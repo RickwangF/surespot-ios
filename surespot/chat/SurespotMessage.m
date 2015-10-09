@@ -23,14 +23,6 @@
     return self;
 }
 
-//TODO prodhash
-- (BOOL) hashed {
-    return NO;
-}
-
-
-
-
 - (id) initWithDictionary:(NSDictionary *) dictionary {
     
     // Call superclass's initializer
