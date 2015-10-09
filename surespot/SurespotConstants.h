@@ -16,6 +16,7 @@ typedef void (^CallbackDictionaryBlock) (NSDictionary * result);
 @interface SurespotConstants : NSObject
 extern NSString * const serverBaseIPAddress;
 extern BOOL const serverSecure;
+extern BOOL const socketLog;
 extern NSInteger const serverPort;
 extern NSString * const serverPublicKeyString;
 extern NSString * const socketUrl;

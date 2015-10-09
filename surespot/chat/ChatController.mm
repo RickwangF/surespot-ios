@@ -210,8 +210,6 @@ static const int MAX_RETRY_DELAY = 30;
 -(void) connect {
     NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
     
-    
-    
     if (loggedInUser) {
         DDLogDebug(@"connecting socket");
         
@@ -223,10 +221,16 @@ static const int MAX_RETRY_DELAY = 30;
         }
         
         [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
-        [opts setObject:[NSNumber numberWithBool:YES] forKey:@"log"];
+        [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
         
-        self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: opts];
-        [self addHandlers];
+        if (self.socket) {
+            [self.socket removeAllHandlers];
+        }
+        
+        if (!self.socket || [self.socket status] == SocketIOClientStatusClosed) {
+            self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: opts];
+            [self addHandlers];
+        }
         [self.socket connect];
     }
 }
