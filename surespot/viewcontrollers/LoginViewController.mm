@@ -11,6 +11,7 @@
 #import "IdentityController.h"
 #import "NetworkController.h"
 #import "NSData+Base64.h"
+#import "NSData+SRB64Additions.h"
 #import "UIUtils.h"
 #import "LoadingView.h"
 #import "DDLog.h"

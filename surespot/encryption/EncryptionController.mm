@@ -9,6 +9,7 @@
 #import "SurespotIdentity.h"
 #import "CredentialCachingController.h"
 #import "NSData+Base64.h"
+#import "NSData+SRB64Additions.h"
 #import "DDLog.h"
 #import "SurespotConstants.h"
 #import "cryptlib.h"

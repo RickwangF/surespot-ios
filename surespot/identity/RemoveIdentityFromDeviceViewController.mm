@@ -17,8 +17,6 @@
 #import "NSData+Gunzip.h"
 #import "NSString+Sensitivize.h"
 #import "NSData+Base64.h"
-#import "NSData+SRB64Additions.h"
-
 #import "EncryptionController.h"
 #import "NetworkController.h"
 

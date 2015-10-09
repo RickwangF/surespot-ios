@@ -11,7 +11,7 @@
 #import "ChatUtils.h"
 #import "DDLog.h"
 #import "NSData+Base64.h"
-//#import "NSString+SBJSON.h"
+#import "NSData+SRB64Additions.h"
 #import "EncryptionController.h"
 
 #ifdef DEBUG

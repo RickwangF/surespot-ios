@@ -12,6 +12,7 @@
 #import "EncryptionController.h"
 #import "UIUtils.h"
 #import "NSData+Base64.h"
+#import "NSData+SRB64Additions.h"
 #import "ChatController.h"
 #import "ChatDataSource.h"
 #import "NetworkController.h"

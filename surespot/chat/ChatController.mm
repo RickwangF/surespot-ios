@@ -9,7 +9,6 @@
 #import "ChatController.h"
 #import "IdentityController.h"
 #import "EncryptionController.h"
-#import "SocketIOPacket.h"
 #import "NSData+Base64.h"
 #import "SurespotControlMessage.h"
 #import "NetworkController.h"
@@ -23,6 +22,7 @@
 #import "Reachability.h"
 #import "SDWebImageManager.h"
 #import "SoundController.h"
+#import "surespot-Swift.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
@@ -38,13 +38,14 @@ static const int MAX_RETRY_DELAY = 30;
 @interface ChatController() {
     
 }
-@property (strong, atomic) SocketIO * socketIO;
+
 @property (strong, atomic) NSMutableDictionary * chatDataSources;
 @property (strong, atomic) HomeDataSource * homeDataSource;
 @property (assign, atomic) NSInteger connectionRetries;
 @property (strong, atomic) NSTimer * reconnectTimer;
 @property (strong, nonatomic) NSMutableArray * sendBuffer;
 @property (strong, nonatomic) NSMutableArray * resendBuffer;
+@property (strong, nonatomic) SocketIOClient * socket;
 @end
 
 @implementation ChatController
@@ -70,7 +71,10 @@ static const int MAX_RETRY_DELAY = 30;
     
     if (self != nil) {
         
-        self.socketIO = [[SocketIO alloc] initWithDelegate:self];
+        self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts:nil];
+        [self addHandlers];
+        
+        
         _chatDataSources = [NSMutableDictionary new];
         _sendBuffer = [NSMutableArray new];
         _resendBuffer = [NSMutableArray new];
@@ -92,13 +96,66 @@ static const int MAX_RETRY_DELAY = 30;
     return self;
 }
 
+-(void) addHandlers {
+    [self.socket onAny:^(SocketAnyEvent * _Nonnull) {
+        DDLogDebug(@"socket event: \($0.event), with items: \($0.items)");
+    }];
+    
+    [self.socket on:@"connect" callback:^(NSArray * _Nonnull, SocketAckEmitter * _Nullable) {
+        DDLogDebug(@"socket connect");
+        
+        _connectionRetries = 0;
+        if (_reconnectTimer) {
+            [_reconnectTimer invalidate];
+        }
+        
+        //send unsent messages
+        [self resendMessages];
+        [self getData];
+    }];
+    
+    [self.socket on:@"disconnect" callback:^(NSArray * _Nonnull, SocketAckEmitter * _Nullable) {
+        DDLogInfo(@"socket disconnect");
+//        if (error) {
+//            [self connect];
+//            
+//        }
+        
+        
+    }];
+    
+    [self.socket on:@"error" callback:^(NSArray * _Nonnull, SocketAckEmitter * _Nullable) {
+        DDLogDebug(@"socket error");
+        
+        BOOL reAuthing = NO;
+//        if ([error code] == SocketIOUnauthorized) {
+//            DDLogInfo(@"socket 403 unauthorized");
+//            reAuthing = [[NetworkController sharedInstance] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie *cookie) {
+//                [self connect];
+//            } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+//                [[NetworkController sharedInstance] setUnauthorized];
+//            }];
+//            
+//            if (!reAuthing) {
+//                [[NetworkController sharedInstance] setUnauthorized];
+//            }
+//            
+//            return;
+//        }
+        
+        if (reAuthing) return;
+        [self reconnect];
+
+    }];
+}
+
 -(void)reachabilityChanged:(NSNotification*)note
 {
     Reachability * reach = [note object];
     
     if([reach isReachable])
     {
-        DDLogInfo(@"wifi: %hhd, wwan, %hhd",[reach isReachableViaWiFi], [reach isReachableViaWWAN]);
+        DDLogInfo(@"wifi: %d, wwan, %d",[reach isReachableViaWiFi], [reach isReachableViaWWAN]);
         //reachibility changed, disconnect and reconnect
         [self disconnect];
         [self reconnect];
@@ -111,9 +168,9 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) disconnect {
-    if (_socketIO) {
+    if (_socket) {
         DDLogVerbose(@"disconnecting socket");
-        [_socketIO disconnect ];
+        [_socket disconnect ];
     }
 }
 
@@ -129,24 +186,25 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) connect {
     NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
-    if (_socketIO && loggedInUser) {
+    if (_socket && loggedInUser) {
         DDLogVerbose(@"connecting socket");
         
-        self.socketIO.cookies = nil;
-        [[NetworkController sharedInstance] clearCookies];
-        NSHTTPCookie * cookie = [[CredentialCachingController sharedInstance] getCookieForUsername: loggedInUser];
-        if (cookie) {
-            [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:cookie];
-            self.socketIO.cookies = @[cookie];
-        }
-        
-        self.socketIO.useSecure = serverSecure;
-        [self.socketIO connectToHost:serverBaseIPAddress onPort:serverPort];
+//        self.socket.cookies = nil;
+//        [[NetworkController sharedInstance] clearCookies];
+//        NSHTTPCookie * cookie = [[CredentialCachingController sharedInstance] getCookieForUsername: loggedInUser];
+//        if (cookie) {
+//            [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:cookie];
+//            self.socketIO.cookies = @[cookie];
+//        }
+//        
+//        self.socketIO.useSecure = serverSecure;
+//        [self.socketIO connectToHost:serverBaseIPAddress onPort:serverPort];
+        [self.socket connect];
     }
 }
 
 -(BOOL) isConnected {
-    return [_socketIO isConnected];
+    return [self.socket status] == SocketIOClientStatusConnected;
 }
 
 -(void) resume {
@@ -157,51 +215,51 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 
-- (void) socketIODidConnect:(SocketIO *)socket {
-    DDLogVerbose(@"didConnect()");
-    // [[NSNotificationCenter defaultCenter] postNotificationName:@"socketConnected" object:nil ];
-    _connectionRetries = 0;
-    if (_reconnectTimer) {
-        [_reconnectTimer invalidate];
-    }
-    
-    //send unsent messages
-    [self resendMessages];
-    [self getData];
-}
+//- (void) socketIODidConnect:(SocketIO *)socket {
+//    DDLogVerbose(@"didConnect()");
+//    // [[NSNotificationCenter defaultCenter] postNotificationName:@"socketConnected" object:nil ];
+//    _connectionRetries = 0;
+//    if (_reconnectTimer) {
+//        [_reconnectTimer invalidate];
+//    }
+//    
+//    //send unsent messages
+//    [self resendMessages];
+//    [self getData];
+//}
 
-- (void) socketIO:(SocketIO *)socket onError:(NSError *)error {
-    DDLogInfo(@"error %@", error);
-    BOOL reAuthing = NO;
-    if ([error code] == SocketIOUnauthorized) {
-        DDLogInfo(@"socket 403 unauthorized");
-        reAuthing = [[NetworkController sharedInstance] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie *cookie) {
-            [self connect];
-        } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
-            [[NetworkController sharedInstance] setUnauthorized];
-        }];
-        
-        if (!reAuthing) {
-            [[NetworkController sharedInstance] setUnauthorized];
-        }
-        
-        return;
-    }
-    
-    if (reAuthing) return;
-    [self reconnect];
-    
-}
+//- (void) socketIO:(SocketIO *)socket onError:(NSError *)error {
+//    DDLogInfo(@"error %@", error);
+//    BOOL reAuthing = NO;
+//    if ([error code] == SocketIOUnauthorized) {
+//        DDLogInfo(@"socket 403 unauthorized");
+//        reAuthing = [[NetworkController sharedInstance] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie *cookie) {
+//            [self connect];
+//        } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+//            [[NetworkController sharedInstance] setUnauthorized];
+//        }];
+//        
+//        if (!reAuthing) {
+//            [[NetworkController sharedInstance] setUnauthorized];
+//        }
+//        
+//        return;
+//    }
+//    
+//    if (reAuthing) return;
+//    [self reconnect];
+//    
+//}
 
-- (void) socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error {
-    
-    DDLogInfo(@"didDisconnectWithError %@", error);
-    if (error) {
-        [self connect];
-        
-    }
-    
-}
+//- (void) socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error {
+//    
+//    DDLogInfo(@"didDisconnectWithError %@", error);
+//    if (error) {
+//        [self connect];
+//        
+//    }
+//    
+//}
 
 -(void) reconnect {
     //start reconnect cycle
@@ -236,46 +294,46 @@ static const int MAX_RETRY_DELAY = 30;
     [self connect];
 }
 
-- (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet
-{
-    DDLogVerbose(@"didReceiveEvent() >>> data: %@", packet.data);
-    NSDictionary * jsonData = [NSJSONSerialization JSONObjectWithData:[packet.data dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
-    
-    
-    NSString * name = [jsonData objectForKey:@"name"];
-    
-    if ([name isEqualToString:@"control"]) {
-        
-        SurespotControlMessage * message = [[SurespotControlMessage alloc] initWithJSONString:[jsonData objectForKey:@"args"][0]];
-        [self handleControlMessage: message];
-    }
-    else {
-        
-        if ([name isEqualToString:@"message"]) {
-            SurespotMessage * message = [[SurespotMessage alloc] initWithJSONString:[jsonData objectForKey:@"args"][0]];
-            
-            //mark voice message to play automatically if tab is open
-            if (![ChatUtils isOurMessage: message] && [message.mimeType isEqualToString:MIME_TYPE_M4A] && [[message getOtherUser] isEqualToString:[self getCurrentChat]]) {
-                message.playVoice = YES;
-            }
-            
-            [self handleMessage:message];
-            [self checkAndSendNextMessage:message];
-        }
-        else {
-            if ([name isEqualToString:@"messageError"]) {
-                SurespotErrorMessage * message = [[SurespotErrorMessage alloc] initWithDictionary:[jsonData objectForKey:@"args"][0]];
-                
-                [self handleErrorMessage:message];
-            }
-        }
-    }
-}
-
-- (void) socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet
-{
-    DDLogVerbose(@"didReceiveMessage() >>> data: %@", packet.data);
-}
+//- (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet
+//{
+//    DDLogVerbose(@"didReceiveEvent() >>> data: %@", packet.data);
+//    NSDictionary * jsonData = [NSJSONSerialization JSONObjectWithData:[packet.data dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
+//    
+//    
+//    NSString * name = [jsonData objectForKey:@"name"];
+//    
+//    if ([name isEqualToString:@"control"]) {
+//        
+//        SurespotControlMessage * message = [[SurespotControlMessage alloc] initWithJSONString:[jsonData objectForKey:@"args"][0]];
+//        [self handleControlMessage: message];
+//    }
+//    else {
+//        
+//        if ([name isEqualToString:@"message"]) {
+//            SurespotMessage * message = [[SurespotMessage alloc] initWithJSONString:[jsonData objectForKey:@"args"][0]];
+//            
+//            //mark voice message to play automatically if tab is open
+//            if (![ChatUtils isOurMessage: message] && [message.mimeType isEqualToString:MIME_TYPE_M4A] && [[message getOtherUser] isEqualToString:[self getCurrentChat]]) {
+//                message.playVoice = YES;
+//            }
+//            
+//            [self handleMessage:message];
+//            [self checkAndSendNextMessage:message];
+//        }
+//        else {
+//            if ([name isEqualToString:@"messageError"]) {
+//                SurespotErrorMessage * message = [[SurespotErrorMessage alloc] initWithDictionary:[jsonData objectForKey:@"args"][0]];
+//                
+//                [self handleErrorMessage:message];
+//            }
+//        }
+//    }
+//}
+//
+//- (void) socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet
+//{
+//    DDLogVerbose(@"didReceiveMessage() >>> data: %@", packet.data);
+//}
 
 - (ChatDataSource *) createDataSourceForFriendname: (NSString *) friendname availableId:(NSInteger)availableId availableControlId: (NSInteger) availableControlId {
     @synchronized (_chatDataSources) {
@@ -365,7 +423,7 @@ static const int MAX_RETRY_DELAY = 30;
 }
 
 -(void) getLatestData: (BOOL) suppressNew {
-    DDLogVerbose(@"getLatestData, chatDatasources count: %d", [_chatDataSources count]);
+    DDLogVerbose(@"getLatestData, chatDatasources count: %lu", (unsigned long)[_chatDataSources count]);
     
     NSMutableArray * messageIds = [[NSMutableArray alloc] init];
     
@@ -560,7 +618,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) sendMessageOnSocket: (NSString *) jsonMessage {
-    [_socketIO sendMessage: jsonMessage];
+  //  [self.socket  sendMessage: jsonMessage];
 }
 
 -(void) sendMessages {
@@ -569,11 +627,11 @@ static const int MAX_RETRY_DELAY = 30;
     [sendBuffer enumerateObjectsUsingBlock:^(SurespotMessage * message, NSUInteger idx, BOOL *stop) {
         
         
-        if (_socketIO) {
-            DDLogInfo(@"sending message %@", message);
-            [self enqueueResendMessage:message];
-            [_socketIO sendMessage:[message toJsonString]];
-        }
+//        if (_socketIO) {
+//            DDLogInfo(@"sending message %@", message);
+//            [self enqueueResendMessage:message];
+//            [_socketIO sendMessage:[message toJsonString]];
+//        }
     }];
 }
 
@@ -900,7 +958,7 @@ static const int MAX_RETRY_DELAY = 30;
     [[NetworkController sharedInstance]
      inviteFriend:username
      successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
-         DDLogVerbose(@"invite friend response: %d",  [operation.response statusCode]);
+         DDLogVerbose(@"invite friend response: %ld",  (long)[operation.response statusCode]);
          
          [_homeDataSource addFriendInvited:username];
          [self stopProgress];
@@ -1145,7 +1203,7 @@ static const int MAX_RETRY_DELAY = 30;
 - (void) deleteMessagesForFriend: (Friend  *) afriend {
     ChatDataSource * cds = [self getDataSourceForFriendname:afriend.name];
     
-    int lastMessageId = 0;
+    long lastMessageId = 0;
     if (cds) {
         lastMessageId = [cds latestMessageId];
     }
@@ -1228,7 +1286,7 @@ static const int MAX_RETRY_DELAY = 30;
                                                           NSInteger size = [[JSON objectForKey:@"size"] integerValue];
                                                           NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
                                                           
-                                                          DDLogInfo(@"uploaded data %@ to server successfully, server id: %d, url: %@, date: %@, size: %d", message.iv, serverid, url, date, size);
+                                                          DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, (long)size);
                                                           
                                                           message.serverid = serverid;
                                                           message.data = url;
@@ -1240,7 +1298,7 @@ static const int MAX_RETRY_DELAY = 30;
                                                           [self stopProgress];
                                                           
                                                       } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
-                                                          DDLogInfo(@"resend data %@ to server failed, statuscode: %d", message.data, responseObject.statusCode);
+                                                          DDLogInfo(@"resend data %@ to server failed, statuscode: %ld", message.data, (long)responseObject.statusCode);
                                                           if (responseObject.statusCode == 402) {
                                                               resendMessage.errorStatus = 402;
                                                           }

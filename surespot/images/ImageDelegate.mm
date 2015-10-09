@@ -19,6 +19,7 @@
 #import "FileController.h"
 #import "ChatController.h"
 #import "NSData+Base64.h"
+#import "NSData+SRB64Additions.h"
 #import "SDWebImageManager.h"
 #import "DDLog.h"
 #import "UIUtils.h"

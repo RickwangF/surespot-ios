@@ -19,6 +19,7 @@
 #import "ChatController.h"
 #import "DDLog.h"
 #import "NSData+Base64.h"
+#import "NSData+SRB64Additions.h"
 #import "KeychainItemWrapper.h"
 #import <Security/Security.h>
 #import "UIUtils.h"

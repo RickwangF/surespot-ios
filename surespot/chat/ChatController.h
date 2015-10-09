@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SocketIO.h"
 #import "ChatDataSource.h"
 #import "HomeDataSource.h"
 #import "Friend.h"
@@ -15,7 +14,7 @@
 #import "SurespotMessage.h"
 #import "SurespotConstants.h"
 
-@interface ChatController : NSObject <SocketIODelegate, FriendDelegate>
+@interface ChatController : NSObject <FriendDelegate>
 +(ChatController*)sharedInstance;
 -(HomeDataSource *) getHomeDataSource;
 -(ChatDataSource *) createDataSourceForFriendname: (NSString *) friendname availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId;

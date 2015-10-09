@@ -70,8 +70,6 @@ using CryptoPP::AuthenticatedDecryptionFilter;
 using CryptoPP::Redirector;
 using CryptoPP::ByteQueue;
 
-#include "NSData+SRB64Additions.h"
-
 #include "eccrypto.h"
 using CryptoPP::ECP;
 
