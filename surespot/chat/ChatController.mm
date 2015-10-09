@@ -25,7 +25,7 @@
 #import "surespot-Swift.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const int ddLogLevel = LOG_LEVEL_DEBUG;
 #else
 static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
@@ -192,7 +192,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) disconnect {
     if (_socket) {
-        DDLogVerbose(@"disconnecting socket");
+        DDLogDebug(@"disconnecting socket");
         [_socket disconnect ];
     }
 }
@@ -213,16 +213,19 @@ static const int MAX_RETRY_DELAY = 30;
     
     
     if (loggedInUser) {
-        DDLogVerbose(@"connecting socket");
+        DDLogDebug(@"connecting socket");
         
         NSHTTPCookie * cookie = [[CredentialCachingController sharedInstance] getCookieForUsername: loggedInUser];
-        NSDictionary * cookies = nil;
+        NSMutableDictionary * opts = [[NSMutableDictionary alloc] init];
         
         if (cookie) {
-            cookies = [NSDictionary dictionaryWithObjectsAndKeys: @[cookie],  @"cookies", nil];
+            [opts setObject:@[cookie] forKey:@"cookies"];
         }
         
-        self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: cookies];
+        [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
+        [opts setObject:[NSNumber numberWithBool:YES] forKey:@"log"];
+        
+        self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: opts];
         [self addHandlers];
         [self.socket connect];
     }
@@ -246,11 +249,11 @@ static const int MAX_RETRY_DELAY = 30;
         
         //exponential random backoff
         double timerInterval = [self generateIntervalK: _connectionRetries++];
-        DDLogVerbose(@ "attempting reconnect in: %f" , timerInterval);
+        DDLogDebug(@ "attempting reconnect in: %f" , timerInterval);
         _reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:timerInterval target:self selector:@selector(reconnectTimerFired:) userInfo:nil repeats:NO];
     }
     else {
-        DDLogVerbose(@"reconnect retries exhausted, giving up");
+        DDLogDebug(@"reconnect retries exhausted, giving up");
     }
 }
 
