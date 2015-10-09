@@ -71,8 +71,6 @@ static const int MAX_RETRY_DELAY = 30;
     
     if (self != nil) {
         
-        self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts:nil];
-        [self addHandlers];
         
         
         _chatDataSources = [NSMutableDictionary new];
@@ -186,8 +184,20 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) connect {
     NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
-    if (_socket && loggedInUser) {
+    
+    
+    
+    if (loggedInUser) {
         DDLogVerbose(@"connecting socket");
+        
+        NSHTTPCookie * cookie = [[CredentialCachingController sharedInstance] getCookieForUsername: loggedInUser];
+        NSDictionary * cookies = nil;
+        if (cookie) {
+            cookies = [NSDictionary dictionaryWithObjectsAndKeys: @[cookie],  @"cookies", nil];
+        }
+        self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: cookies];
+        [self addHandlers];
+
         
 //        self.socket.cookies = nil;
 //        [[NetworkController sharedInstance] clearCookies];
