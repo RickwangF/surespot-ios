@@ -95,6 +95,7 @@ static const int MAX_RETRY_DELAY = 30;
 }
 
 -(void) addHandlers {
+    DDLogDebug(@"adding handlers");
     [self.socket onAny:^(SocketAnyEvent * event) {
         DDLogInfo(@"socket event: %@, with items: %@",event.event, event.items);
     }];
@@ -118,7 +119,7 @@ static const int MAX_RETRY_DELAY = 30;
         //            [self connect];
         //
         //        }
-        [self connect];
+
         
     }];
     
@@ -147,6 +148,7 @@ static const int MAX_RETRY_DELAY = 30;
     }];
     
     [self.socket on:@"message" callback:^(NSArray * data, SocketAckEmitter * ack) {
+        DDLogDebug(@"socket message");
         NSDictionary * jsonMessage = [data objectAtIndex:0];
         SurespotMessage * message = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
         
@@ -224,13 +226,17 @@ static const int MAX_RETRY_DELAY = 30;
         [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
         
         if (self.socket) {
+            DDLogDebug(@"removing all handlers");
+            
             [self.socket removeAllHandlers];
+            [self.socket close];
         }
         
-        if (!self.socket || [self.socket status] == SocketIOClientStatusClosed) {
-            self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: opts];
-            [self addHandlers];
-        }
+        //if (!self.socket || [self.socket status] == SocketIOClientStatusClosed) {
+        DDLogDebug(@"initing new socket");
+        self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: opts];
+        [self addHandlers];
+        //     }
         [self.socket connect];
     }
 }
