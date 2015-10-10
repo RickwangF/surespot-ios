@@ -117,6 +117,7 @@ static const int MAX_RETRY_DELAY = 30;
     
     [self.socket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket disconnect");
+        //  looks like we get error on error event not here
         //        if (error) {
         //            [self connect];
         //
@@ -138,12 +139,6 @@ static const int MAX_RETRY_DELAY = 30;
             
             //if we're in reauth cycle and we've hit maximum, bail
             if (_reauthing && _connectionRetries >= MAX_REAUTH_RETRIES) {
-//                _reauthing = NO;
-//                _connectionRetries = 0;
-//                if (_reconnectTimer) {
-//                    [_reconnectTimer invalidate];
-//                }
-                
                 [[NetworkController sharedInstance] setUnauthorized];
                 return;
             }
@@ -161,12 +156,6 @@ static const int MAX_RETRY_DELAY = 30;
             
             if (!reAuthing) {
                 DDLogInfo(@"not attempting to reauth");
-//                _reauthing = NO;
-//                _connectionRetries = 0;
-//                if (_reconnectTimer) {
-//                    [_reconnectTimer invalidate];
-//                }
-                
                 [[NetworkController sharedInstance] setUnauthorized];
                 return;
             }
