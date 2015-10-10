@@ -31,6 +31,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
 
 static const int MAX_CONNECTION_RETRIES = 60;
+static const int MAX_REAUTH_RETRIES = 5;
 static const int MAX_RETRY_DELAY = 30;
 
 #define ARC4RANDOM_MAX      0x100000000
@@ -46,6 +47,7 @@ static const int MAX_RETRY_DELAY = 30;
 @property (strong, nonatomic) NSMutableArray * sendBuffer;
 @property (strong, nonatomic) NSMutableArray * resendBuffer;
 @property (strong, nonatomic) SocketIOClient * socket;
+@property (assign, atomic) BOOL reauthing;
 @end
 
 @implementation ChatController
@@ -102,7 +104,7 @@ static const int MAX_RETRY_DELAY = 30;
     
     [self.socket on:@"connect" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket connect");
-        
+        _reauthing = NO;
         _connectionRetries = 0;
         if (_reconnectTimer) {
             [_reconnectTimer invalidate];
@@ -119,7 +121,7 @@ static const int MAX_RETRY_DELAY = 30;
         //            [self connect];
         //
         //        }
-
+        
         
     }];
     
@@ -127,20 +129,50 @@ static const int MAX_RETRY_DELAY = 30;
         DDLogInfo(@"socket error");
         
         BOOL reAuthing = NO;
-        //        if ([error code] == SocketIOUnauthorized) {
-        //            DDLogInfo(@"socket 403 unauthorized");
-        //            reAuthing = [[NetworkController sharedInstance] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie *cookie) {
-        //                [self connect];
-        //            } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
-        //                [[NetworkController sharedInstance] setUnauthorized];
-        //            }];
-        //
-        //            if (!reAuthing) {
-        //                [[NetworkController sharedInstance] setUnauthorized];
-        //            }
-        //
-        //            return;
-        //        }
+        
+        //handle not authorized
+        id object0 = [data objectAtIndex:0];
+        if ([object0 isEqualToString:@"not authorized"]) {
+            
+            DDLogInfo(@"socket not authorized");
+            
+            //if we're in reauth cycle and we've hit maximum, bail
+            if (_reauthing && _connectionRetries >= MAX_REAUTH_RETRIES) {
+//                _reauthing = NO;
+//                _connectionRetries = 0;
+//                if (_reconnectTimer) {
+//                    [_reconnectTimer invalidate];
+//                }
+                
+                [[NetworkController sharedInstance] setUnauthorized];
+                return;
+            }
+            
+            //login again then try reconnecting
+            reAuthing = [[NetworkController sharedInstance] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie *cookie) {
+                DDLogInfo(@"relogin success");
+                _reauthing = YES;
+                [self reconnect];
+                
+            } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+                _reauthing = YES;
+                [self reconnect];
+            }];
+            
+            if (!reAuthing) {
+                DDLogInfo(@"not attempting to reauth");
+//                _reauthing = NO;
+//                _connectionRetries = 0;
+//                if (_reconnectTimer) {
+//                    [_reconnectTimer invalidate];
+//                }
+                
+                [[NetworkController sharedInstance] setUnauthorized];
+                return;
+            }
+            
+            return;
+        }
         
         if (reAuthing) return;
         [self reconnect];
@@ -207,6 +239,7 @@ static const int MAX_RETRY_DELAY = 30;
         [_reconnectTimer invalidate];
         _connectionRetries = 0;
     }
+    _reauthing = NO;
 }
 
 -(void) connect {
@@ -232,11 +265,9 @@ static const int MAX_RETRY_DELAY = 30;
             [self.socket close];
         }
         
-        //if (!self.socket || [self.socket status] == SocketIOClientStatusClosed) {
         DDLogDebug(@"initing new socket");
         self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: opts];
         [self addHandlers];
-        //     }
         [self.socket connect];
     }
 }
