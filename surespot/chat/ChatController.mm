@@ -192,7 +192,8 @@ static const int MAX_RETRY_DELAY = 30;
         SurespotErrorMessage * message = [[SurespotErrorMessage alloc] initWithDictionary:[data objectAtIndex:0]];
         [self handleErrorMessage:message];
     }];
-    
+}
+
 
 -(void)setReachabilityStatus:(Reachability *) reach {
     NetworkStatus remoteHostStatus = [reach currentReachabilityStatus];
