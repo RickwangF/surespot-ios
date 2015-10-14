@@ -191,13 +191,13 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    DDLogInfo(@"received remote notification: %@, applicationstate: %d", userInfo, [application applicationState]);
+    DDLogInfo(@"received remote notification: %@, applicationstate: %ld", userInfo, (long)[application applicationState]);
     [self handleNotificationApplication:application userInfo:userInfo local:NO];
 }
 //
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
-    DDLogInfo(@"received local notification, applicationstate: %d", [application applicationState]);
+    DDLogInfo(@"received local notification, applicationstate: %ld", (long)[application applicationState]);
     [self handleNotificationApplication:application userInfo:notification.userInfo local:YES];
 }
 

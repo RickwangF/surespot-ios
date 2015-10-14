@@ -41,4 +41,5 @@
 -(void) assignFriendAlias: (NSString *) alias toFriendName: (NSString *) friendname  callbackBlock: (CallbackBlock) callbackBlock;
 -(void) removeFriendAlias: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock;
 -(void) removeFriendImage: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock;
+@property (nonatomic, assign) BOOL hasInet;
 @end

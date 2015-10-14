@@ -249,7 +249,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    DDLogInfo(@"appending %d bytes", data.length);
+    DDLogInfo(@"appending %lu bytes", (unsigned long)data.length);
     [self.imageData appendData:data];
     
     //    if ((self.options & SDWebImageDownloaderProgressiveDownload) && self.expectedSize > 0 && self.completedBlock)

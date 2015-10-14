@@ -298,7 +298,7 @@ int const PBKDF_ROUNDS = 20000;
 
 
 + (ECDHPrivateKey *) recreateDhPrivateKey:(NSString *) encodedKey validate: (BOOL) validate {
-    DDLogInfo(@"validate: %hhd", validate);
+    DDLogInfo(@"validate: %hhd", (char)validate);
     if (encodedKey) {
         ECDHPrivateKey * privateKey = new ECDHPrivateKey();
         NSData * decodedKey = [NSData dataFromBase64String: encodedKey];
@@ -336,7 +336,7 @@ int const PBKDF_ROUNDS = 20000;
 
 
 + (ECDSAPrivateKey *) recreateDsaPrivateKey:(NSString *) encodedKey validate: (BOOL) validate {
-    DDLogInfo(@"validate: %hhd", validate);
+    DDLogInfo(@"validate: %hhd", (char)validate);
     ECDSAPrivateKey * privateKey = new ECDSAPrivateKey();
     NSData * decodedKey = [ NSData dataFromBase64String:encodedKey];
     ByteQueue byteQueue;

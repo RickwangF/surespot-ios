@@ -254,10 +254,13 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (BOOL) growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *) string
 {
-    
     if ([string isEqualToString:@"\n"]) {
-        [self handleTextAction];
-        return NO;
+        if (growingTextView != _messageTextView || [UIUtils getBoolPrefWithDefaultNoForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_return_sends_message"]) {
+            [self handleTextAction];
+            return NO;
+        } else {
+            return YES;
+        }
     }
     
     if (growingTextView == _inviteTextView) {
@@ -354,7 +357,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)keyboardFrameDidChange:(NSNotification *)notification
 {
     if (![_messageTextView isFirstResponder] && ![_inviteTextView isFirstResponder]) {
-        // if the message text view isn't the first responder, don't adjust control offsets
+        // if the message text view or the invite text views aren't the first responder, don't adjust control offsets
         return;
     }
     
@@ -667,7 +670,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(NSString * ) titleForLabelForPage:(NSInteger)page {
-    DDLogVerbose(@"titleForLabelForPage %d", page);
+    DDLogVerbose(@"titleForLabelForPage %ld", (long)page);
     if (page == 0) {
         return @"home";
     }
@@ -718,7 +721,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (UIView *)swipeView:(SwipeView *)swipeView viewForItemAtIndex:(NSInteger)index reusingView:(UIView *)view
 {
-    DDLogVerbose(@"view for item at index %d", index);
+    DDLogVerbose(@"view for item at index %ld", (long)index);
     if (index == 0) {
         if (!_friendView) {
             DDLogVerbose(@"creating friend view");
@@ -774,7 +777,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)swipeViewCurrentItemIndexDidChange:(SwipeView *)swipeView
 {
     NSInteger currPage = swipeView.currentPage;
-    DDLogInfo(@"swipeview index changed to %d scrolling to: %d", currPage, _scrollingTo);
+    DDLogInfo(@"swipeview index changed to %ld scrolling to: %ld", (long)currPage, (long)_scrollingTo);
     
     UITableView * tableview;
     if (currPage == 0) {
@@ -853,7 +856,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (void)swipeView:(SwipeView *)swipeView didSelectItemAtIndex:(NSInteger)index
 {
-    DDLogVerbose(@"Selected item at index %i", index);
+    DDLogVerbose(@"Selected item at index %li", (long)index);
 }
 
 
@@ -894,7 +897,7 @@ const Float32 voiceRecordDelay = 0.3;
         index = [_swipeView indexOfItemViewOrSubview:tableView];
     }
     
-    DDLogVerbose(@"number of rows in section, index: %d", index);
+    DDLogVerbose(@"number of rows in section, index: %lu", (unsigned long)index);
     // Return the number of rows in the section
     if (index == 0) {
         if (![[ChatController sharedInstance] getHomeDataSource]) {
@@ -1395,7 +1398,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger page = [_swipeView indexOfItemViewOrSubview:tableView];
-    DDLogVerbose(@"selected, on page: %d", page);
+    DDLogVerbose(@"selected, on page: %ld", (long)page);
     
     if (page == 0) {
         Friend * afriend = [[[ChatController sharedInstance] getHomeDataSource].friends objectAtIndex:indexPath.row];
@@ -1531,7 +1534,7 @@ const Float32 voiceRecordDelay = 0.3;
             }
         }
         
-        DDLogVerbose(@"creatingindex: %d", index);
+        DDLogVerbose(@"creatingindex: %ld", (long)index);
         
         //   [chatView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"ChatCell"];
         [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
@@ -1564,7 +1567,7 @@ const Float32 voiceRecordDelay = 0.3;
                 }
             }
             
-            DDLogVerbose(@"scrolling to index: %d", index);
+            DDLogVerbose(@"scrolling to index: %ld", (long)index);
             _scrollingTo = index;
             [_swipeView scrollToPage:index duration:0.500];
         }
@@ -1657,7 +1660,7 @@ const Float32 voiceRecordDelay = 0.3;
 //become the first esponder so we're not typing in the invite field
 //thinking we're typing in the text field
 -(void) updateKeyboardState: (BOOL) goingHome {
-    DDLogInfo(@"updateKeyboardState, goingHome: %hhd", goingHome);
+    DDLogInfo(@"updateKeyboardState, goingHome: %hhd", (char)goingHome);
     if (goingHome) {
         [self resignAllResponders];
     }
@@ -1728,7 +1731,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)refreshMessages:(NSNotification *)notification {
     NSString * username = [notification.object objectForKey:@"username"];
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
-    DDLogVerbose(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], scroll);
+    DDLogVerbose(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
     
     if ([username isEqualToString: [self getCurrentTabName]]) {
         
@@ -1763,7 +1766,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
     NSInteger numRows =[tableView numberOfRowsInSection:0];
     if (numRows > 0) {
-        DDLogVerbose(@"scrolling to row: %d", numRows);
+        DDLogVerbose(@"scrolling to row: %ld", (long)numRows);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
         if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
@@ -2323,14 +2326,14 @@ const Float32 voiceRecordDelay = 0.3;
         
         NSIndexPath *indexPath = [currentView indexPathForRowAtPoint:p];
         if (indexPath == nil) {
-            DDLogVerbose(@"long press on table view at page %d but not on a row", _menuPage);
+            DDLogVerbose(@"long press on table view at page %ld but not on a row", (long)_menuPage);
         }
         else {
             
             
             [currentView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
             [self showMenuForPage: _menuPage indexPath: indexPath];
-            DDLogVerbose(@"long press on table view at page %d, row %d", _menuPage, indexPath.row);
+            DDLogVerbose(@"long press on table view at page %ld, row %ld", (long)_menuPage, (long)indexPath.row);
         }
     }
 }
@@ -2409,7 +2412,7 @@ const Float32 voiceRecordDelay = 0.3;
 -(void) closeTabName: (NSString *) name {
     if (name) {
         NSInteger page = [_swipeView currentPage];
-        DDLogVerbose(@"page before close: %d", page);
+        DDLogVerbose(@"page before close: %ld", (long)page);
         
         [[ChatController sharedInstance] destroyDataSourceForFriendname: name];
         [[[[ChatController sharedInstance] getHomeDataSource] getFriendByName:name] setChatActive:NO];
@@ -2424,7 +2427,7 @@ const Float32 voiceRecordDelay = 0.3;
         }
         [_swipeView scrollToPage:page duration:0.2];
         
-        DDLogVerbose(@"page after close: %d", page);
+        DDLogVerbose(@"page after close: %ld", (long)page);
         NSString * name = [self nameForPage:page];
         DDLogVerbose(@"name after close: %@", name);
         [[[ChatController sharedInstance] getHomeDataSource] setCurrentChat:name];
@@ -2587,14 +2590,14 @@ const Float32 voiceRecordDelay = 0.3;
         [UIUtils startSpinAnimation: _backImageView];
     }
     
-    DDLogVerbose(@"progress count:%d", _progressCount);
+    DDLogVerbose(@"progress count:%ld", (long)_progressCount);
 }
 
 -(void) stopProgress: (NSNotification *) notification {
     if (--_progressCount == 0) {
         [UIUtils stopSpinAnimation:_backImageView];
     }
-    DDLogVerbose(@"progress count:%d", _progressCount);
+    DDLogVerbose(@"progress count:%ld", (long)_progressCount);
 }
 
 

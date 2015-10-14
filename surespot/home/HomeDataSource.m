@@ -50,7 +50,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         }
     }
     
-    DDLogVerbose(@"HomeDataSource init, latestUserControlId: %d", _latestUserControlId);
+    DDLogVerbose(@"HomeDataSource init, latestUserControlId: %ld", (long)_latestUserControlId);
     return self;
 }
 
@@ -59,7 +59,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
     
     [[NetworkController sharedInstance] getFriendsSuccessBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        DDLogInfo(@"get friends response: %d",  [response statusCode]);
+        DDLogInfo(@"get friends response: %ld",  (long)[response statusCode]);
         
         _latestUserControlId = [[JSON objectForKey:@"userControlId"] integerValue];
         
@@ -187,7 +187,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     @synchronized (_friends) {
         if (_latestUserControlId > 0 || _friends.count > 0) {
             NSString * filename =[FileController getHomeFilename];
-            DDLogVerbose(@"saving home data to disk at %@, latestUserControlId: %d, currentChat: %@",filename, _latestUserControlId, [self getCurrentChat]);
+            DDLogVerbose(@"saving home data to disk at %@, latestUserControlId: %ld, currentChat: %@",filename, (long)_latestUserControlId, [self getCurrentChat]);
             NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
             if (_friends.count > 0) {
                 [dict setObject:_friends  forKey:@"friends"];

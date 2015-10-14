@@ -323,6 +323,8 @@ For questions or support please press here or email support@surespot.me.
 Custom notification sounds created by Marco Angelo.";
 
 
+"file_sharing_match"="File Sharing";
+"file_sharing_link"="https://support.apple.com/en-us/HT201301";
 "aes_match"="256 bit AES-GCM";
 "aes_link"="http://www.eetimes.com/design/embedded-internet-design/4372428/How-secure-is-AES-against-brute-force-attacks-";
 "pbkdf_match"="PBKDF";
@@ -333,6 +335,7 @@ Custom notification sounds created by Marco Angelo.";
 "bruteforce_link"="https://en.wikipedia.org/wiki/Brute-force_attack";
 "strength_match"="strength";
 "strength_link"="https://en.wikipedia.org/wiki/Password_strength";
+"after_identity_backup_what"="The identity (.ssi) file has been copied to the Documents folder on the device. Please connect the device to iTunes and copy the identity (.ssi) file to your desktop using File Sharing to complete the backup process.";
 "help_backup_what"="This will export a copy of the selected identity encrypted with 256 bit AES-GCM using a key derived from your password through a PBKDF (Password Based Key Derivation Function).
 
 Surespot can backup your identities to the Documents folder where they will be available in iTunes via File Sharing, or Google Drive.

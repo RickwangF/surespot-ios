@@ -193,14 +193,34 @@ static const int MAX_RETRY_DELAY = 30;
         [self handleErrorMessage:message];
     }];
     
+
+-(void)setReachabilityStatus:(Reachability *) reach {
+    NetworkStatus remoteHostStatus = [reach currentReachabilityStatus];
+    
+    if (remoteHostStatus == NotReachable) {
+        DDLogInfo(@"network not reachable");
+        self.hasInet -= NO;
+    }
+    else if (remoteHostStatus == ReachableViaWiFi) {
+        DDLogInfo(@"network via wifi");
+        self.hasInet -= YES;
+    }
+    else if (remoteHostStatus == ReachableViaWWAN) {
+        DDLogInfo(@"network via cell");
+        self.hasInet -= YES;
+    }
 }
 
 -(void)reachabilityChanged:(NSNotification*)note
 {
     Reachability * reach = [note object];
     
-    if([reach isReachable])
+    [self setReachabilityStatus:reach];
+    _connectionRetries = 0;
+    
+    if([reach isReachable] || self.hasInet)
     {
+
         DDLogInfo(@"wifi: %d, wwan, %d",[reach isReachableViaWiFi], [reach isReachableViaWWAN]);
         //reachibility changed, disconnect and reconnect
         [self disconnect];
@@ -208,7 +228,7 @@ static const int MAX_RETRY_DELAY = 30;
     }
     else
     {
-        DDLogInfo( @"Notification Says Unreachable");
+        DDLogInfo(@"Notification Says Unreachable");
     }
 }
 
@@ -572,6 +592,7 @@ static const int MAX_RETRY_DELAY = 30;
 }
 
 -(void) enqueueMessage: (SurespotMessage * ) message {
+    // check that the message isn't a duplicate
     DDLogInfo(@"enqueing message %@", message);
     [_sendBuffer addObject:message];
 }
@@ -590,9 +611,23 @@ static const int MAX_RETRY_DELAY = 30;
     [self.socket  emit: @"message" withItems: messageArray];
 }
 
+-(void) removeDuplicates: (NSMutableArray *) sendBuffer {
+    for (int forwardIdx = 0; forwardIdx < ((int)sendBuffer.count); forwardIdx++) {
+        SurespotMessage* originalMessage = sendBuffer[forwardIdx];
+        for (int i = ((int)sendBuffer.count) - 1; i > forwardIdx; i--) {
+            SurespotMessage* possibleDuplicate = sendBuffer[i];
+            if ([SurespotMessage areMessagesEqual:originalMessage message:possibleDuplicate] == YES) {
+                DDLogInfo(@"Removed duplicate message %@", possibleDuplicate);
+                [sendBuffer removeObjectAtIndex:i];
+            }
+        }
+    }
+}
+
 -(void) sendMessages {
     NSMutableArray * sendBuffer = _sendBuffer;
     _sendBuffer = [NSMutableArray new];
+    [self removeDuplicates:sendBuffer];
     [sendBuffer enumerateObjectsUsingBlock:^(SurespotMessage * message, NSUInteger idx, BOOL *stop) {
         
         
@@ -612,6 +647,7 @@ static const int MAX_RETRY_DELAY = 30;
 -(void) resendMessages {
     NSMutableArray * resendBuffer = _resendBuffer;
     _resendBuffer = [NSMutableArray new];
+    [self removeDuplicates:resendBuffer];
     NSMutableArray * jsonMessageList = [NSMutableArray new];
     [resendBuffer enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         

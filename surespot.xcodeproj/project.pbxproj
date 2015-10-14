@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A4EF5CE1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */; settings = {ASSET_TAGS = (); }; };
+		5A4EF5CF1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */; settings = {ASSET_TAGS = (); }; };
+		5A4EF5D11BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */; settings = {ASSET_TAGS = (); }; };
+		5A4EF5D21BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */; settings = {ASSET_TAGS = (); }; };
 		5AF842411B910B03009BC037 /* RemoveIdentityFromDeviceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF842401B910B03009BC037 /* RemoveIdentityFromDeviceView.xib */; };
 		5AF842511B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5AF842501B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm */; };
 		6604A2C117626B9E0072216A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A2C017626B9E0072216A /* Foundation.framework */; };
@@ -274,6 +278,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5A4EF5CC1BC5AB1B0000D3F3 /* AfterBackupIdentityHelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AfterBackupIdentityHelpViewController.h; sourceTree = "<group>"; };
+		5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AfterBackupIdentityHelpViewController.m; sourceTree = "<group>"; };
+		5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AfterBackupIdentityHelpView.xib; sourceTree = "<group>"; };
 		5AF842401B910B03009BC037 /* RemoveIdentityFromDeviceView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoveIdentityFromDeviceView.xib; sourceTree = "<group>"; };
 		5AF842421B910B98009BC037 /* RemoveIdentityFromDeviceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoveIdentityFromDeviceViewController.h; sourceTree = "<group>"; };
 		5AF842501B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoveIdentityFromDeviceViewController.mm; sourceTree = "<group>"; };
@@ -1627,6 +1634,9 @@
 				660F0A9718D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm */,
 				660F0A9918D789E900FD8C4D /* RestoreIdentitiesViewController.h */,
 				660F0A9A18D789E900FD8C4D /* RestoreIdentitiesViewController.m */,
+				5A4EF5CC1BC5AB1B0000D3F3 /* AfterBackupIdentityHelpViewController.h */,
+				5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */,
+				5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */,
 			);
 			path = backup;
 			sourceTree = "<group>";
@@ -1911,6 +1921,7 @@
 				661F469E1864C0BE004A71B0 /* BackupIdentityView.xib in Resources */,
 				6637012D187A33A6006D17CA /* PWYLView.xib in Resources */,
 				66F831FF185B9EB500ADD2F1 /* OurMessageCell.xib in Resources */,
+				5A4EF5D11BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */,
 				668D24FF186A36520096D155 /* QRInviteView.xib in Resources */,
 				666D3368187F69AD00B73F69 /* message.caf in Resources */,
 				666D338118847B5000B73F69 /* surespot-invite.caf in Resources */,
@@ -1943,7 +1954,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6604A2F017626B9E0072216A /* InfoPlist.strings in Resources */,
+				5A4EF5D21BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1976,6 +1987,7 @@
 				661F3B941868ECFE003C7AE3 /* KeyFingerprintLoadingCell.m in Sources */,
 				660F0A9818D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm in Sources */,
 				66866263185B6A2E001491B1 /* NSData+GIF.m in Sources */,
+				5A4EF5CE1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */,
 				66EBE0BA1855C97100F2452D /* SurespotIdentity.mm in Sources */,
 				66EBE0BB1855C97100F2452D /* ChatController.mm in Sources */,
 				66EBE13F1855C97100F2452D /* HomeDataSource.m in Sources */,
@@ -2137,7 +2149,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6604A2F317626B9E0072216A /* surespotTests.m in Sources */,
+				5A4EF5CF1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

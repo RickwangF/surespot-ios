@@ -20,6 +20,8 @@
 #import "EncryptionController.h"
 #import "NetworkController.h"
 
+#import "SignUpViewController.h"
+
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
 #else
@@ -79,9 +81,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 37)];
-    if ([_identityNames count] == 0) {
-        label.text = @"";
-    } else {
+    if ([_identityNames count] > 0) {
         label.text =  [_identityNames objectAtIndex:row];
     }
     [label setFont:[UIFont systemFontOfSize:22]];
@@ -132,12 +132,24 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         return;
     }
     
-    [self loadIdentityNames];
+    
     [[IdentityController sharedInstance] deleteIdentityUsername:username preserveBackedUpIdentity:YES];
     [_progressView removeView];
     _progressView = nil;
     [UIUtils showToastKey:@"identity_removed_from_device" duration:2];
     [self loadIdentityNames];
+    [_userPicker reloadAllComponents];
+
+    if ([_identityNames count] == 0) {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle: nil];
+        SignupViewController * svc = [storyboard instantiateViewControllerWithIdentifier:@"signupViewController"];
+        
+        NSMutableArray *  controllers = [NSMutableArray new];
+        [controllers addObject:svc];
+        
+        [self.navigationController setViewControllers:controllers animated:YES];
+        [self.navigationController removeFromParentViewController];
+    }
 }
 
 -(BOOL) shouldAutorotate {

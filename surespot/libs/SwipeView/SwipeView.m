@@ -343,7 +343,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)updateScrollOffset
 {
-    DDLogInfo(@"updateScrollOffset, wrapEnabled: %d",_wrapEnabled);
+    //DDLogInfo(@"updateScrollOffset, wrapEnabled: %d",_wrapEnabled);
     if (_wrapEnabled)
     {
         CGFloat itemsWide = (_numberOfItems == 1)? 1.0f: 3.0f;
@@ -361,7 +361,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 [self setContentOffsetWithoutEvent:CGPointMake(0.0f, _scrollView.contentOffset.y - scrollHeight)];
             }
             _scrollOffset = [self clampedOffset:_scrollOffset];
-            DDLogInfo(@"updateScrollOffset, scrollOffset set to : %f",_scrollOffset);
+            //DDLogInfo(@"updateScrollOffset, scrollOffset set to : %f",_scrollOffset);
         }
         else
         {
@@ -377,7 +377,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 [self setContentOffsetWithoutEvent:CGPointMake(_scrollView.contentOffset.x - scrollWidth, 0.0f)];
             }
             _scrollOffset = [self clampedOffset:_scrollOffset];
-            DDLogInfo(@"updateScrollOffset, scrollOffset set to : %f",_scrollOffset);
+            //DDLogInfo(@"updateScrollOffset, scrollOffset set to : %f",_scrollOffset);
         }
     }
 }
@@ -461,7 +461,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (CGFloat)offsetForItemAtIndex:(NSInteger)index
 {
-    DDLogInfo(@"offsetForItemAtIndex: %d", index);
+    // DDLogInfo(@"offsetForItemAtIndex: %d", index);
     //calculate relative position
     CGFloat offset = index - _scrollOffset;
     if (_wrapEnabled)
@@ -493,7 +493,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         }
     }
     
-    DDLogInfo(@"offsetForItemAtIndex returning %f",offset);
+    //DDLogInfo(@"offsetForItemAtIndex returning %f",offset);
     return offset;
 }
 
@@ -612,7 +612,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     //handle wrap
     [self updateScrollOffset];
     
-    DDLogInfo(@"didScroll, offset: %f",_scrollOffset) ;
+    //DDLogInfo(@"didScroll, offset: %f",_scrollOffset) ;
     
     //update view
     //[self layOutItemViews];
@@ -645,12 +645,12 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 {
     if (_scrolling)
     {
-        DDLogInfo(@"step scrolling");
+        //DDLogInfo(@"step scrolling");
         NSTimeInterval currentTime = [[NSDate date] timeIntervalSinceReferenceDate];
         NSTimeInterval time = fminf(1.0f, (currentTime - _startTime) / _scrollDuration);
         CGFloat delta = [self easeInOut:time];
         _scrollOffset = [self clampedOffset:_startOffset + (_endOffset - _startOffset) * delta];
-        DDLogInfo(@"step scrolling, scrollOffset set to : %f",_scrollOffset);
+        //DDLogInfo(@"step scrolling, scrollOffset set to : %f",_scrollOffset);
         if (_vertical)
         {
             [self setContentOffsetWithoutEvent:CGPointMake(0.0f, _scrollOffset * _itemSize.height)];
@@ -673,7 +673,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     }
     else
     {
-        DDLogInfo(@"step not scrolling");
+        //DDLogInfo(@"step not scrolling");
         [self stopAnimation];
     }
 }
@@ -783,7 +783,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)setCurrentItemIndex:(NSInteger)currentItemIndex
 {
-    DDLogInfo(@"setCurrentItemIndex: %d",currentItemIndex);
+    DDLogInfo(@"setCurrentItemIndex: %ld", (long)currentItemIndex);
     _currentItemIndex = currentItemIndex;
     self.scrollOffset = currentItemIndex;
 }
@@ -815,7 +815,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)scrollByOffset:(CGFloat)offset duration:(NSTimeInterval)duration
 {
-    DDLogInfo(@"scrollByOffset");
+    //DDLogInfo(@"scrollByOffset");
     if (duration > 0.0)
     {
         _scrolling = YES;
@@ -863,7 +863,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     else
     {
         NSInteger offset = [self clampedIndex:_previousItemIndex + itemCount];
-        DDLogInfo(@"scrollByNumberOfItems setting scrollOffset to: %d", offset);
+        DDLogInfo(@"scrollByNumberOfItems setting scrollOffset to: %ld", (long)offset);
         self.scrollOffset = offset;
     }
 }
@@ -1151,7 +1151,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)scrollViewDidScroll:(__unused UIScrollView *)scrollView
 {
-    DDLogInfo(@"scrollViewDidScroll");
+    //DDLogInfo(@"scrollViewDidScroll");
     if (!_suppressScrollEvent)
     {
         

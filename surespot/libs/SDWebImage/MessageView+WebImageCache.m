@@ -81,7 +81,7 @@ static const NSInteger retryAttempts = 5;
                                                                               else {
                                                                                   //retry
                                                                                   if (retryAttempt < retryAttempts) {
-                                                                                      DDLogInfo(@"no data downloaded, retrying attempt: %d", retryAttempt+1);
+                                                                                      DDLogInfo(@"no data downloaded, retrying attempt: %ld", (long)retryAttempt+1);
                                                                                       [self setMessage:message progress:progressBlock completed:completedBlock retryAttempt:retryAttempt+1];
                                                                                       return;
                                                                                   }

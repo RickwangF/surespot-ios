@@ -43,4 +43,5 @@
 - (NSString * ) toJsonString;
 - (NSMutableDictionary * ) toNSDictionary;
 - (BOOL) readyToSend;
++ (BOOL) areMessagesEqual:(SurespotMessage *)lastMessage message:(SurespotMessage *)message;
 @end

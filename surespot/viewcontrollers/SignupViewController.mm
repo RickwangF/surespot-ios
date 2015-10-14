@@ -156,7 +156,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
          authSig: authSig
          clientSig: clientSig
          successBlock:^(AFHTTPRequestOperation *operation, id responseObject, NSHTTPCookie * cookie) {
-             DDLogVerbose(@"signup response: %d",  [operation.response statusCode]);
+             DDLogVerbose(@"signup response: %ld",  (long)[operation.response statusCode]);
              [[IdentityController sharedInstance] createIdentityWithUsername:username andPassword:password andSalt:salt andKeys:keys cookie:cookie];
              UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle: nil];
              SwipeViewController * svc = [storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"];

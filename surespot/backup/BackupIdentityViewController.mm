@@ -7,6 +7,7 @@
 //
 
 #import "BackupIdentityViewController.h"
+#import "AfterBackupIdentityHelpViewController.h"
 #import "IdentityController.h"
 #import "DDLog.h"
 #import "SurespotConstants.h"
@@ -106,9 +107,24 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     } else {
         [self.navigationController pushViewController:controller animated:YES];
     }
-    
 }
 
+-(void) showAfterBackupIdentityHelp {
+    AfterBackupIdentityHelpViewController * controller = [[AfterBackupIdentityHelpViewController alloc] initWithNibName:@"AfterBackupIdentityHelpView" bundle:nil];
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        _popover = [[UIPopoverController alloc] initWithContentViewController:controller];
+        _popover.delegate = self;
+        CGFloat x = self.view.bounds.size.width;
+        CGFloat y = self.view.bounds.size.height;
+        DDLogInfo(@"setting second popover x, y to: %f, %f", x/2,y/2);
+        [_popover setPopoverContentSize:CGSizeMake(320, 480) animated:NO];
+        [_popover presentPopoverFromRect:CGRectMake(x/2,y/2, 1,1 ) inView:self.view permittedArrowDirections:0 animated:YES];
+        
+    } else {
+        [self.navigationController pushViewController:controller animated:YES];
+    }
+}
 
 -(void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView *__autoreleasing *)view {
     CGFloat x =self.view.bounds.size.width;
@@ -507,6 +523,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
         else {
             
             [UIUtils showToastKey:@"backed_up_identity_to_documents" duration:2];
+            [self showAfterBackupIdentityHelp];
             return;
         }
     }];

@@ -55,7 +55,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(void) getSharedSecretForOurVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion hashed: (BOOL) hashed callback: (CallbackBlock) callback {
     
-    DDLogVerbose(@"getSharedSecretForOurVersion, queue size: %d", [_getSecretQueue operationCount] );
+    DDLogVerbose(@"getSharedSecretForOurVersion, queue size: %lu", (unsigned long)[_getSecretQueue operationCount] );
     
     GetSharedSecretOperation * op = [[GetSharedSecretOperation alloc] initWithCache:self ourVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: hashed callback:callback];
     
@@ -77,7 +77,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     }
     
     _latestVersionsDict = [NSMutableDictionary dictionaryWithDictionary:[FileController loadLatestVersionsForUsername:identity.username]];
-    DDLogVerbose(@"loaded %d latest versions from disk", [_latestVersionsDict count]);
+    DDLogVerbose(@"loaded %lu latest versions from disk", (unsigned long)[_latestVersionsDict count]);
     
     [self updateIdentity:identity onlyIfExists:NO];
     
@@ -87,7 +87,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (password) {
         NSDictionary * secrets  =  [FileController loadSharedSecretsForUsername: username withPassword:password];
         [_sharedSecretsDict addEntriesFromDictionary:secrets];
-        DDLogVerbose(@"loaded %d encrypted secrets from disk", [secrets count]);
+        DDLogVerbose(@"loaded %lu encrypted secrets from disk", (unsigned long)[secrets count]);
     }
 }
 
@@ -145,7 +145,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         
         
         [FileController saveSharedSecrets: ourSecrets forUsername: _loggedInUsername withPassword:password];
-        DDLogVerbose(@"saved %d encrypted secrets to disk", [ourSecrets count]);
+        DDLogVerbose(@"saved %lu encrypted secrets to disk", (unsigned long)[ourSecrets count]);
     }
     
 }
@@ -153,7 +153,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 -(void) saveLatestVersions {
     
     [FileController saveLatestVersions: _latestVersionsDict forUsername: _loggedInUsername];
-    DDLogVerbose(@"saved %d latest versions to disk", [_latestVersionsDict count]);
+    DDLogVerbose(@"saved %lu latest versions to disk", (unsigned long)[_latestVersionsDict count]);
     
     
 }
@@ -207,7 +207,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 }
 
 - (void) getLatestVersionForUsername: (NSString *) username callback:(CallbackStringBlock) callback {
-    DDLogVerbose(@"getLatestVersionForUsername, queue size: %d", [_keyVersionQueue operationCount] );
+    DDLogVerbose(@"getLatestVersionForUsername, queue size: %lu", (unsigned long)[_keyVersionQueue operationCount] );
     
     GetKeyVersionOperation * op = [[GetKeyVersionOperation alloc] initWithCache:self username:username completionCallback: callback];
     [self.getSecretQueue addOperation:op];

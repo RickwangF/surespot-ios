@@ -192,7 +192,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         DDLogVerbose(@"computed landscape width %f, height: %f", labelSize.width, labelSize.height);
         [message setRowLandscapeHeight:(int) (labelSize.height + heightAdj > 44 ? labelSize.height + heightAdj: 44) ];
         
-        DDLogVerbose(@"computed row height portrait %d landscape %d", message.rowPortraitHeight, message.rowLandscapeHeight);
+        DDLogVerbose(@"computed row height portrait %ld landscape %ld", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight);
     }
 }
 
@@ -201,7 +201,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     [message setRowPortraitHeight: height];
     [message setRowLandscapeHeight: height];
-    DDLogVerbose(@"setting image row height portrait %d landscape %d", message.rowPortraitHeight, message.rowLandscapeHeight);
+    DDLogVerbose(@"setting image row height portrait %ld landscape %ld", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight);
     
 }
 
@@ -259,7 +259,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 +(void) setVoiceMessageHeights: (SurespotMessage *)  message size: (CGSize) size {
     [message setRowPortraitHeight: 64];
     [message setRowLandscapeHeight: 64];
-    DDLogVerbose(@"setting voice row height portrait %d landscape %d", message.rowPortraitHeight, message.rowLandscapeHeight);
+    DDLogVerbose(@"setting voice row height portrait %ld landscape %ld", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight);
     
 }
 
