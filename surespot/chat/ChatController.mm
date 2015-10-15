@@ -25,7 +25,7 @@
 #import "surespot-Swift.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_DEBUG;
+static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #else
 static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
@@ -48,6 +48,8 @@ static const int MAX_RETRY_DELAY = 30;
 @property (strong, nonatomic) NSMutableArray * resendBuffer;
 @property (strong, nonatomic) SocketIOClient * socket;
 @property (assign, atomic) BOOL reauthing;
+@property (assign, atomic) UIBackgroundTaskIdentifier bgTaskId;
+@property (assign, atomic) BOOL paused;
 @end
 
 @implementation ChatController
@@ -73,7 +75,7 @@ static const int MAX_RETRY_DELAY = 30;
     
     if (self != nil) {
         
-        
+        _bgTaskId = UIBackgroundTaskInvalid;
         
         _chatDataSources = [NSMutableDictionary new];
         _sendBuffer = [NSMutableArray new];
@@ -221,7 +223,7 @@ static const int MAX_RETRY_DELAY = 30;
     
     if([reach isReachable] || self.hasInet)
     {
-
+        
         DDLogInfo(@"wifi: %d, wwan, %d",[reach isReachableViaWiFi], [reach isReachableViaWWAN]);
         //reachibility changed, disconnect and reconnect
         [self disconnect];
@@ -243,14 +245,35 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) pause {
     DDLogVerbose(@"chatcontroller pause");
+    _paused = YES;
+    
+    //if we're not sending stuff, shut everything down
+    @synchronized(self) {
+        
+        if (_bgTaskId == UIBackgroundTaskInvalid) {
+            [self shutdown];
+        }
+        else {
+            [self saveState];
+        }
+    }
+    
+    
+}
+
+-(void) shutdown {
+    DDLogVerbose(@"chatcontroller shutdown");
     [self disconnect];
     [self saveState];
+    
     if (_reconnectTimer) {
         [_reconnectTimer invalidate];
         _connectionRetries = 0;
     }
     _reauthing = NO;
+    
 }
+
 
 -(void) connect {
     NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
@@ -288,6 +311,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) resume {
     DDLogVerbose(@"chatcontroller resume");
+    _paused = NO;
     [self connect];
 }
 
@@ -607,9 +631,20 @@ static const int MAX_RETRY_DELAY = 30;
 }
 
 
--(void) sendMessagesOnSocket: (NSArray *) messageArray {
-    
-    [self.socket  emit: @"message" withItems: messageArray];
+-(void) sendMessageOnSocket: (SurespotMessage *) message {
+    @synchronized(self) {
+        if (_bgTaskId == UIBackgroundTaskInvalid) {
+            
+            _bgTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                [self shutdown];
+            }];
+            DDLogDebug(@"beginning background send task: %d", _bgTaskId);
+        }
+        
+        [self enqueueResendMessage:message];
+        //array doesn't seem to work
+        [self.socket  emit: @"message" withItems: @[[message toNSDictionary]]];
+    }
 }
 
 -(void) removeDuplicates: (NSMutableArray *) sendBuffer {
@@ -634,28 +669,63 @@ static const int MAX_RETRY_DELAY = 30;
         
         if (_socket) {
             DDLogInfo(@"sending message %@", message);
-            [self enqueueResendMessage:message];
-            [_socket emit: @"message" withItems: @[[message toNSDictionary]]];
+           // [self enqueueResendMessage:message];
+            [self sendMessageOnSocket: message];
         }
     }];
 }
 
 -(void ) checkAndSendNextMessage: (SurespotMessage *) message {
     [self sendMessages];
-    [_resendBuffer removeObject:message];
+    [self removeMessageFromResendBuffer:message];
+    
+    if ([_resendBuffer count] == 0) {
+        @synchronized(self) {
+            if (_bgTaskId != UIBackgroundTaskInvalid) {
+                DDLogDebug(@"ending background task: %d",_bgTaskId);
+                [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
+                _bgTaskId = UIBackgroundTaskInvalid;
+                
+                //if we were sending in background, shutdown
+                if (_paused) {
+                    [self shutdown];
+                }
+            }
+        }
+    }
+}
+
+-(SurespotMessage *) removeMessageFromResendBuffer: (SurespotMessage *) removeMessage  {
+    __block SurespotMessage * foundMessage = nil;
+    
+    [_resendBuffer enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(SurespotMessage * message, NSUInteger idx, BOOL *stop) {
+        if([removeMessage.iv isEqualToString: message.iv]) {
+            foundMessage = message;
+            *stop = YES;
+        }
+    }];
+    
+    if (foundMessage ) {
+      
+        [_resendBuffer removeObject:foundMessage];
+          DDLogDebug(@"removed message from resend buffer, iv: %@, count: %d", foundMessage.iv, _resendBuffer.count);
+    
+    }
+    
+    return foundMessage;
 }
 
 -(void) resendMessages {
     NSMutableArray * resendBuffer = _resendBuffer;
     _resendBuffer = [NSMutableArray new];
     [self removeDuplicates:resendBuffer];
-    NSMutableArray * jsonMessageList = [NSMutableArray new];
-    [resendBuffer enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+ //   NSMutableArray * jsonMessageList = [NSMutableArray new];
+    [resendBuffer enumerateObjectsUsingBlock:^(SurespotMessage * message, NSUInteger idx, BOOL *stop) {
         
         
-        if ([obj readyToSend]) {
+        if ([message readyToSend]) {
             //see if we have plain text, re-encrypt and send
-            NSString * otherUser = [obj getOtherUser];
+            NSString * otherUser = [message getOtherUser];
             NSInteger lastMessageId = 0;
             ChatDataSource * cds = [_chatDataSources objectForKey:otherUser];
             if (cds) {
@@ -668,20 +738,21 @@ static const int MAX_RETRY_DELAY = 30;
                 }
             }
             
-            [obj setResendId:lastMessageId];
-            [_resendBuffer addObject:obj];
-            [jsonMessageList addObject:[obj toNSDictionary]];
+            [message setResendId:lastMessageId];
+            [self sendMessageOnSocket:message];
+//            [_resendBuffer addObject:obj];
+//            [jsonMessageList addObject:[obj toNSDictionary]];
         }
         
     }];
     
-    if ([jsonMessageList count]>0) {
-        // NSError *error;
-        //        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonMessageList options:0 error:&error];
-        //        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        //      DDLogInfo(@"sending resend messages %@", jsonString);
-        [self sendMessagesOnSocket:jsonMessageList];
-    }
+//    if ([jsonMessageList count]>0) {
+//        // NSError *error;
+//        //        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonMessageList options:0 error:&error];
+//        //        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//        //      DDLogInfo(@"sending resend messages %@", jsonString);
+//        [self sendMessagesOnSocket:jsonMessageList];
+//    }
 }
 
 -(void) handleErrorMessage: (SurespotErrorMessage *) errorMessage {
@@ -1200,6 +1271,7 @@ static const int MAX_RETRY_DELAY = 30;
             }
             else {
                 [cds deleteMessageByIv: [message iv] ];
+                [self removeMessageFromResendBuffer:message];
             }
         }
     }
