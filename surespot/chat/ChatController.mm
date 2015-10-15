@@ -669,7 +669,7 @@ static const int MAX_RETRY_DELAY = 30;
         
         if (_socket) {
             DDLogInfo(@"sending message %@", message);
-           // [self enqueueResendMessage:message];
+            // [self enqueueResendMessage:message];
             [self sendMessageOnSocket: message];
         }
     }];
@@ -677,10 +677,11 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void ) checkAndSendNextMessage: (SurespotMessage *) message {
     [self sendMessages];
-    [self removeMessageFromResendBuffer:message];
-    
-    if ([_resendBuffer count] == 0) {
-        @synchronized(self) {
+    @synchronized(self) {
+        [self removeMessageFromResendBuffer:message];
+        
+        if ([_resendBuffer count] == 0) {
+            
             if (_bgTaskId != UIBackgroundTaskInvalid) {
                 DDLogDebug(@"ending background task: %d",_bgTaskId);
                 [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
@@ -706,10 +707,10 @@ static const int MAX_RETRY_DELAY = 30;
     }];
     
     if (foundMessage ) {
-      
+        
         [_resendBuffer removeObject:foundMessage];
-          DDLogDebug(@"removed message from resend buffer, iv: %@, count: %d", foundMessage.iv, _resendBuffer.count);
-    
+        DDLogDebug(@"removed message from resend buffer, iv: %@, count: %d", foundMessage.iv, _resendBuffer.count);
+        
     }
     
     return foundMessage;
@@ -719,7 +720,7 @@ static const int MAX_RETRY_DELAY = 30;
     NSMutableArray * resendBuffer = _resendBuffer;
     _resendBuffer = [NSMutableArray new];
     [self removeDuplicates:resendBuffer];
- //   NSMutableArray * jsonMessageList = [NSMutableArray new];
+    //   NSMutableArray * jsonMessageList = [NSMutableArray new];
     [resendBuffer enumerateObjectsUsingBlock:^(SurespotMessage * message, NSUInteger idx, BOOL *stop) {
         
         
@@ -740,19 +741,19 @@ static const int MAX_RETRY_DELAY = 30;
             
             [message setResendId:lastMessageId];
             [self sendMessageOnSocket:message];
-//            [_resendBuffer addObject:obj];
-//            [jsonMessageList addObject:[obj toNSDictionary]];
+            //            [_resendBuffer addObject:obj];
+            //            [jsonMessageList addObject:[obj toNSDictionary]];
         }
         
     }];
     
-//    if ([jsonMessageList count]>0) {
-//        // NSError *error;
-//        //        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonMessageList options:0 error:&error];
-//        //        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-//        //      DDLogInfo(@"sending resend messages %@", jsonString);
-//        [self sendMessagesOnSocket:jsonMessageList];
-//    }
+    //    if ([jsonMessageList count]>0) {
+    //        // NSError *error;
+    //        //        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonMessageList options:0 error:&error];
+    //        //        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    //        //      DDLogInfo(@"sending resend messages %@", jsonString);
+    //        [self sendMessagesOnSocket:jsonMessageList];
+    //    }
 }
 
 -(void) handleErrorMessage: (SurespotErrorMessage *) errorMessage {
