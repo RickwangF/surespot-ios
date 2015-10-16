@@ -773,4 +773,13 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [operation start];
 }
 
+-(void) sendMessages:(NSArray *)messages successBlock:(JSONSuccessBlock)successBlock failureBlock:(JSONFailureBlock)failureBlock {
+    NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:messages, @"messages", nil];
+    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"messages" parameters: params];   
+    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
+   // [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+    [operation start];
+
+}
+
 @end

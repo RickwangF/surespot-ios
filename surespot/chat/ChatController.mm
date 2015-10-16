@@ -43,12 +43,14 @@ static const int MAX_RETRY_DELAY = 30;
 @property (strong, atomic) NSMutableDictionary * chatDataSources;
 @property (strong, atomic) HomeDataSource * homeDataSource;
 @property (assign, atomic) NSInteger connectionRetries;
+@property (assign, atomic) NSInteger bgSendRetries;
 @property (strong, atomic) NSTimer * reconnectTimer;
 @property (strong, nonatomic) NSMutableArray * sendBuffer;
 @property (strong, nonatomic) NSMutableArray * resendBuffer;
 @property (strong, nonatomic) SocketIOClient * socket;
 @property (assign, atomic) BOOL reauthing;
 @property (assign, atomic) UIBackgroundTaskIdentifier bgTaskId;
+@property (strong, atomic) NSTimer * bgSendTimer;
 @property (assign, atomic) BOOL paused;
 @end
 
@@ -110,6 +112,10 @@ static const int MAX_RETRY_DELAY = 30;
         _connectionRetries = 0;
         if (_reconnectTimer) {
             [_reconnectTimer invalidate];
+        }
+        
+        if (_bgSendTimer) {
+            [_bgSendTimer invalidate];
         }
         
         //send unsent messages
@@ -181,7 +187,8 @@ static const int MAX_RETRY_DELAY = 30;
         }
         
         [self handleMessage:message];
-        [self checkAndSendNextMessage:message];
+        [self sendMessages];
+        [self removeMessageFromResendBuffer:message];
     }];
     
     [self.socket on:@"control" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -216,22 +223,25 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void)reachabilityChanged:(NSNotification*)note
 {
-    Reachability * reach = [note object];
-    
-    [self setReachabilityStatus:reach];
-    _connectionRetries = 0;
-    
-    if([reach isReachable] || self.hasInet)
-    {
+    //if we're foregrounded
+    if (!_paused) {
+        Reachability * reach = [note object];
         
-        DDLogInfo(@"wifi: %d, wwan, %d",[reach isReachableViaWiFi], [reach isReachableViaWWAN]);
-        //reachibility changed, disconnect and reconnect
-        [self disconnect];
-        [self reconnect];
-    }
-    else
-    {
-        DDLogInfo(@"Notification Says Unreachable");
+        [self setReachabilityStatus:reach];
+        _connectionRetries = 0;
+        
+        if([reach isReachable] || self.hasInet)
+        {
+            
+            DDLogInfo(@"wifi: %d, wwan, %d",[reach isReachableViaWiFi], [reach isReachableViaWWAN]);
+            //reachibility changed, disconnect and reconnect
+            [self disconnect];
+            [self reconnect];
+        }
+        else
+        {
+            DDLogInfo(@"Notification Says Unreachable");
+        }
     }
 }
 
@@ -246,19 +256,8 @@ static const int MAX_RETRY_DELAY = 30;
 -(void) pause {
     DDLogVerbose(@"chatcontroller pause");
     _paused = YES;
-    
-    //if we're not sending stuff, shut everything down
-    @synchronized(self) {
-        
-        if (_bgTaskId == UIBackgroundTaskInvalid) {
-            [self shutdown];
-        }
-        else {
-            [self saveState];
-        }
-    }
-    
-    
+    [self shutdown];
+    [self sendMessagesViaHttp];
 }
 
 -(void) shutdown {
@@ -270,6 +269,7 @@ static const int MAX_RETRY_DELAY = 30;
         [_reconnectTimer invalidate];
         _connectionRetries = 0;
     }
+    _bgSendRetries = 0;
     _reauthing = NO;
     
 }
@@ -632,19 +632,12 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) sendMessageOnSocket: (SurespotMessage *) message {
-    @synchronized(self) {
-        if (_bgTaskId == UIBackgroundTaskInvalid) {
-            
-            _bgTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-                [self shutdown];
-            }];
-            DDLogDebug(@"beginning background send task: %d", _bgTaskId);
-        }
-        
-        [self enqueueResendMessage:message];
-        //array doesn't seem to work
-        [self.socket  emit: @"message" withItems: @[[message toNSDictionary]]];
-    }
+    
+    
+    [self enqueueResendMessage:message];
+    //array doesn't seem to work
+    [self.socket  emit: @"message" withItems: @[[message toNSDictionary]]];
+    
 }
 
 -(void) removeDuplicates: (NSMutableArray *) sendBuffer {
@@ -675,26 +668,78 @@ static const int MAX_RETRY_DELAY = 30;
     }];
 }
 
--(void ) checkAndSendNextMessage: (SurespotMessage *) message {
-    [self sendMessages];
+
+
+
+-(void) sendMessagesViaHttp {
+    //socket's gone try and send messages via http if we're not connected
+    //if we're not sending stuff, shut everything down
     @synchronized(self) {
-        [self removeMessageFromResendBuffer:message];
-        
-        if ([_resendBuffer count] == 0) {
-            
-            if (_bgTaskId != UIBackgroundTaskInvalid) {
-                DDLogDebug(@"ending background task: %d",_bgTaskId);
-                [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
-                _bgTaskId = UIBackgroundTaskInvalid;
-                
-                //if we were sending in background, shutdown
-                if (_paused) {
-                    [self shutdown];
-                }
+        DDLogDebug(@"sendMessagesViaHttp, _resendBuffer count: %d", [_resendBuffer count]);
+        if (![self isConnected] && ([_resendBuffer count] > 0)) {
+            if (_bgTaskId == UIBackgroundTaskInvalid) {
+                _bgTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                    //give up
+                    [_bgSendTimer invalidate];
+                    _bgSendTimer = nil;
+                    _bgTaskId = UIBackgroundTaskInvalid;
+                }];
             }
+            
+            DDLogDebug(@"sendMessagesViaHttp beginning background send task: %lu", (unsigned long)_bgTaskId);
+            NSMutableArray * messagesJson = [[NSMutableArray alloc] init];
+            
+            
+            [_resendBuffer enumerateObjectsUsingBlock:^(SurespotMessage *  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
+                [messagesJson addObject:[message toNSDictionary]];
+            }];
+            
+            
+            [[NetworkController sharedInstance]
+             sendMessages:messagesJson
+             
+             successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                 DDLogDebug(@"success sending messages via http ending background task: %lu",(unsigned long)_bgTaskId);
+                 //iterate through response statuses and handle accordingly
+                 NSArray * responses = [JSON objectForKey:@"messageStatus"];
+                 [responses enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSDictionary * _Nonnull messageStatus, NSUInteger idx, BOOL * _Nonnull stop) {
+                     NSInteger status = [[messageStatus objectForKey:@"status"] integerValue];
+                     if (status == 204) {
+                         SurespotMessage * message = [_resendBuffer objectAtIndex:idx];
+                         [self handleMessage:message];
+                         [self removeMessageFromResendBuffer:message];
+                     }
+                     else {
+                         SurespotErrorMessage * message = [[SurespotErrorMessage alloc] initWithDictionary:messageStatus];
+                         [self handleErrorMessage:message];
+                         
+                     }
+                 }];
+                 
+                 
+                 [self saveState];
+                 [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
+                 _bgTaskId = UIBackgroundTaskInvalid;
+             }
+             
+             failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+                 DDLogDebug(@"failure sending messages via http ending background task: %lu",(unsigned long)_bgTaskId);
+                 
+                 // [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
+                 // _bgTaskId = UIBackgroundTaskInvalid;
+                 double timerInterval = [self generateIntervalK: _bgSendRetries++];
+                 DDLogDebug(@ "attempting send messages via http in: %f" , timerInterval);
+                 _bgSendTimer = [NSTimer scheduledTimerWithTimeInterval:timerInterval target:self selector:@selector(bgSendTimerFired:) userInfo:nil repeats:NO];
+                 
+             }];
         }
     }
 }
+
+-(void) bgSendTimerFired: (NSTimer *) timer {
+    [self sendMessagesViaHttp];
+}
+
 
 -(SurespotMessage *) removeMessageFromResendBuffer: (SurespotMessage *) removeMessage  {
     __block SurespotMessage * foundMessage = nil;
@@ -709,7 +754,7 @@ static const int MAX_RETRY_DELAY = 30;
     if (foundMessage ) {
         
         [_resendBuffer removeObject:foundMessage];
-        DDLogDebug(@"removed message from resend buffer, iv: %@, count: %d", foundMessage.iv, _resendBuffer.count);
+        DDLogDebug(@"removed message from resend buffer, iv: %@, count: %lu", foundMessage.iv, (unsigned long)_resendBuffer.count);
         
     }
     
@@ -741,19 +786,10 @@ static const int MAX_RETRY_DELAY = 30;
             
             [message setResendId:lastMessageId];
             [self sendMessageOnSocket:message];
-            //            [_resendBuffer addObject:obj];
-            //            [jsonMessageList addObject:[obj toNSDictionary]];
         }
         
     }];
     
-    //    if ([jsonMessageList count]>0) {
-    //        // NSError *error;
-    //        //        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonMessageList options:0 error:&error];
-    //        //        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    //        //      DDLogInfo(@"sending resend messages %@", jsonString);
-    //        [self sendMessagesOnSocket:jsonMessageList];
-    //    }
 }
 
 -(void) handleErrorMessage: (SurespotErrorMessage *) errorMessage {

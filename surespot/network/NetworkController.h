@@ -116,5 +116,6 @@ typedef void (^HTTPFailureBlock) (AFHTTPRequestOperation *operation , NSError *e
 -(void) deleteFriendAlias:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) deleteFriendImage:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) updateSigs: (NSDictionary *) sigs;
+-(void) sendMessages: (NSArray *) messages successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;
 
 @end
