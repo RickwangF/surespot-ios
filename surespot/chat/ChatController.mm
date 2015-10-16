@@ -705,7 +705,7 @@ static const int MAX_RETRY_DELAY = 30;
                  [responses enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSDictionary * _Nonnull messageStatus, NSUInteger idx, BOOL * _Nonnull stop) {
                      NSInteger status = [[messageStatus objectForKey:@"status"] integerValue];
                      if (status == 204) {
-                         SurespotMessage * message = [_resendBuffer objectAtIndex:idx];
+                         SurespotMessage * message = [[SurespotMessage alloc] initWithDictionary:[messageStatus objectForKey:@"message"]];
                          [self handleMessage:message];
                          [self removeMessageFromResendBuffer:message];
                      }
