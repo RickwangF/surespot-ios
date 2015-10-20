@@ -102,9 +102,9 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) addHandlers {
     DDLogDebug(@"adding handlers");
-    [self.socket onAny:^(SocketAnyEvent * event) {
-        DDLogInfo(@"socket event: %@, with items: %@",event.event, event.items);
-    }];
+//    [self.socket onAny:^(SocketAnyEvent * event) {
+//        DDLogInfo(@"socket event: %@, with items: %@",event.event, event.items);
+//    }];
     
     [self.socket on:@"connect" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket connect");
@@ -124,14 +124,10 @@ static const int MAX_RETRY_DELAY = 30;
     }];
     
     [self.socket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
-        DDLogInfo(@"socket disconnect");
-        //  looks like we get error on error event not here
-        //        if (error) {
-        //            [self connect];
-        //
-        //        }
-        
-        
+        DDLogInfo(@"socket disconnect, data: %@", data);
+        //gets fired before the server knows it's disconnected and if we end the background task here
+        //the server doesn't get disconnected (on ios 7.1.2 at least)
+        //   [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
     }];
     
     [self.socket on:@"error" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -257,7 +253,7 @@ static const int MAX_RETRY_DELAY = 30;
     DDLogVerbose(@"chatcontroller pause");
     _paused = YES;
     [self shutdown];
-    [self sendMessagesViaHttp];
+    [self background];
 }
 
 -(void) shutdown {
@@ -671,7 +667,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 
--(void) sendMessagesViaHttp {
+-(void) background {
     //socket's gone try and send messages via http if we're not connected
     //if we're not sending stuff, shut everything down
     @synchronized(self) {
@@ -733,11 +729,21 @@ static const int MAX_RETRY_DELAY = 30;
                  
              }];
         }
+        else {
+            //give socket time to disconnect from server
+            _bgTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                _bgTaskId = UIBackgroundTaskInvalid;
+            }];
+            DDLogVerbose(@"chatcontroller begin bg  task: %d", _bgTaskId);
+            
+            
+        }
     }
+    
 }
 
 -(void) bgSendTimerFired: (NSTimer *) timer {
-    [self sendMessagesViaHttp];
+    [self background];
 }
 
 
