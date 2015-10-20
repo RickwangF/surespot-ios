@@ -49,7 +49,8 @@ static const int MAX_RETRY_DELAY = 30;
 @property (strong, nonatomic) NSMutableArray * resendBuffer;
 @property (strong, nonatomic) SocketIOClient * socket;
 @property (assign, atomic) BOOL reauthing;
-@property (assign, atomic) UIBackgroundTaskIdentifier bgTaskId;
+@property (assign, atomic) UIBackgroundTaskIdentifier bgHttpTaskId;
+@property (assign, atomic) UIBackgroundTaskIdentifier bgSocketTaskId;
 @property (strong, atomic) NSTimer * bgSendTimer;
 @property (assign, atomic) BOOL paused;
 @end
@@ -77,7 +78,8 @@ static const int MAX_RETRY_DELAY = 30;
     
     if (self != nil) {
         
-        _bgTaskId = UIBackgroundTaskInvalid;
+        _bgHttpTaskId = UIBackgroundTaskInvalid;
+        _bgSocketTaskId = UIBackgroundTaskInvalid;
         
         _chatDataSources = [NSMutableDictionary new];
         _sendBuffer = [NSMutableArray new];
@@ -102,9 +104,9 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) addHandlers {
     DDLogDebug(@"adding handlers");
-//    [self.socket onAny:^(SocketAnyEvent * event) {
-//        DDLogInfo(@"socket event: %@, with items: %@",event.event, event.items);
-//    }];
+    //    [self.socket onAny:^(SocketAnyEvent * event) {
+    //        DDLogInfo(@"socket event: %@, with items: %@",event.event, event.items);
+    //    }];
     
     [self.socket on:@"connect" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket connect");
@@ -127,7 +129,7 @@ static const int MAX_RETRY_DELAY = 30;
         DDLogInfo(@"socket disconnect, data: %@", data);
         //gets fired before the server knows it's disconnected and if we end the background task here
         //the server doesn't get disconnected (on ios 7.1.2 at least)
-        //   [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
+        //   [[UIApplication sharedApplication] endBackgroundTask:_bgSocketTaskId];
     }];
     
     [self.socket on:@"error" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -253,11 +255,18 @@ static const int MAX_RETRY_DELAY = 30;
     DDLogVerbose(@"chatcontroller pause");
     _paused = YES;
     [self shutdown];
-    [self background];
+    [self sendMessagesViaHttp];
 }
 
 -(void) shutdown {
     DDLogVerbose(@"chatcontroller shutdown");
+    
+    //give socket time to disconnect from server
+    _bgSocketTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        _bgSocketTaskId = UIBackgroundTaskInvalid;
+    }];
+    DDLogVerbose(@"chatcontroller begin bg socket task: %lu", (unsigned long)_bgSocketTaskId);
+    
     [self disconnect];
     [self saveState];
     
@@ -667,35 +676,33 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 
--(void) background {
-    //socket's gone try and send messages via http if we're not connected
+-(void) sendMessagesViaHttp {
+    //socket will be disconnected so try and send messages via http if we have messages to send
     //if we're not sending stuff, shut everything down
     @synchronized(self) {
-        DDLogDebug(@"sendMessagesViaHttp, _resendBuffer count: %d", [_resendBuffer count]);
-        if (![self isConnected] && ([_resendBuffer count] > 0)) {
-            if (_bgTaskId == UIBackgroundTaskInvalid) {
-                _bgTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        DDLogDebug(@"sendMessagesViaHttp, _resendBuffer count: %lu", (unsigned long)[_resendBuffer count]);
+        if ([_resendBuffer count] > 0) {
+            if (_bgHttpTaskId == UIBackgroundTaskInvalid) {
+                _bgHttpTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
                     //give up
                     [_bgSendTimer invalidate];
                     _bgSendTimer = nil;
-                    _bgTaskId = UIBackgroundTaskInvalid;
+                    _bgHttpTaskId = UIBackgroundTaskInvalid;
                 }];
             }
             
-            DDLogDebug(@"sendMessagesViaHttp beginning background send task: %lu", (unsigned long)_bgTaskId);
+            DDLogDebug(@"sendMessagesViaHttp beginning background send task: %lu", (unsigned long)_bgHttpTaskId);
             NSMutableArray * messagesJson = [[NSMutableArray alloc] init];
-            
             
             [_resendBuffer enumerateObjectsUsingBlock:^(SurespotMessage *  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
                 [messagesJson addObject:[message toNSDictionary]];
             }];
             
-            
             [[NetworkController sharedInstance]
              sendMessages:messagesJson
              
              successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-                 DDLogDebug(@"success sending messages via http ending background task: %lu",(unsigned long)_bgTaskId);
+                 DDLogDebug(@"success sending messages via http ending background task: %lu",(unsigned long)_bgHttpTaskId);
                  //iterate through response statuses and handle accordingly
                  NSArray * responses = [JSON objectForKey:@"messageStatus"];
                  [responses enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSDictionary * _Nonnull messageStatus, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -708,42 +715,30 @@ static const int MAX_RETRY_DELAY = 30;
                      else {
                          SurespotErrorMessage * message = [[SurespotErrorMessage alloc] initWithDictionary:messageStatus];
                          [self handleErrorMessage:message];
-                         
                      }
                  }];
                  
-                 
                  [self saveState];
-                 [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
-                 _bgTaskId = UIBackgroundTaskInvalid;
+                 [[UIApplication sharedApplication] endBackgroundTask:_bgHttpTaskId];
+                 _bgHttpTaskId = UIBackgroundTaskInvalid;
              }
              
              failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
-                 DDLogDebug(@"failure sending messages via http ending background task: %lu",(unsigned long)_bgTaskId);
+                 DDLogDebug(@"failure sending messages via http ending background task: %lu",(unsigned long)_bgHttpTaskId);
                  
                  // [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
                  // _bgTaskId = UIBackgroundTaskInvalid;
                  double timerInterval = [self generateIntervalK: _bgSendRetries++];
-                 DDLogDebug(@ "attempting send messages via http in: %f" , timerInterval);
+                 DDLogDebug(@ "attempting to send messages via http in: %f" , timerInterval);
                  _bgSendTimer = [NSTimer scheduledTimerWithTimeInterval:timerInterval target:self selector:@selector(bgSendTimerFired:) userInfo:nil repeats:NO];
                  
              }];
         }
-        else {
-            //give socket time to disconnect from server
-            _bgTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-                _bgTaskId = UIBackgroundTaskInvalid;
-            }];
-            DDLogVerbose(@"chatcontroller begin bg  task: %d", _bgTaskId);
-            
-            
-        }
     }
-    
 }
 
 -(void) bgSendTimerFired: (NSTimer *) timer {
-    [self background];
+    [self sendMessagesViaHttp];
 }
 
 
@@ -758,10 +753,8 @@ static const int MAX_RETRY_DELAY = 30;
     }];
     
     if (foundMessage ) {
-        
         [_resendBuffer removeObject:foundMessage];
         DDLogDebug(@"removed message from resend buffer, iv: %@, count: %lu", foundMessage.iv, (unsigned long)_resendBuffer.count);
-        
     }
     
     return foundMessage;
@@ -773,8 +766,7 @@ static const int MAX_RETRY_DELAY = 30;
     [self removeDuplicates:resendBuffer];
     //   NSMutableArray * jsonMessageList = [NSMutableArray new];
     [resendBuffer enumerateObjectsUsingBlock:^(SurespotMessage * message, NSUInteger idx, BOOL *stop) {
-        
-        
+    
         if ([message readyToSend]) {
             //see if we have plain text, re-encrypt and send
             NSString * otherUser = [message getOtherUser];
@@ -793,9 +785,7 @@ static const int MAX_RETRY_DELAY = 30;
             [message setResendId:lastMessageId];
             [self sendMessageOnSocket:message];
         }
-        
     }];
-    
 }
 
 -(void) handleErrorMessage: (SurespotErrorMessage *) errorMessage {
