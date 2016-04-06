@@ -304,7 +304,7 @@ static const int MAX_RETRY_DELAY = 30;
         }
         
         DDLogDebug(@"initing new socket");
-        self.socket = [[SocketIOClient alloc] initWithSocketURL:socketUrl opts: opts];
+        self.socket = [[SocketIOClient alloc] initWithSocketURLString:socketUrl  options: opts];
         [self addHandlers];
         [self.socket connect];
     }

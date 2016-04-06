@@ -12,9 +12,9 @@
 
 #ifdef DEBUG
     BOOL const serverSecure = NO;
-    NSString * const serverBaseIPAddress = @"192.168.10.24";
+NSString * const serverBaseIPAddress = @"192.168.10.24";//@"45.33.1.120";
     NSInteger const serverPort = 8080;
-    NSString * const socketUrl = @"192.168.10.24:8080";
+    NSString * const socketUrl = @"http://192.168.10.24:8080";//@"45.33.1.120:8080";
     BOOL const socketLog = YES;
 
     NSString * const serverPublicKeyString =  @"-----BEGIN PUBLIC KEY-----\nMIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQA93Acih23m8Jy65gLo8A9t0/snVXe\nRm+6ucIp56cXPgYvBwKDxT30z/HU84HPm2T8lnKQjFGMTUKHnIW+vqKFZicAokkW\nJ/GoFMDGz5tEDGEQrHk/tswEysri5V++kzwlORA+kAxAasdx7Hezl0QfvkPScr3N\n5ifR7m1J+RFNqK0bulQ=\n-----END PUBLIC KEY-----"; //local
