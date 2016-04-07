@@ -381,7 +381,7 @@ const Float32 voiceRecordDelay = 0.3;
     CGRect keyboardEndFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardBeginFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
     //don't think we need convert with ios 8 plus
-    // CGRect keyboardFrameEnd = [self.view convertRect:keyboardEndFrame toView:nil];
+     //CGRect keyboardFrameEnd = [self.view convertRect:keyboardEndFrame toView:nil];
     // CGRect keyboardFrameBegin = [self.view convertRect:keyboardBeginFrame toView:nil];
     
     CGRect keyboardFrameEnd = keyboardEndFrame;
@@ -551,6 +551,7 @@ const Float32 voiceRecordDelay = 0.3;
     DDLogInfo(@"will rotate");
     if ([UIUtils isIOS8Plus]) {
         [self resignAllResponders];
+        _keyboardState.keyboardHeight = 0;
     }
     
     _swipeView.suppressScrollEvent = YES;
