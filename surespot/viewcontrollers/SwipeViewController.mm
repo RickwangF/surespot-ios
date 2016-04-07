@@ -337,40 +337,39 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)registerForKeyboardNotifications
 {
     //use old positioning pre ios 8
-    //
-    //   if ([UIUtils isIOS8Plus]) {
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameDidChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
-    //        }
-    //        else {
-    //    [[NSNotificationCenter defaultCenter] addObserver:self
-    //                                             selector:@selector(keyboardWasShown:)
-    //                                                 name:UIKeyboardDidShowNotification object:nil];
-    //
-    //    [[NSNotificationCenter defaultCenter] addObserver:self
-    //                                             selector:@selector(keyboardWillBeHidden:)
-    //                                                 name:UIKeyboardDidHideNotification object:nil];
-    //
-    //    }
+    if ([UIUtils isIOS8Plus]) {
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameDidChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    }
+    else {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWasShown:)
+                                                     name:UIKeyboardDidShowNotification object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillBeHidden:)
+                                                     name:UIKeyboardDidHideNotification object:nil];
+        
+    }
 }
 
 -(void) unregisterKeyboardNotifications
 {
     //use old positioning pre ios 8
     //
-    //  if ([UIUtils isIOS8Plus]) {
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name: UIKeyboardWillChangeFrameNotification object:nil];
-    //    }
-    //    else {
-    //        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
-    //
-    //        [[NSNotificationCenter defaultCenter] removeObserver:self
-    //
-    //                                                     name:UIKeyboardDidHideNotification object:nil];
-    //
-    //    }
-    
+    if ([UIUtils isIOS8Plus]) {
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self name: UIKeyboardWillChangeFrameNotification object:nil];
+    }
+    else {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+         
+                                                        name:UIKeyboardDidHideNotification object:nil];
+        
+    }
 }
 
 
@@ -422,37 +421,37 @@ const Float32 voiceRecordDelay = 0.3;
         for (NSString * key in [_chats allKeys]) {
             UITableView * tableView = [_chats objectForKey:key];
             
-//            UITableViewCell * bottomCell = nil;
-//            NSArray * visibleCells = [tableView visibleCells];
-//            if ([visibleCells count ] > 0) {
-//                bottomCell = [visibleCells objectAtIndex:[visibleCells count]-1];
-//            }
-//            
-//            int scrollBy = height;
-//            
-//            if (bottomCell) {
-//                int bottomScroll = bottomCell.frame.origin.y + bottomCell.frame.size.height;
-//                DDLogInfo(@"chat %@ key bottom cell origin y: %f, bottom y: %f", key, bottomCell.frame.origin.y, bottomCell.frame.origin.y + bottomCell.frame.size.height);
-//                int textContainerOriginY = newFrame.origin.y;
-//                int overlap = bottomScroll - textContainerOriginY;
-//                
-//                if (height > 0 ) {
-//                    
-//                }
-//                else {
-//                
-//                    if (overlap < 0) scrollBy = 0;
-//                    if (overlap > 0 && overlap < height) scrollBy = height;
-//                }
-//                DDLogInfo(@"text container origin y: %f, overlap: %d, scrollby: %d", newFrame.origin.y, overlap, scrollBy);
-                
+            //            UITableViewCell * bottomCell = nil;
+            //            NSArray * visibleCells = [tableView visibleCells];
+            //            if ([visibleCells count ] > 0) {
+            //                bottomCell = [visibleCells objectAtIndex:[visibleCells count]-1];
+            //            }
+            //
+            //            int scrollBy = height;
+            //
+            //            if (bottomCell) {
+            //                int bottomScroll = bottomCell.frame.origin.y + bottomCell.frame.size.height;
+            //                DDLogInfo(@"chat %@ key bottom cell origin y: %f, bottom y: %f", key, bottomCell.frame.origin.y, bottomCell.frame.origin.y + bottomCell.frame.size.height);
+            //                int textContainerOriginY = newFrame.origin.y;
+            //                int overlap = bottomScroll - textContainerOriginY;
+            //
+            //                if (height > 0 ) {
+            //
+            //                }
+            //                else {
+            //
+            //                    if (overlap < 0) scrollBy = 0;
+            //                    if (overlap > 0 && overlap < height) scrollBy = height;
+            //                }
+            //                DDLogInfo(@"text container origin y: %f, overlap: %d, scrollby: %d", newFrame.origin.y, overlap, scrollBy);
+            
             //    CGRect aRect = self.view.frame;
             //    aRect.size.height -= height;
-             //   if (!CGRectContainsPoint(aRect, bottomCell.frame.origin) ) {
-                    CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - height);
-                    [tableView setContentOffset:newOffset animated:NO];
+            //   if (!CGRectContainsPoint(aRect, bottomCell.frame.origin) ) {
+            CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - height);
+            [tableView setContentOffset:newOffset animated:NO];
             //    }
-         //   }
+            //   }
         }
     }
     
