@@ -1162,7 +1162,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         CGFloat delta = _vertical? (_scrollView.contentOffset.y - _previousContentOffset.y): (_scrollView.contentOffset.x - _previousContentOffset.x);
         _previousContentOffset = _scrollView.contentOffset;
         _scrollOffset += delta / (_vertical? _itemSize.height: _itemSize.width);
-            DDLogInfo(@"scrollViewDidScroll set scrollOffset to %f", _scrollOffset);
+          //  DDLogInfo(@"scrollViewDidScroll set scrollOffset to %f", _scrollOffset);
         
         //update view and call delegate
         [self didScroll];
