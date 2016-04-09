@@ -500,7 +500,8 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation
                                 duration:(NSTimeInterval)duration
 {
-    DDLogInfo(@"will rotate");        [self resignAllResponders];
+    DDLogInfo(@"will rotate");
+    [self resignAllResponders];
     _keyboardState.keyboardHeight = 0;
     
     
