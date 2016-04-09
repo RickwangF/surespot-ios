@@ -93,7 +93,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [_bCreateIdentity setTitle:NSLocalizedString(@"create_identity", nil) forState:UIControlStateNormal];
     
     
-    [_scrollView setContentSize: CGSizeMake(self.view.frame.size.width, _bCreateIdentity.frame.origin.y + _bCreateIdentity.frame.size.height + 10)];
+    [_scrollView setContentSize: CGSizeMake(self.view.frame.size.width, _bCreateIdentity.frame.origin.y + _bCreateIdentity.frame.size.height)];
 }
 
 - (void)viewDidUnload {
