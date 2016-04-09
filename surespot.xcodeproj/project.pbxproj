@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5A4EF5CE1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */; settings = {ASSET_TAGS = (); }; };
-		5A4EF5CF1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */; settings = {ASSET_TAGS = (); }; };
-		5A4EF5D11BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */; settings = {ASSET_TAGS = (); }; };
-		5A4EF5D21BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */; settings = {ASSET_TAGS = (); }; };
+		5A4EF5CE1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */; };
+		5A4EF5CF1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */; };
+		5A4EF5D11BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */; };
+		5A4EF5D21BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */; };
 		5AF842411B910B03009BC037 /* RemoveIdentityFromDeviceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF842401B910B03009BC037 /* RemoveIdentityFromDeviceView.xib */; };
 		5AF842511B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5AF842501B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm */; };
 		6604A2C117626B9E0072216A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A2C017626B9E0072216A /* Foundation.framework */; };
@@ -20,8 +20,6 @@
 		6604A2D817626B9E0072216A /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6604A2D617626B9E0072216A /* MainStoryboard.storyboard */; };
 		6604A2E717626B9E0072216A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A2BE17626B9E0072216A /* UIKit.framework */; };
 		6604A2E817626B9E0072216A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A2C017626B9E0072216A /* Foundation.framework */; };
-		6604A2F017626B9E0072216A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6604A2EE17626B9E0072216A /* InfoPlist.strings */; };
-		6604A2F317626B9E0072216A /* surespotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2F217626B9E0072216A /* surespotTests.m */; };
 		660F0A9618D7888300FD8C4D /* RestoreIdentityDriveView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 660F0A9518D7888300FD8C4D /* RestoreIdentityDriveView.xib */; };
 		660F0A9818D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 660F0A9718D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm */; };
 		660F0A9B18D789E900FD8C4D /* RestoreIdentitiesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F0A9A18D789E900FD8C4D /* RestoreIdentitiesViewController.m */; };
@@ -131,6 +129,7 @@
 		66A2D940183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D932183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m */; };
 		66A2D941183C25E800785270 /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D934183C25E800785270 /* UIScrollView+SVPullToRefresh.m */; };
 		66AC20AB18690CBD004E58E1 /* KeyFingerprintLoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */; };
+		66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */; };
 		66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */; };
 		66BB5A49187C7672007B5C47 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A48187C7672007B5C47 /* HelpViewController.m */; };
 		66D3B04F182EAB4200B37A6C /* surespot.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D3B04E182EAB4200B37A6C /* surespot.xcassets */; };
@@ -480,6 +479,8 @@
 		66A2D933183C25E800785270 /* UIScrollView+SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVPullToRefresh.h"; sourceTree = "<group>"; };
 		66A2D934183C25E800785270 /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
 		66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeyFingerprintLoadingView.xib; sourceTree = "<group>"; };
+		66B8360F1CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+FallbackLanguage.h"; sourceTree = "<group>"; };
+		66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+FallbackLanguage.m"; sourceTree = "<group>"; };
 		66BB5A38187B7EE9007B5C47 /* SurespotSettingsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotSettingsStore.h; sourceTree = "<group>"; };
 		66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotSettingsStore.m; sourceTree = "<group>"; };
 		66BB5A47187C7672007B5C47 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
@@ -1691,6 +1692,8 @@
 		66EBE0951855C97100F2452D /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				66B8360F1CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.h */,
+				66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */,
 				66EBE0961855C97100F2452D /* FileController.h */,
 				66EBE0971855C97100F2452D /* FileController.mm */,
 				66EBE0981855C97100F2452D /* NSData+Base64.h */,
@@ -2127,6 +2130,7 @@
 				668D24F6186A24D90096D155 /* QREncoder.mm in Sources */,
 				6686626F185B6A2E001491B1 /* HomeCell+WebImageCache.m in Sources */,
 				66EBE0BD1855C97100F2452D /* ChatUtils.mm in Sources */,
+				66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */,
 				66EBE0D41855C97100F2452D /* UIImage+Scale.m in Sources */,
 				661F3B8E1868C3C9003C7AE3 /* KeyFingerprint.m in Sources */,
 				665F4DF91831923C0083BCE7 /* REMenuItemView.m in Sources */,

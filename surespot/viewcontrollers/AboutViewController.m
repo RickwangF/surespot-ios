@@ -8,6 +8,7 @@
 
 #import "AboutViewController.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @interface AboutViewController ()
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;

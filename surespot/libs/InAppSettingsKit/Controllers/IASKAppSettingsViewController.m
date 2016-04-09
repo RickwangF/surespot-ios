@@ -27,6 +27,7 @@
 #import "IASKSpecifierValuesViewController.h"
 #import "IASKTextField.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 #if !__has_feature(objc_arc)
 #error "IASK needs ARC"

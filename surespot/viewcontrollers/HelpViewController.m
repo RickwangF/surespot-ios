@@ -8,6 +8,7 @@
 
 #import "HelpViewController.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @interface HelpViewController ()
 @property (strong, nonatomic) IBOutlet TTTAttributedLabel *helpLabel;

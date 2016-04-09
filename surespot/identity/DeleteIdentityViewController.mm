@@ -20,6 +20,7 @@
 
 #import "EncryptionController.h"
 #import "NetworkController.h"
+#import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;

@@ -10,6 +10,7 @@
 #import "PurchaseDelegate.h"
 #import "TTTAttributedLabel.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @interface PwylViewController ()
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;

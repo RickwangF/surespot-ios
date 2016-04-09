@@ -9,6 +9,7 @@
 #import "PurchaseVoiceViewController.h"
 #import "PurchaseDelegate.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @interface PurchaseVoiceViewController()
 @property (strong, nonatomic) IBOutlet UIButton *purchaseVoiceButton;

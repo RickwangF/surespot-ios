@@ -21,6 +21,7 @@
 #import "NetworkController.h"
 #import "SurespotAppDelegate.h"
 #import "BackupIdentityViewController.h"
+#import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;

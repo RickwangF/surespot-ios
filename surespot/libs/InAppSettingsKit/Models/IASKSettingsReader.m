@@ -180,7 +180,19 @@
 }
 
 - (NSString*)titleForStringId:(NSString*)stringId {
-    return [self.settingsBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
+
+    NSString *fallbackLanguage = @"en";
+    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
+    NSString *localizedString = [self.settingsBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
+    if (![language isEqualToString:fallbackLanguage] && [localizedString isEqualToString:stringId]) {
+        NSString *fallbackBundlePath = [self.settingsBundle pathForResource:fallbackLanguage ofType:@"lproj"];
+        NSBundle *fallbackBundle = [NSBundle bundleWithPath:fallbackBundlePath];
+        NSString *fallbackString = [fallbackBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
+        localizedString = fallbackString;
+    }
+    return localizedString;
+
+    
 }
 
 - (NSString*)pathForImageNamed:(NSString*)image {
