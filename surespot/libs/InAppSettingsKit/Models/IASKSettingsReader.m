@@ -180,18 +180,54 @@
 }
 
 - (NSString*)titleForStringId:(NSString*)stringId {
+    if (!stringId) return @"";
+    
+    //look in default
+    NSString * localizedString = [self.settingsBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
+    
+    //if we found it return it
+    if (![localizedString isEqualToString:stringId]) {
+        return localizedString;
+    }
+    
+    //didn't find it in default
+    //iterate through preferred languages till we find a string
+    //return english if we don't
+    NSArray *preferredLanguages = [NSLocale preferredLanguages];
+    
 
-    NSString *fallbackLanguage = @"en";
-    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-    NSString *localizedString = [self.settingsBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
-    if (![language isEqualToString:fallbackLanguage] && [localizedString isEqualToString:stringId]) {
-        NSString *fallbackBundlePath = [self.settingsBundle pathForResource:fallbackLanguage ofType:@"lproj"];
+
+    
+    for (NSString * language in preferredLanguages) {
+        
+        //add languages only
+        //TODO revisit if we want to utilize country specific languages
+        NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:language];
+        NSString *languageCode = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
+    //    NSString *countryCode = [languageDic objectForKey:@"kCFLocaleCountryCodeKey"];
+
+        
+        NSString *fallbackBundlePath = [self.settingsBundle pathForResource:languageCode ofType:@"lproj"];
+        NSBundle *fallbackBundle = [NSBundle bundleWithPath:fallbackBundlePath];
+        NSString *fallbackString = [fallbackBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
+        if (fallbackString) {
+            localizedString = fallbackString;
+        }
+        if (![localizedString isEqualToString:stringId]) {
+            break;
+        }
+        
+    }
+    //if we didn't find it return english
+    if ([localizedString isEqualToString:stringId]) {
+        NSString *fallbackBundlePath = [self.settingsBundle pathForResource:@"en" ofType:@"lproj"];
         NSBundle *fallbackBundle = [NSBundle bundleWithPath:fallbackBundlePath];
         NSString *fallbackString = [fallbackBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
         localizedString = fallbackString;
     }
+    
     return localizedString;
-
+    
     
 }
 
@@ -223,7 +259,7 @@
     static NSString* const kIASKBundleFolderAlt = @"InAppSettings.bundle";
     
     static NSString* const kIASKBundleLocaleFolderExtension = @".lproj";
-
+    
     // The file is searched in the following order:
     //
     // InAppSettings.bundle/FILE~DEVICE.inApp.plist

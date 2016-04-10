@@ -27,16 +27,56 @@
 @implementation NSBundle (FallbackLanguage)
 
 - (NSString *)localizedStringForKey:(NSString *)key replaceValue:(NSString *)comment {
-    NSString *fallbackLanguage = @"en";
-    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
+    
     NSString *localizedString = [[NSBundle mainBundle] localizedStringForKey:key value:@"" table:nil];
-    if (![language isEqualToString:fallbackLanguage] && [localizedString isEqualToString:key]) {
-        NSString *falbackBundlePath = [[NSBundle mainBundle] pathForResource:fallbackLanguage ofType:@"lproj"];
-        NSBundle *fallbackBundle = [NSBundle bundleWithPath:falbackBundlePath];
+    //if we found it return it
+    if (![localizedString isEqualToString:key]) {
+        return localizedString;
+    }
+    
+    //didn't find it in default
+    //iterate through preferred languages till we find a string
+    //return english if we don't
+    NSArray *preferredLanguagesIncDefault = [NSLocale preferredLanguages];
+    
+    //already tested first language as it's the default so lop that off
+    NSMutableArray *preferredLanguages = [NSMutableArray arrayWithArray:preferredLanguagesIncDefault];
+    [preferredLanguages removeObjectAtIndex:0];
+    
+    
+    for (NSString * language in preferredLanguages) {
+        
+        //add languages only
+        //TODO revisit if we want to utilize country specific languages
+        NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:language];
+        NSString *languageCode = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
+        //    NSString *countryCode = [languageDic objectForKey:@"kCFLocaleCountryCodeKey"];
+        
+        
+        NSString *fallbackBundlePath = [[NSBundle mainBundle] pathForResource:languageCode ofType:@"lproj"];
+        NSBundle *fallbackBundle = [NSBundle bundleWithPath:fallbackBundlePath];
+        NSString *fallbackString = [fallbackBundle localizedStringForKey:key value:@"" table:nil];
+        if (fallbackString) {
+            localizedString = fallbackString;
+        }
+        if (![localizedString isEqualToString:key]) {
+            break;
+        }
+        
+    }
+    //if we didn't find it return english
+    if ([localizedString isEqualToString:key]) {
+        NSString *fallbackBundlePath = [[NSBundle mainBundle] pathForResource:@"en" ofType:@"lproj"];
+        NSBundle *fallbackBundle = [NSBundle bundleWithPath:fallbackBundlePath];
         NSString *fallbackString = [fallbackBundle localizedStringForKey:key value:comment table:nil];
         localizedString = fallbackString;
     }
+    
     return localizedString;
-}
+
+  }
+
+
+    
 
 @end
