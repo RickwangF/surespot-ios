@@ -16,6 +16,7 @@
 
 #import "IASKSettingsReader.h"
 #import "IASKSpecifier.h"
+#import "UIUtils.h"
 
 #pragma mark -
 @interface IASKSettingsReader () {
@@ -180,65 +181,8 @@
 }
 
 - (NSString*)titleForStringId:(NSString*)stringId {
-    if (!stringId) return @"";
-    
-    
-    //look in default
-    NSString * localizedString = [self.settingsBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
- 
-    NSArray *preferredLanguagesIncDefault = [NSLocale preferredLanguages];
-    NSString * preferredLanguage = [preferredLanguagesIncDefault objectAtIndex:0];
-    NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:preferredLanguage];
-    NSString *languageCode = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
-    
-    //if we found it or default language is english return it
-    if ([languageCode isEqualToString:@"en"] || ![localizedString isEqualToString:stringId]) {
-        return localizedString;
-    }
-    
-    //iterate through preferred languages till we find a string
-    //return english if we don't
-    //already tested first language as it's the default so lop that off
-    NSMutableArray *preferredLanguages = [NSMutableArray arrayWithArray:preferredLanguagesIncDefault];
-    [preferredLanguages removeObjectAtIndex:0];
-    
-    NSArray *supportedLanguages = [NSArray arrayWithObjects:@"en",@"de",@"it",@"es",@"fr", nil];
-    
-    for (NSString * language in preferredLanguages) {
-        
-        //add languages only
-        //TODO revisit if we want to utilize country specific languages
-        NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:language];
-        NSString *languageCode = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
-    //    NSString *countryCode = [languageDic objectForKey:@"kCFLocaleCountryCodeKey"];
-
-        //don't bother looking if we don't have a translation
-        if (![supportedLanguages containsObject:languageCode]) {
-            continue;
-        }
-        
-        NSString *fallbackBundlePath = [self.settingsBundle pathForResource:languageCode ofType:@"lproj"];
-        NSBundle *fallbackBundle = [NSBundle bundleWithPath:fallbackBundlePath];
-        NSString *fallbackString = [fallbackBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
-        if (fallbackString) {
-            localizedString = fallbackString;
-        }
-        if (![localizedString isEqualToString:stringId]) {
-            break;
-        }
-        
-    }
-    //if we didn't find it return english
-    if ([localizedString isEqualToString:stringId]) {
-        NSString *fallbackBundlePath = [self.settingsBundle pathForResource:@"en" ofType:@"lproj"];
-        NSBundle *fallbackBundle = [NSBundle bundleWithPath:fallbackBundlePath];
-        NSString *fallbackString = [fallbackBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
-        localizedString = fallbackString;
-    }
-    
-    return localizedString;
-    
-    
+    if (!stringId) return @"";    
+    return [UIUtils localizedStringForKey:stringId replaceValue:stringId bundle:self.settingsBundle table:self.localizationTable];
 }
 
 - (NSString*)pathForImageNamed:(NSString*)image {
