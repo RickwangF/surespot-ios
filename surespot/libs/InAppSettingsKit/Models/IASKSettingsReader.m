@@ -182,21 +182,27 @@
 - (NSString*)titleForStringId:(NSString*)stringId {
     if (!stringId) return @"";
     
+    
     //look in default
     NSString * localizedString = [self.settingsBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
+ 
+    NSArray *preferredLanguagesIncDefault = [NSLocale preferredLanguages];
+    NSString * preferredLanguage = [preferredLanguagesIncDefault objectAtIndex:0];
+    NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:preferredLanguage];
+    NSString *languageCode = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
     
-    //if we found it return it
-    if (![localizedString isEqualToString:stringId]) {
+    //if we found it or default language is english return it
+    if ([languageCode isEqualToString:@"en"] || ![localizedString isEqualToString:stringId]) {
         return localizedString;
     }
     
-    //didn't find it in default
     //iterate through preferred languages till we find a string
     //return english if we don't
-    NSArray *preferredLanguages = [NSLocale preferredLanguages];
+    //already tested first language as it's the default so lop that off
+    NSMutableArray *preferredLanguages = [NSMutableArray arrayWithArray:preferredLanguagesIncDefault];
+    [preferredLanguages removeObjectAtIndex:0];
     
-
-
+    NSArray *supportedLanguages = [NSArray arrayWithObjects:@"en",@"de",@"it",@"es",@"fr", nil];
     
     for (NSString * language in preferredLanguages) {
         
@@ -206,6 +212,10 @@
         NSString *languageCode = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
     //    NSString *countryCode = [languageDic objectForKey:@"kCFLocaleCountryCodeKey"];
 
+        //don't bother looking if we don't have a translation
+        if (![supportedLanguages containsObject:languageCode]) {
+            continue;
+        }
         
         NSString *fallbackBundlePath = [self.settingsBundle pathForResource:languageCode ofType:@"lproj"];
         NSBundle *fallbackBundle = [NSBundle bundleWithPath:fallbackBundlePath];
