@@ -2509,6 +2509,7 @@ const Float32 voiceRecordDelay = 0.3;
                 
             }
             else {
+                [self resignAllResponders];
                 [[PurchaseDelegate sharedInstance] showPurchaseVoiceViewForController:self];
             }
         }
@@ -2572,6 +2573,7 @@ const Float32 voiceRecordDelay = 0.3;
                         [self closeTab];
                     }
                     else {
+                        [self resignAllResponders];
                         [[PurchaseDelegate sharedInstance] showPurchaseVoiceViewForController:self];
                     }
                 }

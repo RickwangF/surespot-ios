@@ -428,12 +428,12 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     NSString * preferredLanguage = [preferredLanguagesIncDefault objectAtIndex:0];
     NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:preferredLanguage];
     NSString *languageCode = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
-    
-    DDLogInfo(@"localizedStringForKey: %@, preferred language: %@", key, languageCode);
+  //
+  //  DDLogInfo(@"localizedStringForKey: %@, preferred language: %@", key, languageCode);
     
     //if we found it or default language is english return it
     if ([languageCode isEqualToString:@"en"] || ![localizedString isEqualToString:key]) {
-        DDLogInfo(@"localizedStringForKey: %@ found", key);
+    //    DDLogInfo(@"localizedStringForKey: %@ found", key);
         return localizedString;
     }
     
@@ -457,7 +457,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         
         //if we don't support the language don't bother looking
         if (![supportedLanguages containsObject:languageCode]) {
-            DDLogInfo(@"localizedStringForKey: %@ no fallback translation for languageCode: %@",key, languageCode);
+    //        DDLogInfo(@"localizedStringForKey: %@ no fallback translation for languageCode: %@",key, languageCode);
             continue;
         }
         
