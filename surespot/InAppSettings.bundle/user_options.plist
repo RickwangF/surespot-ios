@@ -22,7 +22,7 @@
 			<key>Key</key>
 			<string>_user_pref_return_sends_message</string>
 			<key>DefaultValue</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Title</key>
