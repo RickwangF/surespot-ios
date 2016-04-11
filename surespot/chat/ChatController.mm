@@ -1088,7 +1088,7 @@ static const int MAX_RETRY_DELAY = 30;
                       forFriendname: message.data
                             version:[message.moreData objectForKey:@"version"]
                                  iv:[message.moreData objectForKey:@"iv"]
-                             hashed:[message.moreData boolForKey:@"imageHashed"]];
+                             hashed:[[message.moreData objectForKey:@"imageHashed"] boolValue]];
         }
         else {
             [_homeDataSource removeFriendImage:message.data];
@@ -1377,7 +1377,7 @@ static const int MAX_RETRY_DELAY = 30;
                       friendname:message.data
                          version:[message.moreData objectForKey:@"version"]
                               iv:[message.moreData objectForKey:@"iv"]
-                          hashed:[message.moreData boolForKey:@"hashed"]];
+                          hashed:[[message.moreData objectForKey:@"aliasHashed"] boolValue]];
         }
         else {
             [_homeDataSource removeFriendAlias: message.data];
