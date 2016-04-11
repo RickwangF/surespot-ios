@@ -2228,8 +2228,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "931c71d1-a96d-4e25-a094-4516503a55b8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "931c71d1-a96d-4e25-a094-4516503a55b8";
+				PROVISIONING_PROFILE = "c9763b74-76b3-4b62-9238-e886e052a384";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "c9763b74-76b3-4b62-9238-e886e052a384";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2259,8 +2259,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "5e047876-21df-48e3-bc1d-ae0cc9227581";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "5e047876-21df-48e3-bc1d-ae0cc9227581";
+				PROVISIONING_PROFILE = "800826bc-64c7-49d5-8900-281390fc7ca4";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "800826bc-64c7-49d5-8900-281390fc7ca4";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2313,8 +2313,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGN_IDENTITY = "iOS Distribution: surespot llc";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iOS Distribution: surespot llc";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_INPUT_FILETYPE = automatic;
@@ -2335,8 +2335,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.twofours.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "18dcb900-c285-426d-9f79-acfed12ebf2a";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "18dcb900-c285-426d-9f79-acfed12ebf2a";
+				PROVISIONING_PROFILE = "800826bc-64c7-49d5-8900-281390fc7ca4";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "800826bc-64c7-49d5-8900-281390fc7ca4";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/surespot/libs/google-api-objectivec-client-read-only/** $(SRCROOT)/surespot/libs/QR-Code-Encoder-for-Objective-C/QRCodeEncoderObjectiveCAtGithub";
