@@ -38,10 +38,10 @@
 #import "UIAlertView+Blocks.h"
 #import "LoadingView.h"
 #import "UsernameAliasMap.h"
-
+#import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_WARN;
+static const int ddLogLevel = LOG_LEVEL_INFO;
 #else
 static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
@@ -78,7 +78,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 @property (strong, nonatomic) IBOutlet UIView *textFieldContainer;
 @property (atomic, strong) ALAssetsLibrary * assetLibrary;
 @property (atomic, strong) LoadingView * progressView;
-@property (nonatomic) float savedTextHeight;
 @end
 @implementation SwipeViewController
 
@@ -113,7 +112,8 @@ const Float32 voiceRecordDelay = 0.3;
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
-    [self registerForKeyboardNotifications];
+    // [self registerForKeyboardNotifications];
+    self.keyboardState = [[KeyboardState alloc] init];
     
     
     UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 36.0f, 36.0f)];
@@ -255,7 +255,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (BOOL) growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *) string
 {
     if ([string isEqualToString:@"\n"]) {
-        if (growingTextView != _messageTextView || [UIUtils getBoolPrefWithDefaultNoForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_return_sends_message"]) {
+        if (growingTextView != _messageTextView || [UIUtils getBoolPrefWithDefaultYesForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_return_sends_message"]) {
             [self handleTextAction];
             return NO;
         } else {
@@ -304,7 +304,12 @@ const Float32 voiceRecordDelay = 0.3;
     
     [self showHeader];
     [self handleNotification];
-    
+    [self registerForKeyboardNotifications];
+}
+
+-(void) viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [self unregisterKeyboardNotifications];
 }
 
 
@@ -331,206 +336,174 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (void)registerForKeyboardNotifications
 {
-    
     //use old positioning pre ios 8
     
     if ([UIUtils isIOS8Plus]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillBeShown8:)
+                                                     name:UIKeyboardWillShowNotification object:nil];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameDidChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillBeHidden8:)
+                                                     name:UIKeyboardWillHideNotification object:nil];
     }
     else {
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWasShown:)
-                                                     name:UIKeyboardDidShowNotification object:nil];
+                                                 selector:@selector(keyboardWillBeShown7:)
+                                                     name:UIKeyboardWillShowNotification object:nil];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeHidden:)
+                                                 selector:@selector(keyboardWillBeHidden7:)
                                                      name:UIKeyboardWillHideNotification object:nil];
         
     }
-    
-    
 }
 
-
-- (void)keyboardFrameDidChange:(NSNotification *)notification
+-(void) unregisterKeyboardNotifications
 {
-    if (![_messageTextView isFirstResponder] && ![_inviteTextView isFirstResponder]) {
-        // if the message text view or the invite text views aren't the first responder, don't adjust control offsets
-        return;
-    }
-    
-    DDLogInfo(@"keyboardFrameDidChange");
-    CGRect keyboardEndFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGRect keyboardBeginFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    //  UIViewAnimationCurve animationCurve = [[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    //  NSTimeInterval animationDuration = [[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] integerValue];
-    
-    //  [UIView beginAnimations:nil context:nil];
-    //  [UIView setAnimationDuration:animationDuration];
-    //  [UIView setAnimationCurve:animationCurve];
-    
-    CGRect newFrame = _textFieldContainer.frame;
-    CGRect originalFrame = _textFieldContainer.frame;
-    CGRect keyboardFrameEnd = [self.view convertRect:keyboardEndFrame toView:nil];
-    CGRect keyboardFrameBegin = [self.view convertRect:keyboardBeginFrame toView:nil];
-    //DDLogInfo(@"keyboard frame begin origin y: %f, height: %f", keyboardFrameBegin.origin.y, keyboardFrameBegin.size.height);
-    //DDLogInfo(@"keyboard frame end origin y: %f, height: %f", keyboardFrameEnd.origin.y, keyboardFrameEnd.size.height);
-    int height = keyboardFrameBegin.origin.y - keyboardFrameEnd.origin.y;
-    
-    //DDLogInfo(@"keyboard height: %d",height);
-    //DDLogInfo(@"origin y before: %f",newFrame.origin.y);
-    //NSLog(@"textFieldContainer frame: origin x: %f, origin y: %f, height: %f",_textFieldContainer.frame.origin.x, _textFieldContainer.frame.origin.y, _textFieldContainer.frame.size.height);
-    
-    newFrame.origin.y = keyboardEndFrame.origin.y - newFrame.size.height;
-    CGRect convertedToScreenCoords = [self.view convertRect:newFrame fromView:nil];
-    newFrame.origin.y = convertedToScreenCoords.origin.y;
-    _textFieldContainer.frame = newFrame;
-    
-    //NSLog(@"NEW textFieldContainer frame: origin x: %f, origin y: %f, height: %f",_textFieldContainer.frame.origin.x, _textFieldContainer.frame.origin.y, _textFieldContainer.frame.size.height);
-    
-    CGRect frame = _swipeView.frame;
-    //NSLog(@"swipeview frame: origin x: %f, origin y: %f, height: %f",_swipeView.frame.origin.x, _swipeView.frame.origin.y, _swipeView.frame.size.height);
-    CGRect actualSwipeViewTop = [self.view convertRect:frame fromView:nil];
-    float f = self.view.frame.size.height;
-    if (height <= 0) {
-        frame.size.height = f - fabs(actualSwipeViewTop.origin.y) - newFrame.size.height;
-    } else {
-        frame.size.height = f - fabs(actualSwipeViewTop.origin.y) - keyboardEndFrame.size.height - newFrame.size.height;
-    }
-    
-    if (frame.size.height <= 5) {
-        frame.size.height = 10; // get a bigger screen, geez
-    }
-    
-    _swipeView.frame = frame;
-    //NSLog(@"NEW swipeview frame: origin x: %f, origin y: %f, height: %f",_swipeView.frame.origin.x, _swipeView.frame.origin.y, _swipeView.frame.size.height);
-    
-    CGRect buttonFrame = _theButton.frame;
-    buttonFrame.origin.y = newFrame.origin.y - 16;
-    _theButton.frame = buttonFrame;
-    
-    @synchronized (_chats) {
-        for (NSString * key in [_chats allKeys]) {
-            UITableView * tableView = [_chats objectForKey:key];
-            
-            UITableViewCell * bottomCell = nil;
-            NSArray * visibleCells = [tableView visibleCells];
-            if ([visibleCells count ] > 0) {
-                bottomCell = [visibleCells objectAtIndex:[visibleCells count]-1];
-            }
-            
-            if (bottomCell) {
-                CGRect aRect = self.view.frame;
-                
-                if (!CGRectContainsPoint(aRect, bottomCell.frame.origin) ) {
-                    float change = originalFrame.origin.y - newFrame.origin.y;
-                    CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y + change);
-                    [tableView setContentOffset:newOffset animated:NO];
-                }
-            }
-        }
-    }
-    
-    
-    [self.view layoutIfNeeded];
-    // [UIView commitAnimations];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 
 // Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWasShown:(NSNotification*)aNotification {
+- (void)keyboardWillBeShown8:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    [self keyboardWillBeShown:info isIos8Plus: YES];
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeShown7:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    [self keyboardWillBeShown:info isIos8Plus: NO];
+    
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeHidden8:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    [self keyboardWillBeHidden:info isIos8Plus: YES];
+    
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeHidden7:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    [self keyboardWillBeHidden:info isIos8Plus: NO];
+    
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeShown:(NSDictionary*)info isIos8Plus: (BOOL) isIos8Plus {
     DDLogInfo(@"keyboard shown");
     
+    NSTimeInterval animationDuration;
+    UIViewAnimationOptions curve;
+    [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
+    [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
+    CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGFloat keyboardHeight = isIos8Plus ? keyboardRect.size.height : [UIUtils keyboardHeightAdjustedForOrientation:keyboardRect.size];
+    CGFloat deltaHeight = keyboardHeight - _keyboardState.keyboardHeight;
+    _keyboardState.keyboardHeight = keyboardHeight;
     
-    
-    if (!_keyboardState) {
-        NSDictionary* info = [aNotification userInfo];
-        CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-        CGFloat keyboardHeight = [UIUtils keyboardHeightAdjustedForOrientation:keyboardRect.size];
+    // run animation using keyboard's curve and duration
+    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
         
-        _keyboardState = [[KeyboardState alloc] init];
-        _keyboardState.keyboardHeight = keyboardHeight;
         
         CGRect textFieldFrame = _textFieldContainer.frame;
-        textFieldFrame.origin.y -= keyboardHeight;
+        textFieldFrame.origin.y -= deltaHeight;
         _textFieldContainer.frame = textFieldFrame;
         
         CGRect frame = _swipeView.frame;
-        frame.size.height -= keyboardHeight;
+        frame.size.height -= deltaHeight;
         _swipeView.frame = frame;
         
         CGRect buttonFrame = _theButton.frame;
-        buttonFrame.origin.y -= keyboardHeight;
+        buttonFrame.origin.y -= deltaHeight;
         _theButton.frame = buttonFrame;
         
+        // size or move views appropriately so they are not obscured by the keyboard
         @synchronized (_chats) {
             for (NSString * key in [_chats allKeys]) {
                 UITableView * tableView = [_chats objectForKey:key];
                 
-                UITableViewCell * bottomCell = nil;
-                NSArray * visibleCells = [tableView visibleCells];
-                if ([visibleCells count ] > 0) {
-                    bottomCell = [visibleCells objectAtIndex:[visibleCells count]-1];
-                }
-                
-                if (bottomCell) {
-                    CGRect aRect = self.view.frame;
-                    aRect.size.height -= keyboardHeight;
-                    if (!CGRectContainsPoint(aRect, bottomCell.frame.origin) ) {
-                        CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y + keyboardHeight);
-                        [tableView setContentOffset:newOffset animated:NO];
-                    }
-                }
+                //            UITableViewCell * bottomCell = nil;
+                //            NSArray * visibleCells = [tableView visibleCells];
+                //            if ([visibleCells count ] > 0) {
+                //                bottomCell = [visibleCells objectAtIndex:[visibleCells count]-1];
+                //            }
+                //
+                //            if (bottomCell) {
+                //    CGRect aRect = self.view.frame;
+                //    aRect.size.height -= deltaHeight;
+                //   if (!CGRectContainsPoint(aRect, bottomCell.frame.origin) ) {
+                CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y + deltaHeight);
+                [tableView setContentOffset:newOffset animated:NO];
+                //  }
+                //            }
             }
         }
-    }
+    } completion:^(BOOL completion) {
+        
+    }];
 }
 
 // Called when the UIKeyboardWillHideNotification is sent
-- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+- (void)keyboardWillBeHidden:(NSDictionary *) info isIos8Plus: (BOOL) isIos8Plus
 {
-    [self handleKeyboardHide];
-}
-
-- (void) handleKeyboardHide {
     DDLogInfo(@"keyboard hide");
-    if (self.keyboardState) {
+    NSTimeInterval animationDuration;
+    UIViewAnimationOptions curve;
+    [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
+    [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
+    CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGFloat keyboardHeight = isIos8Plus ? keyboardRect.size.height : [UIUtils keyboardHeightAdjustedForOrientation:keyboardRect.size];
+    
+    //height is reported as 0 sometimes WTF apple
+    DDLogInfo(@"keyboard reported height: %f, my height: %f", keyboardHeight, _keyboardState.keyboardHeight);
+    keyboardHeight = _keyboardState.keyboardHeight;
+    
+    // run animation using keyboard's curve and duration
+    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
         //reset content position
         @synchronized (_chats) {
             for (NSString * key in [_chats allKeys]) {
                 UITableView * tableView = [_chats objectForKey:key];
-                CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - _keyboardState.keyboardHeight);
+                CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - keyboardHeight);
                 [tableView setContentOffset:newOffset animated:NO];
             }
         }
         
         CGRect swipeFrame = _swipeView.frame;
-        swipeFrame.size.height += _keyboardState.keyboardHeight;
+        swipeFrame.size.height += keyboardHeight;
         _swipeView.frame = swipeFrame;
         [_swipeView setNeedsLayout];
         
         CGRect textFieldFrame = _textFieldContainer.frame;
-        textFieldFrame.origin.y += self.keyboardState.keyboardHeight;
+        textFieldFrame.origin.y += keyboardHeight;
         _textFieldContainer.frame = textFieldFrame;
         
         
         CGRect buttonFrame = _theButton.frame;
-        buttonFrame.origin.y += self.keyboardState.keyboardHeight;
+        buttonFrame.origin.y += keyboardHeight;
         _theButton.frame = buttonFrame;
         
-        self.keyboardState = nil;
-    }
+        
+        
+    } completion:^(BOOL completion) {
+        
+    }];
+    
+    _keyboardState.keyboardHeight = 0.0f;
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation
                                 duration:(NSTimeInterval)duration
 {
     DDLogInfo(@"will rotate");
-    if ([UIUtils isIOS8Plus]) {
-        [self resignAllResponders];
-    }
+    [self resignAllResponders];
+    _keyboardState.keyboardHeight = 0;
+    
     
     _swipeView.suppressScrollEvent = YES;
     
@@ -2507,7 +2480,7 @@ const Float32 voiceRecordDelay = 0.3;
         if (![self handleTextActionResign:NO]) {
             [self resignAllResponders];
             [self scrollHome];
-            
+                
         }
     }
     else {
@@ -2729,6 +2702,7 @@ const Float32 voiceRecordDelay = 0.3;
         [_popover presentPopoverFromRect:CGRectMake(x/2,y/2, 1,1 ) inView:self.view permittedArrowDirections:0 animated:YES];
         
     } else {
+        [self resignAllResponders];
         [self.navigationController pushViewController:controller animated:YES];
     }
 }

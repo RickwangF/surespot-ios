@@ -149,6 +149,7 @@
 		66A2D940183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D932183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m */; };
 		66A2D941183C25E800785270 /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D934183C25E800785270 /* UIScrollView+SVPullToRefresh.m */; };
 		66AC20AB18690CBD004E58E1 /* KeyFingerprintLoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */; };
+		66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */; };
 		66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */; };
 		66BB5A49187C7672007B5C47 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A48187C7672007B5C47 /* HelpViewController.m */; };
 		66D3B04F182EAB4200B37A6C /* surespot.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D3B04E182EAB4200B37A6C /* surespot.xcassets */; };
@@ -512,6 +513,8 @@
 		66A2D933183C25E800785270 /* UIScrollView+SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVPullToRefresh.h"; sourceTree = "<group>"; };
 		66A2D934183C25E800785270 /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
 		66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeyFingerprintLoadingView.xib; sourceTree = "<group>"; };
+		66B8360F1CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+FallbackLanguage.h"; sourceTree = "<group>"; };
+		66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+FallbackLanguage.m"; sourceTree = "<group>"; };
 		66BB5A38187B7EE9007B5C47 /* SurespotSettingsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotSettingsStore.h; sourceTree = "<group>"; };
 		66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotSettingsStore.m; sourceTree = "<group>"; };
 		66BB5A47187C7672007B5C47 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
@@ -1704,6 +1707,8 @@
 				6611BE9C1BC852C40035C86B /* base64.h */,
 				6611BE971BC84F530035C86B /* NSData+SRB64Additions.h */,
 				6611BE981BC84F530035C86B /* NSData+SRB64Additions.m */,
+				66B8360F1CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.h */,
+				66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */,
 				66EBE0961855C97100F2452D /* FileController.h */,
 				66EBE0971855C97100F2452D /* FileController.mm */,
 				66EBE0981855C97100F2452D /* NSData+Base64.h */,
@@ -1939,8 +1944,10 @@
 				666D3368187F69AD00B73F69 /* message.caf in Resources */,
 				666D338118847B5000B73F69 /* surespot-invite.caf in Resources */,
 				66DAB62A186D0461006C262F /* SurespotSHKSharers.plist in Resources */,
+				6652F2A41875CFF300E023A7 /* PurchaseVoiceView~iphone.xib in Resources */,
 				6646AE26185CADC700CBACDE /* MWPhotoBrowser.bundle in Resources */,
 				66EBE13E1855C97100F2452D /* HomeCell.xib in Resources */,
+				6652F2A51875CFF300E023A7 /* PurchaseVoiceView~ipad.xib in Resources */,
 				6604A2D817626B9E0072216A /* MainStoryboard.storyboard in Resources */,
 				66D3B04F182EAB4200B37A6C /* surespot.xcassets in Resources */,
 				660F0A9618D7888300FD8C4D /* RestoreIdentityDriveView.xib in Resources */,
@@ -2030,6 +2037,7 @@
 				6659532518882DF500BA2CC7 /* MWPhoto.m in Sources */,
 				6611BE901BC843400035C86B /* SocketStringReader.swift in Sources */,
 				6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */,
+				662CA5A818734E4E00684790 /* PurchaseVoiceViewController.m in Sources */,
 				66EBE0BC1855C97100F2452D /* ChatDataSource.mm in Sources */,
 				6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */,
 				66FF1001182D3D920038ECA6 /* DDLog.m in Sources */,
@@ -2151,6 +2159,7 @@
 				668D24F6186A24D90096D155 /* QREncoder.mm in Sources */,
 				6686626F185B6A2E001491B1 /* HomeCell+WebImageCache.m in Sources */,
 				66EBE0BD1855C97100F2452D /* ChatUtils.mm in Sources */,
+				66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */,
 				66EBE0D41855C97100F2452D /* UIImage+Scale.m in Sources */,
 				661F3B8E1868C3C9003C7AE3 /* KeyFingerprint.m in Sources */,
 				665F4DF91831923C0083BCE7 /* REMenuItemView.m in Sources */,
@@ -2281,8 +2290,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "5e047876-21df-48e3-bc1d-ae0cc9227581";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "5e047876-21df-48e3-bc1d-ae0cc9227581";
+				PROVISIONING_PROFILE = "800826bc-64c7-49d5-8900-281390fc7ca4";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "800826bc-64c7-49d5-8900-281390fc7ca4";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2361,8 +2370,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.twofours.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "18dcb900-c285-426d-9f79-acfed12ebf2a";
+				PROVISIONING_PROFILE = "800826bc-64c7-49d5-8900-281390fc7ca4";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "800826bc-64c7-49d5-8900-281390fc7ca4";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/surespot/libs/google-api-objectivec-client-read-only/** $(SRCROOT)/surespot/libs/QR-Code-Encoder-for-Objective-C/QRCodeEncoderObjectiveCAtGithub";

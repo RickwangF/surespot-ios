@@ -9,6 +9,7 @@
 #import "QRInviteViewController.h"
 #import "QREncoder.h"
 #import "SurespotConstants.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @interface QRInviteViewController ()
 @property (strong, nonatomic) IBOutlet UITextView *inviteBlurb;

@@ -6,6 +6,7 @@
 
 #import "AfterBackupIdentityHelpViewController.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @interface AfterBackupIdentityHelpViewController ()
 @property (strong, nonatomic) IBOutlet TTTAttributedLabel *helpLabel;

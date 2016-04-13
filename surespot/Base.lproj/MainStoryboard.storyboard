@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="mXI-aR-0Jk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="mXI-aR-0Jk">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
         <!--Surespot Navigation Controller-->
@@ -21,78 +21,85 @@
         <scene sceneID="5">
             <objects>
                 <viewController storyboardIdentifier="loginViewController" id="2" customClass="LoginViewController" sceneMemberID="viewController">
-                    <scrollView key="view" clipsSubviews="YES" contentMode="scaleToFill" id="88S-Nt-FbA">
+                    <view key="view" contentMode="scaleToFill" id="8Jl-5X-X1O">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="SW9-JJ-OEP">
-                                <rect key="frame" x="91" y="280" width="138" height="46"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
-                                <inset key="insetFor6xAndEarlier" minX="0.0" minY="-10" maxX="0.0" maxY="10"/>
-                                <state key="normal" title="login">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="login:" destination="2" eventType="touchUpInside" id="5nQ-Mi-N0d"/>
-                                </connections>
-                            </button>
-                            <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" minimumFontSize="17" clearButtonMode="whileEditing" id="JPD-8G-y9p">
-                                <rect key="frame" x="23" y="186" width="274" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
-                                <color key="tintColor" red="0.20000000000000001" green="0.70980392160000005" blue="0.8980392157" alpha="1" colorSpace="deviceRGB"/>
-                                <inset key="insetFor6xAndEarlier" minX="0.0" minY="-10" maxX="0.0" maxY="10"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocorrectionType="no" secureTextEntry="YES"/>
-                                <connections>
-                                    <outlet property="delegate" destination="2" id="ht7-Ps-rfl"/>
-                                </connections>
-                            </textField>
-                            <pickerView contentMode="scaleToFill" id="WV1-5E-HKR">
-                                <rect key="frame" x="3" y="7" width="314" height="171"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <inset key="insetFor6xAndEarlier" minX="0.0" minY="-11" maxX="0.0" maxY="11"/>
-                                <connections>
-                                    <outlet property="dataSource" destination="2" id="Myq-Bc-wXw"/>
-                                    <outlet property="delegate" destination="2" id="yaU-74-A3F"/>
-                                </connections>
-                            </pickerView>
-                            <view contentMode="scaleToFill" id="CiP-xm-RW8">
-                                <rect key="frame" x="23" y="234" width="274" height="48"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
+                            <scrollView clipsSubviews="YES" contentMode="scaleToFill" id="J92-bX-hoD">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="store password in keychain" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="Rqw-SE-Rx5">
-                                        <rect key="frame" x="0.0" y="5" width="203" height="21"/>
-                                        <autoresizingMask key="autoresizingMask"/>
+                                    <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="zAN-uw-qpa">
+                                        <rect key="frame" x="92" y="275" width="138" height="56"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
                                         <inset key="insetFor6xAndEarlier" minX="0.0" minY="-10" maxX="0.0" maxY="10"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="Ovg-Yc-56c">
-                                        <rect key="frame" x="225" y="0.0" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
-                                        <inset key="insetFor6xAndEarlier" minX="0.0" minY="-10" maxX="0.0" maxY="10"/>
+                                        <state key="normal" title="login">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
                                         <connections>
-                                            <action selector="storeKeychainValueChanged:" destination="2" eventType="valueChanged" id="sTi-CK-gVn"/>
+                                            <action selector="login:" destination="2" eventType="touchUpInside" id="jKM-75-Bx3"/>
                                         </connections>
-                                    </switch>
+                                    </button>
+                                    <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" minimumFontSize="17" clearButtonMode="whileEditing" id="evC-OP-oxg">
+                                        <rect key="frame" x="23" y="186" width="274" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
+                                        <color key="tintColor" red="0.20000000000000001" green="0.70980392160000005" blue="0.8980392157" alpha="1" colorSpace="deviceRGB"/>
+                                        <inset key="insetFor6xAndEarlier" minX="0.0" minY="-10" maxX="0.0" maxY="10"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" secureTextEntry="YES"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="2" id="SmA-BJ-1vJ"/>
+                                        </connections>
+                                    </textField>
+                                    <pickerView contentMode="scaleToFill" id="BaA-UA-41M">
+                                        <rect key="frame" x="3" y="7" width="314" height="171"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <inset key="insetFor6xAndEarlier" minX="0.0" minY="-11" maxX="0.0" maxY="11"/>
+                                        <connections>
+                                            <outlet property="dataSource" destination="2" id="h0P-uI-AFJ"/>
+                                            <outlet property="delegate" destination="2" id="i3P-tP-XjC"/>
+                                        </connections>
+                                    </pickerView>
+                                    <view contentMode="scaleToFill" id="KNv-Th-IKW">
+                                        <rect key="frame" x="23" y="234" width="274" height="48"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
+                                        <subviews>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="store password in keychain" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="MyP-8F-IQ4">
+                                                <rect key="frame" x="0.0" y="5" width="203" height="21"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <inset key="insetFor6xAndEarlier" minX="0.0" minY="-10" maxX="0.0" maxY="10"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="QwW-6n-zkm">
+                                                <rect key="frame" x="225" y="0.0" width="51" height="31"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
+                                                <inset key="insetFor6xAndEarlier" minX="0.0" minY="-10" maxX="0.0" maxY="10"/>
+                                                <connections>
+                                                    <action selector="storeKeychainValueChanged:" destination="2" eventType="valueChanged" id="g5m-hb-dUw"/>
+                                                </connections>
+                                            </switch>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                    </view>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                            </view>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </scrollView>
+                    </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" id="jSB-cH-bSD"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
-                        <outlet property="bLogin" destination="SW9-JJ-OEP" id="URd-kO-Go8"/>
-                        <outlet property="scrollView" destination="88S-Nt-FbA" id="fTD-aX-84D"/>
-                        <outlet property="storeKeychainLabel" destination="Rqw-SE-Rx5" id="atC-oJ-Xeu"/>
-                        <outlet property="storePassword" destination="Ovg-Yc-56c" id="PaV-oM-qU7"/>
-                        <outlet property="textPassword" destination="JPD-8G-y9p" id="OMQ-Mc-YUx"/>
-                        <outlet property="userPicker" destination="WV1-5E-HKR" id="RnN-f6-NzK"/>
+                        <outlet property="bLogin" destination="zAN-uw-qpa" id="Ntn-si-xvP"/>
+                        <outlet property="scrollView" destination="J92-bX-hoD" id="EQR-OK-GOH"/>
+                        <outlet property="storeKeychainLabel" destination="MyP-8F-IQ4" id="unC-Aw-bQD"/>
+                        <outlet property="storePassword" destination="QwW-6n-zkm" id="CQ1-mc-ZkY"/>
+                        <outlet property="textPassword" destination="evC-OP-oxg" id="4Ze-Xd-Xj6"/>
+                        <outlet property="userPicker" destination="BaA-UA-41M" id="VVb-8Z-g8y"/>
                         <segue destination="VAm-bF-dbx" kind="push" identifier="createSegue" id="u16-qe-I58"/>
                     </connections>
                 </viewController>
@@ -140,7 +147,7 @@
                                         </connections>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="gmo-KK-DEU">
-                                        <rect key="frame" x="20" y="360" width="280" height="36"/>
+                                        <rect key="frame" x="20" y="355" width="280" height="48"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
                                         <state key="normal" title="create identity">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -178,7 +185,7 @@
             </objects>
             <point key="canvasLocation" x="-478" y="-264"/>
         </scene>
-        <!--Swipe View Controller-->
+        <!--Data Source-->
         <scene sceneID="9JK-qE-IFd">
             <objects>
                 <viewController storyboardIdentifier="swipeViewController" id="tcp-OJ-fTS" customClass="SwipeViewController" sceneMemberID="viewController">
@@ -218,7 +225,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <accessibility key="accessibilityConfiguration">
-                                            <accessibilityTraits key="traits" none="YES" image="YES"/>
+                                            <accessibilityTraits key="traits" image="YES"/>
                                         </accessibility>
                                         <state key="normal" image="qr_surespot">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -235,7 +242,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" none="YES" button="YES" updatesFrequently="YES"/>
+                                    <accessibilityTraits key="traits" button="YES" updatesFrequently="YES"/>
                                 </accessibility>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <connections>
@@ -267,10 +274,5 @@
     <resources>
         <image name="qr_surespot" width="28" height="28"/>
     </resources>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4"/>
-    </simulatedMetricsContainer>
     <color key="tintColor" red="0.20000000000000001" green="0.70980392160000005" blue="0.8980392157" alpha="1" colorSpace="deviceRGB"/>
 </document>

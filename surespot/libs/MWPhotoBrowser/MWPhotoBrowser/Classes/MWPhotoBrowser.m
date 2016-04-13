@@ -13,6 +13,7 @@
 #import "MBProgressHUD.h"
 #import "SDImageCache.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 #define PADDING                 10
 #define PAGE_INDEX_TAG_OFFSET   1000

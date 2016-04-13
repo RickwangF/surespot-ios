@@ -9,6 +9,7 @@
 #import "MessageDecryptionOperation.h"
 #import "EncryptionController.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @interface MessageDecryptionOperation()
 @property (nonatomic) BOOL isExecuting;

@@ -21,6 +21,7 @@
 #import "SoundController.h"
 #import "CredentialCachingController.h"
 #import "FileController.h"
+#import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
@@ -127,6 +128,13 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     //clean up old file locations
     [FileController deleteOldSecrets];
+    
+    //clear local cache
+    BOOL cacheCleared = [[NSUserDefaults standardUserDefaults] boolForKey:@"cacheCleared12"];
+    if (!cacheCleared) {
+        [UIUtils clearLocalCache];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"cacheCleared12"];
+    }
     
     
     //if we were launched from a notification use that logic to set the view controller

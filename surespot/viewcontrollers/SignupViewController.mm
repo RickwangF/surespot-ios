@@ -21,6 +21,7 @@
 #import "LoginViewController.h"
 #import "BackupIdentityViewController.h"
 #import "AboutViewController.h"
+#import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_VERBOSE;
@@ -33,8 +34,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 @property (atomic, strong) id progressView;
 @property (nonatomic, strong) NSString * lastCheckedUsername;
 @property (nonatomic, assign) CGFloat delta;
-@property (nonatomic, assign) CGPoint offset;
-@property (nonatomic, assign) NSInteger keyboardHeight;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UILabel *helpLabel;
 @property (strong, readwrite, nonatomic) REMenu *menu;
@@ -83,7 +82,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     _tbPasswordConfirm.returnKeyType = UIReturnKeyGo;
     [_tbPasswordConfirm setPlaceholder:NSLocalizedString(@"confirm_password", nil)];
     
-    [self registerForKeyboardNotifications];
+    _delta = 0.0f;
     
     if ([[[IdentityController sharedInstance] getIdentityNames] count] == 0) {
         self.navigationItem.hidesBackButton = YES;
@@ -96,8 +95,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [_bCreateIdentity setTitle:NSLocalizedString(@"create_identity", nil) forState:UIControlStateNormal];
     
     
-    
-    [_scrollView setContentSize: CGSizeMake(self.view.frame.size.width, _bCreateIdentity.frame.origin.y + _bCreateIdentity.frame.size.height + 10)];
+    [_scrollView setContentSize: CGSizeMake(self.view.frame.size.width, _bCreateIdentity.frame.origin.y + _bCreateIdentity.frame.size.height)];
 }
 
 - (void)viewDidUnload {
@@ -117,6 +115,11 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         return;
     }
     
+    
+    [_tbUsername resignFirstResponder];
+    [_tbPassword resignFirstResponder];
+    [_tbPasswordConfirm resignFirstResponder];
+    
     if (![confirmPassword isEqualToString:password]) {
         [UIUtils showToastKey:@"passwords_do_not_match" duration:1.5];
         _tbPassword.text = @"";
@@ -125,9 +128,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         return;
     }
     
-    [_tbUsername resignFirstResponder];
-    [_tbPassword resignFirstResponder];
-    [_tbPasswordConfirm resignFirstResponder];
     _progressView = [LoadingView showViewKey:@"create_user_progress"];
     
     dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
@@ -330,116 +330,146 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 }
 
 
+-(void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self registerForKeyboardNotifications];
+}
 
-
-// Call this method somewhere in your view controller setup code.
-- (void)registerForKeyboardNotifications
-{
-    if ([UIUtils isIOS8Plus]) {
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameDidChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
-        
-    }
-    else {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWasShown:)
-                                                     name:UIKeyboardDidShowNotification object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeHidden:)
-                                                     name:UIKeyboardWillHideNotification object:nil];
-        
-    }
-
-    
+-(void) viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [self unregisterKeyboardNotifications];
 }
 
 
-- (void)keyboardFrameDidChange:(NSNotification *)notification
+- (void)registerForKeyboardNotifications
 {
-    DDLogInfo(@"keyboardFrameDidChange");
-    CGRect keyboardEndFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGRect keyboardBeginFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    //  UIViewAnimationCurve animationCurve = [[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    //  NSTimeInterval animationDuration = [[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] integerValue];
+    //use old positioning pre ios 8
     
-    //  [UIView beginAnimations:nil context:nil];
-    //  [UIView setAnimationDuration:animationDuration];
-    //  [UIView setAnimationCurve:animationCurve];
-    
-    
-    
-    
-    //    CGRect newFrame = _textFieldContainer.frame;
-    CGRect keyboardFrameEnd = [self.view convertRect:keyboardEndFrame toView:nil];
-    
-    
-    CGRect keyboardFrameBegin = [self.view convertRect:keyboardBeginFrame toView:nil];
-    DDLogInfo(@"keyboard frame begin origin y: %f, height: %f", keyboardFrameBegin.origin.y, keyboardFrameBegin.size.height);
-    DDLogInfo(@"keyboard frame end origin y: %f, height: %f", keyboardFrameEnd.origin.y, keyboardFrameEnd.size.height);
-    int kbHeight = keyboardFrameBegin.origin.y-keyboardFrameEnd.origin.y;
-    // DDLogInfo(@"keyboard height: %d",height);
-    // DDLogInfo(@"origin y before: %f",newFrame.origin.y);
-    
-    // newFrame.origin.y -= height;// keyboardFrameEnd.origin.y - _textFieldContainer.frame.size.height - 10;
-    // DDLogInfo(@"origin y after: %f",newFrame.origin.y);
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbHeight, 0.0);
-    _scrollView.contentInset = contentInsets;
-    _scrollView.scrollIndicatorInsets = contentInsets;
-    
-    NSInteger totalHeight = self.view.frame.size.height;
-    NSInteger keyboardTop = totalHeight - kbHeight;
-    _offset = _scrollView.contentOffset;
-    
-    NSInteger loginButtonBottom =(_bCreateIdentity.frame.origin.y + _bCreateIdentity.frame.size.height);
-    NSInteger delta = keyboardTop - loginButtonBottom;
-    //  DDLogInfo(@"delta %d loginBottom %d keyboardtop: %d", delta, loginButtonBottom, keyboardTop);
-    
-    if (delta < 0 ) {
+    if ([UIUtils isIOS8Plus]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillBeShown8:)
+                                                     name:UIKeyboardWillShowNotification object:nil];
         
-        
-        CGPoint scrollPoint = CGPointMake(0.0, -delta);
-        //  DDLogInfo(@"scrollPoint y: %f", scrollPoint.y);
-        [_scrollView setContentOffset:scrollPoint animated:YES];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillBeHidden8:)
+                                                     name:UIKeyboardWillHideNotification object:nil];
     }
+    else {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillBeShown7:)
+                                                     name:UIKeyboardWillShowNotification object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillBeHidden7:)
+                                                     name:UIKeyboardWillHideNotification object:nil];
+        
+    }
+}
+
+-(void) unregisterKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 
 // Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWasShown:(NSNotification*)aNotification {
+- (void)keyboardWillBeShown8:(NSNotification*)aNotification {
     NSDictionary* info = [aNotification userInfo];
-    NSInteger  kbHeight = [UIUtils keyboardHeightAdjustedForOrientation: [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size];
+    [self keyboardWillBeShown:info isIos8Plus: YES];
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeShown7:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    [self keyboardWillBeShown:info isIos8Plus: NO];
     
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbHeight, 0.0);
-    _scrollView.contentInset = contentInsets;
-    _scrollView.scrollIndicatorInsets = contentInsets;
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeHidden8:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    [self keyboardWillBeHidden:info isIos8Plus: YES];
     
-    NSInteger totalHeight = self.view.frame.size.height;
-    NSInteger keyboardTop = totalHeight - kbHeight;
-    _offset = _scrollView.contentOffset;
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeHidden7:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    [self keyboardWillBeHidden:info isIos8Plus: NO];
     
-    NSInteger loginButtonBottom =(_bCreateIdentity.frame.origin.y + _bCreateIdentity.frame.size.height);
-    NSInteger delta = keyboardTop - loginButtonBottom;
-    //  DDLogInfo(@"delta %d loginBottom %d keyboardtop: %d", delta, loginButtonBottom, keyboardTop);
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeShown:(NSDictionary*)info isIos8Plus: (BOOL) isIos8Plus {
+    DDLogInfo(@"keyboard shown");
     
-    if (delta < 0 ) {
+    
+    NSTimeInterval animationDuration;
+    UIViewAnimationOptions curve;
+    [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
+    [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
+    CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGFloat keyboardHeight = isIos8Plus ? keyboardRect.size.height : [UIUtils keyboardHeightAdjustedForOrientation:keyboardRect.size];
+    CGFloat totalHeight = self.view.frame.size.height;
+    CGFloat keyboardTop = totalHeight - keyboardHeight;
+    
+    // run animation using keyboard's curve and duration
+    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
+        CGRect buttonFrame = _bCreateIdentity.frame;
+        CGFloat createButtonBottom = buttonFrame.origin.y + buttonFrame.size.height ;
+        CGFloat delta = keyboardTop - createButtonBottom;
+        CGFloat deltaDelta = _delta - delta;
+        _delta = delta;
         
+        DDLogInfo(@"delta %f loginBottom %f keyboardtop: %f", deltaDelta, createButtonBottom, keyboardTop);
         
-        CGPoint scrollPoint = CGPointMake(0.0, -delta);
-        //  DDLogInfo(@"scrollPoint y: %f", scrollPoint.y);
-        [_scrollView setContentOffset:scrollPoint animated:YES];
-    }
+        if (delta < 10 ) {
+            UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardHeight, 0.0);
+            _scrollView.contentInset = contentInsets;
+            _scrollView.scrollIndicatorInsets = contentInsets;
+            CGPoint scrollPoint = CGPointMake(0.0, _scrollView.contentOffset.y + deltaDelta);
+            
+            [_scrollView setContentOffset:scrollPoint animated:NO];
+        }
+        
+        [self.view layoutIfNeeded];
+        
+    } completion:^(BOOL completion) {
+        
+    }];
+    
 }
 
 // Called when the UIKeyboardWillHideNotification is sent
-- (void)keyboardWillBeHidden:(NSNotification*)aNotification {
-    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
-    _scrollView.contentInset = contentInsets;
-    _scrollView.scrollIndicatorInsets = contentInsets;
-    [_scrollView setContentOffset:_offset animated:YES];
+- (void)keyboardWillBeHidden:(NSDictionary *) info isIos8Plus: (BOOL) isIos8Plus
+{
+    DDLogInfo(@"keyboard hide");
+    NSTimeInterval animationDuration;
+    UIViewAnimationOptions curve;
+    [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
+    [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
+    // run animation using keyboard's curve and duration
+    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
+        UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+        _scrollView.contentInset = contentInsets;
+        _scrollView.scrollIndicatorInsets = contentInsets;
+    } completion:^(BOOL completion) {
+    }];
+    
+    _delta = 0.0f;
 }
 
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation
+                                duration:(NSTimeInterval)duration
+{
+    DDLogInfo(@"will rotate");
+    [_tbUsername resignFirstResponder];
+    [_tbPassword resignFirstResponder];
+    [_tbPasswordConfirm resignFirstResponder];
+    _delta = 0.0f;
+}
 
 -(void) showMenu {
     if (!_menu) {
@@ -471,10 +501,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     REMenuItem * aboutItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"about", nil) image:[UIImage imageNamed:@"surespot_logo48"] highlightedImage:nil action:^(REMenuItem * item){
         [self showAbout];
     }];
-
+    
     
     [menuItems addObject:aboutItem];
-
+    
     
     
     return [UIUtils createMenu: menuItems closeCompletionHandler:^{

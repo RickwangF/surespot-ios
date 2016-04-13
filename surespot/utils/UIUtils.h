@@ -48,5 +48,6 @@
 +(CGSize)imageSizeAfterAspectFit:(UIImageView*)imgview;
 + (NSString *) buildAliasStringForUsername: (NSString *) username alias: (NSString *) alias;
 + (BOOL) isIOS8Plus;
++ (NSString *)localizedStringForKey:(NSString *)key replaceValue:(NSString *)comment bundle: (NSBundle *) bundle table: (NSString *) table;
 @end
 

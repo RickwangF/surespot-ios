@@ -16,6 +16,7 @@
 
 #import "IASKSettingsReader.h"
 #import "IASKSpecifier.h"
+#import "UIUtils.h"
 
 #pragma mark -
 @interface IASKSettingsReader () {
@@ -180,7 +181,8 @@
 }
 
 - (NSString*)titleForStringId:(NSString*)stringId {
-    return [self.settingsBundle localizedStringForKey:stringId value:stringId table:self.localizationTable];
+    if (!stringId) return @"";    
+    return [UIUtils localizedStringForKey:stringId replaceValue:stringId bundle:self.settingsBundle table:self.localizationTable];
 }
 
 - (NSString*)pathForImageNamed:(NSString*)image {
@@ -211,7 +213,7 @@
     static NSString* const kIASKBundleFolderAlt = @"InAppSettings.bundle";
     
     static NSString* const kIASKBundleLocaleFolderExtension = @".lproj";
-
+    
     // The file is searched in the following order:
     //
     // InAppSettings.bundle/FILE~DEVICE.inApp.plist

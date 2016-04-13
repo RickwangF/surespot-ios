@@ -15,6 +15,7 @@
 #import "cryptlib.h"
 #import "filters.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "NSBundle+FallbackLanguage.h"
 
 using CryptoPP::BitBucket;
 static CryptoPP::AutoSeededRandomPool randomRng(true, 32);

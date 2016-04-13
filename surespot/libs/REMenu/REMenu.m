@@ -27,6 +27,7 @@
 #import "REMenuItem.h"
 #import "REMenuItemView.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 
 @interface REMenuItem ()

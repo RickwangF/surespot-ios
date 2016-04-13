@@ -9,6 +9,7 @@
 #import "RestoreIdentitiesViewController.h"
 #import "RestoreIdentityDriveViewController.h"
 #import "RestoreIdentityDocumentsViewController.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @interface RestoreIdentitiesViewController ()
 

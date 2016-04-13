@@ -21,6 +21,7 @@
 #import "UIUtils.h"
 #import "SurespotAppDelegate.h"
 #import "AGWindowView.h"
+#import "NSBundle+FallbackLanguage.h"
 
 @implementation LoadingView
 
