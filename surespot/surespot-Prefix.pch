@@ -12,3 +12,7 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
 #endif
+
+#ifdef DEBUG
+    #define _AFNETWORKING_ALLOW_INVALID_SSL_CERTIFICATES_
+#endif
