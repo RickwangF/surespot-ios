@@ -296,7 +296,6 @@ static const int MAX_RETRY_DELAY = 30;
         
         [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
         [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
-        [opts setObject:[NSNumber numberWithBool:serverSecure] forKey:@"secure"];
         
 #ifdef DEBUG
         [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
@@ -310,7 +309,7 @@ static const int MAX_RETRY_DELAY = 30;
         }
         
         DDLogDebug(@"initing new socket");
-        self.socket = [[SocketIOClient alloc] initWithSocketURLString:socketUrl  options: opts];
+        self.socket = [[SocketIOClient alloc] initWithSocketURLString:baseUrl options: opts];
         [self addHandlers];
         [self.socket connect];
     }

@@ -41,10 +41,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(NetworkController*)init
 {
-    NSString * baseUrl = serverSecure ?
-    [NSString stringWithFormat: @"https://%@:%d", serverBaseIPAddress, serverPort] :
-    [NSString stringWithFormat: @"http://%@:%d", serverBaseIPAddress, serverPort];
-    
     //call super init
     self = [super initWithBaseURL:[NSURL URLWithString: baseUrl]];
     
