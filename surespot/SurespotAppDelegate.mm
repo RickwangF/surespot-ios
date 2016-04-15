@@ -127,15 +127,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [[SKPaymentQueue defaultQueue] addTransactionObserver:[PurchaseDelegate sharedInstance]];
     
     //clean up old file locations
-    [FileController deleteOldSecrets];
-    
-    //clear local cache
-    BOOL cacheCleared = [[NSUserDefaults standardUserDefaults] boolForKey:@"cacheCleared12"];
-    if (!cacheCleared) {
-        [UIUtils clearLocalCache];
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"cacheCleared12"];
-    }
-    
+    [FileController deleteOldSecrets];    
     
     //if we were launched from a notification use that logic to set the view controller
     NSDictionary* userInfo = [launchOptions valueForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
