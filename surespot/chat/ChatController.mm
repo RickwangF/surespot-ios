@@ -298,18 +298,18 @@ static const int MAX_RETRY_DELAY = 30;
         [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
         
 #ifdef DEBUG
-        [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
+    //    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
 #endif
         
         if (self.socket) {
             DDLogDebug(@"removing all handlers");
             
             [self.socket removeAllHandlers];
-            [self.socket close];
+            [self.socket disconnect];
         }
         
         DDLogDebug(@"initing new socket");
-        self.socket = [[SocketIOClient alloc] initWithSocketURLString:baseUrl options: opts];
+        self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:baseUrl] config: opts];
         [self addHandlers];
         [self.socket connect];
     }
@@ -646,7 +646,7 @@ static const int MAX_RETRY_DELAY = 30;
     
     [self enqueueResendMessage:message];
     //array doesn't seem to work
-    [self.socket  emit: @"message" withItems: @[[message toNSDictionary]]];
+    [self.socket  emit: @"message" with: @[[message toNSDictionary]]];
     
 }
 

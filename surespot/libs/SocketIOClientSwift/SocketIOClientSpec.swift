@@ -1,5 +1,5 @@
 //
-//  SocketClientSpec.swift
+//  SocketIOClientSpec.swift
 //  Socket.IO-Client-Swift
 //
 //  Created by Erik Little on 1/3/16.
@@ -22,19 +22,19 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-protocol SocketClientSpec: class {
+protocol SocketIOClientSpec : class {
     var nsp: String { get set }
     var waitingPackets: [SocketPacket] { get set }
     
     func didConnect()
     func didDisconnect(reason: String)
     func didError(reason: String)
-    func handleAck(ack: Int, data: [AnyObject])
-    func handleEvent(event: String, data: [AnyObject], isInternalMessage: Bool, withAck ack: Int)
-    func joinNamespace(namespace: String)
+    func handleAck(_ ack: Int, data: [Any])
+    func handleEvent(_ event: String, data: [Any], isInternalMessage: Bool, withAck ack: Int)
+    func joinNamespace(_ namespace: String)
 }
 
-extension SocketClientSpec {
+extension SocketIOClientSpec {
     func didError(reason: String) {
         DefaultSocketLogger.Logger.error("%@", type: "SocketIOClient", args: reason)
         

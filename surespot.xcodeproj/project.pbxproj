@@ -8,9 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5A4EF5CE1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */; };
-		5A4EF5CF1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */; };
 		5A4EF5D11BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */; };
-		5A4EF5D21BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A4EF5D01BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib */; };
 		5AF842411B910B03009BC037 /* RemoveIdentityFromDeviceView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5AF842401B910B03009BC037 /* RemoveIdentityFromDeviceView.xib */; };
 		5AF842511B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5AF842501B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm */; };
 		6604A2C117626B9E0072216A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A2C017626B9E0072216A /* Foundation.framework */; };
@@ -18,12 +16,9 @@
 		6604A2CB17626B9E0072216A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2CA17626B9E0072216A /* main.m */; };
 		6604A2CF17626B9E0072216A /* SurespotAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2CE17626B9E0072216A /* SurespotAppDelegate.mm */; };
 		6604A2D817626B9E0072216A /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6604A2D617626B9E0072216A /* MainStoryboard.storyboard */; };
-		6604A2E717626B9E0072216A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A2BE17626B9E0072216A /* UIKit.framework */; };
-		6604A2E817626B9E0072216A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A2C017626B9E0072216A /* Foundation.framework */; };
 		660F0A9618D7888300FD8C4D /* RestoreIdentityDriveView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 660F0A9518D7888300FD8C4D /* RestoreIdentityDriveView.xib */; };
 		660F0A9818D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 660F0A9718D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm */; };
 		660F0A9B18D789E900FD8C4D /* RestoreIdentitiesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F0A9A18D789E900FD8C4D /* RestoreIdentitiesViewController.m */; };
-		660FD54D1CAB5411001913B4 /* SocketClientSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FD5461CAB5411001913B4 /* SocketClientSpec.swift */; };
 		660FD54E1CAB5411001913B4 /* SocketEnginePacketType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FD5471CAB5411001913B4 /* SocketEnginePacketType.swift */; };
 		660FD54F1CAB5411001913B4 /* SocketEnginePollable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FD5481CAB5411001913B4 /* SocketEnginePollable.swift */; };
 		660FD5501CAB5411001913B4 /* SocketEngineSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660FD5491CAB5411001913B4 /* SocketEngineSpec.swift */; };
@@ -42,7 +37,6 @@
 		6611BE8E1BC843400035C86B /* SocketPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE7E1BC843400035C86B /* SocketPacket.swift */; };
 		6611BE901BC843400035C86B /* SocketStringReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE801BC843400035C86B /* SocketStringReader.swift */; };
 		6611BE911BC843400035C86B /* SocketTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE811BC843400035C86B /* SocketTypes.swift */; };
-		6611BE921BC843400035C86B /* SwiftRegex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE821BC843400035C86B /* SwiftRegex.swift */; };
 		6611BE931BC843400035C86B /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE831BC843400035C86B /* WebSocket.swift */; };
 		6611BE991BC84F530035C86B /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE981BC84F530035C86B /* NSData+SRB64Additions.m */; };
 		6611BE9D1BC852C40035C86B /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE9B1BC852C40035C86B /* base64.c */; };
@@ -115,6 +109,11 @@
 		6674FF75186CB94500B8E77B /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF74186CB94500B8E77B /* Accounts.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		6674FF79186CB96A00B8E77B /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF78186CB96A00B8E77B /* libsqlite3.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
 		66755100184C55E900C55AAC /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66E70AB21847F8E100433D6F /* MobileCoreServices.framework */; };
+		6676EC671D9493F9001076DE /* SocketClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6676EC621D9493F9001076DE /* SocketClientManager.swift */; };
+		6676EC681D9493F9001076DE /* SocketExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6676EC631D9493F9001076DE /* SocketExtensions.swift */; };
+		6676EC691D9493F9001076DE /* SocketIOClientConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6676EC641D9493F9001076DE /* SocketIOClientConfiguration.swift */; };
+		6676EC6A1D9493F9001076DE /* SocketIOClientSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6676EC651D9493F9001076DE /* SocketIOClientSpec.swift */; };
+		6676EC6B1D9493F9001076DE /* SSLSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6676EC661D9493F9001076DE /* SSLSecurity.swift */; };
 		667EFF9518425A87002C0406 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 667EFF9418425A87002C0406 /* Reachability.m */; };
 		667EFF9718425D82002C0406 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 667EFF9618425D82002C0406 /* SystemConfiguration.framework */; };
 		667F80051A3FAE8000181B42 /* GTLDrive_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 667F80031A3FAE8000181B42 /* GTLDrive_Sources.m */; };
@@ -244,13 +243,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6604A2E917626B9E0072216A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6604A2B317626B9E0072216A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6604A2BA17626B9E0072216A;
-			remoteInfo = surespot;
-		};
 		6695DDD01B6D68D50059BD6C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6695DDC91B6D68D50059BD6C /* GTL.xcodeproj */;
@@ -297,17 +289,11 @@
 		6604A2CC17626B9E0072216A /* surespot-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "surespot-Prefix.pch"; sourceTree = "<group>"; };
 		6604A2CD17626B9E0072216A /* SurespotAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SurespotAppDelegate.h; sourceTree = "<group>"; };
 		6604A2CE17626B9E0072216A /* SurespotAppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = SurespotAppDelegate.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		6604A2E417626B9E0072216A /* surespotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = surespotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6604A2ED17626B9E0072216A /* surespotTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "surespotTests-Info.plist"; sourceTree = "<group>"; };
-		6604A2EF17626B9E0072216A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		6604A2F117626B9E0072216A /* surespotTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = surespotTests.h; sourceTree = "<group>"; };
-		6604A2F217626B9E0072216A /* surespotTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = surespotTests.m; sourceTree = "<group>"; };
 		660F0A9518D7888300FD8C4D /* RestoreIdentityDriveView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RestoreIdentityDriveView.xib; path = surespot/identity/RestoreIdentityDriveView.xib; sourceTree = SOURCE_ROOT; };
 		660F0A9718D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RestoreIdentityDocumentsViewController.mm; sourceTree = "<group>"; };
 		660F0A9918D789E900FD8C4D /* RestoreIdentitiesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestoreIdentitiesViewController.h; sourceTree = "<group>"; };
 		660F0A9A18D789E900FD8C4D /* RestoreIdentitiesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestoreIdentitiesViewController.m; sourceTree = "<group>"; };
 		660F0A9C18D78A3800FD8C4D /* RestoreIdentityDocumentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestoreIdentityDocumentsViewController.h; sourceTree = "<group>"; };
-		660FD5461CAB5411001913B4 /* SocketClientSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketClientSpec.swift; sourceTree = "<group>"; };
 		660FD5471CAB5411001913B4 /* SocketEnginePacketType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEnginePacketType.swift; sourceTree = "<group>"; };
 		660FD5481CAB5411001913B4 /* SocketEnginePollable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEnginePollable.swift; sourceTree = "<group>"; };
 		660FD5491CAB5411001913B4 /* SocketEngineSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEngineSpec.swift; sourceTree = "<group>"; };
@@ -326,7 +312,6 @@
 		6611BE7E1BC843400035C86B /* SocketPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketPacket.swift; sourceTree = "<group>"; };
 		6611BE801BC843400035C86B /* SocketStringReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketStringReader.swift; sourceTree = "<group>"; };
 		6611BE811BC843400035C86B /* SocketTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketTypes.swift; sourceTree = "<group>"; };
-		6611BE821BC843400035C86B /* SwiftRegex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftRegex.swift; sourceTree = "<group>"; };
 		6611BE831BC843400035C86B /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		6611BE971BC84F530035C86B /* NSData+SRB64Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SRB64Additions.h"; sourceTree = "<group>"; };
 		6611BE981BC84F530035C86B /* NSData+SRB64Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SRB64Additions.m"; sourceTree = "<group>"; };
@@ -448,6 +433,11 @@
 		6674FF74186CB94500B8E77B /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		6674FF76186CB95700B8E77B /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		6674FF78186CB96A00B8E77B /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		6676EC621D9493F9001076DE /* SocketClientManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketClientManager.swift; sourceTree = "<group>"; };
+		6676EC631D9493F9001076DE /* SocketExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketExtensions.swift; sourceTree = "<group>"; };
+		6676EC641D9493F9001076DE /* SocketIOClientConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketIOClientConfiguration.swift; sourceTree = "<group>"; };
+		6676EC651D9493F9001076DE /* SocketIOClientSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketIOClientSpec.swift; sourceTree = "<group>"; };
+		6676EC661D9493F9001076DE /* SSLSecurity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSLSecurity.swift; sourceTree = "<group>"; };
 		667EFF9318425A87002C0406 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		667EFF9418425A87002C0406 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		667EFF9618425D82002C0406 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -856,15 +846,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6604A2E017626B9E0072216A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6604A2E717626B9E0072216A /* UIKit.framework in Frameworks */,
-				6604A2E817626B9E0072216A /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -873,7 +854,6 @@
 			children = (
 				661C2ED21763CB56000649E7 /* libz.dylib */,
 				6604A2C417626B9E0072216A /* surespot */,
-				6604A2EB17626B9E0072216A /* surespotTests */,
 				6604A2BD17626B9E0072216A /* Frameworks */,
 				6604A2BC17626B9E0072216A /* Products */,
 			);
@@ -883,7 +863,6 @@
 			isa = PBXGroup;
 			children = (
 				6604A2BB17626B9E0072216A /* surespot.app */,
-				6604A2E417626B9E0072216A /* surespotTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -970,29 +949,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		6604A2EB17626B9E0072216A /* surespotTests */ = {
-			isa = PBXGroup;
-			children = (
-				6604A2F117626B9E0072216A /* surespotTests.h */,
-				6604A2F217626B9E0072216A /* surespotTests.m */,
-				6604A2EC17626B9E0072216A /* Supporting Files */,
-			);
-			path = surespotTests;
-			sourceTree = "<group>";
-		};
-		6604A2EC17626B9E0072216A /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				6604A2ED17626B9E0072216A /* surespotTests-Info.plist */,
-				6604A2EE17626B9E0072216A /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		6611BE731BC843400035C86B /* SocketIOClientSwift */ = {
 			isa = PBXGroup;
 			children = (
-				660FD5461CAB5411001913B4 /* SocketClientSpec.swift */,
+				6676EC621D9493F9001076DE /* SocketClientManager.swift */,
+				6676EC631D9493F9001076DE /* SocketExtensions.swift */,
+				6676EC641D9493F9001076DE /* SocketIOClientConfiguration.swift */,
+				6676EC651D9493F9001076DE /* SocketIOClientSpec.swift */,
+				6676EC661D9493F9001076DE /* SSLSecurity.swift */,
 				660FD5471CAB5411001913B4 /* SocketEnginePacketType.swift */,
 				660FD5481CAB5411001913B4 /* SocketEnginePollable.swift */,
 				660FD5491CAB5411001913B4 /* SocketEngineSpec.swift */,
@@ -1011,7 +975,6 @@
 				6611BE7E1BC843400035C86B /* SocketPacket.swift */,
 				6611BE801BC843400035C86B /* SocketStringReader.swift */,
 				6611BE811BC843400035C86B /* SocketTypes.swift */,
-				6611BE821BC843400035C86B /* SwiftRegex.swift */,
 				6611BE831BC843400035C86B /* WebSocket.swift */,
 			);
 			path = SocketIOClientSwift;
@@ -1822,25 +1785,6 @@
 			productReference = 6604A2BB17626B9E0072216A /* surespot.app */;
 			productType = "com.apple.product-type.application";
 		};
-		6604A2E317626B9E0072216A /* surespotTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6604A2F917626B9E0072216A /* Build configuration list for PBXNativeTarget "surespotTests" */;
-			buildPhases = (
-				6604A2DF17626B9E0072216A /* Sources */,
-				6604A2E017626B9E0072216A /* Frameworks */,
-				6604A2E117626B9E0072216A /* Resources */,
-				6604A2E217626B9E0072216A /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6604A2EA17626B9E0072216A /* PBXTargetDependency */,
-			);
-			name = surespotTests;
-			productName = surespotTests;
-			productReference = 6604A2E417626B9E0072216A /* surespotTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1854,6 +1798,7 @@
 				TargetAttributes = {
 					6604A2BA17626B9E0072216A = {
 						DevelopmentTeam = 2QFPK9DJY9;
+						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.DataProtection = {
 								enabled = 0;
@@ -1892,7 +1837,6 @@
 			projectRoot = "";
 			targets = (
 				6604A2BA17626B9E0072216A /* surespot */,
-				6604A2E317626B9E0072216A /* surespotTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1944,10 +1888,8 @@
 				666D3368187F69AD00B73F69 /* message.caf in Resources */,
 				666D338118847B5000B73F69 /* surespot-invite.caf in Resources */,
 				66DAB62A186D0461006C262F /* SurespotSHKSharers.plist in Resources */,
-				6652F2A41875CFF300E023A7 /* PurchaseVoiceView~iphone.xib in Resources */,
 				6646AE26185CADC700CBACDE /* MWPhotoBrowser.bundle in Resources */,
 				66EBE13E1855C97100F2452D /* HomeCell.xib in Resources */,
-				6652F2A51875CFF300E023A7 /* PurchaseVoiceView~ipad.xib in Resources */,
 				6604A2D817626B9E0072216A /* MainStoryboard.storyboard in Resources */,
 				66D3B04F182EAB4200B37A6C /* surespot.xcassets in Resources */,
 				660F0A9618D7888300FD8C4D /* RestoreIdentityDriveView.xib in Resources */,
@@ -1970,31 +1912,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6604A2E117626B9E0072216A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5A4EF5D21BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		6604A2E217626B9E0072216A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6604A2B717626B9E0072216A /* Sources */ = {
@@ -2007,6 +1925,7 @@
 				660FD5501CAB5411001913B4 /* SocketEngineSpec.swift in Sources */,
 				661F3B941868ECFE003C7AE3 /* KeyFingerprintLoadingCell.m in Sources */,
 				660F0A9818D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm in Sources */,
+				6676EC6B1D9493F9001076DE /* SSLSecurity.swift in Sources */,
 				66866263185B6A2E001491B1 /* NSData+GIF.m in Sources */,
 				5A4EF5CE1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */,
 				66EBE0BA1855C97100F2452D /* SurespotIdentity.mm in Sources */,
@@ -2037,7 +1956,6 @@
 				6659532518882DF500BA2CC7 /* MWPhoto.m in Sources */,
 				6611BE901BC843400035C86B /* SocketStringReader.swift in Sources */,
 				6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */,
-				662CA5A818734E4E00684790 /* PurchaseVoiceViewController.m in Sources */,
 				66EBE0BC1855C97100F2452D /* ChatDataSource.mm in Sources */,
 				6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */,
 				66FF1001182D3D920038ECA6 /* DDLog.m in Sources */,
@@ -2046,6 +1964,7 @@
 				660F0A9B18D789E900FD8C4D /* RestoreIdentitiesViewController.m in Sources */,
 				66E21DF11847D7F90005D91E /* IASKSettingsStoreFile.m in Sources */,
 				666D337D188476B100B73F69 /* EAGLView.m in Sources */,
+				6676EC691D9493F9001076DE /* SocketIOClientConfiguration.swift in Sources */,
 				66EBE1381855C97100F2452D /* NSString+Sensitivize.m in Sources */,
 				66EBE1361855C97100F2452D /* FileController.mm in Sources */,
 				665F4DF61831923C0083BCE7 /* REMenu.m in Sources */,
@@ -2066,6 +1985,7 @@
 				6611BE871BC843400035C86B /* SocketEngine.swift in Sources */,
 				6611BE8D1BC843400035C86B /* SocketLogger.swift in Sources */,
 				66A2D940183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
+				6676EC6A1D9493F9001076DE /* SocketIOClientSpec.swift in Sources */,
 				66EBE0B51855C97100F2452D /* GetSharedSecretOperation.mm in Sources */,
 				66DEA49318DA6E5A00AAF24C /* UsernameAliasMap.m in Sources */,
 				66EBE0BE1855C97100F2452D /* FilledRectView.m in Sources */,
@@ -2077,7 +1997,6 @@
 				66EBE0C51855C97100F2452D /* SurespotErrorMessage.m in Sources */,
 				661F4695186375F0004A71B0 /* MessageView+WebImageCache.m in Sources */,
 				66A2D919183A7A7F00785270 /* SurespotConstants.m in Sources */,
-				660FD54D1CAB5411001913B4 /* SocketClientSpec.swift in Sources */,
 				66FB799818905360009CA47B /* HPTextViewInternal.m in Sources */,
 				66E21DF21847D7F90005D91E /* IASKSettingsStoreUserDefaults.m in Sources */,
 				6611BE991BC84F530035C86B /* NSData+SRB64Additions.m in Sources */,
@@ -2098,6 +2017,7 @@
 				6659531C1885B95900BA2CC7 /* BackupHelpViewController.m in Sources */,
 				668D24F5186A24D90096D155 /* QR_Encode.cpp in Sources */,
 				66FF0FE218242B6B0038ECA6 /* Toast+UIView.m in Sources */,
+				6676EC671D9493F9001076DE /* SocketClientManager.swift in Sources */,
 				66EBE0B71855C97100F2452D /* KeychainItemWrapper.m in Sources */,
 				66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */,
 				6646AE0E185CADC700CBACDE /* MWCaptionView.m in Sources */,
@@ -2134,6 +2054,7 @@
 				66E21DF81847D7F90005D91E /* IASKSwitch.m in Sources */,
 				6646AE14185CADC700CBACDE /* DACircularProgressView.m in Sources */,
 				66EC6111176E494900937467 /* AFURLConnectionOperation.m in Sources */,
+				6676EC681D9493F9001076DE /* SocketExtensions.swift in Sources */,
 				66EC6112176E494900937467 /* AFXMLRequestOperation.m in Sources */,
 				66EBE0CD1855C97100F2452D /* UIViewPager.m in Sources */,
 				66E21DF71847D7F90005D91E /* IASKSlider.m in Sources */,
@@ -2166,29 +2087,12 @@
 				66EBE0C61855C97100F2452D /* SurespotMessage.m in Sources */,
 				665953221886021300BA2CC7 /* UIAlertView+Blocks.m in Sources */,
 				66EBE0B31855C97100F2452D /* GetKeyVersionOperation.mm in Sources */,
-				6611BE921BC843400035C86B /* SwiftRegex.swift in Sources */,
 				6611BE8E1BC843400035C86B /* SocketPacket.swift in Sources */,
 				6646AE12185CADC700CBACDE /* MWTapDetectingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6604A2DF17626B9E0072216A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5A4EF5CF1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		6604A2EA17626B9E0072216A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6604A2BA17626B9E0072216A /* surespot */;
-			targetProxy = 6604A2E917626B9E0072216A /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		6604A2D617626B9E0072216A /* MainStoryboard.storyboard */ = {
@@ -2197,14 +2101,6 @@
 				6621BB7D17626EE800BC2850 /* Base */,
 			);
 			name = MainStoryboard.storyboard;
-			sourceTree = "<group>";
-		};
-		6604A2EE17626B9E0072216A /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6604A2EF17626B9E0072216A /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 		6621BB861762704D00BC2850 /* Localizable.strings */ = {
@@ -2257,7 +2153,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "c9763b74-76b3-4b62-9238-e886e052a384";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "c9763b74-76b3-4b62-9238-e886e052a384";
@@ -2287,7 +2183,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PROVISIONING_PROFILE = "800826bc-64c7-49d5-8900-281390fc7ca4";
@@ -2316,7 +2212,7 @@
 				GCC_PREFIX_HEADER = "surespot/surespot-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "surespot/surespot-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2333,6 +2229,7 @@
 				PROVISIONING_PROFILE = "c9763b74-76b3-4b62-9238-e886e052a384";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "c9763b74-76b3-4b62-9238-e886e052a384";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/surespot/libs/google-api-objectivec-client-read-only/Source/** /Users/adam/dev/surespot/libs/ios/github/src/QR-Code-Encoder-for-Objective-C/QRCodeEncoderObjectiveCAtGithub";
 				VALID_ARCHS = "armv7 arm64";
@@ -2348,6 +2245,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 2QFPK9DJY9;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -2356,7 +2254,7 @@
 				GCC_PREFIX_HEADER = "surespot/surespot-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "surespot/surespot-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2370,51 +2268,15 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.twofours.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "800826bc-64c7-49d5-8900-281390fc7ca4";
+				PROVISIONING_PROFILE = "fd37fc73-7d30-4dec-afed-662e4d0eced1";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "800826bc-64c7-49d5-8900-281390fc7ca4";
+				PROVISIONING_PROFILE_SPECIFIER = dev;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/surespot/libs/google-api-objectivec-client-read-only/** $(SRCROOT)/surespot/libs/QR-Code-Encoder-for-Objective-C/QRCodeEncoderObjectiveCAtGithub";
 				VALID_ARCHS = "armv7 arm64";
 				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		6604A2FA17626B9E0072216A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/surespot.app/surespot";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "surespot/surespot-Prefix.pch";
-				INFOPLIST_FILE = "surespotTests/surespotTests-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "twofours.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-			};
-			name = Debug;
-		};
-		6604A2FB17626B9E0072216A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/surespot.app/surespot";
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "surespot/surespot-Prefix.pch";
-				INFOPLIST_FILE = "surespotTests/surespotTests-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "twofours.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Release;
 		};
@@ -2435,15 +2297,6 @@
 			buildConfigurations = (
 				6604A2F717626B9E0072216A /* Debug */,
 				6604A2F817626B9E0072216A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		6604A2F917626B9E0072216A /* Build configuration list for PBXNativeTarget "surespotTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6604A2FA17626B9E0072216A /* Debug */,
-				6604A2FB17626B9E0072216A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
