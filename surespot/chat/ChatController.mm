@@ -298,7 +298,7 @@ static const int MAX_RETRY_DELAY = 30;
         [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
         
 #ifdef DEBUG
-    //    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
+        //    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
 #endif
         
         if (self.socket) {
@@ -771,7 +771,7 @@ static const int MAX_RETRY_DELAY = 30;
     [self removeDuplicates:resendBuffer];
     //   NSMutableArray * jsonMessageList = [NSMutableArray new];
     [resendBuffer enumerateObjectsUsingBlock:^(SurespotMessage * message, NSUInteger idx, BOOL *stop) {
-    
+        
         if ([message readyToSend]) {
             //see if we have plain text, re-encrypt and send
             NSString * otherUser = [message getOtherUser];
@@ -1220,20 +1220,11 @@ static const int MAX_RETRY_DELAY = 30;
     
     if (theFriend) {
         if (message.moreData) {
-            NSDictionary * json = nil;
-            //this smells: something with socket.io client doesn't deserialize the nested moreData json, so check if it's an NSString and parse
-            if ([message.moreData isKindOfClass:[NSString class]]) {
-                json =  [NSJSONSerialization JSONObjectWithData:[message.moreData dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
-            }
-            else {
-                json = message.moreData;
-            }
-            
-            [self setFriendImageUrl:[json objectForKey:@"url"]
+            [self setFriendImageUrl:[message.moreData objectForKey:@"url"]
                       forFriendname: message.data
-                            version:[json objectForKey:@"version"]
-                                 iv:[json objectForKey:@"iv"]
-                             hashed:[[json objectForKey:@"imageHashed"] boolValue]];
+                            version:[message.moreData objectForKey:@"version"]
+                                 iv:[message.moreData objectForKey:@"iv"]
+                             hashed:[[message.moreData objectForKey:@"imageHashed"] boolValue]];
         }
         else {
             [_homeDataSource removeFriendImage:message.data];
@@ -1518,20 +1509,11 @@ static const int MAX_RETRY_DELAY = 30;
     Friend * theFriend = [_homeDataSource getFriendByName:message.data];
     if (theFriend) {
         if (message.moreData) {
-            NSDictionary * json = nil;
-            //this smells: something with socket.io client doesn't deserialize the nested moreData json, so check if it's an NSString and parse
-            if ([message.moreData isKindOfClass:[NSString class]]) {
-                json =  [NSJSONSerialization JSONObjectWithData:[message.moreData dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
-            }
-            else {
-                json = message.moreData;
-            }
-            
-            [self setFriendAlias:nil data:[json objectForKey:@"data"]
+            [self setFriendAlias:nil data:[message.moreData objectForKey:@"data"]
                       friendname:message.data
-                         version:[json objectForKey:@"version"]
-                              iv:[json objectForKey:@"iv"]
-                          hashed:[[json objectForKey:@"aliasHashed"] boolValue]];
+                         version:[message.moreData objectForKey:@"version"]
+                              iv:[message.moreData objectForKey:@"iv"]
+                          hashed:[[message.moreData objectForKey:@"aliasHashed"] boolValue]];
         }
         else {
             [_homeDataSource removeFriendAlias: message.data];
