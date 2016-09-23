@@ -1518,11 +1518,20 @@ static const int MAX_RETRY_DELAY = 30;
     Friend * theFriend = [_homeDataSource getFriendByName:message.data];
     if (theFriend) {
         if (message.moreData) {
-            [self setFriendAlias:nil data:[message.moreData objectForKey:@"data"]
+            NSDictionary * json = nil;
+            //this smells: something with socket.io client doesn't deserialize the nested moreData json, so check if it's an NSString and parse
+            if ([message.moreData isKindOfClass:[NSString class]]) {
+                json =  [NSJSONSerialization JSONObjectWithData:[message.moreData dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
+            }
+            else {
+                json = message.moreData;
+            }
+            
+            [self setFriendAlias:nil data:[json objectForKey:@"data"]
                       friendname:message.data
-                         version:[message.moreData objectForKey:@"version"]
-                              iv:[message.moreData objectForKey:@"iv"]
-                          hashed:[[message.moreData objectForKey:@"aliasHashed"] boolValue]];
+                         version:[json objectForKey:@"version"]
+                              iv:[json objectForKey:@"iv"]
+                          hashed:[[json objectForKey:@"aliasHashed"] boolValue]];
         }
         else {
             [_homeDataSource removeFriendAlias: message.data];
