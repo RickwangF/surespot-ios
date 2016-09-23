@@ -436,27 +436,18 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
               failureBlock: (JSONFailureBlock) failureBlock
 {
     DDLogInfo(@"postFileStream, fileid: %@", fileid);
-    NSString * path = [[NSString stringWithFormat:@"images2/%@/%@/%@", ourVersion, theirUsername, theirVersion] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString * encodedId = [self encodeBase64:fileid];
+    DDLogInfo(@"postFileStream, encodedId: %@", encodedId);
+    NSString * path = [NSString stringWithFormat:@"files/%@/%@/%@/%@/%@", ourVersion, [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], theirVersion, encodedId, ([mimeType isEqual:MIME_TYPE_M4A] ? @"mp4" : @"image")];
+    DDLogInfo(@"postFileStream, path: %@", path);
     NSMutableURLRequest *request
-    = [self multipartFormRequestWithMethod:@"POST"
-                                      path: path
-                                parameters:nil
-                 constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
-                     
-                     [formData appendPartWithFileData:data
-                                                 name:@"image"
-                                             fileName:fileid mimeType:mimeType];
-                     
-                 }];
-    
-    
-    // if you want progress updates as it's uploading, uncomment the following:
-    //
-    // [operation setUploadProgressBlock:^(NSUInteger bytesWritten,
-    // long long totalBytesWritten,
-    // long long totalBytesExpectedToWrite) {
-    //     NSLog(@"Sent %lld of %lld bytes", totalBytesWritten, totalBytesExpectedToWrite);
-    // }];
+    = [self requestWithMethod:@"POST"
+                         path: path
+                   parameters:nil];
+    [request setHTTPBody:data];
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:[NSString stringWithFormat:@"%i",data.length] forHTTPHeaderField:@"Content-Length"];
     
     AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
     [operation start];
@@ -761,7 +752,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 -(void) updateSigs: (NSDictionary *) sigs {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:sigs options:0 error:nil];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-
+    
     
     NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:jsonString, @"sigs", nil];
     NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"sigs" parameters: params];
@@ -771,11 +762,15 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(void) sendMessages:(NSArray *)messages successBlock:(JSONSuccessBlock)successBlock failureBlock:(JSONFailureBlock)failureBlock {
     NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:messages, @"messages", nil];
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"messages" parameters: params];   
+    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"messages" parameters: params];
     AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
-   // [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+    // [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
     [operation start];
-
+    
 }
 
+-(NSString *) encodeBase64: (NSString *) base64 {
+    NSString * encodedString = [base64 stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+    return encodedString;
+}
 @end
