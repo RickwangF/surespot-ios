@@ -1220,11 +1220,20 @@ static const int MAX_RETRY_DELAY = 30;
     
     if (theFriend) {
         if (message.moreData) {
-            [self setFriendImageUrl:[message.moreData objectForKey:@"url"]
+            NSDictionary * json = nil;
+            //this smells: something with socket.io client doesn't deserialize the nested moreData json, so check if it's an NSString and parse
+            if ([message.moreData isKindOfClass:[NSString class]]) {
+                json =  [NSJSONSerialization JSONObjectWithData:[message.moreData dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
+            }
+            else {
+                json = message.moreData;
+            }
+            
+            [self setFriendImageUrl:[json objectForKey:@"url"]
                       forFriendname: message.data
-                            version:[message.moreData objectForKey:@"version"]
-                                 iv:[message.moreData objectForKey:@"iv"]
-                             hashed:[[message.moreData objectForKey:@"imageHashed"] boolValue]];
+                            version:[json objectForKey:@"version"]
+                                 iv:[json objectForKey:@"iv"]
+                             hashed:[[json objectForKey:@"imageHashed"] boolValue]];
         }
         else {
             [_homeDataSource removeFriendImage:message.data];

@@ -447,7 +447,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                    parameters:nil];
     [request setHTTPBody:data];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%i",data.length] forHTTPHeaderField:@"Content-Length"];
+    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
     
     AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
     [operation start];
@@ -461,30 +461,19 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 successBlock:(HTTPSuccessBlock) successBlock
                 failureBlock: (HTTPFailureBlock) failureBlock
 {
-    DDLogInfo(@"postFriendFileStream, iv: %@", iv);
-    NSString * path = [[NSString stringWithFormat:@"images2/%@/%@", theirUsername, ourVersion] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSMutableURLRequest *request
-    = [self multipartFormRequestWithMethod:@"POST"
-                                      path: path
-                                parameters:nil
-                 constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
-                     
-                     [formData appendPartWithFileData:data
-                                                 name:@"image"
-                                             fileName:iv mimeType:MIME_TYPE_IMAGE];
-                     
-                 }];
+    NSString * encodedIv = [self encodeBase64:iv];
+    
+    DDLogInfo(@"postFriendFileStream, encoded iv: %@", encodedIv);
+    
+    NSString * path = [NSString stringWithFormat:@"files/%@/%@/%@", [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], ourVersion, encodedIv];
+    NSMutableURLRequest *request = [self requestWithMethod:@"POST"
+                                                      path: path
+                                                parameters:nil];
+    [request setHTTPBody:data];
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
-    // if you want progress updates as it's uploading, uncomment the following:
-    //
-    // [operation setUploadProgressBlock:^(NSUInteger bytesWritten,
-    // long long totalBytesWritten,
-    // long long totalBytesExpectedToWrite) {
-    //     NSLog(@"Sent %lld of %lld bytes", totalBytesWritten, totalBytesExpectedToWrite);
-    // }];
-    
     [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
     [operation start];
 }
