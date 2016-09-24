@@ -484,9 +484,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                successBlock:(HTTPSuccessBlock)successBlock
                failureBlock: (HTTPFailureBlock) failureBlock {
     
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:(shareable ? @"true" : @"false"),@"shareable", nil];
-    NSString * path = [[NSString stringWithFormat:@"messages/%@/%d/shareable", name, serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"PUT" path:path  parameters:params];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:(shareable ? @YES : @NO),@"shareable", nil];
+    NSString * path = [[NSString stringWithFormat:@"messages/%@/%ld/shareable", name, (long)serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:path  parameters:params];
     AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
     [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
     [operation start];
