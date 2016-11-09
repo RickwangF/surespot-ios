@@ -145,7 +145,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [[NetworkController sharedInstance] getKeyTokenForUsername:username
                                                    andPassword:passwordString
                                                   andSignature:signatureString
-                                                  successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                                                  successBlock:^(NSURLSessionTask *request, id JSON) {
                                                       NSString * keyToken = [JSON objectForKey:@"token"];
                                                       NSInteger iKeyVersion = [[JSON valueForKey:@"keyversion"] integerValue];
                                                       NSString * keyVersion = [[JSON objectForKey:@"keyversion"] stringValue];
@@ -171,7 +171,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                        tokenSig:tokenSignatureString
                                                                                                       keyVersion:keyVersion
                                                                                                        clientSig: clientSig
-                                                                                                   successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                                                   successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                                                                        [[IdentityController sharedInstance] rollKeysForUsername: username
                                                                                                                                                        password: password
                                                                                                                                                      keyVersion: keyVersion
@@ -191,7 +191,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                            
                                                                                                        });
                                                                                                        
-                                                                                                   } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                                                   } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                                                                        [[IdentityController sharedInstance] removeExpectedKeyVersionForUsername:username];
                                                                                                        dispatch_async(dispatch_get_main_queue(), ^{
                                                                                                            [_progressView removeView];                                                                                                                                                                                                                      _progressView = nil;
@@ -199,7 +199,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                        });
                                                                                                    }];
                                                       
-                                                  } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+                                                  } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
                                                       dispatch_async(dispatch_get_main_queue(), ^{
                                                           [_progressView removeView];
                                                           _progressView = nil;

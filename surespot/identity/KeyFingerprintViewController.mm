@@ -202,7 +202,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(void) addAllPublicKeysForUsername: (NSString *) username toDictionary: (NSMutableDictionary *) dictionary {
     [[NetworkController sharedInstance] getKeyVersionForUsername:username
-                                                    successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                    successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                         NSString * latestVersion = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
                                                         if ([latestVersion length] > 0) {
                                                             _theirLatestVersion = [latestVersion integerValue];
@@ -248,7 +248,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                             }
                                                         }
                                                         
-                                                    } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                    } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                         [UIUtils showToastKey:@"could_not_load_public_keys"];
                                                     }
      ];

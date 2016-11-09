@@ -138,7 +138,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [[NetworkController sharedInstance] getDeleteTokenForUsername:username
                                                       andPassword:passwordString
                                                      andSignature:signatureString
-                                                     successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                     successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                          
                                                          NSString * keyToken = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
                                                          
@@ -152,7 +152,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                     authSig:signatureString
                                                                                                    tokenSig:tokenSignatureString
                                                                                                  keyVersion:version
-                                                                                               successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                                               successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                                                                    
                                                                                                    
                                                                                                    dispatch_async(dispatch_get_main_queue(), ^{
@@ -163,7 +163,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                        [UIUtils showToastKey:@"identity_deleted" duration:2];
                                                                                                    });
                                                                                                    
-                                                                                               } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                                               } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                                                                    [[IdentityController sharedInstance] removeExpectedKeyVersionForUsername:username];
                                                                                                    dispatch_async(dispatch_get_main_queue(), ^{
                                                                                                        [_progressView removeView];
@@ -172,7 +172,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                    });
                                                                                                }];
                                                          
-                                                     } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                     } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                          
                                                          dispatch_async(dispatch_get_main_queue(), ^{
                                                              [_progressView removeView];

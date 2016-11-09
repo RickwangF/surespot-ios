@@ -155,8 +155,8 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
          dsaKey: encodedDSAKey
          authSig: authSig
          clientSig: clientSig
-         successBlock:^(AFHTTPRequestOperation *operation, id responseObject, NSHTTPCookie * cookie) {
-             DDLogVerbose(@"signup response: %ld",  (long)[operation.response statusCode]);
+         successBlock:^(NSURLSessionTask *operation, id responseObject, NSHTTPCookie * cookie) {
+             DDLogVerbose(@"signup response: %ld",  (long)[(NSHTTPURLResponse*)operation.response statusCode]);
              [[IdentityController sharedInstance] createIdentityWithUsername:username andPassword:password andSalt:salt andKeys:keys cookie:cookie];
              UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle: nil];
              SwipeViewController * svc = [storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"];
@@ -179,14 +179,14 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
              [_progressView removeView];
              _progressView = nil;
          }
-         failureBlock:^(AFHTTPRequestOperation *operation, NSError *Error) {
+         failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
              
              DDLogVerbose(@"signup response failure: %@",  Error);
              
              [_progressView removeView];
              _progressView = nil;
              
-             switch (operation.response.statusCode) {
+             switch ([(NSHTTPURLResponse*)operation.response statusCode]) {
                  case 429:
                      [UIUtils showToastKey: @"user_creation_throttled" duration:3];
                      [_tbUsername becomeFirstResponder];
@@ -284,7 +284,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     _lastCheckedUsername = username;
     _progressView = [LoadingView showViewKey:@"user_exists_progress"];
     
-    [[NetworkController sharedInstance] userExists:username successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[NetworkController sharedInstance] userExists:username successBlock:^(NSURLSessionTask *operation, id responseObject) {
         NSString * response = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         
         [_progressView removeView];
@@ -300,7 +300,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             [self setUsernameValidity:YES];
             [_tbPassword becomeFirstResponder];
         }
-    } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
         [_tbUsername becomeFirstResponder];
         [_progressView removeView];
         _progressView = nil;

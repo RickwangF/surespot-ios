@@ -19,7 +19,7 @@
 #import "FileController.h"
 #import "CredentialCachingController.h"
 #import "SurespotErrorMessage.h"
-#import "Reachability.h"
+#import "AFNetworkReachabilityManager.h"
 #import "SDWebImageManager.h"
 #import "SoundController.h"
 #import "surespot-Swift.h"
@@ -87,13 +87,32 @@ static const int MAX_RETRY_DELAY = 30;
         _resendBuffer = [NSMutableArray new];
         
         //listen for network changes so we can reconnect
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(reachabilityChanged:)
-                                                     name:kReachabilityChangedNotification
-                                                   object:nil];
-        
-        Reachability * reach = [Reachability reachabilityForInternetConnection];
-        [reach startNotifier];
+        [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+            ChatController * controller =
+            [ChatController sharedInstance];
+            //if we're foregrounded
+            if (![controller paused]) {
+                BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
+                
+                
+                //   [self setReachabilityStatus:status];
+                _connectionRetries = 0;
+                
+                if(isReachable)
+                {
+                    
+                    DDLogInfo(@"wifi: %d, wwan, %d",status == AFNetworkReachabilityStatusReachableViaWiFi, status == AFNetworkReachabilityStatusReachableViaWWAN);
+                    //reachibility changed, disconnect and reconnect
+                    [controller disconnect];
+                    [controller reconnect];
+                }
+                else
+                {
+                    DDLogInfo(@"Notification Says Unreachable");
+                }
+            }
+
+        }];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAutoinvitesNotification:) name:@"autoinvites" object:nil];
         
@@ -151,12 +170,12 @@ static const int MAX_RETRY_DELAY = 30;
             }
             
             //login again then try reconnecting
-            reAuthing = [[NetworkController sharedInstance] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie *cookie) {
+            reAuthing = [[NetworkController sharedInstance] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
                 DDLogInfo(@"relogin success");
                 _reauthing = YES;
                 [self reconnect];
                 
-            } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+            } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
                 _reauthing = YES;
                 [self reconnect];
             }];
@@ -203,36 +222,39 @@ static const int MAX_RETRY_DELAY = 30;
 }
 
 
--(void)setReachabilityStatus:(Reachability *) reach {
-    NetworkStatus remoteHostStatus = [reach currentReachabilityStatus];
-    
-    if (remoteHostStatus == NotReachable) {
-        DDLogInfo(@"network not reachable");
-        self.hasInet -= NO;
-    }
-    else if (remoteHostStatus == ReachableViaWiFi) {
-        DDLogInfo(@"network via wifi");
-        self.hasInet -= YES;
-    }
-    else if (remoteHostStatus == ReachableViaWWAN) {
-        DDLogInfo(@"network via cell");
-        self.hasInet -= YES;
+-(void)setReachabilityStatus:(AFNetworkReachabilityStatus) status {
+    switch (status)
+    {
+        case AFNetworkReachabilityStatusReachableViaWWAN:
+        case AFNetworkReachabilityStatusReachableViaWiFi:
+        {
+            self.hasInet = YES;
+            break;
+        }
+            
+        case AFNetworkReachabilityStatusNotReachable:
+        default:
+        {
+           self.hasInet = NO;
+            break;
+        }
     }
 }
 
--(void)reachabilityChanged:(NSNotification*)note
+-(void)reachabilityChanged:(AFNetworkReachabilityStatus) status
 {
     //if we're foregrounded
     if (!_paused) {
-        Reachability * reach = [note object];
+        BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
+
         
-        [self setReachabilityStatus:reach];
+     //   [self setReachabilityStatus:status];
         _connectionRetries = 0;
         
-        if([reach isReachable] || self.hasInet)
+        if(isReachable)
         {
             
-            DDLogInfo(@"wifi: %d, wwan, %d",[reach isReachableViaWiFi], [reach isReachableViaWWAN]);
+            DDLogInfo(@"wifi: %d, wwan, %d",status == AFNetworkReachabilityStatusReachableViaWiFi, status == AFNetworkReachabilityStatusReachableViaWWAN);
             //reachibility changed, disconnect and reconnect
             [self disconnect];
             [self reconnect];
@@ -469,7 +491,7 @@ static const int MAX_RETRY_DELAY = 30;
     DDLogVerbose(@"before network call");
     
     
-    [[NetworkController sharedInstance] getLatestDataSinceUserControlId: _homeDataSource.latestUserControlId spotIds:messageIds successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+    [[NetworkController sharedInstance] getLatestDataSinceUserControlId: _homeDataSource.latestUserControlId spotIds:messageIds successBlock:^(NSURLSessionTask *task, id JSON) {
         
         DDLogVerbose(@"network call complete");
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -540,7 +562,7 @@ static const int MAX_RETRY_DELAY = 30;
         
         [self stopProgress];
         [_homeDataSource postRefresh];
-    } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+    } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
         [self stopProgress];
         [UIUtils showToastKey:@"loading_latest_messages_failed"];
     }];
@@ -682,6 +704,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) sendMessagesViaHttp {
+    return;
     //socket will be disconnected so try and send messages via http if we have messages to send
     //if we're not sending stuff, shut everything down
     @synchronized(self) {
@@ -706,7 +729,7 @@ static const int MAX_RETRY_DELAY = 30;
             [[NetworkController sharedInstance]
              sendMessages:messagesJson
              
-             successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+             successBlock:^(NSURLSessionTask *task, id JSON) {
                  DDLogDebug(@"success sending messages via http ending background task: %lu",(unsigned long)_bgHttpTaskId);
                  //iterate through response statuses and handle accordingly
                  NSArray * responses = [JSON objectForKey:@"messageStatus"];
@@ -728,7 +751,7 @@ static const int MAX_RETRY_DELAY = 30;
                  _bgHttpTaskId = UIBackgroundTaskInvalid;
              }
              
-             failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+             failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
                  DDLogDebug(@"failure sending messages via http ending background task: %lu",(unsigned long)_bgHttpTaskId);
                  
                  // [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
@@ -1027,7 +1050,7 @@ static const int MAX_RETRY_DELAY = 30;
     [[NetworkController sharedInstance]  respondToInviteName:username action:action
      
      
-                                                successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                successBlock:^(NSURLSessionTask * task, id responseObject) {
                                                     
                                                     Friend * afriend = [_homeDataSource getFriendByName:username];
                                                     [afriend setInviter:NO];
@@ -1048,9 +1071,9 @@ static const int MAX_RETRY_DELAY = 30;
                                                     [self stopProgress];
                                                 }
      
-                                                failureBlock:^(AFHTTPRequestOperation *operation, NSError *Error) {
+                                                failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
                                                     DDLogError(@"error responding to invite: %@", Error);
-                                                    if ([operation.response statusCode] != 404) {
+                                                    if ([(NSHTTPURLResponse*) operation.response statusCode] != 404) {
                                                         
                                                         [UIUtils showToastKey:@"could_not_respond_to_invite"];
                                                     }
@@ -1072,17 +1095,17 @@ static const int MAX_RETRY_DELAY = 30;
     [self startProgress];
     [[NetworkController sharedInstance]
      inviteFriend:username
-     successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
-         DDLogVerbose(@"invite friend response: %ld",  (long)[operation.response statusCode]);
+     successBlock:^(NSURLSessionTask *operation, id responseObject) {
+         DDLogVerbose(@"invite friend response: %ld",  (long)[(NSHTTPURLResponse*) operation.response statusCode]);
          
          [_homeDataSource addFriendInvited:username];
          [self stopProgress];
      }
-     failureBlock:^(AFHTTPRequestOperation *operation, NSError *Error) {
+     failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
          
          DDLogVerbose(@"response failure: %@",  Error);
          
-         switch (operation.response.statusCode) {
+         switch ([(NSHTTPURLResponse*) operation.response statusCode]) {
              case 404:
                  [UIUtils showToastKey: @"user_does_not_exist"];
                  break;
@@ -1195,8 +1218,8 @@ static const int MAX_RETRY_DELAY = 30;
                 //clear http cache
                 NSInteger maxVersion = [version integerValue];
                 for (NSInteger i=1;i<=maxVersion;i++) {
-                    NSURLRequest * request = [[NetworkController sharedInstance] buildPublicKeyRequestForUsername:deleted version: [@(i) stringValue]];
-                    [[NetworkController sharedInstance] deleteFromCache: request];
+                   // NSString * path = [[NetworkController sharedInstance] buildPublicKeyPathForUsername:deleted version: [@(i) stringValue]];
+                   // [[NetworkController sharedInstance] deleteFromCache: path];
                 }
             }];
         }
@@ -1273,10 +1296,10 @@ static const int MAX_RETRY_DELAY = 30;
         
         [self startProgress];
         
-        [[NetworkController sharedInstance] deleteFriend:friendname successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [[NetworkController sharedInstance] deleteFriend:friendname successBlock:^(NSURLSessionTask *operation, id responseObject) {
             [self handleDeleteUser:friendname deleter:username];
             [self stopProgress];
-        } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+        } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
             [UIUtils showToastKey:@"could_not_delete_friend"];
             [self stopProgress];
         }];
@@ -1290,14 +1313,14 @@ static const int MAX_RETRY_DELAY = 30;
             if (message.serverid > 0) {
                 
                 [self startProgress];
-                [[NetworkController sharedInstance] deleteMessageName:[message getOtherUser] serverId:[message serverid] successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [[NetworkController sharedInstance] deleteMessageName:[message getOtherUser] serverId:[message serverid] successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds deleteMessage: message initiatedByMe: YES];
                     [self stopProgress];
-                } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                     
                     
                     //if it's 404, delete it locally as it's not on the server
-                    if ([operation.response statusCode] == 404) {
+                    if ([(NSHTTPURLResponse*) operation.response statusCode] == 404) {
                         [cds deleteMessage: message initiatedByMe: YES];
                     }
                     else {
@@ -1327,12 +1350,12 @@ static const int MAX_RETRY_DELAY = 30;
         lastMessageId = [afriend lastReceivedMessageId];
     }
     [self startProgress];
-    [[NetworkController sharedInstance] deleteMessagesUTAI:lastMessageId name:afriend.name successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[NetworkController sharedInstance] deleteMessagesUTAI:lastMessageId name:afriend.name successBlock:^(NSURLSessionTask *operation, id responseObject) {
         
         [cds deleteAllMessagesUTAI:lastMessageId];
         [self stopProgress];
         
-    } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
         [UIUtils showToastKey:@"could_not_delete_messages"];
         [self stopProgress];
     }];
@@ -1362,10 +1385,10 @@ static const int MAX_RETRY_DELAY = 30;
             if (message.serverid > 0) {
                 
                 [self startProgress];
-                [[NetworkController sharedInstance] setMessageShareable:[message getOtherUser] serverId:[message serverid] shareable:!message.shareable successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [[NetworkController sharedInstance] setMessageShareable:[message getOtherUser] serverId:[message serverid] shareable:!message.shareable successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds setMessageId: message.serverid shareable: [[[NSString alloc] initWithData: responseObject encoding:NSUTF8StringEncoding] isEqualToString:@"shareable"] ? YES : NO];
                     [self stopProgress];
-                } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                     [UIUtils showToastKey:@"could_not_set_message_lock_state"];
                     [self stopProgress];
                 }];
@@ -1395,7 +1418,7 @@ static const int MAX_RETRY_DELAY = 30;
                                                       theirVersion:[message getTheirVersion]
                                                             fileid:message.iv
                                                           mimeType:message.mimeType
-                                                      successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                                                      successBlock:^(NSURLSessionTask *task, id JSON) {
                                                           
                                                           NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
                                                           NSString * url = [JSON objectForKey:@"url"];
@@ -1413,9 +1436,10 @@ static const int MAX_RETRY_DELAY = 30;
                                                           
                                                           [self stopProgress];
                                                           
-                                                      } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
-                                                          DDLogInfo(@"resend data %@ to server failed, statuscode: %ld", message.data, (long)responseObject.statusCode);
-                                                          if (responseObject.statusCode == 402) {
+                                                      } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
+                                                          long statusCode = [(NSHTTPURLResponse*) operation.response statusCode];
+                                                          DDLogInfo(@"resend data %@ to server failed, statuscode: %ld", message.data, statusCode);
+                                                          if (statusCode == 402) {
                                                               resendMessage.errorStatus = 402;
                                                           }
                                                           else {
@@ -1481,11 +1505,11 @@ static const int MAX_RETRY_DELAY = 30;
                                                friendname:friendname
                                                version:version
                                                iv:b64iv
-                                               successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                               successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                    [self setFriendAlias: alias  data: b64data friendname: friendname version: version iv: b64iv hashed:YES];
                                                    callbackBlock([NSNumber numberWithBool:YES]);
                                                    [self stopProgress];
-                                               } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                               } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                    callbackBlock([NSNumber numberWithBool:NO]);
                                                    [self stopProgress];
                                                }];
@@ -1525,11 +1549,11 @@ static const int MAX_RETRY_DELAY = 30;
     [self startProgress];
     [[NetworkController sharedInstance]
      deleteFriendAlias:friendname
-     successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+     successBlock:^(NSURLSessionTask *operation, id responseObject) {
          [_homeDataSource removeFriendAlias: friendname];
          callbackBlock([NSNumber numberWithBool:YES]);
          [self stopProgress];
-     } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+     } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
          callbackBlock([NSNumber numberWithBool:NO]);
          [self stopProgress];
      }];
@@ -1538,11 +1562,11 @@ static const int MAX_RETRY_DELAY = 30;
     [self startProgress];
     [[NetworkController sharedInstance]
      deleteFriendImage:friendname
-     successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+     successBlock:^(NSURLSessionTask *operation, id responseObject) {
          [_homeDataSource removeFriendImage: friendname];
          callbackBlock([NSNumber numberWithBool:YES]);
          [self stopProgress];
-     } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+     } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
          callbackBlock([NSNumber numberWithBool:NO]);
          [self stopProgress];
      }];

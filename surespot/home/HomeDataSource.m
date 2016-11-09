@@ -58,8 +58,8 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     DDLogInfo(@"startProgress");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
     
-    [[NetworkController sharedInstance] getFriendsSuccessBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        DDLogInfo(@"get friends response: %ld",  (long)[response statusCode]);
+    [[NetworkController sharedInstance] getFriendsSuccessBlock:^(NSURLSessionTask *task, id JSON) {
+        //DDLogInfo(@"get friends response: %ld",  (long)[task.response statusCode]);
         
         _latestUserControlId = [[JSON objectForKey:@"userControlId"] integerValue];
         
@@ -73,7 +73,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         DDLogInfo(@"stopProgress");
         [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
         
-    } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+    } failureBlock:^(NSURLSessionTask *operation,  NSError *Error) {
         DDLogInfo(@"response failure: %@",  Error);
         [self postRefresh];
         callback(NO);

@@ -158,12 +158,12 @@ NSString *  const PRODUCT_ID_VOICE_MESSAGING = @"voice_messaging";
     [storage setObject: b64receipt forKey:@"appStoreReceipt"];
     
     //upload to server
-    [[NetworkController sharedInstance] uploadReceipt:b64receipt successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+ //   [[NetworkController sharedInstance] uploadReceipt:b64receipt successBlock:^(NSURLSessionTask *operation, id responseObject) {
         
-    } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
-        DDLogInfo(@"could not validate purchase receipt on server, please login to validate");
-        [UIUtils showToastKey:@"login_to_validate" duration:2];
-    }];
+//    } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
+//        DDLogInfo(@"could not validate purchase receipt on server, please login to validate");
+//        [UIUtils showToastKey:@"login_to_validate" duration:2];
+//    }];
 }
 
 -  (void)paymentQueue:(SKPaymentQueue *)queue updatedDownloads:(NSArray *)downloads {

@@ -80,7 +80,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [[NetworkController sharedInstance]
      getPublicKeys2ForUsername: self.username
      andVersion: [@(validatedKeyVersion+1) stringValue]
-     successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+     successBlock:^(NSURLSessionTask *request, id JSON) {
          
          if (JSON) {
              for (NSInteger i=0;i < [JSON count]; i++) {
@@ -155,7 +155,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
              [self finish:nil];
          }
          
-     } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+     } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
          
          DDLogVerbose(@"response failure: %@",  Error);
          [self finish:nil];

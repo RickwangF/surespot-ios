@@ -217,7 +217,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                     theirVersion:version
                                                                                                           fileid:[iv SR_stringByBase64Encoding]
                                                                                                         mimeType:MIME_TYPE_IMAGE
-                                                                                                    successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                                                                                                    successBlock:^(NSURLSessionTask *request, id JSON) {
                                                                                                         
                                                                                                         //update the message with the id and url
                                                                                                         NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
@@ -237,10 +237,11 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                         [cds addMessage:updatedMessage refresh:YES];
                                                                                                         
                                                                                                         [self stopProgress];
-                                                                                                    } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
-                                                                                                        DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", key, (long)responseObject.statusCode);
+                                                                                                    } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
+                                                                                                        long statusCode = [(NSHTTPURLResponse *) operation.response statusCode];
+                                                                                                        DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", key, statusCode);
                                                                                                         [self stopProgress];
-                                                                                                        if (responseObject.statusCode == 402) {
+                                                                                                        if (statusCode == 402) {
                                                                                                             message.errorStatus = 402;
                                                                                                         }
                                                                                                         else {
@@ -299,7 +300,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                 ourVersion:_ourVersion
                                                                                              theirUsername:_theirUsername
                                                                                                         iv:[iv SR_stringByBase64Encoding]
-                                                                                              successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                                              successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                                                                   [self stopProgress];
                                                                                                   if (responseObject) {
                                                                                                       NSString * url = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
@@ -331,9 +332,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                   }
                                                                                                   
                                                                                                   
-                                                                                              } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                                              } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                                                                   [self stopProgress];
-                                                                                                  DDLogInfo(@"uploading friend image %@ to server failed, statuscode: %ld", key, (long)operation.response.statusCode);
+                                                                                                  DDLogInfo(@"uploading friend image %@ to server failed", key);
                                                                                                   [UIUtils showToastKey:@"could_not_upload_friend_image" duration:2];
                                                                                                   
                                                                                                   if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {

@@ -407,7 +407,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     [[NetworkController sharedInstance] validateUsername:identity.username
                                                 password:passwordString
                                                signature:signatureString
-                                            successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                            successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                 //regenerate the identity with full validation for saving
                                                 SurespotIdentity * validatedIdentity = [self decodeIdentityData:decryptedIdentity password:password validate:YES];
                                                 if ([self saveIdentity:validatedIdentity withPassword:[password stringByAppendingString:CACHE_IDENTITY_ID]]) {
@@ -418,8 +418,8 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
                                                     callback([NSString stringWithFormat:NSLocalizedString(@"could_not_restore_identity_name", nil), username]);
                                                 }
                                                 
-                                            } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                switch (operation.response.statusCode) {
+                                            } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
+                                                switch ([(NSHTTPURLResponse*)operation.response statusCode]) {
                                                     case 403:
                                                         callback(NSLocalizedString(@"incorrect_password_or_key", nil));
                                                         break;
@@ -469,7 +469,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     
     
     
-    [[NetworkController sharedInstance] validateUsername:username password:passwordString signature:signatureString successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[NetworkController sharedInstance] validateUsername:username password:passwordString signature:signatureString successBlock:^(NSURLSessionTask *operation, id responseObject) {
         
         
         if ([self saveIdentityDocuments:identity withPassword:password]) {
@@ -478,8 +478,8 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         else {
             callback(nil, @"no_identity_exported");
         }
-    } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
-        switch (operation.response.statusCode) {
+    } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
+        switch ([(NSHTTPURLResponse*)operation.response statusCode]) {
             case 403:
             case 404:
                 callback(NSLocalizedString(@"incorrect_password_or_key", nil), nil);
@@ -508,11 +508,11 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     
     
     
-    [[NetworkController sharedInstance] validateUsername:username password:passwordString signature:signatureString successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[NetworkController sharedInstance] validateUsername:username password:passwordString signature:signatureString successBlock:^(NSURLSessionTask *operation, id responseObject) {
         callback(nil, [self encryptIdentity:identity withPassword:[password stringByAppendingString:EXPORT_IDENTITY_ID]]);
         
-    } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
-        switch (operation.response.statusCode) {
+    } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
+        switch ([(NSHTTPURLResponse*)operation.response statusCode]) {
             case 403:
             case 404:
                 callback(NSLocalizedString(@"incorrect_password_or_key", nil), nil);

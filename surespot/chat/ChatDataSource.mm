@@ -95,8 +95,8 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             //load message data
             DDLogInfo(@"startProgress");
             [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
-            [[NetworkController sharedInstance] getMessageDataForUsername:_username andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-                DDLogVerbose(@"get messageData response: %ld",  (long)[response statusCode]);
+            [[NetworkController sharedInstance] getMessageDataForUsername:_username andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
+                DDLogVerbose(@"get messageData response");
                 
                 NSArray * controlMessages =[((NSDictionary *) JSON) objectForKey:@"controlMessages"];
                 
@@ -110,7 +110,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
                 
                 
-            } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+            } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
                 DDLogVerbose(@"get messagedata response error: %@",  Error);
                 DDLogInfo(@"stopProgress");
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
@@ -570,7 +570,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             return;
         }
         
-        [[NetworkController sharedInstance] getEarlierMessagesForUsername:_username messageId:earliestMessageId successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        [[NetworkController sharedInstance] getEarlierMessagesForUsername:_username messageId:earliestMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
             
             NSArray * messages = JSON;
             if (messages.count == 0) {
@@ -579,7 +579,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             
             [self handleEarlierMessages:messages callback:callback];
             _loadingEarlier = NO;
-        } failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+        } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
             callback(nil);
             _loadingEarlier = NO;
             [UIUtils showToastKey:@"loading_earlier_messages_failed"];

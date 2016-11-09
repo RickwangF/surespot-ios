@@ -267,8 +267,8 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
          loginWithUsername:identity.username
          andPassword:passwordString
          andSignature: signatureString
-         successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie * cookie) {
-             DDLogVerbose(@"login response: %ld",  (long)[response statusCode]);
+         successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie * cookie) {
+             DDLogVerbose(@"login success");
              
              if (_storePassword.isOn) {
                  [[IdentityController sharedInstance] storePasswordForIdentity:username password:password];
@@ -298,12 +298,12 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
              _progressView = nil;
              self.navigationItem.rightBarButtonItem.enabled = YES;
          }
-         failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+         failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
              DDLogVerbose(@"response failure: %@",  Error);
              [_progressView removeView];
              _progressView = nil;
              
-             switch (responseObject.statusCode) {
+             switch ([(NSHTTPURLResponse*) operation.response statusCode]) {
                  case 401:
                      [UIUtils showToastKey: @"login_check_password"];
                      _textPassword.text = @"";

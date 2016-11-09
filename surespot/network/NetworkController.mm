@@ -47,12 +47,23 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (self != nil) {
         _baseUrl = baseUrl;
         
-        // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
-        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
-        [self setDefaultHeader:@"User-Agent" value:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)]];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HTTPOperationDidFinish:) name:AFNetworkingOperationDidFinishNotification object:nil];
+      //  self.requestSerializer = [AFJSONRequestSerializer serializer];
+//        [self.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [self.requestSerializer setValue:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)] forHTTPHeaderField:@"User-Agent"];
         
-        self.parameterEncoding = AFJSONParameterEncoding;
+        self.responseSerializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[[AFJSONResponseSerializer serializer],
+                                                                                                           [AFHTTPResponseSerializer serializer]]];
+        
+       // self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
+      //          self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObject:@"text/plain"];
+      
+        // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
+        
+//        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
+//        [self setDefaultHeader:@"User-Agent" value:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)]];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HTTPOperationDidFinish:) name:AFNetworkingOperationDidFinishNotification object:nil];
+//        
+//        self.parameterEncoding = AFJSONParameterEncoding;
     }
     
     return self;
@@ -61,23 +72,24 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 //handle 401s globally
 - (void)HTTPOperationDidFinish:(NSNotification *)notification {
-    AFHTTPRequestOperation *operation = (AFHTTPRequestOperation *)[notification object];
-    
-    if (![operation isKindOfClass:[AFHTTPRequestOperation class]]) {
-        return;
-    }
-    
-    if ([operation.response statusCode] == 401) {
-        DDLogInfo(@"path components: %@", operation.request.URL.pathComponents[1]);
-        //ignore on logout
-        if (![operation.request.URL.pathComponents[1] isEqualToString:@"logout"]) {
-            DDLogInfo(@"received 401");
-            [self setUnauthorized];
-        }
-        else {
-            DDLogInfo(@"logout 401'd");
-        }
-    }
+    //TODO figure out token refresh
+    //    AFHTTPRequestOperation *operation = (AFHTTPRequestOperation *)[notification object];
+    //
+    //    if (![operation isKindOfClass:[AFHTTPRequestOperation class]]) {
+    //        return;
+    //    }
+    //
+    //    if ([operation.response statusCode] == 401) {
+    //        DDLogInfo(@"path components: %@", operation.request.URL.pathComponents[1]);
+    //        //ignore on logout
+    //        if (![operation.request.URL.pathComponents[1] isEqualToString:@"logout"]) {
+    //            DDLogInfo(@"received 401");
+    //            [self setUnauthorized];
+    //        }
+    //        else {
+    //            DDLogInfo(@"logout 401'd");
+    //        }
+    //    }
 }
 
 -(void) setUnauthorized {
@@ -116,26 +128,21 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
     }
     
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"login" parameters: params];
-    
-    
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSHTTPCookie * cookie = [self extractConnectCookie];
-        if (cookie) {
-            successBlock(request, response, JSON, cookie);
-        }
-        else {
-            failureBlock(request, response, nil, nil);
-        }
-        
-        
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-        failureBlock(request, response, error, JSON);
-    } ];
-    
-    
-    [operation start];
-    
+    [self POST:@"login"
+    parameters:params
+      progress:nil
+       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable JSON) {
+           NSHTTPCookie * cookie = [self extractConnectCookie];
+           if (cookie) {
+               successBlock(task, JSON, cookie);
+           }
+           else {
+               failureBlock(task, nil);
+           }
+           
+       } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+           failureBlock(task, error);
+       }];
 }
 
 -(BOOL) reloginWithUsername:(NSString*) username successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock
@@ -158,7 +165,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             
             if (!identity) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    failureBlock(nil,nil,nil,nil);
+                    failureBlock(nil,nil);
                 });
                 return;
             }
@@ -178,10 +185,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
              loginWithUsername:identity.username
              andPassword:passwordString
              andSignature: signatureString
-             successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie * cookie) {
-                 DDLogVerbose(@"login response: %d",  [response statusCode]);
+             successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie * cookie) {
+                 DDLogVerbose(@"login response");
                  [[IdentityController sharedInstance] userLoggedInWithIdentity:identity password: password cookie: cookie reglogin:YES];
-                 successBlock(request, response, JSON, cookie);
+                 successBlock(task, JSON, cookie);
              }
              failureBlock: failureBlock];
         });
@@ -221,25 +228,35 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (apnToken) {
         [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
     }
-    
-    
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"users2" parameters: params];
-    
-    
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [self POST:@"users2" parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSHTTPCookie * cookie = [self extractConnectCookie];
         if (cookie) {
-            successBlock(operation, responseObject, cookie);
+            successBlock(task, responseObject, cookie);
         }
         else {
-            failureBlock(operation, nil);
+            failureBlock(task, nil);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failureBlock(operation, error);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        failureBlock(task, error);
     }];
     
-    [operation start];
+    //    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"users2" parameters: params];
+    //
+    //
+    //    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
+    //    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    //        NSHTTPCookie * cookie = [self extractConnectCookie];
+    //        if (cookie) {
+    //            successBlock(operation, responseObject, cookie);
+    //        }
+    //        else {
+    //            failureBlock(operation, nil);
+    //        }
+    //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    //        failureBlock(operation, error);
+    //    }];
+    //
+    //    [operation start];
 }
 
 
@@ -260,63 +277,49 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 }
 
 -(void) getFriendsSuccessBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
-    NSURLRequest *request = [self requestWithMethod:@"GET" path:@"friends" parameters:nil];
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock
-                                                                                        failure: failureBlock];
-    operation.JSONReadingOptions = NSJSONReadingMutableContainers;
-    [operation start];
+    [self GET:@"friends" parameters:nil progress:nil success:successBlock failure:failureBlock];
 }
 
 -(void) inviteFriend: (NSString *) friendname successBlock: (HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat: @"invite/%@",friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"POST" path:path parameters:nil];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    
+    [self POST:path parameters:nil progress:nil success:successBlock failure:failureBlock];
+    
 }
 
 - (void) getKeyVersionForUsername:(NSString *)username successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock
 {
     NSString * path = [[NSString stringWithFormat: @"keyversion/%@",username] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"GET" path:path parameters: nil];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    
+    [self GET:path parameters:nil progress:nil success:successBlock failure:failureBlock];
+    
 }
 
 - (void) getPublicKeys2ForUsername:(NSString *)username andVersion:(NSString *)version successBlock:(JSONSuccessBlock)successBlock failureBlock:(JSONFailureBlock) failureBlock{
-    NSURLRequest *request = [self buildPublicKeyRequestForUsername:username version:version];
     
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure: failureBlock];
     
-    //dont't need this on main thread
-    [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)];
-    [operation start];
+    [self GET:[self buildPublicKeyPathForUsername:username version:version] parameters:nil progress:nil success:successBlock
+      failure:failureBlock];
+    
 }
 
--(NSURLRequest *) buildPublicKeyRequestForUsername: (NSString *) username version: (NSString *) version {
+-(NSString *) buildPublicKeyPathForUsername: (NSString *) username version: (NSString *) version {
     NSString * path = [[NSString stringWithFormat: @"publickeys/%@/since/%@",username, version]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ;
-    NSURLRequest *request = [self requestWithMethod:@"GET" path: path parameters: nil];
-    return request;
+    
+    return path;
 }
 
 -(void) getMessageDataForUsername:(NSString *)username andMessageId:(NSInteger)messageId andControlId:(NSInteger) controlId successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
     
-    NSString * path = [[NSString stringWithFormat:@"messagedataopt/%@/%u/%u", username, messageId, controlId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"GET" path:path parameters: nil];
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock
-                                                                                        failure: failureBlock];
-    [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)];
-    [operation start];
+    NSString * path = [[NSString stringWithFormat:@"messagedataopt/%@/%ld/%ld", username, (long)messageId, (long)controlId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self GET: path parameters:nil progress:nil success:successBlock failure:failureBlock];
     
 }
 
 -(void) respondToInviteName:(NSString *) friendname action: (NSString *) action successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat:@"invites/%@/%@", friendname, action] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"POST" path:path  parameters:nil];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    [self POST: path parameters:nil constructingBodyWithBlock:nil progress:nil success:successBlock failure:failureBlock];
+    
 }
 
 -(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
@@ -330,12 +333,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     [self addPurchaseReceiptToParams:params];
     
-    NSString * path = [NSString stringWithFormat:@"optdata/%d", latestUserControlId];
-    NSURLRequest *request = [self requestWithMethod:@"POST" path:path parameters: params];
+    NSString * path = [NSString stringWithFormat:@"optdata/%ld", (long)latestUserControlId];
+    [self POST:path parameters:params progress:nil success:successBlock failure:failureBlock];
     
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
     
-    [operation start];
 }
 
 
@@ -344,17 +345,12 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     //send logout
     if (!_loggedOut) {
         DDLogInfo(@"logout");
-        NSURLRequest *request = [self requestWithMethod:@"POST" path:@"logout"  parameters:nil];
-        AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [self deleteCookies];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [self deleteCookies];
+        [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+             [self deleteCookies];
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+             [self deleteCookies];
         }];
-        [operation start];
     }
-    
-    
 }
 
 -(void) deleteCookies {
@@ -369,61 +365,38 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 
 -(void) deleteFriend:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
-    
     NSString * path = [[NSString stringWithFormat:@"friends/%@", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"DELETE" path:path  parameters:nil];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
-    
+    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 
 -(void) deleteMessageName:(NSString *) name serverId: (NSInteger) serverid successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
-    NSString * path = [[NSString stringWithFormat:@"messages/%@/%d", name, serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"DELETE" path:path  parameters:nil];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
-    
+    NSString * path = [[NSString stringWithFormat:@"messages/%@/%ld", name, (long)serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) deleteMessagesUTAI:(NSInteger) utaiId name: (NSString *) name successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
-    NSString * path = [[NSString stringWithFormat:@"messagesutai/%@/%d", name, utaiId] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"DELETE" path:path  parameters:nil];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
-    
+    NSString * path = [[NSString stringWithFormat:@"messagesutai/%@/%ld", name, (long)utaiId] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) userExists: (NSString *) username successBlock: (HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat:@"users/%@/exists", username] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"GET" path: path  parameters:nil];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    [self GET:path parameters:nil progress:nil success:successBlock failure:failureBlock];
 }
 
 -(void) getEarlierMessagesForUsername: (NSString *) username messageId: (NSInteger) messageId successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
     
-    NSString * path = [[NSString stringWithFormat:@"messagesopt/%@/before/%d", username, messageId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"GET" path:path parameters: nil];
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock
-                                                                                        failure: failureBlock];
-    
-    [operation start];
+    NSString * path = [[NSString stringWithFormat:@"messagesopt/%@/before/%ld", username, (long)messageId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self GET:path parameters:nil progress:nil success:successBlock failure:failureBlock];
 }
 
 -(void) validateUsername: (NSString *) username password: (NSString *) password signature: (NSString *) signature successBlock:(HTTPSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:username,@"username",password,@"password",signature,@"authSig", nil];
-    NSURLRequest *request = [self requestWithMethod:@"POST" path:@"validate"  parameters:params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    [self POST:@"validate" parameters:params progress:nil success:successBlock failure:failureBlock];
 }
 
 -(void) postFileStreamData: (NSData *) data
@@ -441,16 +414,16 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     DDLogInfo(@"postFileStream, encodedId: %@", encodedId);
     NSString * path = [NSString stringWithFormat:@"files/%@/%@/%@/%@/%@", ourVersion, [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], theirVersion, encodedId, ([mimeType isEqual:MIME_TYPE_M4A] ? @"mp4" : @"image")];
     DDLogInfo(@"postFileStream, path: %@", path);
-    NSMutableURLRequest *request
-    = [self requestWithMethod:@"POST"
-                         path: path
-                   parameters:nil];
-    [request setHTTPBody:data];
-    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
-    
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
-    [operation start];
+//    NSMutableURLRequest *request
+//    = [self requestWithMethod:@"POST"
+//                         path: path
+//                   parameters:nil];
+//    [request setHTTPBody:data];
+//    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+//    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
+//    
+//    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
+//    [operation start];
     
 }
 
@@ -465,17 +438,17 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     DDLogInfo(@"postFriendFileStream, encoded iv: %@", encodedIv);
     
-    NSString * path = [NSString stringWithFormat:@"files/%@/%@/%@", [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], ourVersion, encodedIv];
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST"
-                                                      path: path
-                                                parameters:nil];
-    [request setHTTPBody:data];
-    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    NSString * path = [NSString stringWithFormat:@"/files/%@/%@/%@", [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], ourVersion, encodedIv];
+//    NSMutableURLRequest *request = [self requestWithMethod:@"POST"
+//                                                      path: path
+//                                                parameters:nil];
+//    [request setHTTPBody:data];
+//    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+//    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
+//    
+//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+//    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
+//    [operation start];
 }
 
 -(void) setMessageShareable:(NSString *) name
@@ -486,10 +459,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:(shareable ? @YES : @NO),@"shareable", nil];
     NSString * path = [[NSString stringWithFormat:@"messages/%@/%ld/shareable", name, (long)serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:path  parameters:params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    [self PUT:path parameters:params success:successBlock failure:failureBlock];
     
 }
 
@@ -504,14 +474,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    signature, @"authSig",
                                    nil];
     
-    
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"keytoken" parameters: params];
-    
-    
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
-    [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [operation start];
-    
+    [self POST:@"/keytoken" parameters:params progress:nil success:successBlock failure:failureBlock];
 }
 
 
@@ -550,11 +513,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
     }
     
-    NSURLRequest *request = [self requestWithMethod:@"POST" path:@"keys2"  parameters:params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [operation start];
+    [self POST:@"/keys2" parameters:params progress:nil success:successBlock failure:failureBlock];
     
     
 }
@@ -568,16 +527,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    signature, @"authSig",
                                    nil];
     
-    
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"deletetoken" parameters: params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [operation start];
-    
-    
-    
-    
+    [self POST:@"/deletetoken" parameters:params progress:nil success:successBlock failure:failureBlock];
 }
 
 -(void) deleteUsername:(NSString *) username
@@ -596,14 +546,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    keyversion, @"keyVersion",
                                    nil];
     
-    
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"/users/delete" parameters: params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [operation start];
-    
-    
+    [self POST:@"/users/delete" parameters:params progress:nil success:successBlock failure:failureBlock];
 }
 
 
@@ -616,15 +559,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    signature, @"authSig",
                                    nil];
     
-    
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"passwordtoken" parameters: params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [operation start];
-    
-    
-    
+    [self POST:@"/passwordtoken" parameters:params progress:nil success:successBlock failure:failureBlock];
     
 }
 
@@ -646,12 +581,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    newPassword, @"newPassword",
                                    nil];
     
-    
-    NSMutableURLRequest *request = [self requestWithMethod:@"PUT" path:@"users/password" parameters: params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [operation start];
+    [self PUT:@"/users/password" parameters:params success:successBlock failure:failureBlock];
     
 }
 
@@ -665,16 +595,16 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 -(void) getShortUrl:(NSString*) longUrl callback: (CallbackBlock) callback
 {
     NSString * path = [[NSString stringWithFormat:@"https://api-ssl.bitly.com/v3/shorten?access_token=%@&longUrl=%@", BITLY_TOKEN, longUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:nil parameters: nil];
-    [request setURL:  [NSURL URLWithString:path]];
-    
-    
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        callback([JSON valueForKeyPath:@"data.url"]);
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-        callback(longUrl);
-    }];
-    [operation start];
+//    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:nil parameters: nil];
+//    [request setURL:  [NSURL URLWithString:path]];
+//    
+//    
+//    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+//        callback([JSON valueForKeyPath:@"data.url"]);
+//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+//        callback(longUrl);
+//    }];
+//    [operation start];
 }
 
 -(void) addPurchaseReceiptToParams: (NSMutableDictionary *) params {
@@ -689,18 +619,18 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         [params setObject: purchaseReceipt forKey:@"purchaseReceipt"];
     }
 }
--(void) uploadReceipt: (NSString *) receipt
-         successBlock:(HTTPSuccessBlock) successBlock
-         failureBlock: (HTTPFailureBlock) failureBlock {
-    
-    NSMutableDictionary * params = [NSMutableDictionary new];
-    [self addPurchaseReceiptToParams: params];
-    
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"updatePurchaseTokens" parameters: params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
-}
+//-(void) uploadReceipt: (NSString *) receipt
+//         successBlock:(HTTPSuccessBlock) successBlock
+//         failureBlock: (HTTPFailureBlock) failureBlock {
+//    
+//    NSMutableDictionary * params = [NSMutableDictionary new];
+//    [self addPurchaseReceiptToParams: params];
+//    
+//    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"updatePurchaseTokens" parameters: params];
+//    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
+//    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
+//    [operation start];
+//}
 
 -(void) assignFriendAlias:(NSString *) data friendname: (NSString *) friendname version: (NSString *) version iv: (NSString *) iv successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
@@ -711,31 +641,20 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    nil];
     
     NSString * path = [[NSString stringWithFormat:@"users/%@/alias2", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"PUT" path:path  parameters:params];
     
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    [self PUT:path parameters:params success:successBlock failure:failureBlock];
 }
 
 -(void) deleteFriendAlias:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"users/%@/alias", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"DELETE" path:path  parameters:nil];
-    
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) deleteFriendImage:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"users/%@/image", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURLRequest *request = [self requestWithMethod:@"DELETE" path:path  parameters:nil];
-    
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    [operation start];
+    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) updateSigs: (NSDictionary *) sigs {
@@ -744,17 +663,12 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     
     NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:jsonString, @"sigs", nil];
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"sigs" parameters: params];
-    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation start];
+    [self POST:@"sigs" parameters:params progress:nil success:nil failure:nil];
 }
 
 -(void) sendMessages:(NSArray *)messages successBlock:(JSONSuccessBlock)successBlock failureBlock:(JSONFailureBlock)failureBlock {
     NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:messages, @"messages", nil];
-    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"messages" parameters: params];
-    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
-    // [operation setSuccessCallbackQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [operation start];
+    [self POST:@"messages" parameters:params progress:nil success:successBlock failure:failureBlock];
     
 }
 

@@ -340,7 +340,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [[NetworkController sharedInstance] getPasswordTokenForUsername:username
                                                         andPassword:passwordString
                                                        andSignature:signatureString
-                                                       successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                       successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                            NSString * passwordToken = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
                                                            NSDictionary * derived = [EncryptionController deriveKeyFromPassword:newPassword];
                                                            NSData * newSaltData = [derived objectForKey:@"salt"];
@@ -356,7 +356,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                                  authSig:signatureString
                                                                                                                 tokenSig:tokenSignatureString
                                                                                                               keyVersion:[identity latestVersion]
-                                                                                                            successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                                                            successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                                                                                 [[IdentityController sharedInstance] updatePasswordForUsername:username
                                                                                                                                                                currentPassword:password
                                                                                                                                                                    newPassword:newPassword
@@ -376,7 +376,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                                     [nav pushViewController:bvc animated:YES];
                                                                                                                 });
   
-                                                                                                            } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                                                            } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                                                                                 dispatch_async(dispatch_get_main_queue(), ^{
                                                                                                                     [_progressView removeView];
                                                                                                                     _progressView = nil;
@@ -386,7 +386,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                                 });
                                                                                                             }];
                                                            
-                                                       } failureBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                       } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                            dispatch_async(dispatch_get_main_queue(), ^{
                                                                [_currentPassword becomeFirstResponder];
                                                                [_progressView removeView];

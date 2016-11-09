@@ -12,7 +12,7 @@
 #import "DDLog.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #else
 static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
@@ -55,7 +55,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         
         [[NetworkController sharedInstance]
          getKeyVersionForUsername: _username
-         successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+         successBlock:^(NSURLSessionTask *operation, id responseObject) {
              NSString * responseObjectS =   [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
              DDLogVerbose(@"caching key version: %@ for username: %@", responseObjectS, _username);
              
@@ -64,7 +64,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
              [self finish:responseObjectS];
              
          }
-         failureBlock:^(AFHTTPRequestOperation *operation, NSError *Error) {
+         failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
              
              DDLogVerbose(@"response failure: %@",  Error);
              [self finish:nil];

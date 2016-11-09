@@ -458,7 +458,7 @@ const NSInteger SEND_THRESHOLD = 25;
                                                                                                     theirVersion:version
                                                                                                           fileid:[iv SR_stringByBase64Encoding]
                                                                                                         mimeType:MIME_TYPE_M4A
-                                                                                                    successBlock:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+                                                                                                    successBlock:^(NSURLSessionTask *task, id JSON) {
                                                                                                         NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
                                                                                                         NSString * url = [JSON objectForKey:@"url"];
                                                                                                         NSInteger size = [[JSON objectForKey:@"size"] integerValue];
@@ -477,10 +477,10 @@ const NSInteger SEND_THRESHOLD = 25;
                                                                                                         
                                                                                                         //[self stopProgress];
                                                                                                     }
-                                                                                                    failureBlock:^(NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON) {
+                                                                                                    failureBlock:^(NSURLSessionTask *operation, NSError *ErroN) {
                                                                                                         
                                                                                                         
-                                                                                                        DDLogInfo(@"uploaded voice %@ to server failed, statuscode: %d", key, responseObject.statusCode);
+                                                                                                        DDLogInfo(@"uploaded voice %@ to server failed", key);
                                                                                            
                                                                                                         message.errorStatus = 500;
                                                                                                         

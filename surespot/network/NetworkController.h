@@ -6,20 +6,21 @@
 //  Copyright (c) 2013 surespot. All rights reserved.
 //
 
-#import "AFHTTPClient.h"
+
 #import "AFNetworking.h"
+#import "AFHTTPSessionManager.h"
 #import "SurespotConstants.h"
 
 typedef void (^JSONResponseBlock) (NSDictionary* json);
-typedef void (^JSONSuccessBlock) (NSURLRequest *request, NSHTTPURLResponse *response, id JSON);
-typedef void (^JSONCookieSuccessBlock) (NSURLRequest *request, NSHTTPURLResponse *response, id JSON, NSHTTPCookie * cookie);
-typedef void (^JSONFailureBlock) (NSURLRequest *operation, NSHTTPURLResponse *responseObject, NSError *Error, id JSON);
-typedef void (^HTTPSuccessBlock) (AFHTTPRequestOperation *operation , id responseObject);
-typedef void (^HTTPCookieSuccessBlock) (AFHTTPRequestOperation *operation , id responseObject, NSHTTPCookie * cookie);
-typedef void (^HTTPFailureBlock) (AFHTTPRequestOperation *operation , NSError *error );
+typedef void (^JSONSuccessBlock) (NSURLSessionTask* task, id JSON);
+typedef void (^JSONCookieSuccessBlock) (NSURLSessionTask* task, id JSON, NSHTTPCookie * cookie);
+typedef void (^JSONFailureBlock) (NSURLSessionTask* task, NSError *Error);
+typedef void (^HTTPSuccessBlock) (NSURLSessionTask* task, id responseObject);
+typedef void (^HTTPCookieSuccessBlock) (NSURLSessionTask* task, id responseObject, NSHTTPCookie * cookie);
+typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
 
 
-@interface NetworkController : AFHTTPClient
+@interface NetworkController : AFHTTPSessionManager
 
 +(NetworkController*)sharedInstance;
 
@@ -100,13 +101,13 @@ typedef void (^HTTPFailureBlock) (AFHTTPRequestOperation *operation , NSError *e
                      failureBlock:(HTTPFailureBlock) failureBlock;
 
 -(void) deleteFromCache: (NSURLRequest *) request;
--(NSURLRequest *) buildPublicKeyRequestForUsername: (NSString *) username version: (NSString *) version;
+-(NSString *) buildPublicKeyPathForUsername: (NSString *) username version: (NSString *) version;
 
 -(void) getShortUrl:(NSString*) longUrl callback: (CallbackBlock) callback;
 
--(void) uploadReceipt: (NSString *) receipt
-         successBlock:(HTTPSuccessBlock) successBlock
-         failureBlock: (HTTPFailureBlock) failureBlock;
+//-(void) uploadReceipt: (NSString *) receipt
+//         successBlock:(HTTPSuccessBlock) successBlock
+//         failureBlock: (HTTPFailureBlock) failureBlock;
 
 -(void) clearCookies;
 
