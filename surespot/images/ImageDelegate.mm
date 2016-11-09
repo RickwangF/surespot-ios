@@ -217,7 +217,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                     theirVersion:version
                                                                                                           fileid:[iv SR_stringByBase64Encoding]
                                                                                                         mimeType:MIME_TYPE_IMAGE
-                                                                                                    successBlock:^(NSURLSessionTask *request, id JSON) {
+                                                                                                    successBlock:^(id JSON) {
                                                                                                         
                                                                                                         //update the message with the id and url
                                                                                                         NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
@@ -237,8 +237,8 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                         [cds addMessage:updatedMessage refresh:YES];
                                                                                                         
                                                                                                         [self stopProgress];
-                                                                                                    } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
-                                                                                                        long statusCode = [(NSHTTPURLResponse *) operation.response statusCode];
+                                                                                                    } failureBlock:^(NSURLResponse *operation, NSError *Error) {
+                                                                                                        long statusCode = [(NSHTTPURLResponse *) operation statusCode];
                                                                                                         DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", key, statusCode);
                                                                                                         [self stopProgress];
                                                                                                         if (statusCode == 402) {

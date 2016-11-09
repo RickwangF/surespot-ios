@@ -47,8 +47,8 @@ typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
               theirVersion: (NSString *) theirVersion
                     fileid: (NSString *) fileid
                   mimeType: (NSString *) mimeType
-              successBlock:(JSONSuccessBlock) successBlock
-              failureBlock: (JSONFailureBlock) failureBlock;
+              successBlock: ( void (^)(id JSON)) successBlock
+              failureBlock: ( void (^)(NSURLResponse * response, NSError * error)) failureBlock;
 
 -(void) setMessageShareable:(NSString *) name
                    serverId: (NSInteger) serverid

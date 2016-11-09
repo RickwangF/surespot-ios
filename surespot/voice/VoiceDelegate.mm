@@ -458,7 +458,7 @@ const NSInteger SEND_THRESHOLD = 25;
                                                                                                     theirVersion:version
                                                                                                           fileid:[iv SR_stringByBase64Encoding]
                                                                                                         mimeType:MIME_TYPE_M4A
-                                                                                                    successBlock:^(NSURLSessionTask *task, id JSON) {
+                                                                                                    successBlock:^(id JSON) {
                                                                                                         NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
                                                                                                         NSString * url = [JSON objectForKey:@"url"];
                                                                                                         NSInteger size = [[JSON objectForKey:@"size"] integerValue];
@@ -477,7 +477,7 @@ const NSInteger SEND_THRESHOLD = 25;
                                                                                                         
                                                                                                         //[self stopProgress];
                                                                                                     }
-                                                                                                    failureBlock:^(NSURLSessionTask *operation, NSError *ErroN) {
+                                                                                                    failureBlock:^(NSURLResponse *operation, NSError *ErroN) {
                                                                                                         
                                                                                                         
                                                                                                         DDLogInfo(@"uploaded voice %@ to server failed", key);

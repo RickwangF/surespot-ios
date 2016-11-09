@@ -1418,7 +1418,7 @@ static const int MAX_RETRY_DELAY = 30;
                                                       theirVersion:[message getTheirVersion]
                                                             fileid:message.iv
                                                           mimeType:message.mimeType
-                                                      successBlock:^(NSURLSessionTask *task, id JSON) {
+                                                      successBlock:^(id JSON) {
                                                           
                                                           NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
                                                           NSString * url = [JSON objectForKey:@"url"];
@@ -1436,8 +1436,8 @@ static const int MAX_RETRY_DELAY = 30;
                                                           
                                                           [self stopProgress];
                                                           
-                                                      } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
-                                                          long statusCode = [(NSHTTPURLResponse*) operation.response statusCode];
+                                                      } failureBlock:^(NSURLResponse *operation, NSError *Error) {
+                                                          long statusCode = [(NSHTTPURLResponse*) operation statusCode];
                                                           DDLogInfo(@"resend data %@ to server failed, statuscode: %ld", message.data, statusCode);
                                                           if (statusCode == 402) {
                                                               resendMessage.errorStatus = 402;

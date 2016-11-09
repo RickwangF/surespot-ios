@@ -47,23 +47,23 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (self != nil) {
         _baseUrl = baseUrl;
         
-      //  self.requestSerializer = [AFJSONRequestSerializer serializer];
-//        [self.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        //  self.requestSerializer = [AFJSONRequestSerializer serializer];
+        //        [self.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         [self.requestSerializer setValue:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)] forHTTPHeaderField:@"User-Agent"];
         
         self.responseSerializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[[AFJSONResponseSerializer serializer],
-                                                                                                           [AFHTTPResponseSerializer serializer]]];
+                                                                                                            [AFHTTPResponseSerializer serializer]]];
         
-       // self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
-      //          self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObject:@"text/plain"];
-      
+        // self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
+        //          self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObject:@"text/plain"];
+        
         // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
         
-//        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
-//        [self setDefaultHeader:@"User-Agent" value:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)]];
-//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HTTPOperationDidFinish:) name:AFNetworkingOperationDidFinishNotification object:nil];
-//        
-//        self.parameterEncoding = AFJSONParameterEncoding;
+        //        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
+        //        [self setDefaultHeader:@"User-Agent" value:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)]];
+        //        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HTTPOperationDidFinish:) name:AFNetworkingOperationDidFinishNotification object:nil];
+        //
+        //        self.parameterEncoding = AFJSONParameterEncoding;
     }
     
     return self;
@@ -239,24 +239,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         failureBlock(task, error);
     }];
-    
-    //    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"users2" parameters: params];
-    //
-    //
-    //    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-    //    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-    //        NSHTTPCookie * cookie = [self extractConnectCookie];
-    //        if (cookie) {
-    //            successBlock(operation, responseObject, cookie);
-    //        }
-    //        else {
-    //            failureBlock(operation, nil);
-    //        }
-    //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-    //        failureBlock(operation, error);
-    //    }];
-    //
-    //    [operation start];
 }
 
 
@@ -346,9 +328,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (!_loggedOut) {
         DDLogInfo(@"logout");
         [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-             [self deleteCookies];
+            [self deleteCookies];
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-             [self deleteCookies];
+            [self deleteCookies];
         }];
     }
 }
@@ -405,25 +387,35 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
               theirVersion: (NSString *) theirVersion
                     fileid: (NSString *) fileid
                   mimeType: (NSString *) mimeType
-              successBlock:(JSONSuccessBlock) successBlock
-              failureBlock: (JSONFailureBlock) failureBlock
+              successBlock: ( void (^)(id JSON)) successBlock
+              failureBlock: ( void (^)(NSURLResponse * response, NSError * error)) failureBlock
 {
     DDLogInfo(@"postFileStream, fileid: %@", fileid);
     
     NSString * encodedId = [self encodeBase64:fileid];
     DDLogInfo(@"postFileStream, encodedId: %@", encodedId);
-    NSString * path = [NSString stringWithFormat:@"files/%@/%@/%@/%@/%@", ourVersion, [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], theirVersion, encodedId, ([mimeType isEqual:MIME_TYPE_M4A] ? @"mp4" : @"image")];
+    NSString * path = [NSString stringWithFormat:@"%@/files/%@/%@/%@/%@/%@",_baseUrl, ourVersion, [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], theirVersion, encodedId, ([mimeType isEqual:MIME_TYPE_M4A] ? @"mp4" : @"image")];
     DDLogInfo(@"postFileStream, path: %@", path);
-//    NSMutableURLRequest *request
-//    = [self requestWithMethod:@"POST"
-//                         path: path
-//                   parameters:nil];
-//    [request setHTTPBody:data];
-//    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-//    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
-//    
-//    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
-//    [operation start];
+    NSMutableURLRequest *request  = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+
+    
+    NSURLSessionUploadTask * task = [self uploadTaskWithRequest:request fromData:data progress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        if (error) {
+            failureBlock(response, error);
+        }
+        else {
+            successBlock(responseObject);
+        }
+    }];
+    [task resume];
+    //    [request setHTTPBody:data];
+    //    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    //    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
+    //
+    //    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
+    //    [operation start];
     
 }
 
@@ -439,16 +431,16 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     DDLogInfo(@"postFriendFileStream, encoded iv: %@", encodedIv);
     
     NSString * path = [NSString stringWithFormat:@"/files/%@/%@/%@", [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], ourVersion, encodedIv];
-//    NSMutableURLRequest *request = [self requestWithMethod:@"POST"
-//                                                      path: path
-//                                                parameters:nil];
-//    [request setHTTPBody:data];
-//    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-//    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
-//    
-//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-//    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-//    [operation start];
+    //    NSMutableURLRequest *request = [self requestWithMethod:@"POST"
+    //                                                      path: path
+    //                                                parameters:nil];
+    //    [request setHTTPBody:data];
+    //    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    //    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
+    //
+    //    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    //    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
+    //    [operation start];
 }
 
 -(void) setMessageShareable:(NSString *) name
@@ -595,16 +587,16 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 -(void) getShortUrl:(NSString*) longUrl callback: (CallbackBlock) callback
 {
     NSString * path = [[NSString stringWithFormat:@"https://api-ssl.bitly.com/v3/shorten?access_token=%@&longUrl=%@", BITLY_TOKEN, longUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:nil parameters: nil];
-//    [request setURL:  [NSURL URLWithString:path]];
-//    
-//    
-//    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-//        callback([JSON valueForKeyPath:@"data.url"]);
-//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-//        callback(longUrl);
-//    }];
-//    [operation start];
+    //    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:nil parameters: nil];
+    //    [request setURL:  [NSURL URLWithString:path]];
+    //
+    //
+    //    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+    //        callback([JSON valueForKeyPath:@"data.url"]);
+    //    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+    //        callback(longUrl);
+    //    }];
+    //    [operation start];
 }
 
 -(void) addPurchaseReceiptToParams: (NSMutableDictionary *) params {
@@ -622,10 +614,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 //-(void) uploadReceipt: (NSString *) receipt
 //         successBlock:(HTTPSuccessBlock) successBlock
 //         failureBlock: (HTTPFailureBlock) failureBlock {
-//    
+//
 //    NSMutableDictionary * params = [NSMutableDictionary new];
 //    [self addPurchaseReceiptToParams: params];
-//    
+//
 //    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"updatePurchaseTokens" parameters: params];
 //    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
 //    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
