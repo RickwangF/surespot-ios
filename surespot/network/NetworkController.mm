@@ -47,23 +47,15 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (self != nil) {
         _baseUrl = baseUrl;
         
-        //  self.requestSerializer = [AFJSONRequestSerializer serializer];
-        //        [self.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         [self.requestSerializer setValue:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)] forHTTPHeaderField:@"User-Agent"];
         
         self.responseSerializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[[AFJSONResponseSerializer serializer],
                                                                                                             [AFHTTPResponseSerializer serializer]]];
         
-        // self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
-        //          self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObject:@"text/plain"];
-        
-        // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
         
         //        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
-        //        [self setDefaultHeader:@"User-Agent" value:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)]];
+        
         //        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HTTPOperationDidFinish:) name:AFNetworkingOperationDidFinishNotification object:nil];
-        //
-        //        self.parameterEncoding = AFJSONParameterEncoding;
     }
     
     return self;
@@ -399,7 +391,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     NSMutableURLRequest *request  = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-
+    
     
     NSURLSessionUploadTask * task = [self uploadTaskWithRequest:request fromData:data progress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         if (error) {
@@ -410,13 +402,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         }
     }];
     [task resume];
-    //    [request setHTTPBody:data];
-    //    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    //    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
-    //
-    //    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:successBlock failure:failureBlock];
-    //    [operation start];
-    
 }
 
 -(void) postFriendStreamData: (NSData *) data
@@ -445,17 +430,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         }
     }];
     [task resume];
-
-    //    NSMutableURLRequest *request = [self requestWithMethod:@"POST"
-    //                                                      path: path
-    //                                                parameters:nil];
-    //    [request setHTTPBody:data];
-    //    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    //    [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)data.length] forHTTPHeaderField:@"Content-Length"];
-    //
-    //    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    //    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-    //    [operation start];
 }
 
 -(void) setMessageShareable:(NSString *) name
