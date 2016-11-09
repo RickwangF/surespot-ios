@@ -300,7 +300,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                 ourVersion:_ourVersion
                                                                                              theirUsername:_theirUsername
                                                                                                         iv:[iv SR_stringByBase64Encoding]
-                                                                                              successBlock:^(NSURLSessionTask *operation, id responseObject) {
+                                                                                              successBlock:^(id responseObject) {
                                                                                                   [self stopProgress];
                                                                                                   if (responseObject) {
                                                                                                       NSString * url = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
@@ -332,7 +332,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                   }
                                                                                                   
                                                                                                   
-                                                                                              } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
+                                                                                              } failureBlock:^(NSURLResponse *operation, NSError *error) {
                                                                                                   [self stopProgress];
                                                                                                   DDLogInfo(@"uploading friend image %@ to server failed", key);
                                                                                                   [UIUtils showToastKey:@"could_not_upload_friend_image" duration:2];

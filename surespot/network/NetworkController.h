@@ -60,8 +60,8 @@ typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
                   ourVersion: (NSString *) ourVersion
                theirUsername: (NSString *) theirUsername
                           iv: (NSString *) iv
-                successBlock:(HTTPSuccessBlock) successBlock
-                failureBlock: (HTTPFailureBlock) failureBlock;
+                successBlock: ( void (^)(id responseObject)) successBlock
+                failureBlock: ( void (^)(NSURLResponse * response, NSError * error)) failureBlock;
 
 -(void) getKeyTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
                   successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;

@@ -423,14 +423,29 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                   ourVersion: (NSString *) ourVersion
                theirUsername: (NSString *) theirUsername
                           iv: (NSString *) iv
-                successBlock:(HTTPSuccessBlock) successBlock
-                failureBlock: (HTTPFailureBlock) failureBlock
+                successBlock: ( void (^)(id responseObject)) successBlock
+                failureBlock: ( void (^)(NSURLResponse * response, NSError * error)) failureBlock
 {
     NSString * encodedIv = [self encodeBase64:iv];
     
     DDLogInfo(@"postFriendFileStream, encoded iv: %@", encodedIv);
     
-    NSString * path = [NSString stringWithFormat:@"/files/%@/%@/%@", [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], ourVersion, encodedIv];
+    NSString * path = [NSString stringWithFormat:@"%@/files/%@/%@/%@",_baseUrl, [theirUsername stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], ourVersion, encodedIv];
+    NSMutableURLRequest *request  = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    
+    
+    NSURLSessionUploadTask * task = [self uploadTaskWithRequest:request fromData:data progress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        if (error) {
+            failureBlock(response, error);
+        }
+        else {
+            successBlock(responseObject);
+        }
+    }];
+    [task resume];
+
     //    NSMutableURLRequest *request = [self requestWithMethod:@"POST"
     //                                                      path: path
     //                                                parameters:nil];
