@@ -639,12 +639,11 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 }
 
 -(void) updateSigs: (NSDictionary *) sigs {
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:sigs options:0 error:nil];
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    
-    
-    NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:jsonString, @"sigs", nil];
-    [self POST:@"sigs" parameters:params progress:nil success:nil failure:nil];
+    NSString * path = [NSString stringWithFormat:@"%@/sigs2",_baseUrl];
+    NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:sigs, @"sigs2", nil];
+    NSMutableURLRequest * req = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:path parameters:params error:nil];
+    NSURLSessionDataTask * task = [self dataTaskWithRequest:req completionHandler:nil];
+    [task resume];
 }
 
 -(void) sendMessages:(NSArray *)messages successBlock:(JSONSuccessBlock)successBlock failureBlock:(JSONFailureBlock)failureBlock {

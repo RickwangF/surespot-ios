@@ -566,8 +566,12 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         ECDHPrivateKey * dhPriv = [identity getDhPrivateKeyForVersion:currentVersion];
         ECDSAPrivateKey * dsaPriv = [identity getDsaPrivateKeyForVersion:currentVersion];
         
-        NSString * sDhPub = [EncryptionController encodeDHPublicKey:[EncryptionController createPublicDHFromPrivKey:dhPriv]];
-        NSString * sDsaPub = [EncryptionController encodeDSAPublicKey:[EncryptionController createPublicDSAFromPrivKey:dsaPriv]];
+        
+        NSString * sDhPub = [[EncryptionController encodeDHPublicKeyData:[EncryptionController createPublicDHFromPrivKey:dhPriv]] SR_stringByBase64Encoding];
+        NSString * sDsaPub = [[EncryptionController encodeDSAPublicKeyData:[EncryptionController createPublicDSAFromPrivKey:dsaPriv]] SR_stringByBase64Encoding];
+        
+        DDLogInfo(@"signed dh: %@, dsa: %@", sDhPub, sDsaPub);
+
         
         [signatures setObject:[[EncryptionController signUsername:[identity username] andVersion:i andDhPubKey:sDhPub andDsaPubKey:sDsaPub withPrivateKey:privateDsaKey] SR_stringByBase64Encoding] forKey:currentVersion];
         if (i>1) {

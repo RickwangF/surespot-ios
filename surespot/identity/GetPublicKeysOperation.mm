@@ -11,7 +11,10 @@
 #import "EncryptionController.h"
 #import "IdentityController.h"
 #import "NSData+Base64.h"
+#import "NSData+SRB64Additions.h"
+
 #import "DDLog.h"
+
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
@@ -56,6 +59,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     PublicKeys * validatedKeys = nil;
     NSInteger validatedKeyVersion = 0;
     
+    NSMutableDictionary * dhKeys = [[NSMutableDictionary alloc] init];
     NSMutableDictionary * dsaKeys = [[NSMutableDictionary alloc] init];
     NSMutableDictionary * resultKeys = [[NSMutableDictionary alloc] init];
     
@@ -70,13 +74,13 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         currentVersion--;
     }
     
-
+    
     if (validatedKeys && wantedVersion == validatedKeyVersion) {
         DDLogInfo(@"Loaded public keys from disk for user: %@, version: %@", _username, _version);
         [self finish:keys];
         return;
     }
-        
+    
     [[NetworkController sharedInstance]
      getPublicKeys2ForUsername: self.username
      andVersion: [@(validatedKeyVersion+1) stringValue]
@@ -86,20 +90,21 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
              for (NSInteger i=0;i < [JSON count]; i++) {
                  NSDictionary * jsonKeys = [JSON objectAtIndex:i];
                  NSString * sReadVersion = [jsonKeys objectForKey:@"version"];
+                 
                  NSString * spubECDSA = [jsonKeys objectForKey:@"dsaPub"];
                  ECDSAPublicKey * dsaPub = [EncryptionController recreateDsaPublicKey:spubECDSA];
                  [dsaKeys setObject:[NSValue valueWithPointer:dsaPub] forKey:sReadVersion];
+                 
+                 NSString * spubECDH = [jsonKeys objectForKey:@"dhPub"];
+                 ECDHPublicKey * dhPub = [EncryptionController recreateDhPublicKey:spubECDH];
+                 [dhKeys setObject:[NSValue valueWithPointer:dhPub] forKey:sReadVersion];
+                 
                  [resultKeys setObject:jsonKeys forKey:sReadVersion];
              }
              
              NSDictionary * wantedKey = [resultKeys objectForKey:_version];
-             if (![wantedKey objectForKey:@"clientSig"]) {
-                 DDLogInfo(@"validating username: %@, version: %@, keys using v1 code", _username, _version);
-                 [self finish:[self getPublicKeysForUsername:_username version:_version jsonKeys:wantedKey]];
-                 return;
-             }
-             else {
-                 DDLogInfo(@"validating username: %@, version: %@, keys using v2 code", _username, _version);
+             if ([wantedKey objectForKey:@"clientSig2"]) {
+                 DDLogInfo(@"validating username: %@, version: %@, keys using v3 code", _username, _version);
                  
                  ECDSAPublicKey * previousDsaKey = nil;
                  if (validatedKeys) {
@@ -109,16 +114,24 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                      [[dsaKeys objectForKey:@"1"] getValue:&previousDsaKey];
                  }
                  
+                 ECDHPublicKey * dhPub;
+                 ECDSAPublicKey * dsaPub;
+                
                  NSString * sDhPub = nil;
                  NSString * sDsaPub = nil;
                  
+                 
                  for (NSInteger validatingVersion = validatedKeyVersion + 1;validatingVersion <= wantedVersion; validatingVersion++) {
                      NSString * sValidatingVersion = [@(validatingVersion) stringValue];
-                     NSDictionary * jsonKey = [resultKeys objectForKey: sValidatingVersion];
-                     sDhPub = [jsonKey objectForKey:@"dhPub"];
-                     sDsaPub = [jsonKey objectForKey:@"dsaPub"];
                      
-                     BOOL verified = [EncryptionController verifySigUsingKey:[EncryptionController serverPublicKey] signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"serverSig"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
+                     NSDictionary * jsonKey = [resultKeys objectForKey: sValidatingVersion];
+                     [[dhKeys objectForKey:_version] getValue:&dhPub];
+                     [[dsaKeys objectForKey:_version] getValue:&dsaPub];
+                     
+                     sDhPub = [[EncryptionController encodeDHPublicKeyData:dhPub] SR_stringByBase64Encoding];
+                     sDsaPub = [[EncryptionController encodeDSAPublicKeyData:dsaPub] SR_stringByBase64Encoding];
+                     
+                     BOOL verified = [EncryptionController verifySigUsingKey:[EncryptionController serverPublicKey] signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"serverSig2"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
                      
                      if (!verified) {
                          DDLogWarn(@"server signature check failed");
@@ -126,20 +139,17 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                          return;
                      }
                      
-                     verified = [EncryptionController verifySigUsingKey:previousDsaKey signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"clientSig"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
+                     verified = [EncryptionController verifySigUsingKey:previousDsaKey signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"clientSig2"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
                      if (!verified) {
                          DDLogWarn(@"client signature check failed");
                          [self finish:nil];
                          return;
                      }
-
-                     [[IdentityController sharedInstance] savePublicKeys: jsonKey  username: _username version: sValidatingVersion];
+                     
+                     [[IdentityController sharedInstance] savePublicKeys: jsonKey username: _username version: sValidatingVersion];
                      [[dsaKeys objectForKey: sValidatingVersion] getValue:&previousDsaKey];
                  }
                  
-                 ECDHPublicKey * dhPub = [EncryptionController recreateDhPublicKey:sDhPub];
-                 ECDSAPublicKey * dsaPub;
-                 [[dsaKeys objectForKey:_version] getValue:&dsaPub];
                  
                  PublicKeys* pk = [[PublicKeys alloc] init];
                  pk.dhPubKey = dhPub;
@@ -149,6 +159,68 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                  
                  [self finish:pk];
 
+             }
+             else {
+
+                 if ([wantedKey objectForKey:@"clientSig"]) {
+                     
+                     DDLogInfo(@"validating username: %@, version: %@, keys using v2 code", _username, _version);
+                     
+                     ECDSAPublicKey * previousDsaKey = nil;
+                     if (validatedKeys) {
+                         previousDsaKey = [validatedKeys dsaPubKey];
+                     }
+                     else {
+                         [[dsaKeys objectForKey:@"1"] getValue:&previousDsaKey];
+                     }
+                     
+                     NSString * sDhPub = nil;
+                     NSString * sDsaPub = nil;
+                     
+                     for (NSInteger validatingVersion = validatedKeyVersion + 1;validatingVersion <= wantedVersion; validatingVersion++) {
+                         NSString * sValidatingVersion = [@(validatingVersion) stringValue];
+                         NSDictionary * jsonKey = [resultKeys objectForKey: sValidatingVersion];
+                         sDhPub = [jsonKey objectForKey:@"dhPub"];
+                         sDsaPub = [jsonKey objectForKey:@"dsaPub"];
+                         
+                         BOOL verified = [EncryptionController verifySigUsingKey:[EncryptionController serverPublicKey] signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"serverSig"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
+                         
+                         if (!verified) {
+                             DDLogWarn(@"server signature check failed");
+                             [self finish:nil];
+                             return;
+                         }
+                         
+                         verified = [EncryptionController verifySigUsingKey:previousDsaKey signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"clientSig"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
+                         if (!verified) {
+                             DDLogWarn(@"client signature check failed");
+                             [self finish:nil];
+                             return;
+                         }
+                         
+                         [[IdentityController sharedInstance] savePublicKeys: jsonKey  username: _username version: sValidatingVersion];
+                         [[dsaKeys objectForKey: sValidatingVersion] getValue:&previousDsaKey];
+                     }
+                     
+                     ECDHPublicKey * dhPub;
+                     [[dhKeys objectForKey:_version] getValue:&dhPub];
+                     ECDSAPublicKey * dsaPub;
+                     [[dsaKeys objectForKey:_version] getValue:&dsaPub];
+                     
+                     PublicKeys* pk = [[PublicKeys alloc] init];
+                     pk.dhPubKey = dhPub;
+                     pk.dsaPubKey = dsaPub;
+                     pk.version = _version;
+                     pk.lastModified = [NSDate date];
+                     
+                     [self finish:pk];
+                     
+                 }
+                 else {
+                     DDLogInfo(@"validating username: %@, version: %@, keys using v1 code", _username, _version);
+                     [self finish:[self getPublicKeysForUsername:_username version:_version jsonKeys:wantedKey]];
+                     return;
+                 }
              }
          }
          else {

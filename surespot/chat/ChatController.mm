@@ -495,7 +495,7 @@ static const int MAX_RETRY_DELAY = 30;
         
         DDLogVerbose(@"network call complete");
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ([JSON objectForKey:@"sigs"]) {
+            if ([JSON objectForKey:@"sigs2"]) {
                 NSDictionary * sigs = [[IdentityController sharedInstance] updateSignatures];
                 [[NetworkController sharedInstance] updateSigs:sigs];
             }
