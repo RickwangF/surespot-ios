@@ -145,11 +145,13 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         
         NSString * encodedDHKey = [EncryptionController encodeDHPublicKey: [keys dhPubKey]];
         NSString * encodedDSAKey = [EncryptionController encodeDSAPublicKey:[keys dsaPubKey]];
+        NSString * sDhPub = [[EncryptionController encodeDHPublicKeyData:[keys dhPubKey]] SR_stringByBase64Encoding];
+        NSString * sDsaPub = [[EncryptionController encodeDSAPublicKeyData:[keys dsaPubKey]] SR_stringByBase64Encoding];
         NSString * authSig = [[EncryptionController signUsername:username andPassword: [encPassword dataUsingEncoding:NSUTF8StringEncoding] withPrivateKey:keys.dsaPrivKey] SR_stringByBase64Encoding];
-        NSString * clientSig = [[EncryptionController signUsername:username andVersion:1 andDhPubKey:encodedDHKey andDsaPubKey:encodedDSAKey withPrivateKey:keys.dsaPrivKey] SR_stringByBase64Encoding];
+        NSString * clientSig = [[EncryptionController signUsername:username andVersion:1 andDhPubKey:sDhPub andDsaPubKey:sDsaPub withPrivateKey:keys.dsaPrivKey] SR_stringByBase64Encoding];
         
         [[NetworkController sharedInstance]
-         createUser2WithUsername: username
+         createUser3WithUsername: username
          derivedPassword: encPassword
          dhKey: encodedDHKey
          dsaKey: encodedDSAKey

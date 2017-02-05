@@ -156,14 +156,18 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                       
                                                       IdentityKeys * keys = [EncryptionController generateKeyPairs];
                                                       
-                                                      NSString * encodedDHKey = [EncryptionController encodeDHPublicKey: [keys dhPubKey]];
-                                                      NSString * encodedDSAKey = [EncryptionController encodeDSAPublicKey:[keys dsaPubKey]];
-
-                                                      NSString * clientSig = [[EncryptionController signUsername:username andVersion:iKeyVersion andDhPubKey:encodedDHKey andDsaPubKey:encodedDSAKey withPrivateKey:[identity getDsaPrivateKey]] SR_stringByBase64Encoding];
+                                                      NSString * sDhPub = [[EncryptionController encodeDHPublicKeyData:[keys dhPubKey]] SR_stringByBase64Encoding];
+                                                      NSString * sDsaPub = [[EncryptionController encodeDSAPublicKeyData:[keys dsaPubKey]] SR_stringByBase64Encoding];
+                                                      
+                                                      NSString * clientSig = [[EncryptionController signUsername:username
+                                                                                                      andVersion:iKeyVersion
+                                                                                                     andDhPubKey:sDhPub
+                                                                                                    andDsaPubKey:sDsaPub
+                                                                                                  withPrivateKey:[identity getDsaPrivateKey]] SR_stringByBase64Encoding];
 
                                                       
                                                       [[IdentityController sharedInstance] setExpectedKeyVersionForUsername:username version:keyVersion];
-                                                      [[NetworkController sharedInstance] updateKeys2ForUsername:username
+                                                      [[NetworkController sharedInstance] updateKeys3ForUsername:username
                                                                                                        password:passwordString
                                                                                                     publicKeyDH:[EncryptionController encodeDHPublicKey:keys.dhPubKey]
                                                                                                    publicKeyDSA:[EncryptionController encodeDSAPublicKey:keys.dsaPubKey]

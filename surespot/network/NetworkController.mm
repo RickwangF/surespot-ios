@@ -194,7 +194,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     }
 }
 
--(void) createUser2WithUsername:(NSString *)username derivedPassword:(NSString *)derivedPassword dhKey:(NSString *)encodedDHKey dsaKey:(NSString *)encodedDSAKey authSig:(NSString *)authSig clientSig:(NSString *)clientSig successBlock:(HTTPCookieSuccessBlock)successBlock failureBlock:(HTTPFailureBlock)failureBlock {
+-(void) createUser3WithUsername:(NSString *)username derivedPassword:(NSString *)derivedPassword dhKey:(NSString *)encodedDHKey dsaKey:(NSString *)encodedDSAKey authSig:(NSString *)authSig clientSig:(NSString *)clientSig successBlock:(HTTPCookieSuccessBlock)successBlock failureBlock:(HTTPFailureBlock)failureBlock {
     
     [self clearCookies];
     
@@ -210,7 +210,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    encodedDHKey, @"dhPub",
                                    encodedDSAKey, @"dsaPub",
                                    versionString, @"version",
-                                   clientSig, @"clientSig",
+                                   clientSig, @"clientSig2",
                                    @"ios", @"platform", nil];
     
     [self addPurchaseReceiptToParams:params];
@@ -459,7 +459,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 }
 
 
--(void) updateKeys2ForUsername:(NSString *) username
+-(void) updateKeys3ForUsername:(NSString *) username
                       password:(NSString *) password
                    publicKeyDH:(NSString *) pkDH
                   publicKeyDSA:(NSString *) pkDSA
@@ -483,7 +483,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    pkDSA, @"dsaPub",
                                    authSig, @"authSig",
                                    tokenSig, @"tokenSig",
-                                   clientSig, @"clientSig",
+                                   clientSig, @"clientSig2",
                                    keyversion, @"keyVersion",
                                    versionString, @"version",
                                    @"ios", @"platform", nil];
