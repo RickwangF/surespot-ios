@@ -220,7 +220,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (apnToken) {
         [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
     }
-    [self POST:@"users2" parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    [self POST:@"users3" parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSHTTPCookie * cookie = [self extractConnectCookie];
         if (cookie) {
             successBlock(task, responseObject, cookie);
@@ -494,7 +494,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
     }
     
-    [self POST:@"/keys2" parameters:params progress:nil success:successBlock failure:failureBlock];
+    [self POST:@"/keys3" parameters:params progress:nil success:successBlock failure:failureBlock];
     
     
 }
