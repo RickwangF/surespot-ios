@@ -570,22 +570,21 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [[NSURLCache sharedURLCache] removeCachedResponseForRequest:request];
 }
 
-
-
-
 -(void) getShortUrl:(NSString*) longUrl callback: (CallbackBlock) callback
 {
     NSString * path = [[NSString stringWithFormat:@"https://api-ssl.bitly.com/v3/shorten?access_token=%@&longUrl=%@", BITLY_TOKEN, longUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    //    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:nil parameters: nil];
-    //    [request setURL:  [NSURL URLWithString:path]];
-    //
-    //
-    //    AFJSONRequestOperation* operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-    //        callback([JSON valueForKeyPath:@"data.url"]);
-    //    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-    //        callback(longUrl);
-    //    }];
-    //    [operation start];
+    
+    NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:@"GET" URLString:path parameters:nil error:nil];
+    NSURLSessionDataTask * task = [self dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        if  (responseObject) {
+            callback([responseObject valueForKeyPath:@"data.url"]);
+        }
+        else
+        {
+            callback(longUrl);
+        }
+    }];
+    [task resume];
 }
 
 -(void) addPurchaseReceiptToParams: (NSMutableDictionary *) params {
@@ -600,18 +599,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         [params setObject: purchaseReceipt forKey:@"purchaseReceipt"];
     }
 }
-//-(void) uploadReceipt: (NSString *) receipt
-//         successBlock:(HTTPSuccessBlock) successBlock
-//         failureBlock: (HTTPFailureBlock) failureBlock {
-//
-//    NSMutableDictionary * params = [NSMutableDictionary new];
-//    [self addPurchaseReceiptToParams: params];
-//
-//    NSMutableURLRequest *request = [self requestWithMethod:@"POST" path:@"updatePurchaseTokens" parameters: params];
-//    AFHTTPRequestOperation * operation = [[AFHTTPRequestOperation alloc] initWithRequest:request ];
-//    [operation setCompletionBlockWithSuccess:successBlock failure:failureBlock];
-//    [operation start];
-//}
 
 -(void) assignFriendAlias:(NSString *) data friendname: (NSString *) friendname version: (NSString *) version iv: (NSString *) iv successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
