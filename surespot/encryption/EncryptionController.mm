@@ -416,7 +416,7 @@ int const PBKDF_ROUNDS = 20000;
     int put = CryptoPP::DSAConvertSignatureFormat(buffer,verifier.SignatureLength(), CryptoPP::DSASignatureFormat::DSA_P1363, reinterpret_cast<unsigned char const* >([signature bytes]), [signature length], CryptoPP::DSASignatureFormat::DSA_DER);
     
     [keyData appendBytes:buffer length:put];
-    delete buffer;
+    delete[] buffer;
     
     bool result = false;
     StringSource ss((byte *)[keyData bytes], [keyData length], true,
@@ -450,7 +450,7 @@ int const PBKDF_ROUNDS = 20000;
     int put = CryptoPP::DSAConvertSignatureFormat(buffer,verifier.SignatureLength(), CryptoPP::DSASignatureFormat::DSA_P1363, reinterpret_cast<unsigned char const* >([signature bytes]), [signature length], CryptoPP::DSASignatureFormat::DSA_DER);
     
     [keyData appendBytes:buffer length:put];
-    delete buffer;
+    delete[] buffer;
     
     bool result = false;
     StringSource ss((byte *)[keyData bytes], [keyData length], true,
