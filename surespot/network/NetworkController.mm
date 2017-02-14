@@ -51,8 +51,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         
         self.responseSerializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[[AFJSONResponseSerializer serializer],
                                                                                                             [AFHTTPResponseSerializer serializer]]];
-        
-        
+        self.requestSerializer = [AFJSONRequestSerializer serializer];
         //        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
         
         //        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HTTPOperationDidFinish:) name:AFNetworkingOperationDidFinishNotification object:nil];
@@ -112,7 +111,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                    versionString, @"version",
                                    @"ios", @"platform", nil];
     
-    [self addPurchaseReceiptToParams:params];
+   // [self addPurchaseReceiptToParams:params];
     
     //add apnToken if we have one
     NSData *  apnToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"apnToken"];
