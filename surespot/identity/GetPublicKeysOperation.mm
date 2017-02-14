@@ -125,8 +125,8 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                      NSString * sValidatingVersion = [@(validatingVersion) stringValue];
                      
                      NSDictionary * jsonKey = [resultKeys objectForKey: sValidatingVersion];
-                     [[dhKeys objectForKey:_version] getValue:&dhPub];
-                     [[dsaKeys objectForKey:_version] getValue:&dsaPub];
+                     [[dhKeys objectForKey:sValidatingVersion] getValue:&dhPub];
+                     [[dsaKeys objectForKey:sValidatingVersion] getValue:&dsaPub];
                      
                      sDhPub = [[EncryptionController encodeDHPublicKeyData:dhPub] SR_stringByBase64Encoding];
                      sDsaPub = [[EncryptionController encodeDSAPublicKeyData:dsaPub] SR_stringByBase64Encoding];
