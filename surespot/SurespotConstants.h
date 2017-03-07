@@ -21,6 +21,7 @@ extern NSInteger const SAVE_MESSAGE_COUNT;
 extern NSString * const MIME_TYPE_IMAGE;
 extern NSString * const MIME_TYPE_TEXT;
 extern NSString * const MIME_TYPE_M4A;
+extern NSString * const MIME_TYPE_GIF_LINK;
 extern NSInteger const MAX_IDENTITIES;
 
 extern NSString * const FACEBOOK_APP_ID;

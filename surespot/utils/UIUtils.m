@@ -319,7 +319,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 			break;
 		case 500:
         default:
-			if ([mimeType isEqualToString:MIME_TYPE_TEXT]) {
+			if ([mimeType isEqualToString:MIME_TYPE_TEXT] || [mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
                 statusText =  NSLocalizedString(@"error_message_generic",nil);
             }
             else {

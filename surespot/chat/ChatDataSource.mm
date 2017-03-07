@@ -71,12 +71,12 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 
                 
                 //if the message is ready to send and it's not already errored and it's not a text message set it to errored
-                if ([message readyToSend] && message.errorStatus == 0 && ![message.mimeType isEqualToString:MIME_TYPE_TEXT]) {
+                if ([message readyToSend] && message.errorStatus == 0 && !([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
                     message.errorStatus = 500;
                 }
                 else {
                     //if the message doesn't have a server id and it's a text message, add it to the resend buffer
-                    if (message.serverid <= 0 && [message.mimeType isEqualToString:MIME_TYPE_TEXT]) {
+                    if (message.serverid <= 0 && ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
                         [[ChatController sharedInstance] enqueueResendMessage: message];
                     }
                     

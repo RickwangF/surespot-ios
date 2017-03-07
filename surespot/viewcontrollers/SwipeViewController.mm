@@ -1160,8 +1160,8 @@ const Float32 voiceRecordDelay = 0.3;
                 cell.messageSentView.foregroundColor = [UIUtils surespotBlue];
             }
             cell.backgroundColor = [UIColor clearColor];
-            cell.message = message;
-            cell.messageLabel.text = plainData;
+            
+            
             cell.messageLabel.textColor = [self getTextColor];
             
             NSDictionary * linkAttributes = [NSMutableDictionary dictionary];
@@ -1179,6 +1179,10 @@ const Float32 voiceRecordDelay = 0.3;
             cell.messageStatusLabel.textColor = [self getTextColor];
             
             cell.messageLabel.lineBreakMode = NSLineBreakByWordWrapping;
+
+            cell.message = message;
+            cell.messageLabel.text = plainData;
+          
             UIView *bgColorView = [[UIView alloc] init];
             bgColorView.backgroundColor = [UIUtils surespotSelectionBlue];
             bgColorView.layer.masksToBounds = YES;
@@ -1211,7 +1215,7 @@ const Float32 voiceRecordDelay = 0.3;
                         cell.messageSentView.foregroundColor = [UIColor lightGrayColor];
                     }
                     
-                    if ((!message.plainData && [message.mimeType isEqualToString:MIME_TYPE_TEXT]) ||
+                    if ((!message.plainData && ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString: MIME_TYPE_GIF_LINK])) ||
                         (([message.mimeType isEqualToString:MIME_TYPE_M4A] || [message.mimeType isEqualToString:MIME_TYPE_IMAGE]) && ![[SDWebImageManager sharedManager] isKeyCached: message.data])) {
                         DDLogVerbose(@"setting message loading");
                         cell.messageStatusLabel.text = NSLocalizedString(@"message_loading_and_decrypting",nil);
@@ -1232,7 +1236,7 @@ const Float32 voiceRecordDelay = 0.3;
                 }
             }
             
-            if ([message.mimeType isEqualToString:MIME_TYPE_TEXT]) {
+            if ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
                 cell.messageLabel.hidden = NO;
                 cell.uiImageView.hidden = YES;
                 cell.shareableView.hidden = YES;
@@ -2150,7 +2154,7 @@ const Float32 voiceRecordDelay = 0.3;
     NSMutableArray * menuItems = [NSMutableArray new];
     
     //copy
-    if ([message.mimeType isEqualToString:MIME_TYPE_TEXT] && message.plainData) {
+    if (([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK]) && message.plainData) {
         REMenuItem * copyItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_copy", nil) image:[UIImage imageNamed:@"ic_menu_copy"] highlightedImage:nil action:^(REMenuItem * item){
             
             [[UIPasteboard generalPasteboard]  setString: message.plainData];

@@ -36,7 +36,7 @@
     [self didChangeValueForKey:@"isExecuting"];
     
     
-    if ([_message.mimeType isEqualToString: MIME_TYPE_TEXT]) {
+    if ([_message.mimeType isEqualToString: MIME_TYPE_TEXT] || [_message.mimeType isEqualToString: MIME_TYPE_GIF_LINK]) {
         
         if ([_message data]) {
             

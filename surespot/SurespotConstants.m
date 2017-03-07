@@ -23,6 +23,7 @@
 NSInteger const SAVE_MESSAGE_COUNT = 50;
 NSString * const MIME_TYPE_IMAGE = @"image/";
 NSString * const MIME_TYPE_TEXT = @"text/plain";
+NSString * const MIME_TYPE_GIF_LINK = @"gif/https";
 NSString * const MIME_TYPE_M4A = @"audio/mp4";
 NSInteger const MAX_IDENTITIES = 3;
 
