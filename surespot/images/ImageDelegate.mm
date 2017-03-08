@@ -244,9 +244,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                                                                         if (statusCode == 402) {
                                                                                                             message.errorStatus = 402;
                                                                                                         }
-                                                                                                        else {
-                                                                                                            message.errorStatus = 500;
-                                                                                                        }
+//                                                                                                        else {
+//                                                                                                            message.errorStatus = 500;
+//                                                                                                        }
                                                                                                         
                                                                                                         [cds postRefresh];
                                                                                                     }];

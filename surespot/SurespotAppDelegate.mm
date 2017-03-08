@@ -22,6 +22,7 @@
 #import "CredentialCachingController.h"
 #import "FileController.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "SideMenu-Swift.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
@@ -98,12 +99,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [UIUtils setAppAppearances];
     
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
-    UINavigationController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"navigationController"];
-    
-        [self.window makeKeyAndVisible];
-    
-    self.window.rootViewController = rootViewController;
-    
     
     NSString *appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     [[NSUserDefaults standardUserDefaults] setObject:appVersionString forKey:@"version_preference"];
@@ -143,19 +138,34 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         }
         
         if (setSession) {
-            [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"]]];
+            UIViewController * swipeViewController = [storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"];
+
+            UISideMenuNavigationController * sideMenu = [[UISideMenuNavigationController alloc] initWithRootViewController:swipeViewController];
+    
+            sideMenu.leftSide = YES;
+    //        AKSideMenu * sideMenu = [[AKSideMenu alloc] initWithContentViewController: navigationController leftMenuViewController:nil rightMenuViewController:nil];
+            [SideMenuManager setMenuLeftNavigationController:sideMenu];
+            
+            self.window.rootViewController = sideMenu;
         }
         
         else {
+             UINavigationController *navigationController = [storyboard instantiateViewControllerWithIdentifier:@"navigationController"];
+            
             //show create if we don't have any identities, otherwise login
             if ([[[IdentityController sharedInstance] getIdentityNames ] count] == 0 ) {
-                [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"signupViewController"]]];
+                
+                [navigationController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"signupViewController"]]];
             }
             else {
-                [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
+                [navigationController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
             }
+            self.window.rootViewController = navigationController;
         }
     }
+    
+    [self.window makeKeyAndVisible];
+
     
 
     return YES;

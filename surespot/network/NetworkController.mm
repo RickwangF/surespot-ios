@@ -13,6 +13,7 @@
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
 #import "EncryptionController.h"
+#import "CredentialCachingController.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
@@ -41,8 +42,18 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(NetworkController*)init
 {
-    //call super init
+    //set cookie
+//    NSHTTPCookie  *cookie = [[CredentialCachingController sharedInstance] getCookieForUsername:[[IdentityController sharedInstance] getLoggedInUser]];
+//    NSHTTPCookieStorage * shared = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+//    [shared setCookie:cookie];
+   // [shared clear]
+   // [self clearCookies];
+    
+//    NSURLSessionConfiguration * sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+//    [sessionConfiguration setHTTPCookieStorage: [NSHTTPCookieStorage sharedHTTPCookieStorage]];
+//    //call super init
     self = [super initWithBaseURL:[NSURL URLWithString: baseUrl]];
+             //sessionConfiguration:sessionConfiguration];
     
     if (self != nil) {
         _baseUrl = baseUrl;
@@ -52,13 +63,22 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         self.responseSerializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[[AFJSONResponseSerializer serializer],
                                                                                                             [AFHTTPResponseSerializer serializer]]];
         self.requestSerializer = [AFJSONRequestSerializer serializer];
+      //  self.requestSerializer.HTTPShouldHandleCookies = YES;
         //        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
         
         //        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HTTPOperationDidFinish:) name:AFNetworkingOperationDidFinishNotification object:nil];
+        
+      //  [self sesionM]
+       
     }
+    
+    
     
     return self;
 }
+
+
+//inject cookie for current user
 
 
 //handle 401s globally
@@ -296,6 +316,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 }
 
 -(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
+
     NSMutableDictionary *params = nil;
     if ([spotIds count] > 0) {
         NSData * jsonData = [NSJSONSerialization dataWithJSONObject:spotIds options:0 error:nil];
@@ -305,6 +326,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     DDLogVerbose(@"GetLatestData: params; %@", params);
     
     [self addPurchaseReceiptToParams:params];
+    
     
     NSString * path = [NSString stringWithFormat:@"optdata/%ld", (long)latestUserControlId];
     [self POST:path parameters:params progress:nil success:successBlock failure:failureBlock];
