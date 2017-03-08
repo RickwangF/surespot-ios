@@ -22,8 +22,8 @@
 #import "AFNetworkReachabilityManager.h"
 #import "SDWebImageManager.h"
 #import "SoundController.h"
-#import "surespot-Swift.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "SocketIO-swift.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_VERBOSE;
