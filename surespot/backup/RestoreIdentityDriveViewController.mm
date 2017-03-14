@@ -7,7 +7,7 @@
 //
 
 #import "RestoreIdentityDriveViewController.h"
-#import "GTLDrive.h"
+#import "GTLRDrive.h"
 #import "GTMOAuth2ViewControllerTouch.h"
 #import "DDLog.h"
 #import "SurespotConstants.h"
@@ -29,12 +29,12 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 
 @interface RestoreIdentityDriveViewController ()
 @property (strong, nonatomic) IBOutlet UITableView *tvDrive;
-@property (nonatomic, strong) GTLServiceDrive *driveService;
+@property (nonatomic, strong) GTLRDriveService *driveService;
 @property (strong) NSMutableArray * driveIdentities;
 @property (strong) NSDateFormatter * dateFormatter;
 @property (atomic, strong) id progressView;
 @property (atomic, strong) NSString * name;
-@property (atomic, strong) NSString * url;
+@property (atomic, strong) NSString * identifier;
 @property (atomic, strong) NSString * storedPassword;
 - (IBAction)bLoadIdentities:(id)sender;
 @property (strong, nonatomic) IBOutlet UIButton *bSelect;
@@ -58,7 +58,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     
 
     
-	self.driveService = [[GTLServiceDrive alloc] init];
+    self.driveService = [[GTLRDriveService alloc] init];
     
     _driveIdentities = [NSMutableArray new];
     _driveService.shouldFetchNextPages = YES;
@@ -114,7 +114,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 {
     GTMOAuth2ViewControllerTouch *authController;
     //http://stackoverflow.com/questions/13693617/error-500-when-performing-a-query-with-drive-file-scope
-    authController = [[GTMOAuth2ViewControllerTouch alloc] initWithScope: [[kGTLAuthScopeDriveFile stringByAppendingString:@" "] stringByAppendingString: kGTLAuthScopeDriveMetadataReadonly]
+    authController = [[GTMOAuth2ViewControllerTouch alloc] initWithScope: [[kGTLRAuthScopeDriveFile stringByAppendingString:@" "] stringByAppendingString: kGTLRAuthScopeDriveMetadataReadonly]
                                                                 clientID:GOOGLE_CLIENT_ID
                                                             clientSecret:GOOGLE_CLIENT_SECRET
                                                         keychainItemName:kKeychainItemName
@@ -131,10 +131,11 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 {
     if (error != nil)
     {
-        if ([error code] != kGTMOAuth2ErrorWindowClosed) {
+        if ([error code] != GTMOAuth2ErrorWindowClosed) {
             [UIUtils showToastMessage:error.localizedDescription duration:2];
         }
-        [self setAccountFromKeychain];
+        self.driveService.authorizer = nil;
+        _accountLabel.text = nil;
     }
     else
     {
@@ -189,17 +190,17 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 
 -(void) ensureDriveIdentityDirectoryCompletionBlock: (CallbackBlock) completionBlock {
     
-    GTLQueryDrive *queryFilesList = [GTLQueryDrive queryForChildrenListWithFolderId:@"root"];
-    queryFilesList.q =  [NSString stringWithFormat:@"title='%@' and trashed = false and mimeType='application/vnd.google-apps.folder'", DRIVE_IDENTITY_FOLDER];
+    GTLRDriveQuery_FilesList *queryFilesList = [GTLRDriveQuery_FilesList query];
+    queryFilesList.q =  [NSString stringWithFormat:@"name='%@' and trashed = false and mimeType='application/vnd.google-apps.folder'", DRIVE_IDENTITY_FOLDER];
     
     [_driveService executeQuery:queryFilesList
-              completionHandler:^(GTLServiceTicket *ticket, GTLDriveFileList *files,
+              completionHandler:^(GTLRServiceTicket *ticket, GTLRDrive_FileList *result,
                                   NSError *error) {
                   if (error == nil) {
-                      if (files.items.count > 0) {
+                      if (result.files.count > 0) {
                           NSString * identityDirId = nil;
                           
-                          for (id file in files.items) {
+                          for (id file in result.files) {
                               identityDirId = [file identifier];
                               if (identityDirId) break;
                           }
@@ -207,23 +208,23 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                           return;
                       }
                       else {
-                          GTLDriveFile *folderObj = [GTLDriveFile object];
-                          folderObj.title = DRIVE_IDENTITY_FOLDER;
+                          GTLRDrive_File *folderObj = [GTLRDrive_File object];
+                          folderObj.name = DRIVE_IDENTITY_FOLDER;
                           folderObj.mimeType = @"application/vnd.google-apps.folder";
                           
                           // To create a folder in a specific parent folder, specify the identifier
                           // of the parent:
                           // _resourceId is the identifier from the parent folder
                           
-                          GTLDriveParentReference *parentRef = [GTLDriveParentReference object];
-                          parentRef.identifier = @"root";
-                          folderObj.parents = [NSArray arrayWithObject:parentRef];
+//                          GTLDriveParentReference *parentRef = [GTLDriveParentReference object];
+//                          parentRef.identifier = @"root";
+//                          folderObj.parents = [NSArray arrayWithObject:parentRef];
                           
                           
-                          GTLQueryDrive *query = [GTLQueryDrive queryForFilesInsertWithObject:folderObj uploadParameters:nil];
+                          GTLRDriveQuery_FilesCreate *query = [GTLRDriveQuery_FilesCreate   queryWithObject:folderObj uploadParameters:nil];
                           
                           [_driveService executeQuery:query
-                                    completionHandler:^(GTLServiceTicket *ticket, GTLDriveFile *file,
+                                    completionHandler:^(GTLRServiceTicket *ticket, GTLRDrive_File *file,
                                                         NSError *error) {
                                         NSString * identityDirId = nil;
                                         if (error == nil) {
@@ -267,11 +268,14 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
             return;
             
         }
-        GTLQueryDrive *queryFilesList = [GTLQueryDrive queryForChildrenListWithFolderId:identityDirId];
-        queryFilesList.q = @"trashed = false";
+        GTLRDriveQuery_FilesList *queryFilesList = [GTLRDriveQuery_FilesList query];
+    
+        queryFilesList.q = [NSString stringWithFormat: @"trashed = false and \'%@\' in parents", identityDirId];
+      //  queryFilesList.additionalURLQueryParameters = [NSDictionary dictionaryWithObjectsAndKeys:@"alt", @"media", nil];
+        queryFilesList.fields = @"files(id, modifiedTime,originalFilename)";
         
         [_driveService executeQuery:queryFilesList
-                  completionHandler:^(GTLServiceTicket *ticket, GTLDriveFileList *files,
+                  completionHandler:^(GTLRServiceTicket *ticket, GTLRDrive_FileList *result,
                                       NSError *error) {
                       
                       if (error) {
@@ -283,8 +287,8 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                           return;
                       }
                       
-                      DDLogInfo(@"retrieved Identity files %@", files.items);
-                      NSInteger dlCount = [[files items] count];
+                      DDLogInfo(@"retrieved Identity files %@", result.files);
+                      NSInteger dlCount = result.files.count;
                       if (dlCount == 0) {
                           //no identities to download
                           [_progressView removeView];
@@ -298,27 +302,27 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                       NSObject * completionLock = [NSObject new];
                       __block NSInteger completed = 0;
                       
-                      for (GTLDriveChildReference *child in files) {
-                          GTLQuery *query = [GTLQueryDrive queryForFilesGetWithFileId:child.identifier];
+                      for (GTLRDrive_File *file in result.files) {
+                     //     GTLQuery *query = [GTLQueryDrive queryForFilesGetWithFileId:child.identifier];
                           
-                          // queryTicket can be used to track the status of the request.
-                          [self.driveService executeQuery:query
-                                        completionHandler:^(GTLServiceTicket *ticket,
-                                                            GTLDriveFile *file,
-                                                            NSError *error) {
-                                            
-                                            if (!error) {
+//                          // queryTicket can be used to track the status of the request.
+//                          [self.driveService executeQuery:query
+//                                        completionHandler:^(GTLServiceTicket *ticket,
+//                                                            GTLDriveFile *file,
+//                                                            NSError *error) {
+//                                          
+//                                            if (!error) {
                                                 DDLogInfo(@"\nfile name = %@", file.originalFilename);
                                                 NSMutableDictionary * identityFile = [NSMutableDictionary new];
                                                 [identityFile  setObject: [[IdentityController sharedInstance] identityNameFromFile: file.originalFilename] forKey:@"name"];
-                                                [identityFile setObject:[file.modifiedDate date] forKey:@"date"];
-                                                [identityFile setObject:file.downloadUrl forKey:@"url"];
+                                                [identityFile setObject:[file.modifiedTime date] forKey:@"date"];
+                                                [identityFile setObject:file.identifier forKey:@"identifier"];
                                                 [identityFiles addObject:identityFile];
-                                            }
-                                            else {
-                                                DDLogError(@"An error occurred: %@", error);
-                                            }
-                                            
+//                                            }
+//                                            else {
+//                                                DDLogError(@"An error occurred: %@", error);
+//                                            }
+                          
                                             @synchronized (completionLock) {
                                                 completed++;
                                                 
@@ -332,7 +336,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                                             }
                                             
                                             
-                                        }];
+                                    //    }];
                       }
                       
                   }];
@@ -375,11 +379,11 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 
     NSDictionary * rowData = [_driveIdentities objectAtIndex:indexPath.row];
     NSString * name = [rowData objectForKey:@"name"];
-    NSString * url = [rowData objectForKey:@"url"];
+    NSString * identifier = [rowData objectForKey:@"identifier"];
     
     _storedPassword = [[IdentityController sharedInstance] getStoredPasswordForIdentity:name];
     _name = name;
-    _url = url;
+    _identifier = identifier;
     
     //if (!_password) {
     
@@ -405,20 +409,19 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
         }
         
         if (![UIUtils stringIsNilOrEmpty:password]) {
-            [self importIdentity:_name url:_url password:password];
+            [self importIdentity:_name identifier: _identifier password:password];
         }
     }
 }
 
--(void) importIdentity: (NSString *) name url: (NSString *) url password: (NSString *) password {
+-(void) importIdentity: (NSString *) name identifier: (NSString *) identifier password: (NSString *) password {
     _progressView = [LoadingView showViewKey:@"progress_restoring_identity"];
     
-    GTMHTTPFetcher *fetcher =
-    [self.driveService.fetcherService fetcherWithURLString:url];
+    GTLRQuery *query = [GTLRDriveQuery_FilesGet queryForMediaWithFileId:identifier];
+    [self.driveService executeQuery:query completionHandler:^(GTLRServiceTicket * ticket, GTLRDataObject *file, NSError * _Nullable error) {
     
-    [fetcher beginFetchWithCompletionHandler:^(NSData *data, NSError *error) {
-        if (error == nil) {
-            NSData * identityData = [FileController gunzipIfNecessary:data];
+     if (error == nil) {
+            NSData * identityData = [FileController gunzipIfNecessary:file.data];
             [[IdentityController sharedInstance] importIdentityData:identityData username:name password:password callback:^(id result) {
                 [_progressView removeView];
                 _progressView = nil;
