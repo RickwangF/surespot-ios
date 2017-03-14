@@ -90,7 +90,6 @@
 		6674FF79186CB96A00B8E77B /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF78186CB96A00B8E77B /* libsqlite3.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
 		66755100184C55E900C55AAC /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66E70AB21847F8E100433D6F /* MobileCoreServices.framework */; };
 		667EFF9718425D82002C0406 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 667EFF9618425D82002C0406 /* SystemConfiguration.framework */; };
-		667F80051A3FAE8000181B42 /* GTLDrive_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 667F80031A3FAE8000181B42 /* GTLDrive_Sources.m */; };
 		667F800C1A3FB99100181B42 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A2BE17626B9E0072216A /* UIKit.framework */; };
 		667F800D1A3FB9A900181B42 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66BFDF091A3F7A9F00498240 /* OpenGLES.framework */; };
 		6686623D18565AD5001491B1 /* LoginViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6686623818565AD5001491B1 /* LoginViewController.mm */; };
@@ -113,7 +112,6 @@
 		668D24F6186A24D90096D155 /* QREncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 668D24F3186A24D90096D155 /* QREncoder.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		668D24FF186A36520096D155 /* QRInviteView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 668D24FE186A36520096D155 /* QRInviteView.xib */; };
 		668D2502186A373A0096D155 /* QRInviteViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 668D2501186A373A0096D155 /* QRInviteViewController.mm */; };
-		6695DDD81B6D6B110059BD6C /* libGTLTouchStaticLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6695DDD31B6D68D50059BD6C /* libGTLTouchStaticLib.a */; };
 		6698585118663157003624DA /* AGWindowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6698584E18663157003624DA /* AGWindowView.m */; };
 		669BC187187DAACD00C3C752 /* HelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 669BC186187DAACD00C3C752 /* HelpView.xib */; };
 		669BC195187DBF3500C3C752 /* AboutView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 669BC194187DBF3500C3C752 /* AboutView.xib */; };
@@ -178,7 +176,6 @@
 		66EBE0CB1855C97100F2452D /* KeyboardState.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF2A1855C96F00F2452D /* KeyboardState.m */; };
 		66EBE0CC1855C97100F2452D /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF2C1855C96F00F2452D /* LoadingView.m */; };
 		66EBE0CD1855C97100F2452D /* UIViewPager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF2E1855C96F00F2452D /* UIViewPager.m */; };
-		66EBE0CF1855C97100F2452D /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBDF321855C96F00F2452D /* GTMOAuth2ViewTouch.xib */; };
 		66EBE0D01855C97100F2452D /* IdentityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF341855C96F00F2452D /* IdentityCell.m */; };
 		66EBE0D11855C97100F2452D /* IdentityCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBDF351855C96F00F2452D /* IdentityCell.xib */; };
 		66EBE0D21855C97100F2452D /* RestoreIdentityDriveViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF371855C96F00F2452D /* RestoreIdentityDriveViewController.mm */; };
@@ -207,37 +204,6 @@
 		66FF1002182D3D920038ECA6 /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 66FF1000182D3D920038ECA6 /* DDTTYLogger.m */; };
 		6761F09264FD201A9C63491D /* Pods_surespot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		6695DDD01B6D68D50059BD6C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6695DDC91B6D68D50059BD6C /* GTL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4F38F6A60B66E91D00B24B81;
-			remoteInfo = GTLFramework;
-		};
-		6695DDD21B6D68D50059BD6C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6695DDC91B6D68D50059BD6C /* GTL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4F12027C11A4CA2F00BEB470;
-			remoteInfo = GTLTouchStaticLib;
-		};
-		6695DDD41B6D68D50059BD6C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6695DDC91B6D68D50059BD6C /* GTL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4F12027D11A4CA2F00BEB470;
-			remoteInfo = GTLUnitTests;
-		};
-		6695DDD61B6D68D50059BD6C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6695DDC91B6D68D50059BD6C /* GTL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4F1AD9020B71603F00DC0485;
-			remoteInfo = DevelopmentTestTool;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_surespot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -381,8 +347,6 @@
 		6674FF78186CB96A00B8E77B /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		667EFF9618425D82002C0406 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		667F80011A3FADCB00181B42 /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GTMOAuth2ViewTouch.xib; path = "../../libs/ios/google/google-api-objectivec-client-read-only/Source/OAuth2/Touch/GTMOAuth2ViewTouch.xib"; sourceTree = "<group>"; };
-		667F80031A3FAE8000181B42 /* GTLDrive_Sources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTLDrive_Sources.m; sourceTree = "<group>"; };
-		667F80041A3FAE8000181B42 /* GTLDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTLDrive.h; sourceTree = "<group>"; };
 		6686623718565AD5001491B1 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		6686623818565AD5001491B1 /* LoginViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoginViewController.mm; sourceTree = "<group>"; };
 		6686623918565AD5001491B1 /* SignupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignupViewController.h; sourceTree = "<group>"; };
@@ -425,7 +389,6 @@
 		668D24FE186A36520096D155 /* QRInviteView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = QRInviteView.xib; path = qr/QRInviteView.xib; sourceTree = "<group>"; };
 		668D2500186A373A0096D155 /* QRInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QRInviteViewController.h; path = qr/QRInviteViewController.h; sourceTree = "<group>"; };
 		668D2501186A373A0096D155 /* QRInviteViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QRInviteViewController.mm; path = qr/QRInviteViewController.mm; sourceTree = "<group>"; };
-		6695DDC91B6D68D50059BD6C /* GTL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GTL.xcodeproj; path = "google-api-objectivec-client-read-only/Source/GTL.xcodeproj"; sourceTree = "<group>"; };
 		66974AF0187EF17D007BB80F /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		66974AF1187F1692007BB80F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		66974AF2187F169F007BB80F /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -680,7 +643,6 @@
 		66EBDF2C1855C96F00F2452D /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		66EBDF2D1855C96F00F2452D /* UIViewPager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIViewPager.h; sourceTree = "<group>"; };
 		66EBDF2E1855C96F00F2452D /* UIViewPager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIViewPager.m; sourceTree = "<group>"; };
-		66EBDF321855C96F00F2452D /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GTMOAuth2ViewTouch.xib; sourceTree = "<group>"; };
 		66EBDF331855C96F00F2452D /* IdentityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdentityCell.h; sourceTree = "<group>"; };
 		66EBDF341855C96F00F2452D /* IdentityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IdentityCell.m; sourceTree = "<group>"; };
 		66EBDF351855C96F00F2452D /* IdentityCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IdentityCell.xib; sourceTree = "<group>"; };
@@ -737,7 +699,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6695DDD81B6D6B110059BD6C /* libGTLTouchStaticLib.a in Frameworks */,
 				667F800D1A3FB9A900181B42 /* OpenGLES.framework in Frameworks */,
 				667F800C1A3FB99100181B42 /* UIKit.framework in Frameworks */,
 				662CA5AA18734E9500684790 /* StoreKit.framework in Frameworks */,
@@ -1072,17 +1033,6 @@
 			name = qr;
 			sourceTree = "<group>";
 		};
-		6695DDCA1B6D68D50059BD6C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				6695DDD11B6D68D50059BD6C /* GTL.framework */,
-				6695DDD31B6D68D50059BD6C /* libGTLTouchStaticLib.a */,
-				6695DDD51B6D68D50059BD6C /* GTLUnitTests.xctest */,
-				6695DDD71B6D68D50059BD6C /* DevelopmentTestTool */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		6698584218663105003624DA /* AGWindowView */ = {
 			isa = PBXGroup;
 			children = (
@@ -1192,9 +1142,6 @@
 		66E4F517176298CB00596E6B /* libs */ = {
 			isa = PBXGroup;
 			children = (
-				6695DDC91B6D68D50059BD6C /* GTL.xcodeproj */,
-				667F80031A3FAE8000181B42 /* GTLDrive_Sources.m */,
-				667F80041A3FAE8000181B42 /* GTLDrive.h */,
 				66FB799218905360009CA47B /* HPGrowingTextView */,
 				6659531F188601FD00BA2CC7 /* UIAlertViewBlocks */,
 				668D24ED186A24D90096D155 /* qr */,
@@ -1495,7 +1442,6 @@
 				661F469B1864C0BE004A71B0 /* BackupIdentityView.xib */,
 				661F469C1864C0BE004A71B0 /* BackupIdentityViewController.mm */,
 				661F469D1864C0BE004A71B0 /* BackupIdentityViewController.h */,
-				66EBDF321855C96F00F2452D /* GTMOAuth2ViewTouch.xib */,
 				66EBDF331855C96F00F2452D /* IdentityCell.h */,
 				66EBDF341855C96F00F2452D /* IdentityCell.m */,
 				66EBDF351855C96F00F2452D /* IdentityCell.xib */,
@@ -1699,12 +1645,6 @@
 			mainGroup = 6604A2B217626B9E0072216A;
 			productRefGroup = 6604A2BC17626B9E0072216A /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 6695DDCA1B6D68D50059BD6C /* Products */;
-					ProjectRef = 6695DDC91B6D68D50059BD6C /* GTL.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				6604A2BA17626B9E0072216A /* surespot */,
@@ -1712,44 +1652,12 @@
 		};
 /* End PBXProject section */
 
-/* Begin PBXReferenceProxy section */
-		6695DDD11B6D68D50059BD6C /* GTL.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = GTL.framework;
-			remoteRef = 6695DDD01B6D68D50059BD6C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6695DDD31B6D68D50059BD6C /* libGTLTouchStaticLib.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libGTLTouchStaticLib.a;
-			remoteRef = 6695DDD21B6D68D50059BD6C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6695DDD51B6D68D50059BD6C /* GTLUnitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = GTLUnitTests.xctest;
-			remoteRef = 6695DDD41B6D68D50059BD6C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6695DDD71B6D68D50059BD6C /* DevelopmentTestTool */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = DevelopmentTestTool;
-			remoteRef = 6695DDD61B6D68D50059BD6C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
-
 /* Begin PBXResourcesBuildPhase section */
 		6604A2B917626B9E0072216A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				5AF842411B910B03009BC037 /* RemoveIdentityFromDeviceView.xib in Resources */,
-				66EBE0CF1855C97100F2452D /* GTMOAuth2ViewTouch.xib in Resources */,
 				66E21E001847E1220005D91E /* InAppSettings.bundle in Resources */,
 				661F469E1864C0BE004A71B0 /* BackupIdentityView.xib in Resources */,
 				6637012D187A33A6006D17CA /* PWYLView.xib in Resources */,
@@ -1956,7 +1864,6 @@
 				66EBE1401855C97100F2452D /* MessageIndicatorNewView.m in Sources */,
 				66EBE0CC1855C97100F2452D /* LoadingView.m in Sources */,
 				66E21DF41847D7F90005D91E /* IASKPSSliderSpecifierViewCell.m in Sources */,
-				667F80051A3FAE8000181B42 /* GTLDrive_Sources.m in Sources */,
 				6686623D18565AD5001491B1 /* LoginViewController.mm in Sources */,
 				661F3B8618689D78003C7AE3 /* KeyFingerprintCell.m in Sources */,
 				66866267185B6A2E001491B1 /* SDWebImageDownloader.m in Sources */,
