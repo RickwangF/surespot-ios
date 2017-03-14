@@ -172,21 +172,23 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 
 
 -(void) setAccountFromKeychain {
-    self.driveService.authorizer = [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:kKeychainItemName];
+    self.driveService.authorizer = [GTMOAuth2ViewControllerTouch authForGoogleFromKeychainForName:kKeychainItemName
+                                clientID:GOOGLE_CLIENT_ID
+                            clientSecret:GOOGLE_CLIENT_SECRET];
     [self updateUI];
 }
 
 -(void) updateUI {
-   // if (_driveService.authorizer && [_driveService.authorizer isMemberOfClass:[GTMOAuth2Authentication class]]) {
-        NSString * currentEmail = [_driveService.authorizer userEmail];
-        if (currentEmail) {
-            _accountLabel.text = currentEmail;
-            [_bSelect setTitle:NSLocalizedString(@"remove",nil) forState:UIControlStateNormal];
-            [_bSelect.titleLabel setAdjustsFontSizeToFitWidth:YES];
-            return;
-            
-        }
-  //  }
+    // if (_driveService.authorizer && [_driveService.authorizer isMemberOfClass:[GTMOAuth2Authentication class]]) {
+    NSString * currentEmail = [_driveService.authorizer userEmail];
+    if (currentEmail) {
+        _accountLabel.text = currentEmail;
+        [_bSelect setTitle:NSLocalizedString(@"remove",nil) forState:UIControlStateNormal];
+        [_bSelect.titleLabel setAdjustsFontSizeToFitWidth:YES];
+        return;
+        
+    }
+    //  }
     
     _accountLabel.text = NSLocalizedString(@"no_google_account_selected", nil);
     [_bSelect setTitle:NSLocalizedString(@"select", nil) forState:UIControlStateNormal];
@@ -288,13 +290,14 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                           GTLRDrive_File *folderObj = [GTLRDrive_File object];
                           folderObj.name = DRIVE_IDENTITY_FOLDER;
                           folderObj.mimeType = @"application/vnd.google-apps.folder";
+                          folderObj.parents = @[@"root"];
                           
                           // To create a folder in a specific parent folder, specify the identifier
                           // of the parent:
                           // _resourceId is the identifier from the parent folder
                           
-                        //  GTLRDriveParentReference *parentRef = [GTLDriveParentReference object];
-                         // parentRef.identifier = @"root";
+                          //  GTLRDriveParentReference *parentRef = [GTLDriveParentReference object];
+                          // parentRef.identifier = @"root";
                           //folderObj.parents = [NSArray arrayWithObject:parentRef];
                           
                           
@@ -453,12 +456,28 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                 
                 [self getIdentityFile:identityDirId name:name callback:^(GTLRDrive_File * idFile) {
                     if (idFile) {
+                        
+                        GTLRDrive_File *driveFile = [GTLRDrive_File object] ;
+                       
+                        
+                        //    GTLRDriveParentReference *parentRef = [GTLDriveParentReference object];
+                        //  parentRef.identifier = identityDirId;
+                      //  driveFile.parents = @[identityDirId];
+                        
+                        
+                     //   driveFile.mimeType = @"application/octet-stream";
+                      //  NSString * caseInsensiveUsername = [name caseInsensitivize];
+                       // NSString * filename = [caseInsensiveUsername stringByAppendingPathExtension: IDENTITY_EXTENSION];
+                        //driveFile.originalFilename = filename;
+                        //driveFile.name = filename;
+                        
+                        
                         GTLRUploadParameters *uploadParameters = [GTLRUploadParameters
-                                                                 uploadParametersWithData:[identityData gzipDeflate]
-                                                                 MIMEType:@"application/octet-stream"];
+                                                                  uploadParametersWithData:[identityData gzipDeflate]
+                                                                  MIMEType:@"application/octet-stream"];
                         uploadParameters.shouldUploadWithSingleRequest = TRUE;
                         
-                        GTLRDriveQuery_FilesUpdate *query = [GTLRDriveQuery_FilesUpdate queryWithObject:idFile fileId:idFile.identifier uploadParameters:uploadParameters];
+                        GTLRDriveQuery_FilesUpdate *query = [GTLRDriveQuery_FilesUpdate queryWithObject:driveFile fileId:idFile.identifier uploadParameters:uploadParameters];
                         
                         [self.driveService executeQuery:query
                                       completionHandler:^(GTLRServiceTicket *ticket,
@@ -479,8 +498,8 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                     else {
                         GTLRDrive_File *driveFile = [GTLRDrive_File object] ;
                         
-                    //    GTLRDriveParentReference *parentRef = [GTLDriveParentReference object];
-                      //  parentRef.identifier = identityDirId;
+                        //    GTLRDriveParentReference *parentRef = [GTLDriveParentReference object];
+                        //  parentRef.identifier = identityDirId;
                         driveFile.parents = @[identityDirId];
                         
                         
@@ -491,12 +510,12 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                         driveFile.name = filename;
                         
                         GTLRUploadParameters *uploadParameters = [GTLRUploadParameters
-                                                                 uploadParametersWithData:[identityData gzipDeflate]
-                                                                 MIMEType:@"application/octet-stream"];
+                                                                  uploadParametersWithData:[identityData gzipDeflate]
+                                                                  MIMEType:@"application/octet-stream"];
                         
                         GTLRDriveQuery_FilesCreate *query = [GTLRDriveQuery_FilesCreate  queryWithObject:driveFile
-                                                                           uploadParameters:uploadParameters];
-                                               
+                                                                                        uploadParameters:uploadParameters];
+                        
                         [self.driveService executeQuery:query
                                       completionHandler:^(GTLRServiceTicket *ticket,
                                                           GTLRDrive_File *updatedFile,
