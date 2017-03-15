@@ -39,6 +39,8 @@
 #import "LoadingView.h"
 #import "UsernameAliasMap.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "FastUserSwitchController.h"
+#import "SideMenu-Swift.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
@@ -216,6 +218,16 @@ const Float32 voiceRecordDelay = 0.3;
     [_inviteTextView.internalTextView setSpellCheckingType:UITextSpellCheckingTypeNo];
     
     [self setTextBoxHints];
+    [self setupSideView];
+}
+
+- (void) setupSideView {
+    FastUserSwitchController * fusc = [[FastUserSwitchController alloc] initWithNibName:@"FastUserSwitchView" bundle:nil];
+
+    UISideMenuNavigationController *sideC = [[UISideMenuNavigationController alloc] initWithRootViewController:fusc];
+    sideC.leftSide = YES;
+    [SideMenuManager setMenuLeftNavigationController:sideC];
+    [SideMenuManager menuAddPanGestureToPresentToView:self.navigationController.navigationBar];
 }
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height

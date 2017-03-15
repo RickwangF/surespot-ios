@@ -62,6 +62,8 @@
 		6648B1E9186CB9D9007037B1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E7186CB9D9007037B1 /* CoreText.framework */; };
 		6648B1EB186CB9EB007037B1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1EA186CB9EB007037B1 /* AddressBook.framework */; };
 		6652F2AA1875F16D00E023A7 /* PwylViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6652F2A91875F16D00E023A7 /* PwylViewController.m */; };
+		66536BEC1E79BA5D00520131 /* FastUserSwitchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */; };
+		66536BEE1E79BEF400520131 /* FastUserSwitchController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66536BED1E79BEF400520131 /* FastUserSwitchController.mm */; };
 		6654441317F37A3F00F62F7F /* SwipeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6654441217F37A3F00F62F7F /* SwipeView.m */; };
 		6659531C1885B95900BA2CC7 /* BackupHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6659531B1885B95900BA2CC7 /* BackupHelpViewController.m */; };
 		6659531E1885B97000BA2CC7 /* BackupHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6659531D1885B97000BA2CC7 /* BackupHelpView.xib */; };
@@ -301,6 +303,9 @@
 		6648B1EA186CB9EB007037B1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		6652F2A81875F16D00E023A7 /* PwylViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PwylViewController.h; path = purchases/PwylViewController.h; sourceTree = "<group>"; };
 		6652F2A91875F16D00E023A7 /* PwylViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PwylViewController.m; path = purchases/PwylViewController.m; sourceTree = "<group>"; };
+		66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FastUserSwitchView.xib; sourceTree = "<group>"; };
+		66536BED1E79BEF400520131 /* FastUserSwitchController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FastUserSwitchController.mm; sourceTree = "<group>"; };
+		66536BEF1E79BF0F00520131 /* FastUserSwitchController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FastUserSwitchController.h; sourceTree = "<group>"; };
 		6654441117F37A3F00F62F7F /* SwipeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeView.h; sourceTree = "<group>"; };
 		6654441217F37A3F00F62F7F /* SwipeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SwipeView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		6659531A1885B93A00BA2CC7 /* BackupHelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackupHelpViewController.h; sourceTree = "<group>"; };
@@ -1416,6 +1421,9 @@
 				669BC194187DBF3500C3C752 /* AboutView.xib */,
 				669BC196187DC1CB00C3C752 /* AboutViewController.h */,
 				669BC197187DC1CB00C3C752 /* AboutViewController.m */,
+				66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */,
+				66536BEF1E79BF0F00520131 /* FastUserSwitchController.h */,
+				66536BED1E79BEF400520131 /* FastUserSwitchController.mm */,
 			);
 			path = viewcontrollers;
 			sourceTree = "<group>";
@@ -1610,7 +1618,7 @@
 				CLASSPREFIX = Surespot;
 				LastTestingUpgradeCheck = 0700;
 				LastUpgradeCheck = 0810;
-				ORGANIZATIONNAME = 2fours;
+				ORGANIZATIONNAME = surespot;
 				TargetAttributes = {
 					6604A2BA17626B9E0072216A = {
 						DevelopmentTeam = 2QFPK9DJY9;
@@ -1658,6 +1666,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5AF842411B910B03009BC037 /* RemoveIdentityFromDeviceView.xib in Resources */,
+				66536BEC1E79BA5D00520131 /* FastUserSwitchView.xib in Resources */,
 				66E21E001847E1220005D91E /* InAppSettings.bundle in Resources */,
 				661F469E1864C0BE004A71B0 /* BackupIdentityView.xib in Resources */,
 				6637012D187A33A6006D17CA /* PWYLView.xib in Resources */,
@@ -1841,6 +1850,7 @@
 				66E21DEC1847D7F90005D91E /* IASKAppSettingsViewController.m in Sources */,
 				666D33861884805600B73F69 /* SoundController.mm in Sources */,
 				66E21DEE1847D7F90005D91E /* IASKSpecifierValuesViewController.m in Sources */,
+				66536BEE1E79BEF400520131 /* FastUserSwitchController.mm in Sources */,
 				66EBE0D31855C97100F2452D /* ImageDelegate.mm in Sources */,
 				66BB5A49187C7672007B5C47 /* HelpViewController.m in Sources */,
 				66EBE1371855C97100F2452D /* NSData+Base64.m in Sources */,
