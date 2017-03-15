@@ -11,7 +11,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FastUserSwitchController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate>
+
+@interface FastUserSwitchController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 
 @end

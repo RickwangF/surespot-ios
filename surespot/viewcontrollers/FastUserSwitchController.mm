@@ -12,7 +12,7 @@
 
 @interface FastUserSwitchController ()
 @property (atomic, strong) NSArray * identityNames;
-@property (strong, nonatomic) IBOutlet UIPickerView *userPicker;
+@property (weak, nonatomic) IBOutlet UITableView *userTableView;
 @end
 
 @implementation FastUserSwitchController
@@ -33,28 +33,28 @@
     }
     
     
-    [_userPicker selectRow:index inComponent:0 animated:YES];
+}
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+     return [_identityNames count];
+}
+
+// Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
+// Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-}
-
-- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
-{
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 37)];
-    label.text =  [_identityNames objectAtIndex:row];
-    [label setFont:[UIFont systemFontOfSize:22]];
-    label.textAlignment = NSTextAlignmentCenter;
-    label.backgroundColor = [UIColor clearColor];
-    return label;
-}
-
-// returns the number of 'columns' to display.
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
-    return 1;
-}
-
-// returns the # of rows in each component..
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    return [_identityNames count];
+    static NSString *simpleTableIdentifier = @"SimpleTableItem";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+    }
+    
+    cell.textLabel.text = [_identityNames objectAtIndex:indexPath.row];
+    return cell;
 }
 
 -(void) loadIdentityNames {
