@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "FastUserSwitchController.h"
 #import "IdentityController.h"
+#import "ChatController.h"
+#import "CredentialCachingController.h"
 
 @interface FastUserSwitchController ()
 @property (atomic, strong) NSArray * identityNames;
@@ -60,6 +62,13 @@
 -(void) loadIdentityNames {
     _identityNames = [[IdentityController sharedInstance] getIdentityNames];
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSDictionary *userInfo = @{@"username": [_identityNames objectAtIndex:indexPath.row]};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"fastUserSwitch" object:nil userInfo: userInfo];
+}
+
 
 
 @end

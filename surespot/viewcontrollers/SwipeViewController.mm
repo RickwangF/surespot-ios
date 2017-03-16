@@ -2816,6 +2816,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 -(void) userSwitch {
     DDLogVerbose(@"userSwitch");
+    [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: YES completion:nil];
+    
     @synchronized (_chats) {
         [_chats removeAllObjects];
         // [_swipeView reloadData];

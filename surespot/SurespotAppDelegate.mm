@@ -158,6 +158,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     }
     
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fastUserSwitch:) name:@"fastUserSwitch" object:nil];
     return YES;
 }
 
@@ -264,27 +265,33 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"openedFromNotification" object:nil ];
                 }
                 else {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:@"userSwitch" object:nil ];
-                    //set the session
-                    UIStoryboard *storyboard = self.window.rootViewController.storyboard;
-                    [[ChatController sharedInstance] logout];
-                    if ([[CredentialCachingController sharedInstance] setSessionForUsername:to]) {
-                        
-                        [[ChatController sharedInstance] login];
-                        [(UINavigationController *) self.window.rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"]]];
-                        
-                    }
-                    else {
-                        //show login
-                        [(UINavigationController *) self.window.rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
-                    }
+                    [self userSwitch:to];
                 }
-                
         }
         return YES;
     }
     
     return NO;    
+}
+
+-(void) fastUserSwitch: (NSNotification *) notification {
+    [self userSwitch: notification.userInfo[@"username"]];
+}
+
+-(void) userSwitch: (NSString *) username {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"userSwitch" object:nil ];
+    //set the session
+    UIStoryboard *storyboard = self.window.rootViewController.storyboard;
+    [[ChatController sharedInstance] logout];
+    if ([[CredentialCachingController sharedInstance] setSessionForUsername:username]) {
+        
+        [[ChatController sharedInstance] login];
+        [(UINavigationController *) self.window.rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"]]];
+    }
+    else {
+        //show login
+        [(UINavigationController *) self.window.rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
+    }
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
