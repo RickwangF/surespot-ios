@@ -311,8 +311,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(void) respondToInviteName:(NSString *) friendname action: (NSString *) action successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat:@"invites/%@/%@", friendname, action] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self POST: path parameters:nil constructingBodyWithBlock:nil progress:nil success:successBlock failure:failureBlock];
-    
+    [self POST:path parameters:nil progress:nil success:successBlock failure:failureBlock];
 }
 
 -(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
