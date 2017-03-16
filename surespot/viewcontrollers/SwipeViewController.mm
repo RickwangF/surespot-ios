@@ -108,6 +108,7 @@ const Float32 voiceRecordDelay = 0.3;
     _swipeView.wrapEnabled = NO;
     _swipeView.truncateFinalPage =NO ;
     _swipeView.delaysContentTouches = YES;
+    _swipeView.bounces = NO;
     
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
     {
@@ -227,7 +228,11 @@ const Float32 voiceRecordDelay = 0.3;
     UISideMenuNavigationController *sideC = [[UISideMenuNavigationController alloc] initWithRootViewController:fusc];
     sideC.leftSide = YES;
     [SideMenuManager setMenuLeftNavigationController:sideC];
-    [SideMenuManager menuAddPanGestureToPresentToView:self.navigationController.navigationBar];
+    [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft];
+    [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft];
+    [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft];
+    SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
+    SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
 }
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
