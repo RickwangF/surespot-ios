@@ -208,7 +208,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                                                             _theirLatestVersion = [latestVersion integerValue];
                                                             [_tableView reloadData];
                                                             
-                                                            for (int ver=_theirLatestVersion;ver>0;ver--) {
+                                                            for (long ver=_theirLatestVersion;ver>0;ver--) {
                                                                 NSString * version = [@(ver) stringValue];
                                                                 
                                                                 //get public keys out of dictionary

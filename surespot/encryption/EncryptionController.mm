@@ -68,7 +68,7 @@ int const PBKDF_ROUNDS = 20000;
 
 + (NSData *) encryptData:(NSData *) data withPassword:(NSString *) password andRounds: (NSInteger) rounds
 {
-    int length = [data length];
+    size_t length = [data length];
     byte * identityBytes = (byte*)[data bytes];
     
     //generate iv
@@ -92,7 +92,7 @@ int const PBKDF_ROUNDS = 20000;
     
     
     //return the iv salt and encrypted identity data in one buffer
-    int returnLength = IV_LENGTH + SALT_LENGTH + cipherString.length();
+    size_t returnLength = IV_LENGTH + SALT_LENGTH + cipherString.length();
     NSMutableData * returnData = [[NSMutableData alloc] initWithCapacity: returnLength];
     [returnData appendBytes:ivBytes length:IV_LENGTH];
     [returnData appendData:[derived objectForKey:@"salt"]];
@@ -107,7 +107,7 @@ int const PBKDF_ROUNDS = 20000;
     
     byte * identityBytes = (byte*)[data bytes];
     
-    int cipherLength = [data length] - IV_LENGTH - SALT_LENGTH;
+    unsigned long cipherLength = [data length] - IV_LENGTH - SALT_LENGTH;
     byte cipherByte[cipherLength];
     byte ivBytes[IV_LENGTH];
     byte saltBytes[SALT_LENGTH];
@@ -255,7 +255,7 @@ int const PBKDF_ROUNDS = 20000;
     byte * passwordBytes = (byte *) [passwordData bytes];
     
     CryptoPP::PKCS5_PBKDF2_HMAC<SHA256> kdf;
-    kdf.DeriveKey(bytes, AES_KEY_LENGTH, 0, passwordBytes, [passwordData length], (byte *)[salt bytes],  SALT_LENGTH, rounds, 0);
+    kdf.DeriveKey(bytes, AES_KEY_LENGTH, 0, passwordBytes, [passwordData length], (byte *)[salt bytes],  SALT_LENGTH, (unsigned int) rounds, 0);
     return [NSData dataWithBytes:bytes length:AES_KEY_LENGTH];
 }
 
@@ -382,13 +382,13 @@ int const PBKDF_ROUNDS = 20000;
     NSMutableData *concatData = [NSMutableData dataWithData: data1];
     [concatData appendData:data2];
     [concatData appendBytes:random length:16];
-    int sigLength = signer.MaxSignatureLength();
+    size_t sigLength = signer.MaxSignatureLength();
     
     byte * signature = new byte[sigLength];
-    int sigLen = signer.SignMessage(randomRng, (byte *)[concatData bytes], concatData.length, signature);
+    size_t sigLen = signer.SignMessage(randomRng, (byte *)[concatData bytes], concatData.length, signature);
     
     byte * buffer = new Byte[1000];
-    int put = CryptoPP::DSAConvertSignatureFormat(buffer, 1000, CryptoPP::DSASignatureFormat::DSA_DER, signature, sigLen, CryptoPP::DSASignatureFormat::DSA_P1363);
+    size_t put = CryptoPP::DSAConvertSignatureFormat(buffer, 1000, CryptoPP::DSASignatureFormat::DSA_DER, signature, sigLen, CryptoPP::DSASignatureFormat::DSA_P1363);
     
     NSMutableData * sig = [NSMutableData dataWithBytesNoCopy:random  length:16 freeWhenDone:true];
     [sig appendBytes:buffer length:put];
@@ -406,13 +406,13 @@ int const PBKDF_ROUNDS = 20000;
     [concatData appendData:[dhPubKey dataUsingEncoding: NSUTF8StringEncoding]];
     [concatData appendData:[dsaPubKey dataUsingEncoding: NSUTF8StringEncoding]];
     
-    int sigLength = signer.MaxSignatureLength();
+    size_t sigLength = signer.MaxSignatureLength();
     
     byte * signature = new byte[sigLength];
-    int sigLen = signer.SignMessage(randomRng, (byte *)[concatData bytes], concatData.length, signature);
+    size_t sigLen = signer.SignMessage(randomRng, (byte *)[concatData bytes], concatData.length, signature);
     
     byte * buffer = new Byte[10000];
-    int put = CryptoPP::DSAConvertSignatureFormat(buffer, 10000, CryptoPP::DSASignatureFormat::DSA_DER, signature, sigLen, CryptoPP::DSASignatureFormat::DSA_P1363);
+    size_t put = CryptoPP::DSAConvertSignatureFormat(buffer, 10000, CryptoPP::DSASignatureFormat::DSA_DER, signature, sigLen, CryptoPP::DSASignatureFormat::DSA_P1363);
     
     NSMutableData * sig = [NSMutableData dataWithBytesNoCopy:buffer  length:put freeWhenDone:true];
     return sig;
@@ -424,7 +424,7 @@ int const PBKDF_ROUNDS = 20000;
     NSMutableData * keyData = [NSMutableData dataWithData:[data dataUsingEncoding:NSUTF8StringEncoding ]];
     byte * buffer = new Byte[verifier.SignatureLength()];
     
-    int put = CryptoPP::DSAConvertSignatureFormat(buffer,verifier.SignatureLength(), CryptoPP::DSASignatureFormat::DSA_P1363, reinterpret_cast<unsigned char const* >([signature bytes]), [signature length], CryptoPP::DSASignatureFormat::DSA_DER);
+    size_t put = CryptoPP::DSAConvertSignatureFormat(buffer,verifier.SignatureLength(), CryptoPP::DSASignatureFormat::DSA_P1363, reinterpret_cast<unsigned char const* >([signature bytes]), [signature length], CryptoPP::DSASignatureFormat::DSA_DER);
     
     [keyData appendBytes:buffer length:put];
     delete[] buffer;
@@ -458,7 +458,7 @@ int const PBKDF_ROUNDS = 20000;
     
     byte * buffer = new Byte[verifier.SignatureLength()];
     
-    int put = CryptoPP::DSAConvertSignatureFormat(buffer,verifier.SignatureLength(), CryptoPP::DSASignatureFormat::DSA_P1363, reinterpret_cast<unsigned char const* >([signature bytes]), [signature length], CryptoPP::DSASignatureFormat::DSA_DER);
+    size_t put = CryptoPP::DSAConvertSignatureFormat(buffer,verifier.SignatureLength(), CryptoPP::DSASignatureFormat::DSA_P1363, reinterpret_cast<unsigned char const* >([signature bytes]), [signature length], CryptoPP::DSASignatureFormat::DSA_DER);
     
     [keyData appendBytes:buffer length:put];
     delete[] buffer;
@@ -666,7 +666,7 @@ int const PBKDF_ROUNDS = 20000;
 
 +(NSString *) md5: (NSData *) data {
     uint8_t digest[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(data.bytes, data.length, digest);
+    CC_MD5(data.bytes, (unsigned int)data.length, digest);
     
     
     NSMutableString* output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];

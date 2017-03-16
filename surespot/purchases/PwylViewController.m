@@ -53,7 +53,7 @@
 -(void) updateButtons {
     
     for (UIButton * button in _buttons) {
-        [button setTitle: [NSString stringWithFormat:@"%d surecoin", button.tag] forState:UIControlStateNormal];
+        [button setTitle: [NSString stringWithFormat:@"%ld surecoin", button.tag] forState:UIControlStateNormal];
         if (button.tag < 10) {
             [button setEnabled:[[PurchaseDelegate sharedInstance] getProductForId:PRODUCT_ID_PWYL_1] != nil];
         }

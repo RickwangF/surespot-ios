@@ -1420,7 +1420,7 @@ const Float32 voiceRecordDelay = 0.3;
                 browser.displayActionButton = NO; // Show action button to allow sharing, copying, etc (defaults to YES)
                 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
                 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
-                browser.wantsFullScreenLayout = NO; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
+              //  browser.wantsFullScreenLayout = NO; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
                 
                 // Present
                 [self.navigationController pushViewController:browser animated:YES];
@@ -1498,7 +1498,7 @@ const Float32 voiceRecordDelay = 0.3;
                     }
                     else {
                         DDLogVerbose(@"loaded %@ earlier messages for user: %@", result, username);
-                        [self updateTableView:weakView withNewRowCount:[result integerValue]];
+                        [self updateTableView:weakView withNewRowCount:[result intValue]];
                     }
                 }
                 else {

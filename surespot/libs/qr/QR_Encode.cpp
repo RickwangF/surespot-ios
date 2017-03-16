@@ -621,13 +621,13 @@ bool CQR_Encode::EncodeData(int nLevel, int nVersion, bool bAutoExtent, int nMas
 	m_nMaskingNo = nMaskingNo;
 
 	// データ長が指定されていない場合は lstrlen によって取得
-	int ncLength = ncSource > 0 ? ncSource : strlen(lpsSource);
+	size_t ncLength = ncSource > 0 ? ncSource : strlen(lpsSource);
 
 	if (ncLength == 0)
 		return false; // データなし
 
 	// バージョン(型番)チェック
-	int nEncodeVersion = GetEncodeVersion(nVersion, lpsSource, ncLength);
+	size_t nEncodeVersion = GetEncodeVersion(nVersion, lpsSource, ncLength);
 
 	if (nEncodeVersion == 0)
 		return false; // 容量オーバー
