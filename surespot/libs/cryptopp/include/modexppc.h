@@ -1,7 +1,10 @@
 #ifndef CRYPTOPP_MODEXPPC_H
 #define CRYPTOPP_MODEXPPC_H
 
+#include "cryptlib.h"
 #include "modarith.h"
+#include "integer.h"
+#include "algebra.h"
 #include "eprecomp.h"
 #include "smartptr.h"
 #include "pubkey.h"
@@ -13,6 +16,8 @@ CRYPTOPP_DLL_TEMPLATE_CLASS DL_FixedBasePrecomputationImpl<Integer>;
 class ModExpPrecomputation : public DL_GroupPrecomputation<Integer>
 {
 public:
+	virtual ~ModExpPrecomputation() {}
+
 	// DL_GroupPrecomputation
 	bool NeedConversions() const {return true;}
 	Element ConvertIn(const Element &v) const {return m_mr->ConvertIn(v);}

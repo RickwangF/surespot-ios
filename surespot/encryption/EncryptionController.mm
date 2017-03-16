@@ -216,7 +216,18 @@ int const PBKDF_ROUNDS = 20000;
     OID CURVE = secp521r1();
     ECDH < ECP >::Domain dhA( CURVE );
     CryptoPP::SecByteBlock secA(dhA.AgreedValueLength());
-    dhA.Agree(secA, privateKey->GetPrivateExponent(), publicKey->GetPublicElement());
+    
+    //convert private key to bytes
+    CryptoPP::Integer pk = privateKey->GetPrivateExponent();
+    CryptoPP::SecByteBlock privKBytes(dhA.PrivateKeyLength());
+    privateKey->GetPrivateExponent().Encode(privKBytes,dhA.PrivateKeyLength());
+    
+    //convert public key to bytes
+    CryptoPP::SecByteBlock pubBytes(dhA.AccessGroupParameters().GetEncodedElementSize(true));
+    dhA.AccessGroupParameters().EncodeElement(true, publicKey->GetPublicElement(),pubBytes);
+    
+    //compute raw shared secret
+    dhA.Agree(secA, privKBytes,pubBytes);
     
     NSData * key;
     if (hashed) {
@@ -394,7 +405,7 @@ int const PBKDF_ROUNDS = 20000;
     [concatData appendData:versionData];
     [concatData appendData:[dhPubKey dataUsingEncoding: NSUTF8StringEncoding]];
     [concatData appendData:[dsaPubKey dataUsingEncoding: NSUTF8StringEncoding]];
-
+    
     int sigLength = signer.MaxSignatureLength();
     
     byte * signature = new byte[sigLength];
@@ -403,9 +414,9 @@ int const PBKDF_ROUNDS = 20000;
     byte * buffer = new Byte[10000];
     int put = CryptoPP::DSAConvertSignatureFormat(buffer, 10000, CryptoPP::DSASignatureFormat::DSA_DER, signature, sigLen, CryptoPP::DSASignatureFormat::DSA_P1363);
     
-    NSMutableData * sig = [NSMutableData dataWithBytesNoCopy:buffer  length:put freeWhenDone:true];    
+    NSMutableData * sig = [NSMutableData dataWithBytesNoCopy:buffer  length:put freeWhenDone:true];
     return sig;
-
+    
 }
 
 +(BOOL) verifyPublicKeySignature: (NSData *) signature data: (NSString *) data {
@@ -510,7 +521,7 @@ int const PBKDF_ROUNDS = 20000;
 }
 
 +(NSString *) encodeDHPublicKey: (ECDHPublicKey *) dhPubKey {
-     return [self pemKey:[self encodeDHPublicKeyData:dhPubKey]];
+    return [self pemKey:[self encodeDHPublicKeyData:dhPubKey]];
 }
 
 +(NSData *) encodeDHPublicKeyData: (ECDHPublicKey *) dhPubKey {
@@ -534,7 +545,7 @@ int const PBKDF_ROUNDS = 20000;
     
     return [NSData dataWithBytes:encoded length:size];
     
-
+    
 }
 
 +(NSString *) encodeDSAPrivateKey: (ECDSAPrivateKey *) dsaPrivKey {
@@ -566,7 +577,7 @@ int const PBKDF_ROUNDS = 20000;
     byteQueue.Get(encoded, size);
     
     return [NSData dataWithBytes:encoded length:size];
-  
+    
 }
 
 +(NSString *) encodeDSAPublicKey: (ECDSAPublicKey *) dsaPubKey {

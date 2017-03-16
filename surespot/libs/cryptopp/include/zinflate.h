@@ -1,18 +1,20 @@
 #ifndef CRYPTOPP_ZINFLATE_H
 #define CRYPTOPP_ZINFLATE_H
 
+#include "cryptlib.h"
+#include "secblock.h"
 #include "filters.h"
-#include <vector>
+#include "stdcpp.h"
 
 NAMESPACE_BEGIN(CryptoPP)
 
-//! _
+//! \class LowFirstBitReader
+//! \since Crypto++ 1.0
 class LowFirstBitReader
 {
 public:
 	LowFirstBitReader(BufferedTransformation &store)
 		: m_store(store), m_buffer(0), m_bitsBuffered(0) {}
-//	unsigned long BitsLeft() const {return m_store.MaxRetrievable() * 8 + m_bitsBuffered;}
 	unsigned int BitsBuffered() const {return m_bitsBuffered;}
 	unsigned long PeekBuffer() const {return m_buffer;}
 	bool FillBuffer(unsigned int length);
@@ -28,7 +30,9 @@ private:
 
 struct CodeLessThan;
 
-//! Huffman Decoder
+//! \class HuffmanDecoder
+//! \brief Huffman Decoder
+//! \since Crypto++ 1.0
 class HuffmanDecoder
 {
 public:
@@ -38,8 +42,10 @@ public:
 
 	class Err : public Exception {public: Err(const std::string &what) : Exception(INVALID_DATA_FORMAT, "HuffmanDecoder: " + what) {}};
 
-	HuffmanDecoder() {}
-	HuffmanDecoder(const unsigned int *codeBitLengths, unsigned int nCodes)	{Initialize(codeBitLengths, nCodes);}
+	HuffmanDecoder() : m_maxCodeBits(0), m_cacheBits(0), m_cacheMask(0), m_normalizedCacheMask(0) {}
+	HuffmanDecoder(const unsigned int *codeBitLengths, unsigned int nCodes)
+		: m_maxCodeBits(0), m_cacheBits(0), m_cacheMask(0), m_normalizedCacheMask(0)
+			{Initialize(codeBitLengths, nCodes);}
 
 	void Initialize(const unsigned int *codeBitLengths, unsigned int nCodes);
 	unsigned int Decode(code_t code, /* out */ value_t &value) const;
@@ -80,8 +86,9 @@ private:
 	mutable std::vector<LookupEntry, AllocatorWithCleanup<LookupEntry> > m_cache;
 };
 
-//! DEFLATE (RFC 1951) decompressor
-
+//! \class Inflator
+//! \brief DEFLATE decompressor (RFC 1951)
+//! \since Crypto++ 1.0
 class Inflator : public AutoSignaling<Filter>
 {
 public:
@@ -94,10 +101,11 @@ public:
 	class UnexpectedEndErr : public Err {public: UnexpectedEndErr() : Err(INVALID_DATA_FORMAT, "Inflator: unexpected end of compressed block") {}};
 	class BadBlockErr : public Err {public: BadBlockErr() : Err(INVALID_DATA_FORMAT, "Inflator: error in compressed block") {}};
 
-	/*! \param repeat decompress multiple compressed streams in series
-		\param autoSignalPropagation 0 to turn off MessageEnd signal
-	*/
-	Inflator(BufferedTransformation *attachment = NULL, bool repeat = false, int autoSignalPropagation = -1);
+	//! \brief RFC 1951 Decompressor
+	//! \param attachment the filter's attached transformation
+	//! \param repeat decompress multiple compressed streams in series
+	//! \param autoSignalPropagation 0 to turn off MessageEnd signal
+	Inflator(BufferedTransformation *attachment = NULLPTR, bool repeat = false, int autoSignalPropagation = -1);
 
 	void IsolatedInitialize(const NameValuePairs &parameters);
 	size_t Put2(const byte *inString, size_t length, int messageEnd, bool blocking);
