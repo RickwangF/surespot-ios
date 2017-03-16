@@ -24,13 +24,6 @@ extern NSString * const MIME_TYPE_M4A;
 extern NSString * const MIME_TYPE_GIF_LINK;
 extern NSInteger const MAX_IDENTITIES;
 
-extern NSString * const FACEBOOK_APP_ID;
-
-extern NSString * const TUMBLR_CONSUMER_KEY;
-extern NSString * const TUMBLR_SECRET;
-extern NSString * const TUMBLR_CALLBACK_URL;
-
-
 extern NSString *const GOOGLE_CLIENT_ID;
 extern NSString *const GOOGLE_CLIENT_SECRET;
 
