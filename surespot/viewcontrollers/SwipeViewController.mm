@@ -228,11 +228,20 @@ const Float32 voiceRecordDelay = 0.3;
     UISideMenuNavigationController *sideC = [[UISideMenuNavigationController alloc] initWithRootViewController:fusc];
     sideC.leftSide = YES;
     [SideMenuManager setMenuLeftNavigationController:sideC];
-    [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft];
-    [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft];
-    [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft];
+    NSMutableArray *sideMenuGestures = [[NSMutableArray alloc]init];
+    [sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
+    [sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
+    [sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
     SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
     SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
+    
+    //set gesture recognizer priority
+    for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
+        DDLogDebug(@"gesture: %@)", gesture);
+        for (UIGestureRecognizer *sideMenuGesture in sideMenuGestures) {
+            [gesture requireGestureRecognizerToFail:sideMenuGesture];
+        }
+    }
 }
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
