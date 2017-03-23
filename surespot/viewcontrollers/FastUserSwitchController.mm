@@ -65,8 +65,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *userInfo = @{@"username": [_identityNames objectAtIndex:indexPath.row]};
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"fastUserSwitch" object:nil userInfo: userInfo];
+
+    [self dismissViewControllerAnimated:YES completion:^{
+        NSDictionary *userInfo = @{@"username": [_identityNames objectAtIndex:indexPath.row]};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"fastUserSwitch" object:nil userInfo: userInfo];
+    }];
 }
 
 

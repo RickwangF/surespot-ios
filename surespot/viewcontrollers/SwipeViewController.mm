@@ -79,6 +79,8 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 @property (strong, nonatomic) IBOutlet UIView *textFieldContainer;
 @property (atomic, strong) ALAssetsLibrary * assetLibrary;
 @property (atomic, strong) LoadingView * progressView;
+@property (atomic, strong) NSMutableArray *sideMenuGestures;
+
 @end
 @implementation SwipeViewController
 
@@ -228,20 +230,22 @@ const Float32 voiceRecordDelay = 0.3;
     
     
     [SideMenuManager setMenuLeftNavigationController:sideC];
-    NSMutableArray *sideMenuGestures = [[NSMutableArray alloc]init];
-    [sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
-    [sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
-    [sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
+    _sideMenuGestures = [[NSMutableArray alloc]init];
+    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
     SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
     SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
     
     //set gesture recognizer priority
-    for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
-        DDLogDebug(@"gesture: %@)", gesture);
-        for (UIGestureRecognizer *sideMenuGesture in sideMenuGestures) {
-            [gesture requireGestureRecognizerToFail:sideMenuGesture];
+  
+        for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
+            DDLogDebug(@"gesture: %@)", gesture);
+            for (UIGestureRecognizer *sideMenuGesture in _sideMenuGestures) {
+                [gesture requireGestureRecognizerToFail:sideMenuGesture];
+            }
         }
-    }
+  
 }
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
@@ -1730,7 +1734,7 @@ const Float32 voiceRecordDelay = 0.3;
         if (scroll) {
             [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableView afterDelay:0.5];
         }
-    }    
+    }
 }
 
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
@@ -2805,6 +2809,15 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [self resignAllResponders];
     _swipeView = nil;
     
+    //remove gestures
+    for (id gesture in _sideMenuGestures) {
+        [self.view removeGestureRecognizer:gesture];
+        [self.navigationController.view removeGestureRecognizer:gesture];
+        [self.swipeView.scrollView removeGestureRecognizer:gesture];
+    }
+    
+    [_sideMenuGestures removeAllObjects];
+    _sideMenuGestures = nil;
 }
 
 -(void) reloadSwipeViewData {
