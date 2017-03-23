@@ -91,7 +91,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 {
     if (self.isCancelled)
     {
-        DDLogInfo(@"isCancelled");
+        DDLogVerbose(@"isCancelled");
         self.finished = YES;
         [self reset];
         return;
@@ -120,7 +120,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     self.connection = [NSURLConnection.alloc initWithRequest:self.request delegate:self startImmediately:NO];
     
     [self.connection start];
-    DDLogInfo(@"downloading image: %@", [self.request.URL absoluteString]);
+    DDLogVerbose(@"downloading image: %@", [self.request.URL absoluteString]);
     
     if (self.connection)
     {
@@ -160,7 +160,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)cancel
 {
-    DDLogInfo(@"cancel");
+    DDLogVerbose(@"cancel");
     if (self.isFinished) return;
     [super cancel];
     if (self.cancelBlock) self.cancelBlock();
@@ -181,7 +181,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)done
 {
-    DDLogInfo(@"done");
+    DDLogVerbose(@"done");
     self.finished = YES;
     self.executing = NO;
     [self reset];
@@ -189,7 +189,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)reset
 {
-    DDLogInfo(@"reset");
+    DDLogVerbose(@"reset");
     self.cancelBlock = nil;
     self.completedBlock = nil;
     self.progressBlock = nil;
@@ -249,7 +249,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    DDLogInfo(@"appending %lu bytes", (unsigned long)data.length);
+    DDLogVerbose(@"appending %lu bytes", (unsigned long)data.length);
     [self.imageData appendData:data];
     
     //    if ((self.options & SDWebImageDownloaderProgressiveDownload) && self.expectedSize > 0 && self.completedBlock)

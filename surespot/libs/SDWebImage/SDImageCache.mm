@@ -176,7 +176,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
         return;
     }
     
-    DDLogInfo(@"storing image in memory cache at key: %@", key);
+    DDLogVerbose(@"storing image in memory cache at key: %@", key);
     CGFloat cost = 0;
     
     if ([mimeType isEqualToString:MIME_TYPE_IMAGE]) {
@@ -187,7 +187,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
         cost = [image length];
     }
     
-    DDLogInfo(@"using image from disk cache for key: %@", key);
+    DDLogVerbose(@"using image from disk cache for key: %@", key);
     [self.memCache setObject:image forKey:key cost:cost];
     
     if (toDisk)
@@ -206,7 +206,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
                                
                                NSString * path = [self defaultCachePathForKey:key];
                                [fileManager createFileAtPath:path contents:imageData attributes:nil];
-                               DDLogInfo(@"storing encrypted image data to disk at %@ for key: %@", path,  key);
+                               DDLogVerbose(@"storing encrypted image data to disk at %@ for key: %@", path,  key);
                            }
                        });
     }
@@ -244,7 +244,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
     id image = [self imageFromMemoryCacheForKey:key];
     if (image)
     {
-        DDLogInfo(@"using image from memory cache for key: %@", key);
+        DDLogVerbose(@"using image from memory cache for key: %@", key);
         return image;
     }
     
@@ -253,7 +253,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
     CGFloat cost = 0;
     if (diskImage)
     {
-        DDLogInfo(@"using image from disk cache for key: %@", key);
+        DDLogVerbose(@"using image from disk cache for key: %@", key);
         if ([mimeType isEqualToString:MIME_TYPE_IMAGE]) {
             
             
@@ -371,7 +371,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
                                CGFloat cost = 0;
                                if (diskImage)
                                {
-                                   DDLogDebug(@"using image from disk cache and setting memory cache for key: %@", key);
+                                   DDLogVerbose(@"using image from disk cache and setting memory cache for key: %@", key);
                                    if ([mimeType isEqualToString:MIME_TYPE_IMAGE]) {
                                        
                                        cost = [diskImage size].height * [diskImage size].width * [(UIImage *)diskImage scale];

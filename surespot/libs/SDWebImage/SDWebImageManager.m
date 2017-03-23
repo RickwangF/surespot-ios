@@ -160,7 +160,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 {
                     // If image was found in the cache bug SDWebImageRefreshCached is provided, notify about the cached image
                     // AND try to re-download it in order to let a chance to NSURLCache to refresh it from server.
-                                 DDLogInfo(@"using cached image for key: %@", key);
+                                 DDLogVerbose(@"using cached image for key: %@", key);
                     completedBlock(data, mimeType, nil, cacheType, YES);
                 });
             }

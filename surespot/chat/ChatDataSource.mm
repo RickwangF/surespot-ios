@@ -50,10 +50,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         NSArray * messages;
         
         NSString * path =[FileController getChatDataFilenameForSpot:[ChatUtils getSpotUserA:username userB:loggedInUser]];
-        DDLogDebug(@"looking for chat data at: %@", path);
+        DDLogVerbose(@"looking for chat data at: %@", path);
         id chatData = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
         if (chatData) {
-            DDLogDebug(@"loading chat data from: %@", path);
+            DDLogVerbose(@"loading chat data from: %@", path);
             
             _latestControlMessageId = [[chatData objectForKey:@"latestControlMessageId"] integerValue];
             messages = [chatData objectForKey:@"messages"];
@@ -62,10 +62,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             
             //convert messages to SurespotMessage
             for (SurespotMessage * message in messages) {
-                DDLogDebug(@"adding message %@, iv: %@", _username, message.iv);
+                DDLogVerbose(@"adding message %@, iv: %@", _username, message.iv);
                 dispatch_group_enter(group);
                 [self addMessage:message refresh:NO callback:^(id result) {
-                    DDLogDebug(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
+                    DDLogVerbose(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
                     dispatch_group_leave(group);
                 }];
                 
@@ -164,7 +164,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 refresh = false;
                 CGSize size = [UIScreen mainScreen ].bounds.size;
                 
-                DDLogDebug(@"added %@,  now decrypting message iv: %@, width: %f, height: %f",_username, message.iv, size.width, size.height);
+                DDLogVerbose(@"added %@,  now decrypting message iv: %@, width: %f, height: %f",_username, message.iv, size.width, size.height);
                 
                 MessageDecryptionOperation * op = [[MessageDecryptionOperation alloc]initWithMessage:message size: size completionCallback:^(SurespotMessage  * message){
                     if (blockRefresh) {

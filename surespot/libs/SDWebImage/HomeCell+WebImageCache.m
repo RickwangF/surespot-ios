@@ -70,7 +70,7 @@ static NSInteger const retryAttempts = 5;
                                                                               else {
                                                                                   //retry
                                                                                   if (retryAttempt < retryAttempts) {
-                                                                                      DDLogInfo(@"no friend image data downloaded, retrying attempt: %ld", (long)retryAttempt+1);
+                                                                                      DDLogVerbose(@"no friend image data downloaded, retrying attempt: %ld", (long)retryAttempt+1);
                                                                                       [self setImageForFriend:afriend withEncryptionParams:encryptionParams placeholderImage:placeholder progress:progressBlock completed:completedBlock retryAttempt:retryAttempt+1];
                                                                                       return;
                                                                                   }

@@ -222,7 +222,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 - (void) setupSideView {
-    DDLogInfo(@"setupSideview");
+    DDLogVerbose(@"setupSideview");
     FastUserSwitchController * fusc = [[FastUserSwitchController alloc] initWithNibName:@"FastUserSwitchView" bundle:nil];
     
     UISideMenuNavigationController *sideC = [[UISideMenuNavigationController alloc] initWithRootViewController:fusc];
@@ -240,7 +240,7 @@ const Float32 voiceRecordDelay = 0.3;
     //set gesture recognizer priority
   
         for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
-            DDLogDebug(@"gesture: %@)", gesture);
+            DDLogVerbose(@"gesture: %@)", gesture);
             for (UIGestureRecognizer *sideMenuGesture in _sideMenuGestures) {
                 [gesture requireGestureRecognizerToFail:sideMenuGesture];
             }
@@ -250,7 +250,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
 {
-    DDLogInfo(@"growingTextView height: %f", height);
+    DDLogVerbose(@"growingTextView height: %f", height);
     float diff = (growingTextView.frame.size.height - height);
     
     CGRect containerRect = _textFieldContainer.frame;
@@ -1740,7 +1740,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
     NSInteger numRows =[tableView numberOfRowsInSection:0];
     if (numRows > 0) {
-        DDLogDebug(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
+        DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
         if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
@@ -1750,7 +1750,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 - (void) scrollTableViewToCell: (UITableView *) tableView  indexPath: (NSIndexPath *) indexPath {
-    DDLogDebug(@"scrolling to cell: %@", indexPath);
+    DDLogVerbose(@"scrolling to cell: %@", indexPath);
     if ( [tableView numberOfSections] > indexPath.section && [tableView numberOfRowsInSection:0] > indexPath.row ) {
         [tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }

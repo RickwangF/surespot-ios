@@ -58,7 +58,7 @@ static const NSInteger retryAttempts = 5;
                                                                               
                                                                               //do nothing if the message has changed
                                                                               if (![wself.message isEqual:message]) {
-                                                                                  DDLogInfo(@"cell is pointing to a different message now, not assigning data");
+                                                                                  DDLogVerbose(@"cell is pointing to a different message now, not assigning data");
                                                                                   return;
                                                                               }
                                                                               if (image)
@@ -81,7 +81,7 @@ static const NSInteger retryAttempts = 5;
                                                                               else {
                                                                                   //retry
                                                                                   if (retryAttempt < retryAttempts) {
-                                                                                      DDLogInfo(@"no data downloaded, retrying attempt: %ld", (long)retryAttempt+1);
+                                                                                      DDLogVerbose(@"no data downloaded, retrying attempt: %ld", (long)retryAttempt+1);
                                                                                       [self setMessage:message progress:progressBlock completed:completedBlock retryAttempt:retryAttempt+1];
                                                                                       return;
                                                                                   }
