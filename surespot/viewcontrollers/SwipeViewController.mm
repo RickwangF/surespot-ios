@@ -223,10 +223,13 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 - (void) setupSideView {
+    DDLogInfo(@"setupSideview");
     FastUserSwitchController * fusc = [[FastUserSwitchController alloc] initWithNibName:@"FastUserSwitchView" bundle:nil];
 
     UISideMenuNavigationController *sideC = [[UISideMenuNavigationController alloc] initWithRootViewController:fusc];
     sideC.leftSide = YES;
+    
+
     [SideMenuManager setMenuLeftNavigationController:sideC];
     NSMutableArray *sideMenuGestures = [[NSMutableArray alloc]init];
     [sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
@@ -1553,6 +1556,9 @@ const Float32 voiceRecordDelay = 0.3;
             [[ChatController sharedInstance] setCurrentChat: username];
         }
         
+        
+        
+        
     }
     
     else {
@@ -2800,7 +2806,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 -(void) handleNotification {
     
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    DDLogVerbose(@"handleNotification, defaults: %@", defaults);
+    DDLogDebug(@"handleNotification, defaults: %@", defaults);
     //if we entered app via notification defaults will be set
     NSString * notificationType = [defaults objectForKey:@"notificationType"];
     NSString * to = [defaults objectForKey:@"notificationTo"];
@@ -2824,7 +2830,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(void) userSwitch {
-    DDLogVerbose(@"userSwitch");
+    DDLogDebug(@"userSwitch");
     [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: YES completion:nil];
     
     @synchronized (_chats) {

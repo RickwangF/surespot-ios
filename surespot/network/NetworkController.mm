@@ -115,6 +115,11 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     }
 }
 
+-(void) setCookie: (NSHTTPCookie *) cookie {
+    NSHTTPCookieStorage * shared = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    [shared setCookie:cookie];
+}
+
 -(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
              successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock
 {
@@ -337,14 +342,14 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(void) logout {
     //send logout
-    if (!_loggedOut) {
+  //  if (!_loggedOut) {
         DDLogInfo(@"logout");
         [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             [self deleteCookies];
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
             [self deleteCookies];
         }];
-    }
+   // }
 }
 
 -(void) deleteCookies {

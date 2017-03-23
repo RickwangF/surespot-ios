@@ -22,6 +22,7 @@
 #import "CredentialCachingController.h"
 #import "FileController.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "NetworkController.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
@@ -282,9 +283,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userSwitch" object:nil ];
     //set the session
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
+    [[NetworkController sharedInstance] logout];
     [[ChatController sharedInstance] logout];
     if ([[CredentialCachingController sharedInstance] setSessionForUsername:username]) {
-        
+        [[NetworkController sharedInstance] setCookie: [[CredentialCachingController sharedInstance] getCookieForUsername:username]];
         [[ChatController sharedInstance] login];
         [(UINavigationController *) self.window.rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"]]];
     }

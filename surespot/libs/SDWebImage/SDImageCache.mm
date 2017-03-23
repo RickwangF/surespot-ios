@@ -345,7 +345,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
     id image = [self imageFromMemoryCacheForKey:key];
     if (image)
     {
-        DDLogInfo(@"using image from memory cache for key: %@", key);
+        DDLogVerbose(@"using image from memory cache for key: %@", key);
         doneBlock(image, SDImageCacheTypeMemory);
         return nil;
     }
