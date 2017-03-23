@@ -56,8 +56,9 @@ static NSInteger const retryAttempts = 5;
                                                  dispatch_main_async_safe(^
                                                                           {
                                                                               if (!wself) return;
-                                                                              
+
                                                                               DDLogVerbose(@"initial friend: %@, current friend: %@", afriend.name, wself.friendName);
+
                                                                               //cell is not pointing to the same user
                                                                               if (![wself.friendName isEqualToString:afriend.name]) return;
                                                                               if (image)

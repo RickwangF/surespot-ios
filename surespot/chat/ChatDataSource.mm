@@ -19,7 +19,7 @@
 #import "SDWebImageManager.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const int ddLogLevel = LOG_LEVEL_INFO;
 #else
 static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
@@ -34,7 +34,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 @implementation ChatDataSource
 
--(ChatDataSource*)initWithUsername:(NSString *) username loggedInUser: (NSString * ) loggedInUser availableId:(NSInteger)availableId availableControlId:( NSInteger) availableControlId {
+-(ChatDataSource*)initWithUsername:(NSString *) username loggedInUser: (NSString * ) loggedInUser availableId:(NSInteger)availableId availableControlId:( NSInteger) availableControlId callback:(CallbackBlock) initCallback {
     
     DDLogVerbose(@"username: %@, loggedInUser: %@, availableid: %ld, availableControlId: %ld", username, loggedInUser, (long)availableId, (long)availableControlId);
     //call super init
@@ -50,25 +50,24 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         NSArray * messages;
         
         NSString * path =[FileController getChatDataFilenameForSpot:[ChatUtils getSpotUserA:username userB:loggedInUser]];
-        DDLogInfo(@"looking for chat data at: %@", path);
+        DDLogDebug(@"looking for chat data at: %@", path);
         id chatData = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
         if (chatData) {
-            DDLogInfo(@"loading chat data from: %@", path);
+            DDLogDebug(@"loading chat data from: %@", path);
             
             _latestControlMessageId = [[chatData objectForKey:@"latestControlMessageId"] integerValue];
             messages = [chatData objectForKey:@"messages"];
+            __weak ChatDataSource * weakSelf = self;
+            dispatch_group_t group = dispatch_group_create();
             
             //convert messages to SurespotMessage
             for (SurespotMessage * message in messages) {
-                DDLogVerbose(@"adding message");
-                __weak ChatDataSource * weakSelf = self;
+                DDLogDebug(@"adding message %@, iv: %@", _username, message.iv);
+                dispatch_group_enter(group);
                 [self addMessage:message refresh:NO callback:^(id result) {
-                    if ([weakSelf.decryptionQueue operationCount] == 0) {
-                        DDLogInfo(@"loaded %lu messages from disk at: %@", (unsigned long)[messages count] ,path);
-                        [weakSelf postRefresh];
-                    }
+                    DDLogDebug(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
+                    dispatch_group_leave(group);
                 }];
-                
                 
                 //if the message is ready to send and it's not already errored and it's not a text message set it to errored
                 if ([message readyToSend] && message.errorStatus == 0 && !([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
@@ -79,12 +78,14 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                     if (message.serverid <= 0 && ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
                         [[ChatController sharedInstance] enqueueResendMessage: message];
                     }
-                    
                 }
             }
             
-            DDLogVerbose( @"latestMEssageid: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
+            dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+                initCallback(nil);
+            });
             
+            DDLogVerbose( @"latestMEssageid: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
         }
         
         
@@ -163,13 +164,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 refresh = false;
                 CGSize size = [UIScreen mainScreen ].bounds.size;
                 
-                DDLogVerbose(@"added, now decrypting message iv: %@, width: %f, height: %f", message.iv, size.width, size.height);
+                DDLogDebug(@"added %@,  now decrypting message iv: %@, width: %f, height: %f",_username, message.iv, size.width, size.height);
                 
                 MessageDecryptionOperation * op = [[MessageDecryptionOperation alloc]initWithMessage:message size: size completionCallback:^(SurespotMessage  * message){
-                    // DDLogInfo(@"adding message post decryption iv: %@", message.iv);
-                    
-                    
-                    
                     if (blockRefresh) {
                         if ([_decryptionQueue operationCount] == 0) {
                             [self postRefresh];
@@ -179,24 +176,19 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                     if (callback) {
                         callback(nil);
                     }
-                    
-                    
                 }];
                 [_decryptionQueue addOperation:op];
-                
-                
             }
             else {
                 DDLogVerbose(@"added message already decrypted iv: %@", message.iv);
                 
                 if (callback) {
                     callback(nil);
-                }
-                
+                }                
             }
             
             if (![ChatUtils isOurMessage:message]) {
-                DDLogInfo(@"not our message, marking message as new");
+                DDLogVerbose(@"not our message, marking message as new");
                 isNew = YES;
             }
             else {
@@ -277,6 +269,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     
 }
+
 
 -(void) postRefresh {
     [self postRefreshScroll:YES];
@@ -516,7 +509,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         DDLogVerbose(@"sorting messages for %@", _username);
         NSArray *sortedArray;
         sortedArray = [_messages sortedArrayUsingComparator:^NSComparisonResult(SurespotMessage * a, SurespotMessage * b) {
-            DDLogVerbose(@"comparing a serverid: %ld, b serverId: %ld", (long)a.serverid, (long)b.serverid);
+            // DDLogVerbose(@"comparing a serverid: %ld, b serverId: %ld", (long)a.serverid, (long)b.serverid);
             if (a.serverid == b.serverid) {return NSOrderedSame;}
             if (a.serverid == 0) {return NSOrderedDescending;}
             if (b.serverid == 0) {return NSOrderedAscending;}

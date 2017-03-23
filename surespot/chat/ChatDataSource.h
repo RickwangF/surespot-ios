@@ -18,7 +18,7 @@
 @property (nonatomic, assign) NSInteger latestMessageId;
 @property (nonatomic, assign) NSInteger latestControlMessageId;
 
--(ChatDataSource*)initWithUsername:(NSString *) username loggedInUser: (NSString * ) loggedInUser availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId;
+-(ChatDataSource*)initWithUsername:(NSString *) username loggedInUser: (NSString * ) loggedInUser availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId callback: (CallbackBlock) initCallback;
 -(BOOL) addMessage:(SurespotMessage *) message refresh:(BOOL) refresh;
 -(void) postRefresh;
 -(void) deleteMessage: (SurespotMessage *) message initiatedByMe: (BOOL) initiatedByMe;

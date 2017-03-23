@@ -43,7 +43,7 @@
 #import "SideMenu-Swift.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const int ddLogLevel = LOG_LEVEL_DEBUG;
 #else
 static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
@@ -54,7 +54,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 @property (nonatomic, strong) dispatch_queue_t dateFormatQueue;
 @property (nonatomic, strong) NSDateFormatter * dateFormatter;
 @property (nonatomic, strong) UIViewPager * viewPager;
-@property (nonatomic, strong) NSMutableDictionary * needsScroll;
 @property (strong, readwrite, nonatomic) REMenu *menu;
 @property (atomic, assign) NSInteger progressCount;
 @property (nonatomic, weak) UIView * backImageView;
@@ -92,8 +91,6 @@ const Float32 voiceRecordDelay = 0.3;
     [super viewDidLoad];
     
     _assetLibrary = [ALAssetsLibrary new];
-    
-    _needsScroll = [NSMutableDictionary new];
     
     _dateFormatQueue = dispatch_queue_create("date format queue", NULL);
     _dateFormatter = [[NSDateFormatter alloc]init];
@@ -225,11 +222,11 @@ const Float32 voiceRecordDelay = 0.3;
 - (void) setupSideView {
     DDLogInfo(@"setupSideview");
     FastUserSwitchController * fusc = [[FastUserSwitchController alloc] initWithNibName:@"FastUserSwitchView" bundle:nil];
-
+    
     UISideMenuNavigationController *sideC = [[UISideMenuNavigationController alloc] initWithRootViewController:fusc];
     sideC.leftSide = YES;
     
-
+    
     [SideMenuManager setMenuLeftNavigationController:sideC];
     NSMutableArray *sideMenuGestures = [[NSMutableArray alloc]init];
     [sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
@@ -821,9 +818,6 @@ const Float32 voiceRecordDelay = 0.3;
                 
                 [tableview reloadData];
                 
-                //scroll if we need to
-                BOOL scrolledUsingIndexPath = NO;
-                
                 //if we've got saved scroll positions
                 if (_bottomIndexPaths) {
                     id path = [_bottomIndexPaths objectForKey:map.username];
@@ -831,22 +825,8 @@ const Float32 voiceRecordDelay = 0.3;
                         DDLogVerbose(@"scrolling using saved index path for %@",map.username);
                         [self scrollTableViewToCell:tableview indexPath:path];
                         [_bottomIndexPaths removeObjectForKey:map.username];
-                        scrolledUsingIndexPath = YES;
                     }
                 }
-                
-                
-                if (!scrolledUsingIndexPath) {
-                    @synchronized (_needsScroll ) {
-                        id needsit = [_needsScroll  objectForKey:map.username];
-                        if (needsit) {
-                            DDLogVerbose(@"scrolling %@ to bottom",map.username);
-                            [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableview afterDelay:0.5];
-                            [_needsScroll removeObjectForKey:map.username];
-                        }
-                    }
-                }
-                
                 
                 //update button
                 [self updateTabChangeUI];
@@ -1208,10 +1188,10 @@ const Float32 voiceRecordDelay = 0.3;
             cell.messageStatusLabel.textColor = [self getTextColor];
             
             cell.messageLabel.lineBreakMode = NSLineBreakByWordWrapping;
-
+            
             cell.message = message;
             cell.messageLabel.text = plainData;
-          
+            
             UIView *bgColorView = [[UIView alloc] init];
             bgColorView.backgroundColor = [UIUtils surespotSelectionBlue];
             bgColorView.layer.masksToBounds = YES;
@@ -1432,7 +1412,7 @@ const Float32 voiceRecordDelay = 0.3;
                 browser.displayActionButton = NO; // Show action button to allow sharing, copying, etc (defaults to YES)
                 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
                 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
-              //  browser.wantsFullScreenLayout = NO; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
+                //  browser.wantsFullScreenLayout = NO; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
                 
                 // Present
                 [self.navigationController pushViewController:browser animated:YES];
@@ -1478,7 +1458,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void) loadChat:(NSString *) username show: (BOOL) show  availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId {
-    DDLogVerbose(@"entered");
+    DDLogDebug(@"loadChat username: %@", username);
     //get existing view if there is one
     UITableView * chatView;
     @synchronized (_chats) {
@@ -1522,14 +1502,9 @@ const Float32 voiceRecordDelay = 0.3;
             }];
         }];
         
-        //create the data source
-        [[ChatController sharedInstance] createDataSourceForFriendname:username availableId: availableId availableControlId:availableControlId];
-        
         NSInteger index = 0;
         @synchronized (_chats) {
-            
             [_chats setObject:chatView forKey:username];
-            
             
             NSArray * sortedChats = [self sortedAliasedChats];
             for (int i=0;i<[sortedChats count];i++) {
@@ -1546,19 +1521,20 @@ const Float32 voiceRecordDelay = 0.3;
         [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
         [chatView registerNib:[UINib nibWithNibName:@"TheirMessageCell" bundle:nil] forCellReuseIdentifier:@"TheirMessageView"];
         
-        [_swipeView loadViewAtIndex:index];
         [_swipeView updateItemSizeAndCount];
         [_swipeView updateScrollViewDimensions];
         
-        if (show) {
-            _scrollingTo = index;
-            [_swipeView scrollToPage:index duration:0.500];
-            [[ChatController sharedInstance] setCurrentChat: username];
-        }
-        
-        
-        
-        
+        //create the data source
+        [[ChatController sharedInstance] createDataSourceForFriendname:username availableId: availableId availableControlId:availableControlId callback:^(id result) {
+            [_swipeView loadViewAtIndex:index];
+            [self scrollTableViewToBottom:chatView];
+            
+            if (show) {
+                _scrollingTo = index;
+                [_swipeView scrollToPage:index duration:0.500];
+                [[ChatController sharedInstance] setCurrentChat: username];
+            }
+        }];
     }
     
     else {
@@ -1740,42 +1716,27 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)refreshMessages:(NSNotification *)notification {
     NSString * username = [notification.object objectForKey:@"username"];
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
-    DDLogVerbose(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
+    DDLogDebug(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
     
-    if ([username isEqualToString: [self getCurrentTabName]]) {
-        
-        UITableView * tableView;
-        @synchronized (_chats) {
-            tableView = [_chats objectForKey:username];
-        }
-        
-        if (tableView) {
-            [tableView reloadData];
-            
-            if (scroll) {
-                @synchronized (_needsScroll) {
-                    [_needsScroll removeObjectForKey:username];
-                }
-                
-                [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableView afterDelay:0.5];
-            }
-        }
+    
+    UITableView * tableView;
+    @synchronized (_chats) {
+        tableView = [_chats objectForKey:username];
     }
-    else {
+    
+    if (tableView) {
+        [tableView reloadData];
+        
         if (scroll) {
-            @synchronized (_needsScroll) {
-                DDLogVerbose(@"setting needs scroll for %@", username);
-                [_needsScroll setObject:@"yourmama" forKey:username];
-                [_bottomIndexPaths removeObjectForKey:username];
-            }
+            [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableView afterDelay:0.5];
         }
-    }
+    }    
 }
 
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
     NSInteger numRows =[tableView numberOfRowsInSection:0];
     if (numRows > 0) {
-        DDLogVerbose(@"scrolling to row: %ld", (long)numRows);
+        DDLogDebug(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
         if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
@@ -1785,7 +1746,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 - (void) scrollTableViewToCell: (UITableView *) tableView  indexPath: (NSIndexPath *) indexPath {
-    DDLogVerbose(@"scrolling to cell: %@", indexPath);
+    DDLogDebug(@"scrolling to cell: %@", indexPath);
     if ( [tableView numberOfSections] > indexPath.section && [tableView numberOfRowsInSection:0] > indexPath.row ) {
         [tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
@@ -2516,7 +2477,7 @@ const Float32 voiceRecordDelay = 0.3;
         if (![self handleTextActionResign:NO]) {
             [self resignAllResponders];
             [self scrollHome];
-                
+            
         }
     }
     else {
