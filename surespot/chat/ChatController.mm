@@ -380,11 +380,11 @@ static const int MAX_RETRY_DELAY = 30;
     [self connect];
 }
 
-- (ChatDataSource *) createDataSourceForFriendname: (NSString *) friendname availableId:(NSInteger)availableId availableControlId: (NSInteger) availableControlId {
+- (ChatDataSource *) createDataSourceForFriendname: (NSString *) friendname availableId:(NSInteger)availableId availableControlId: (NSInteger) availableControlId callback:(CallbackBlock) createCallback {
     @synchronized (_chatDataSources) {
         ChatDataSource * dataSource = [self.chatDataSources objectForKey:friendname];
         if (dataSource == nil) {
-            dataSource = [[ChatDataSource alloc] initWithUsername:friendname loggedInUser:[[IdentityController sharedInstance] getLoggedInUser] availableId: availableId availableControlId:availableControlId] ;
+            dataSource = [[ChatDataSource alloc] initWithUsername:friendname loggedInUser:[[IdentityController sharedInstance] getLoggedInUser] availableId: availableId availableControlId:availableControlId callback: createCallback] ;
             
             Friend  * afriend = [_homeDataSource getFriendByName:friendname];
             if (afriend && [afriend isDeleted]) {

@@ -989,7 +989,7 @@ const Float32 voiceRecordDelay = 0.3;
                 }
                 
                 if (height > 0) {
-                    DDLogVerbose(@"returning height: %ld for message iv: %@", height, message.iv);
+             //       DDLogDebug(@"returning height: %ld for message iv: %@", height, message.iv);
                     return height;
                 }
                 
@@ -1523,9 +1523,6 @@ const Float32 voiceRecordDelay = 0.3;
             }];
         }];
         
-        //create the data source
-        [[ChatController sharedInstance] createDataSourceForFriendname:username availableId: availableId availableControlId:availableControlId];
-        
         NSInteger index = 0;
         @synchronized (_chats) {
             
@@ -1541,26 +1538,49 @@ const Float32 voiceRecordDelay = 0.3;
             }
         }
         
+        
         DDLogVerbose(@"creatingindex: %ld", (long)index);
         
         //   [chatView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"ChatCell"];
         [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
         [chatView registerNib:[UINib nibWithNibName:@"TheirMessageCell" bundle:nil] forCellReuseIdentifier:@"TheirMessageView"];
         
-        [self scrollTableViewToBottom:chatView];
-        [_swipeView loadViewAtIndex:index];
+        
         [_swipeView updateItemSizeAndCount];
         [_swipeView updateScrollViewDimensions];
         
-        if (show) {
-            _scrollingTo = index;
-            [_swipeView scrollToPage:index duration:0.500];
-            [[ChatController sharedInstance] setCurrentChat: username];
-        }
+
+
+        
+        //create the data source
+//        DDLogDebug(@"creating datasource: %@", username);
+        [[ChatController sharedInstance] createDataSourceForFriendname:username availableId: availableId availableControlId:availableControlId callback:^(id result) {
+         //   DDLogDebug(@"datasource created: %@", username);
+            [self scrollTableViewToBottom:chatView];
+            @synchronized (_needsScroll) {
+                DDLogDebug(@"setting needs scroll for %@", username);
+                [_needsScroll setObject:@"yourmama" forKey:username];
+                [_bottomIndexPaths removeObjectForKey:username];
+            }
+            [_swipeView loadViewAtIndex:index];
+            if (show) {
+                _scrollingTo = index;
+                [_swipeView scrollToPage:index duration:0.500];
+                [[ChatController sharedInstance] setCurrentChat: username];
+            }
+        }];
         
     }
     
     else {
+        UITableView * chatView;
+        @synchronized (_chats) {
+            chatView = [_chats objectForKey:username];
+        }
+        if (chatView) {
+            [self scrollTableViewToBottom:chatView];
+        }
+
         if (show) {
             [[ChatController sharedInstance] setCurrentChat: username];
             NSInteger index=0;
@@ -1574,6 +1594,7 @@ const Float32 voiceRecordDelay = 0.3;
                     }
                 }
             }
+            
             
             DDLogVerbose(@"scrolling to index: %ld", (long)index);
             _scrollingTo = index;
@@ -1774,7 +1795,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
     NSInteger numRows =[tableView numberOfRowsInSection:0];
     if (numRows > 0) {
-        DDLogDebug(@"scrolling to row: %ld", (long)numRows);
+        DDLogDebug(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
         if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
