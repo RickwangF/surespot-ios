@@ -43,7 +43,7 @@
 #import "SideMenu-Swift.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const int ddLogLevel = LOG_LEVEL_DEBUG;
 #else
 static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
@@ -837,7 +837,7 @@ const Float32 voiceRecordDelay = 0.3;
                     @synchronized (_needsScroll ) {
                         id needsit = [_needsScroll  objectForKey:map.username];
                         if (needsit) {
-                            DDLogVerbose(@"scrolling %@ to bottom",map.username);
+                            DDLogDebug(@"scrolling %@ to bottom",map.username);
                             [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableview afterDelay:0.5];
                             [_needsScroll removeObjectForKey:map.username];
                         }
@@ -989,14 +989,18 @@ const Float32 voiceRecordDelay = 0.3;
                 }
                 
                 if (height > 0) {
+                    DDLogVerbose(@"returning height: %ld for message iv: %@", height, message.iv);
                     return height;
                 }
                 
                 else {
+                    DDLogDebug(@"returning default height of 44 for message iv: %@", message.iv);
+                    
                     return 44;
                 }
             }
             else {
+                 DDLogDebug(@"returning height of 0");
                 return 0;
             }
         }
@@ -1475,7 +1479,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void) loadChat:(NSString *) username show: (BOOL) show  availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId {
-    DDLogVerbose(@"entered");
+    DDLogDebug(@"loadChat username: %@", username);
     //get existing view if there is one
     UITableView * chatView;
     @synchronized (_chats) {
@@ -1494,7 +1498,7 @@ const Float32 voiceRecordDelay = 0.3;
             [chatView setSeparatorInset:UIEdgeInsetsZero];
         }
         [self addLongPressGestureRecognizer:chatView];
-        
+
         // setup pull-to-refresh
         __weak UITableView *weakView = chatView;
         [chatView addPullToRefreshWithActionHandler:^{
@@ -1543,6 +1547,7 @@ const Float32 voiceRecordDelay = 0.3;
         [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
         [chatView registerNib:[UINib nibWithNibName:@"TheirMessageCell" bundle:nil] forCellReuseIdentifier:@"TheirMessageView"];
         
+        [self scrollTableViewToBottom:chatView];
         [_swipeView loadViewAtIndex:index];
         [_swipeView updateItemSizeAndCount];
         [_swipeView updateScrollViewDimensions];
@@ -1734,7 +1739,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)refreshMessages:(NSNotification *)notification {
     NSString * username = [notification.object objectForKey:@"username"];
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
-    DDLogVerbose(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
+    DDLogDebug(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
     
     if ([username isEqualToString: [self getCurrentTabName]]) {
         
@@ -1758,7 +1763,7 @@ const Float32 voiceRecordDelay = 0.3;
     else {
         if (scroll) {
             @synchronized (_needsScroll) {
-                DDLogVerbose(@"setting needs scroll for %@", username);
+                DDLogDebug(@"setting needs scroll for %@", username);
                 [_needsScroll setObject:@"yourmama" forKey:username];
                 [_bottomIndexPaths removeObjectForKey:username];
             }
@@ -1769,17 +1774,18 @@ const Float32 voiceRecordDelay = 0.3;
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
     NSInteger numRows =[tableView numberOfRowsInSection:0];
     if (numRows > 0) {
-        DDLogVerbose(@"scrolling to row: %ld", (long)numRows);
+        DDLogDebug(@"scrolling to row: %ld", (long)numRows);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
         if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+         //   [tableView layoutIfNeeded];
         }
     }
 }
 
 
 - (void) scrollTableViewToCell: (UITableView *) tableView  indexPath: (NSIndexPath *) indexPath {
-    DDLogVerbose(@"scrolling to cell: %@", indexPath);
+    DDLogDebug(@"scrolling to cell: %@", indexPath);
     if ( [tableView numberOfSections] > indexPath.section && [tableView numberOfRowsInSection:0] > indexPath.row ) {
         [tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }

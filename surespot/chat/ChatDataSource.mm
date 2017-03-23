@@ -17,15 +17,16 @@
 #import "ChatController.h"
 #import "SurespotConstants.h"
 #import "SDWebImageManager.h"
+#import "EncryptionController.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #else
 static const int ddLogLevel = LOG_LEVEL_OFF;
 #endif
 
 @interface ChatDataSource()
-@property (nonatomic, strong) NSOperationQueue * decryptionQueue;
+//@property (nonatomic, strong) NSOperationQueue * decryptionQueue;
 @property (nonatomic, strong) NSString * loggedInUser;
 @property (nonatomic, strong) NSMutableDictionary * controlMessages;
 @property (atomic, assign) BOOL noEarlierMessages;
@@ -41,7 +42,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     self = [super init];
     
     if (self != nil) {
-        _decryptionQueue = [[NSOperationQueue alloc] init];
+        //        _decryptionQueue = [[NSOperationQueue alloc] init];
         _loggedInUser = loggedInUser;
         _username = username;
         _messages = [NSMutableArray new];
@@ -61,13 +62,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             //convert messages to SurespotMessage
             for (SurespotMessage * message in messages) {
                 DDLogVerbose(@"adding message");
-                __weak ChatDataSource * weakSelf = self;
-                [self addMessage:message refresh:NO callback:^(id result) {
-                    if ([weakSelf.decryptionQueue operationCount] == 0) {
-                        DDLogInfo(@"loaded %lu messages from disk at: %@", (unsigned long)[messages count] ,path);
-                        [weakSelf postRefresh];
-                    }
-                }];
+                [self addMessage:message refresh:NO];
                 
                 
                 //if the message is ready to send and it's not already errored and it's not a text message set it to errored
@@ -82,6 +77,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                     
                 }
             }
+            [self postRefresh];
             
             DDLogVerbose( @"latestMEssageid: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
             
@@ -157,38 +153,63 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         DDLogVerbose(@"looking for message iv: %@", message.iv);
         NSUInteger index = [self.messages indexOfObject:message];
         if (index == NSNotFound) {
+            CGSize size = [UIScreen mainScreen ].bounds.size;
             [self.messages addObject:message];
             if (!message.plainData) {
-                BOOL blockRefresh = refresh;
-                refresh = false;
-                CGSize size = [UIScreen mainScreen ].bounds.size;
                 
-                DDLogVerbose(@"added, now decrypting message iv: %@, width: %f, height: %f", message.iv, size.width, size.height);
                 
-                MessageDecryptionOperation * op = [[MessageDecryptionOperation alloc]initWithMessage:message size: size completionCallback:^(SurespotMessage  * message){
-                    // DDLogInfo(@"adding message post decryption iv: %@", message.iv);
+                DDLogDebug(@"added, now decrypting message iv: %@, width: %f, height: %f, mimeType: %@", message.iv, size.width, size.height, message.mimeType);
+                
+                if ([message.mimeType isEqualToString: MIME_TYPE_TEXT] || [message.mimeType isEqualToString: MIME_TYPE_GIF_LINK]) {
                     
+                    if ([message data]) {
+                        __block NSString * plaintext = nil;
+                        DDLogDebug(@"sem create iv: %@", message.iv);
+                        dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+                        
+                        [EncryptionController symmetricDecryptString:[message data] ourVersion:[message getOurVersion] theirUsername:[message getOtherUser] theirVersion:[message getTheirVersion]  iv:[message iv] hashed: [message hashed] callback:^(NSString * ptext){
+                            
+                            plaintext = ptext;
+                            DDLogDebug(@"sem signal decrypted iv: %@", message.iv);
+                            dispatch_semaphore_signal(sem);
+                            
+                            
+                            
+                            
+                        }];
+                        
+                        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+                        DDLogDebug(@"sem wait over for iv: %@", message.iv);
+                        //figure out message height for both orientations
+                        if (![UIUtils stringIsNilOrEmpty:plaintext]){
+                            message.plainData = plaintext;
+                        }
+                        else {
+                            //todo more granular error messages
+                            message.plainData = NSLocalizedString(@"message_error_decrypting_message",nil);
+                        }
+                        
+                    //    dispatch_async(dispatch_get_main_queue(), ^{
+                            [UIUtils setTextMessageHeights:message size:size];
+                      //  });
+                        
+                    }
                     
-                    
-                    if (blockRefresh) {
-                        if ([_decryptionQueue operationCount] == 0) {
-                            [self postRefresh];
+                }
+                
+                else {
+                    if ([message.mimeType isEqualToString: MIME_TYPE_IMAGE]) {
+                        [UIUtils setImageMessageHeights:message size:size];
+                    }
+                    else {
+                        if ([message.mimeType isEqualToString: MIME_TYPE_M4A]) {
+                            [UIUtils setVoiceMessageHeights:message size:size];
                         }
                     }
-                    
-                    if (callback) {
-                        callback(nil);
-                    }
-                    
-                    
-                }];
-                [_decryptionQueue addOperation:op];
-                
-                
+                }
             }
             else {
-                DDLogVerbose(@"added message already decrypted iv: %@", message.iv);
-                
+                DDLogDebug(@"added message already decrypted iv: %@", message.iv);
                 if (callback) {
                     callback(nil);
                 }
@@ -196,7 +217,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             }
             
             if (![ChatUtils isOurMessage:message]) {
-                DDLogInfo(@"not our message, marking message as new");
+                DDLogVerbose(@"not our message, marking message as new");
                 isNew = YES;
             }
             else {
@@ -266,9 +287,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     
     if (refresh) {
-        if ([_decryptionQueue operationCount] == 0) {
-            [self postRefresh];
-        }
+        //  if ([_decryptionQueue operationCount] == 0) {
+        [self postRefresh];
+        // }
     }
     
     DDLogVerbose(@"isNew: %hhd", (char)isNew);
@@ -277,6 +298,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     
 }
+
 
 -(void) postRefresh {
     [self postRefreshScroll:YES];
@@ -367,20 +389,17 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 
 -(BOOL) handleMessages: (NSArray *) messages {
-    __weak ChatDataSource* weakSelf =self;
     SurespotMessage * lastMessage;
     BOOL areNew = NO;
     for (id jsonMessage in messages) {
         lastMessage = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
-        BOOL isNew = [self addMessage:lastMessage refresh:NO callback:^(id result) {
-            if ([weakSelf.decryptionQueue operationCount] == 0) {
-                [weakSelf postRefresh];
-            }
-        }];
+        BOOL isNew = [self addMessage:lastMessage refresh:NO];
         if (isNew  ) {
             areNew = isNew;
         }
+        
     }
+    [self postRefresh];
     
     return areNew;
 }
@@ -391,23 +410,22 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         _noEarlierMessages = YES;
         return;
     }
-    __weak ChatDataSource* weakSelf =self;
+    
     SurespotMessage * lastMessage;
     for (id jsonMessage in messages) {
         lastMessage = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
         DDLogInfo(@"adding earlier message, id: %ld", (long)lastMessage.serverid);
-        [self addMessage:lastMessage refresh:NO callback:^(id result) {
-            if ([weakSelf.decryptionQueue operationCount] == 0) {
-                [weakSelf sort];
-                DDLogInfo(@"all messages added, calling back");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    callback([NSNumber numberWithLong:[messages count]]);
-                });
-            }
-            
-        }];
+        [self addMessage:lastMessage refresh:NO];
+        
+        
     }
+    DDLogInfo(@"all messages added, calling back");
+    [self sort];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        callback([NSNumber numberWithLong:[messages count]]);
+    });
+    
     
     
     
@@ -516,7 +534,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         DDLogVerbose(@"sorting messages for %@", _username);
         NSArray *sortedArray;
         sortedArray = [_messages sortedArrayUsingComparator:^NSComparisonResult(SurespotMessage * a, SurespotMessage * b) {
-            DDLogVerbose(@"comparing a serverid: %ld, b serverId: %ld", (long)a.serverid, (long)b.serverid);
+            // DDLogVerbose(@"comparing a serverid: %ld, b serverId: %ld", (long)a.serverid, (long)b.serverid);
             if (a.serverid == b.serverid) {return NSOrderedSame;}
             if (a.serverid == 0) {return NSOrderedDescending;}
             if (b.serverid == 0) {return NSOrderedAscending;}
