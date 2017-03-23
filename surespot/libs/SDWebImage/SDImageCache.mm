@@ -345,7 +345,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
     id image = [self imageFromMemoryCacheForKey:key];
     if (image)
     {
-        DDLogInfo(@"using image from memory cache for key: %@", key);
+        DDLogDebug(@"using image from memory cache for key: %@", key);
         doneBlock(image, SDImageCacheTypeMemory);
         return nil;
     }
@@ -371,7 +371,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
                                CGFloat cost = 0;
                                if (diskImage)
                                {
-                                   DDLogInfo(@"using image from disk cache and setting memory cache for key: %@", key);
+                                   DDLogDebug(@"using image from disk cache and setting memory cache for key: %@", key);
                                    if ([mimeType isEqualToString:MIME_TYPE_IMAGE]) {
                                        
                                        cost = [diskImage size].height * [diskImage size].width * [(UIImage *)diskImage scale];

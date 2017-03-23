@@ -58,9 +58,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             _latestControlMessageId = [[chatData objectForKey:@"latestControlMessageId"] integerValue];
             messages = [chatData objectForKey:@"messages"];
             __weak ChatDataSource * weakSelf = self;
-            
-            //   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            
             dispatch_group_t group = dispatch_group_create();
             
             //convert messages to SurespotMessage
@@ -68,16 +65,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 DDLogDebug(@"adding message %@, iv: %@", _username, message.iv);
                 dispatch_group_enter(group);
                 [self addMessage:message refresh:NO callback:^(id result) {
-                    //                    if ([weakSelf.decryptionQueue operationCount] == 0) {
-                    //                        DDLogInfo(@"loaded %lu messages from disk at: %@", (unsigned long)[messages count] ,path);
-                    //                        [weakSelf postRefresh];
-                    //                        initCallback(nil);
-                    //                    }
                     DDLogDebug(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
                     dispatch_group_leave(group);
                 }];
-                
-                
                 
                 //if the message is ready to send and it's not already errored and it's not a text message set it to errored
                 if ([message readyToSend] && message.errorStatus == 0 && !([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
@@ -88,7 +78,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                     if (message.serverid <= 0 && ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
                         [[ChatController sharedInstance] enqueueResendMessage: message];
                     }
-                    
                 }
             }
             
@@ -96,11 +85,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 initCallback(nil);
             });
             
-            
-            //     });
-            
             DDLogVerbose( @"latestMEssageid: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
-            
         }
         
         
@@ -182,10 +167,6 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 DDLogDebug(@"added %@,  now decrypting message iv: %@, width: %f, height: %f",_username, message.iv, size.width, size.height);
                 
                 MessageDecryptionOperation * op = [[MessageDecryptionOperation alloc]initWithMessage:message size: size completionCallback:^(SurespotMessage  * message){
-                    // DDLogInfo(@"adding message post decryption iv: %@", message.iv);
-                    
-                    
-                    
                     if (blockRefresh) {
                         if ([_decryptionQueue operationCount] == 0) {
                             [self postRefresh];
@@ -195,20 +176,15 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                     if (callback) {
                         callback(nil);
                     }
-                    
-                    
                 }];
                 [_decryptionQueue addOperation:op];
-                
-                
             }
             else {
                 DDLogVerbose(@"added message already decrypted iv: %@", message.iv);
                 
                 if (callback) {
                     callback(nil);
-                }
-                
+                }                
             }
             
             if (![ChatUtils isOurMessage:message]) {
