@@ -223,6 +223,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             }
         }
         else {
+            if (callback) {
+                callback(nil);
+            }
             DDLogInfo(@"updating message iv: %@", message.iv);
             SurespotMessage * existingMessage = [self.messages objectAtIndex:index];
             if (message.serverid > 0) {
