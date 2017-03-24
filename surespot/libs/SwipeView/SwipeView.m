@@ -888,10 +888,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 - (UIView *)loadViewAtIndex:(NSInteger)index
 {
-    DDLogVerbose(@"loadViewAtIndex");
+    DDLogVerbose(@"loadViewAtIndex %ld", index);
     UIView *view = [_dataSource swipeView:self viewForItemAtIndex:index reusingView:[self dequeueItemView]];
-    if (view == nil)
-    {
+    if (view == nil) {
+        DDLogVerbose(@"loadViewAtIndex %ld creating view", index);    
         view = [[UIView alloc] init];
     }
     
@@ -899,7 +899,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (oldView)
     {
         [self queueItemView:oldView];
-        DDLogVerbose(@"removeFromSuperview");
+        DDLogDebug(@"removeFromSuperview %@", oldView);
         [oldView removeFromSuperview];
     }
     

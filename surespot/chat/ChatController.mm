@@ -391,13 +391,10 @@ static const int MAX_RETRY_DELAY = 30;
                 [dataSource userDeleted];
             }
             
-            
-            
             [self.chatDataSources setObject: dataSource forKey: friendname];
         }
         return dataSource;
     }
-    
 }
 
 - (ChatDataSource *) getDataSourceForFriendname: (NSString *) friendname {

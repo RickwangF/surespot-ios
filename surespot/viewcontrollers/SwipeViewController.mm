@@ -90,7 +90,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (void)viewDidLoad
 {
-    DDLogVerbose(@"swipeviewdidload %@", self);
+    DDLogDebug(@"swipeviewdidload %@", self);
     [super viewDidLoad];
     
     _assetLibrary = [ALAssetsLibrary new];
@@ -234,9 +234,9 @@ const Float32 voiceRecordDelay = 0.3;
     
     [SideMenuManager setMenuLeftNavigationController:sideC];
     _sideMenuGestures = [[NSMutableArray alloc]init];
-//    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
-//    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
-//    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
+    //    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
+    //    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
+    //    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
     SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
     SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
     
@@ -752,26 +752,19 @@ const Float32 voiceRecordDelay = 0.3;
         
     }
     else {
-        
-        
-        DDLogDebug(@"returning chat view");
-        
+        id theView;
+        id aKey;
         @synchronized (_chats) {
             NSArray *keys = [self sortedAliasedChats];
             if ([keys count] > index - 1) {
-                
-                id aKey = [keys objectAtIndex:index -1];
-                
-                
-                id anObject = [_chats objectForKey:[aKey username]];
-                return anObject;
-            }
-            else {
-                return nil;
+                aKey = [keys objectAtIndex:index -1];
+                theView = [_chats objectForKey:[aKey username]];
             }
         }
+        
+        DDLogDebug(@"returning chat view %@ for username: %@", theView, [aKey username]);
+        return theView;
     }
-    
 }
 
 -(void) addLongPressGestureRecognizer: (UITableView  *) tableView {
@@ -828,7 +821,7 @@ const Float32 voiceRecordDelay = 0.3;
                 }
                 
                 if (![_tabLoading objectForKey:map.username]) {
-                    [tableview reloadData];
+           //         [tableview reloadData];
                     
                     //if we've got saved scroll positions
                     if (_bottomIndexPaths) {
@@ -892,7 +885,7 @@ const Float32 voiceRecordDelay = 0.3;
         index = [_swipeView indexOfItemViewOrSubview:tableView];
     }
     
-    DDLogVerbose(@"number of rows in section, index: %lu", (unsigned long)index);
+    DDLogDebug(@"number of rows in section, index: %lu", (unsigned long)index);
     // Return the number of rows in the section
     if (index == 0) {
         if (![[ChatController sharedInstance] getHomeDataSource]) {
@@ -1150,7 +1143,7 @@ const Float32 voiceRecordDelay = 0.3;
         NSArray * messages = [[ChatController sharedInstance] getDataSourceForFriendname: username].messages;
         
         
-        if (messages.count == 0 || [_tabLoading objectForKey:username]) {
+        if (messages.count == 0) {
             DDLogVerbose(@"no chat messages");
             static NSString *CellIdentifier = @"Cell";
             UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -1489,8 +1482,9 @@ const Float32 voiceRecordDelay = 0.3;
         
         __block NSInteger index = 0;
         @synchronized (_chats) {
-            //UITableView * emptyView =
-            [_chats setObject:[[UIView alloc] initWithFrame:_swipeView.frame] forKey:username];
+            UIView * emptyView = [[UIView alloc] initWithFrame:_swipeView.frame];
+            DDLogDebug(@"loadChat created empty view %@ for username %@", emptyView, username);
+            [_chats setObject: emptyView forKey:username];
             
             NSArray * sortedChats = [self sortedAliasedChats];
             for (int i=0;i<[sortedChats count];i++) {
@@ -1502,9 +1496,10 @@ const Float32 voiceRecordDelay = 0.3;
         }
         
         DDLogDebug(@"creatingindex: %ld", (long)index);
+        [_swipeView loadViewAtIndex:index];
         [_swipeView updateItemSizeAndCount];
         [_swipeView updateScrollViewDimensions];
-        [_swipeView loadViewAtIndex:index];
+        
         
         if (show) {
             _scrollingTo = index;
@@ -1557,8 +1552,8 @@ const Float32 voiceRecordDelay = 0.3;
             [_chats setObject:chatView forKey:username];
             [_tabLoading removeObjectForKey:username];
             [_swipeView loadViewAtIndex:index];
-            [self scrollTableViewToBottom:chatView];
-          
+            [self scrollTableViewToBottom:chatView animated:NO];
+            
         }];
     }
     
@@ -1762,13 +1757,20 @@ const Float32 voiceRecordDelay = 0.3;
     }
 }
 
+
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
+    [self scrollTableViewToBottom:tableView animated:YES];
+}
+
+
+- (void) scrollTableViewToBottom: (UITableView *) tableView animated: (BOOL) animated {
+    
     NSInteger numRows =[tableView numberOfRowsInSection:0];
     if (numRows > 0) {
         DDLogInfo(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
         if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
-            [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
         }
     }
 }
@@ -2445,13 +2447,13 @@ const Float32 voiceRecordDelay = 0.3;
     //blow the views away
     
     _friendView = nil;
-//    
-//    for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
-//        DDLogVerbose(@"gesture: %@)", gesture);
-//        for (UIGestureRecognizer *sideMenuGesture in _sideMenuGestures) {
-//            [gesture rem];
-//        }
-//    }
+    //
+    //    for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
+    //        DDLogVerbose(@"gesture: %@)", gesture);
+    //        for (UIGestureRecognizer *sideMenuGesture in _sideMenuGestures) {
+    //            [gesture rem];
+    //        }
+    //    }
     
     //remove gestures
     for (id gesture in _sideMenuGestures) {
@@ -2459,8 +2461,8 @@ const Float32 voiceRecordDelay = 0.3;
         [self.navigationController.view removeGestureRecognizer:gesture];
         [self.swipeView.scrollView removeGestureRecognizer:gesture];
     }
-
-  
+    
+    
     
     [[NetworkController sharedInstance] logout];
     [[ChatController sharedInstance] logout];
@@ -2477,7 +2479,7 @@ const Float32 voiceRecordDelay = 0.3;
     _swipeView = nil;
     
     
-
+    
     
     //could be logging out as a result of deleting the logged in identity, which could be the only identity
     //if this is the case we want to go to the signup screen not the login screen
