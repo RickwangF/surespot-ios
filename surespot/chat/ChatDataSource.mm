@@ -57,11 +57,11 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         dispatch_group_enter(group);
         
         dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            DDLogInfo(@"dispatch group 1 notified");
+         //   DDLogInfo(@"dispatch group 1 notified");
             //If the socket is connected get the data from the server, otherwise it'll be retrieved when the socket connects
             if ([[ChatController sharedInstance] isConnected] && (availableId > _latestMessageId || availableControlId > _latestControlMessageId)) {
                 dispatch_group_t group2 = dispatch_group_create();
-                              DDLogInfo(@"dispatch group enter %@", username);
+           //                   DDLogInfo(@"dispatch group enter %@", username);
                 dispatch_group_enter(group2);
                 dispatch_group_notify(group2, dispatch_get_main_queue(), ^{
                     DDLogInfo(@"stopProgress username: %@", username);
@@ -70,12 +70,12 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 });
                 
 
-                DDLogDebug(@"getting messageData latestMessageId: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
+             //   DDLogDebug(@"getting messageData latestMessageId: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
                 //load message data
-                DDLogInfo(@"startProgress: %@", username);
+             //   DDLogInfo(@"startProgress: %@", username);
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
                 [[NetworkController sharedInstance] getMessageDataForUsername:_username andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
-                    DDLogInfo(@"get messageData response");
+                //    DDLogInfo(@"get messageData response");
                     
                     NSArray * controlMessages =[((NSDictionary *) JSON) objectForKey:@"controlMessages"];
                     
@@ -85,16 +85,16 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                     
                     for (id jsonMessage in messages) {
                         SurespotMessage *lastMessage = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
-                        DDLogInfo(@"dispatch group message enter %@", username);
+                    //    DDLogInfo(@"dispatch group message enter %@", username);
                         dispatch_group_enter(group2);
                         [self addMessage:lastMessage refresh:NO callback:^(id result) {
-                            DDLogInfo(@"message decrypted %@, iv: %@", username, lastMessage.iv);
-                            DDLogInfo(@"dispatch group mesasge leave %@", username);
+                      //      DDLogInfo(@"message decrypted %@, iv: %@", username, lastMessage.iv);
+                      //      DDLogInfo(@"dispatch group mesasge leave %@", username);
                             dispatch_group_leave(group2);
                         }];
                     }
                     
-                    DDLogInfo(@"dispatch group leave %@", username);
+                   // DDLogInfo(@"dispatch group leave %@", username);
                     dispatch_group_leave(group2);
                     
                 } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
@@ -118,15 +118,15 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             
             _latestControlMessageId = [[chatData objectForKey:@"latestControlMessageId"] integerValue];
             messages = [chatData objectForKey:@"messages"];
-            __weak ChatDataSource * weakSelf = self;
+       //     __weak ChatDataSource * weakSelf = self;
             
             
             //convert messages to SurespotMessage
             for (SurespotMessage * message in messages) {
-                DDLogVerbose(@"adding message %@, iv: %@", _username, message.iv);
+             //   DDLogVerbose(@"adding message %@, iv: %@", _username, message.iv);
                 dispatch_group_enter(group);
                 [self addMessage:message refresh:NO callback:^(id result) {
-                    DDLogInfo(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
+               //     DDLogInfo(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
                     dispatch_group_leave(group);
                 }];
                 
@@ -288,11 +288,11 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     
     
-    if (refresh) {
-        if ([_decryptionQueue operationCount] == 0) {
-            [self postRefresh];
-        }
-    }
+//    if (refresh) {
+//        if ([_decryptionQueue operationCount] == 0) {
+//            [self postRefresh];
+//        }
+//    }
     
     DDLogVerbose(@"isNew: %hhd", (char)isNew);
     
