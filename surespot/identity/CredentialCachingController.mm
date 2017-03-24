@@ -40,11 +40,19 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         sharedInstance.latestVersionsDict = [[NSMutableDictionary alloc] init];
         sharedInstance.cookiesDict = [[NSMutableDictionary alloc] init];
         sharedInstance.identitiesDict = [[NSMutableDictionary alloc] init];
+
         sharedInstance.genSecretQueue = [[NSOperationQueue alloc] init];
+        [sharedInstance.genSecretQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        
         sharedInstance.publicKeyQueue = [[NSOperationQueue alloc] init];
+        [sharedInstance.publicKeyQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+        
         sharedInstance.getSecretQueue = [[NSOperationQueue alloc] init];
+        [sharedInstance.getSecretQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         [sharedInstance.getSecretQueue setMaxConcurrentOperationCount:1];
-        sharedInstance.keyVersionQueue = [NSOperationQueue new];
+        
+        sharedInstance.keyVersionQueue = [[NSOperationQueue alloc] init];
+        [sharedInstance.keyVersionQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         [sharedInstance.keyVersionQueue setMaxConcurrentOperationCount:1];
     });
     

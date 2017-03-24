@@ -47,7 +47,8 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     self = [super initWithNibName:nibNameOrNil bundle:nil];
     if (self) {
         _username = username;
-        _queue = [NSOperationQueue new];
+        _queue = [[NSOperationQueue alloc] init];
+        [_queue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         _theirLatestVersion = 1;
         _dateFormatQueue = dispatch_queue_create("date format queue fp", NULL);
         _dateFormatter = [[NSDateFormatter alloc]init];

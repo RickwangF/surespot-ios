@@ -36,12 +36,13 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(ChatDataSource*)initWithUsername:(NSString *) username loggedInUser: (NSString * ) loggedInUser availableId:(NSInteger)availableId availableControlId:( NSInteger) availableControlId callback:(CallbackBlock) initCallback {
     
-    DDLogInfo(@"username: %@, loggedInUser: %@, availableid: %ld, availableControlId: %ld", username, loggedInUser, (long)availableId, (long)availableControlId);
+   // DDLogInfo(@"username: %@, loggedInUser: %@, availableid: %ld, availableControlId: %ld", username, loggedInUser, (long)availableId, (long)availableControlId);
     //call super init
     self = [super init];
     
     if (self != nil) {
         _decryptionQueue = [[NSOperationQueue alloc] init];
+        [_decryptionQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         _loggedInUser = loggedInUser;
         _username = username;
         _messages = [NSMutableArray new];
