@@ -535,15 +535,14 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         }
         
         CGRect rect =CGRectMake(0.0f, 0.0f, _itemSize.width, _itemSize.height);
-        if (!CGRectEqualToRect(rect, view.bounds)) {
+        if (!CGRectEqualToRect(rect, view.bounds) && [view respondsToSelector: @selector(contentOffset)]) {
             DDLogVerbose(@"setting bounds");
-            CGPoint offset =        view.contentOffset;
+            CGPoint offset = view.contentOffset;
             view.bounds = rect;
             [view setContentOffset:offset animated: NO];
         }
         else {
             DDLogVerbose(@"bounds are the same, not setting");
-            
         }
         if (disableAnimation && animationEnabled) [UIView setAnimationsEnabled:YES];
     }
@@ -832,7 +831,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     else
     {
         self.scrollOffset += offset;
-            DDLogVerbose(@"scrollByOffset set scrollOffset to %f", _scrollOffset);
+        DDLogVerbose(@"scrollByOffset set scrollOffset to %f", _scrollOffset);
     }
 }
 
@@ -1162,7 +1161,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         CGFloat delta = _vertical? (_scrollView.contentOffset.y - _previousContentOffset.y): (_scrollView.contentOffset.x - _previousContentOffset.x);
         _previousContentOffset = _scrollView.contentOffset;
         _scrollOffset += delta / (_vertical? _itemSize.height: _itemSize.width);
-          //  DDLogVerbose(@"scrollViewDidScroll set scrollOffset to %f", _scrollOffset);
+        //  DDLogVerbose(@"scrollViewDidScroll set scrollOffset to %f", _scrollOffset);
         
         //update view and call delegate
         [self didScroll];

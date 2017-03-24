@@ -36,7 +36,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 -(ChatDataSource*)initWithUsername:(NSString *) username loggedInUser: (NSString * ) loggedInUser availableId:(NSInteger)availableId availableControlId:( NSInteger) availableControlId callback:(CallbackBlock) initCallback {
     
-    DDLogVerbose(@"username: %@, loggedInUser: %@, availableid: %ld, availableControlId: %ld", username, loggedInUser, (long)availableId, (long)availableControlId);
+    DDLogInfo(@"username: %@, loggedInUser: %@, availableid: %ld, availableControlId: %ld", username, loggedInUser, (long)availableId, (long)availableControlId);
     //call super init
     self = [super init];
     
@@ -65,7 +65,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
                 DDLogVerbose(@"adding message %@, iv: %@", _username, message.iv);
                 dispatch_group_enter(group);
                 [self addMessage:message refresh:NO callback:^(id result) {
-                    DDLogVerbose(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
+                    DDLogInfo(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
                     dispatch_group_leave(group);
                 }];
                 
@@ -86,6 +86,9 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
             });
             
             DDLogVerbose( @"latestMEssageid: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
+        }
+        else {
+             initCallback(nil);
         }
         
         
