@@ -111,7 +111,7 @@ static const int MAX_RETRY_DELAY = 30;
                     DDLogInfo(@"Notification Says Unreachable");
                 }
             }
-
+            
         }];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAutoinvitesNotification:) name:@"autoinvites" object:nil];
@@ -235,7 +235,7 @@ static const int MAX_RETRY_DELAY = 30;
         case AFNetworkReachabilityStatusNotReachable:
         default:
         {
-           self.hasInet = NO;
+            self.hasInet = NO;
             break;
         }
     }
@@ -246,9 +246,9 @@ static const int MAX_RETRY_DELAY = 30;
     //if we're foregrounded
     if (!_paused) {
         BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
-
         
-     //   [self setReachabilityStatus:status];
+        
+        //   [self setReachabilityStatus:status];
         _connectionRetries = 0;
         
         if(isReachable)
@@ -491,14 +491,11 @@ static const int MAX_RETRY_DELAY = 30;
     [[NetworkController sharedInstance] getLatestDataSinceUserControlId: _homeDataSource.latestUserControlId spotIds:messageIds successBlock:^(NSURLSessionTask *task, id JSON) {
         
         DDLogVerbose(@"network call complete");
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([JSON objectForKey:@"sigs2"]) {
-                NSDictionary * sigs = [[IdentityController sharedInstance] updateSignatures];
-                [[NetworkController sharedInstance] updateSigs:sigs];
-            }
-        });
         
-        
+        if ([JSON objectForKey:@"sigs2"]) {
+            NSDictionary * sigs = [[IdentityController sharedInstance] updateSignatures];
+            [[NetworkController sharedInstance] updateSigs:sigs];
+        }
         
         NSDictionary * conversationIds = [JSON objectForKey:@"conversationIds"];
         if (conversationIds) {
@@ -1215,8 +1212,8 @@ static const int MAX_RETRY_DELAY = 30;
                 //clear http cache
                 NSInteger maxVersion = [version integerValue];
                 for (NSInteger i=1;i<=maxVersion;i++) {
-                   // NSString * path = [[NetworkController sharedInstance] buildPublicKeyPathForUsername:deleted version: [@(i) stringValue]];
-                   // [[NetworkController sharedInstance] deleteFromCache: path];
+                    // NSString * path = [[NetworkController sharedInstance] buildPublicKeyPathForUsername:deleted version: [@(i) stringValue]];
+                    // [[NetworkController sharedInstance] deleteFromCache: path];
                 }
             }];
         }
