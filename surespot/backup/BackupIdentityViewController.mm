@@ -381,7 +381,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 
 -(void) getIdentityFile: (NSString *) identityDirId name: (NSString *) name callback: (CallbackBlock) callback {
     GTLRDriveQuery_FilesList *queryFilesList = [GTLRDriveQuery_FilesList query];
-    queryFilesList.q = [NSString stringWithFormat:@"name = '%@' and trashed = false", [[name  caseInsensitivize] stringByAppendingPathExtension: IDENTITY_EXTENSION]];
+    queryFilesList.q = [NSString stringWithFormat:@"name = '%@' and '%@' in parents and trashed = false", [[name  caseInsensitivize] stringByAppendingPathExtension: IDENTITY_EXTENSION], identityDirId];
     
     [_driveService executeQuery:queryFilesList
               completionHandler:^(GTLRServiceTicket *ticket, GTLRDrive_FileList *result,
