@@ -191,7 +191,7 @@
 		66EBE1371855C97100F2452D /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0991855C97100F2452D /* NSData+Base64.m */; };
 		66EBE1381855C97100F2452D /* NSString+Sensitivize.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE09B1855C97100F2452D /* NSString+Sensitivize.m */; };
 		66EBE13A1855C97100F2452D /* SurespotLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE09F1855C97100F2452D /* SurespotLogFormatter.m */; };
-		66EBE13B1855C97100F2452D /* UIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0A11855C97100F2452D /* UIUtils.m */; };
+		66EBE13B1855C97100F2452D /* UIUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0A11855C97100F2452D /* UIUtils.mm */; };
 		66EBE13C1855C97100F2452D /* Friend.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0A41855C97100F2452D /* Friend.mm */; };
 		66EBE13D1855C97100F2452D /* HomeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0A71855C97100F2452D /* HomeCell.m */; };
 		66EBE13E1855C97100F2452D /* HomeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBE0A81855C97100F2452D /* HomeCell.xib */; };
@@ -351,7 +351,6 @@
 		6674FF76186CB95700B8E77B /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		6674FF78186CB96A00B8E77B /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		667EFF9618425D82002C0406 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		667F80011A3FADCB00181B42 /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GTMOAuth2ViewTouch.xib; path = "../../libs/ios/google/google-api-objectivec-client-read-only/Source/OAuth2/Touch/GTMOAuth2ViewTouch.xib"; sourceTree = "<group>"; };
 		6686623718565AD5001491B1 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		6686623818565AD5001491B1 /* LoginViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoginViewController.mm; sourceTree = "<group>"; };
 		6686623918565AD5001491B1 /* SignupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignupViewController.h; sourceTree = "<group>"; };
@@ -673,7 +672,7 @@
 		66EBE09E1855C97100F2452D /* SurespotLogFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotLogFormatter.h; sourceTree = "<group>"; };
 		66EBE09F1855C97100F2452D /* SurespotLogFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotLogFormatter.m; sourceTree = "<group>"; };
 		66EBE0A01855C97100F2452D /* UIUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIUtils.h; sourceTree = "<group>"; };
-		66EBE0A11855C97100F2452D /* UIUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = UIUtils.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		66EBE0A11855C97100F2452D /* UIUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = UIUtils.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		66EBE0A31855C97100F2452D /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
 		66EBE0A41855C97100F2452D /* Friend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Friend.mm; sourceTree = "<group>"; };
 		66EBE0A51855C97100F2452D /* FriendDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendDelegate.h; sourceTree = "<group>"; };
@@ -844,7 +843,6 @@
 		6604A2C517626B9E0072216A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				667F80011A3FADCB00181B42 /* GTMOAuth2ViewTouch.xib */,
 				66DAB629186D0461006C262F /* SurespotSHKSharers.plist */,
 				6621BB861762704D00BC2850 /* Localizable.strings */,
 				6604A2C617626B9E0072216A /* surespot-Info.plist */,
@@ -1529,7 +1527,7 @@
 				66EBE09E1855C97100F2452D /* SurespotLogFormatter.h */,
 				66EBE09F1855C97100F2452D /* SurespotLogFormatter.m */,
 				66EBE0A01855C97100F2452D /* UIUtils.h */,
-				66EBE0A11855C97100F2452D /* UIUtils.m */,
+				66EBE0A11855C97100F2452D /* UIUtils.mm */,
 				66BB5A38187B7EE9007B5C47 /* SurespotSettingsStore.h */,
 				66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */,
 				66DEA49118DA6E5A00AAF24C /* UsernameAliasMap.h */,
@@ -1769,7 +1767,7 @@
 				6646AE15185CADC700CBACDE /* MBProgressHUD.m in Sources */,
 				66EBE13C1855C97100F2452D /* Friend.mm in Sources */,
 				6686623E18565AD5001491B1 /* SignupViewController.mm in Sources */,
-				66EBE13B1855C97100F2452D /* UIUtils.m in Sources */,
+				66EBE13B1855C97100F2452D /* UIUtils.mm in Sources */,
 				661F46A91865EDC3004A71B0 /* ChangePasswordViewController.mm in Sources */,
 				66FB799718905360009CA47B /* HPGrowingTextView.m in Sources */,
 				66E21DEF1847D7F90005D91E /* IASKSettingsReader.m in Sources */,

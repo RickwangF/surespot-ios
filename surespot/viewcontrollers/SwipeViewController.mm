@@ -92,6 +92,7 @@ const Float32 voiceRecordDelay = 0.3;
 {
     DDLogDebug(@"swipeviewdidload %@", self);
     [super viewDidLoad];
+   
     
     _assetLibrary = [ALAssetsLibrary new];
     
@@ -206,6 +207,7 @@ const Float32 voiceRecordDelay = 0.3;
     [_messageTextView.layer setBorderWidth:0.5];
     [_messageTextView setBackgroundColor:[UIColor clearColor]];
     _messageTextView.layer.cornerRadius = 5;
+    [_messageTextView setTextColor:[self getTextColor]];
     
     _inviteTextView.enablesReturnKeyAutomatically = NO;
     [_inviteTextView setFont:[UIFont systemFontOfSize:14]];
@@ -219,6 +221,7 @@ const Float32 voiceRecordDelay = 0.3;
     [_inviteTextView.internalTextView setAutocorrectionType:UITextAutocorrectionTypeNo];
     [_inviteTextView.internalTextView setAutocapitalizationType:UITextAutocapitalizationTypeNone];
     [_inviteTextView.internalTextView setSpellCheckingType:UITextSpellCheckingTypeNo];
+    [_inviteTextView setTextColor:[self getTextColor]];
     
     [self setTextBoxHints];
     [self setupSideView];
@@ -234,9 +237,9 @@ const Float32 voiceRecordDelay = 0.3;
     
     [SideMenuManager setMenuLeftNavigationController:sideC];
     _sideMenuGestures = [[NSMutableArray alloc]init];
-    //    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
-    //    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
-    //    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
     SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
     SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
     
@@ -248,7 +251,6 @@ const Float32 voiceRecordDelay = 0.3;
             [gesture requireGestureRecognizerToFail:sideMenuGesture];
         }
     }
-    
 }
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
@@ -1000,7 +1002,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(UIColor *) getTextColor {
-    return _hasBackgroundImage ? [UIUtils surespotGrey] : [UIColor blackColor];
+    return _hasBackgroundImage ? [UIUtils surespotGrey] : ([UIUtils isBlackTheme] ? [UIColor whiteColor] : [UIColor blackColor]);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -2523,7 +2525,7 @@ const Float32 voiceRecordDelay = 0.3;
     [_buttonTimer invalidate];
     
     NSTimeInterval interval = -[_buttonDownDate timeIntervalSinceNow];
-    Friend * afriend = [[[ChatController sharedInstance] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
+   // Friend * afriend = [[[ChatController sharedInstance] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
     
     if (interval < voiceRecordDelay) {
         
@@ -2785,6 +2787,9 @@ const Float32 voiceRecordDelay = 0.3;
     else {
         _hasBackgroundImage = NO;
         _bgImageView.image = nil;
+        
+        [_bgImageView setBackgroundColor: [UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor]];
+        
     }
     
     [controller.tableView reloadData];
@@ -2904,6 +2909,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     
     return [aliasMap username];
 }
+
+
 
 
 

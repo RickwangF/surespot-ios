@@ -15,6 +15,7 @@
 #import "FileController.h"
 #import "SDWebImageManager.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "IdentityController.h"
 
 #ifdef DEBUG
 static const int ddLogLevel = LOG_LEVEL_INFO;
@@ -487,6 +488,10 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     return localizedString;
     
+}
+
++(BOOL) isBlackTheme {
+    return [UIUtils getBoolPrefWithDefaultNoForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_black_theme"];
 }
 
 
