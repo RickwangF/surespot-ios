@@ -9,4 +9,5 @@ target 'surespot' do
   pod 'GTMOAuth2', '~> 1.1.4'
   pod 'GoogleAPIClientForREST'
   pod 'GoogleAPIClientForREST/Drive'
+  pod 'InAppSettingsKit'
 end
