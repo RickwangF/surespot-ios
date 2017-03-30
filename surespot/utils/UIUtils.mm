@@ -7,7 +7,7 @@
 //
 
 #import "UIUtils.h"
-#import "UIView+Toast.h"
+#import "Toast+UIView.h"
 #import "ChatUtils.h"
 #import "CocoaLumberjack.h"
 #import "SurespotConstants.h"

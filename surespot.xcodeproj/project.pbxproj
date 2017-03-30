@@ -82,6 +82,7 @@
 		666D33861884805600B73F69 /* SoundController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 666D33851884805600B73F69 /* SoundController.mm */; };
 		666FE55F1E8CB69300F16569 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666FE55E1E8CB69300F16569 /* CoreImage.framework */; };
 		666FE5601E8CB6DE00F16569 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FF0FF5182AE6960038ECA6 /* QuartzCore.framework */; };
+		666FE5661E8D7F8100F16569 /* Toast+UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 666FE5641E8D7F8100F16569 /* Toast+UIView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		6674FF71186CB91300B8E77B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF70186CB91300B8E77B /* CoreMedia.framework */; };
 		6674FF73186CB92200B8E77B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF72186CB92200B8E77B /* AVFoundation.framework */; };
 		6674FF75186CB94500B8E77B /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF74186CB94500B8E77B /* Accounts.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -304,6 +305,8 @@
 		666D33841884805600B73F69 /* SoundController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundController.h; sourceTree = "<group>"; };
 		666D33851884805600B73F69 /* SoundController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundController.mm; sourceTree = "<group>"; };
 		666FE55E1E8CB69300F16569 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		666FE5641E8D7F8100F16569 /* Toast+UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Toast+UIView.m"; path = "Toast/Toast+UIView.m"; sourceTree = "<group>"; };
+		666FE5651E8D7F8100F16569 /* Toast+UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Toast+UIView.h"; path = "Toast/Toast+UIView.h"; sourceTree = "<group>"; };
 		6674FF70186CB91300B8E77B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		6674FF72186CB92200B8E77B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6674FF74186CB94500B8E77B /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -863,6 +866,15 @@
 			path = sounds;
 			sourceTree = "<group>";
 		};
+		666FE5631E8D7F7200F16569 /* Toast */ = {
+			isa = PBXGroup;
+			children = (
+				666FE5641E8D7F8100F16569 /* Toast+UIView.m */,
+				666FE5651E8D7F8100F16569 /* Toast+UIView.h */,
+			);
+			name = Toast;
+			sourceTree = "<group>";
+		};
 		66866244185B6A2E001491B1 /* SDWebImage */ = {
 			isa = PBXGroup;
 			children = (
@@ -931,6 +943,7 @@
 		66E4F517176298CB00596E6B /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				666FE5631E8D7F7200F16569 /* Toast */,
 				6659531F188601FD00BA2CC7 /* UIAlertViewBlocks */,
 				6646ADD2185CADC700CBACDE /* MWPhotoBrowser */,
 				66866244185B6A2E001491B1 /* SDWebImage */,
@@ -1594,6 +1607,7 @@
 				66866267185B6A2E001491B1 /* SDWebImageDownloader.m in Sources */,
 				6654441317F37A3F00F62F7F /* SwipeView.m in Sources */,
 				6686626F185B6A2E001491B1 /* HomeCell+WebImageCache.m in Sources */,
+				666FE5661E8D7F8100F16569 /* Toast+UIView.m in Sources */,
 				66EBE0BD1855C97100F2452D /* ChatUtils.mm in Sources */,
 				66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */,
 				66EBE0D41855C97100F2452D /* UIImage+Scale.m in Sources */,

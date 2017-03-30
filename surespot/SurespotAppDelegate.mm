@@ -15,7 +15,6 @@
 #import "UIUtils.h"
 #import "IdentityController.h"
 #import "UIUtils.h"
-#import "AGWindowView.h"
 #import <StoreKit/StoreKit.h>
 #import "PurchaseDelegate.h"
 #import "SoundController.h"
@@ -41,7 +40,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-
+    
     // in our case, show the surespot logo centered on a black background
     if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1)
     {
@@ -74,22 +73,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    //-- Set Notification
-    if ([application respondsToSelector:@selector(isRegisteredForRemoteNotifications)])
-    {
-        // iOS 8 Notifications
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
-        
-        [application registerForRemoteNotifications];
-    }
-    else
-    {
-        // iOS < 8 Notifications
-        [application registerForRemoteNotificationTypes:
-         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound)];
-    }
-
-  //  [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert|UIRemoteNotificationTypeBadge|/UIRemoteNotificationTypeSound) ];
+    
+    // iOS 8 Notifications
+    [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+    
+    [application registerForRemoteNotifications];
+    
     if  (launchOptions) {
         DDLogVerbose(@"received launch options: %@", launchOptions);
     }
@@ -101,7 +90,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
     UINavigationController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"navigationController"];
     
-        [self.window makeKeyAndVisible];
+    [self.window makeKeyAndVisible];
     
     self.window.rootViewController = rootViewController;
     
@@ -113,17 +102,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString *appBuildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
     [[NSUserDefaults standardUserDefaults] setObject:appBuildString forKey:@"build_preference"];
     
-    
-    
-    
-  //  _overlayWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  //  [_overlayWindow setWindowLevel:UIWindowLevelAlert+1];
-  //  _overlayWindow.hidden = NO;
-  //  _overlayWindow.userInteractionEnabled = NO;
-    
-   // _overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
-   // _overlayView.supportedInterfaceOrientations = AGInterfaceOrientationMaskAll;
-//    _overlayView.transform = CGAffineTransformIdentity;
     
     [[SKPaymentQueue defaultQueue] addTransactionObserver:[PurchaseDelegate sharedInstance]];
     
@@ -158,7 +136,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
     }
     
-
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fastUserSwitch:) name:@"fastUserSwitch" object:nil];
     return YES;
 }
@@ -216,7 +194,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         //todo download and add the message or just move to tab and tell it to load
         switch ([application applicationState]) {
-            case UIApplicationStateActive:
+                case UIApplicationStateActive:
                 
                 //application was running when we received
                 //if we're not on the tab, show notification
@@ -241,8 +219,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }
                 break;
                 
-            case UIApplicationStateInactive:
-            case UIApplicationStateBackground:
+                case UIApplicationStateInactive:
+                case UIApplicationStateBackground:
                 //started application from notification, move to correct tab
                 
                 BOOL hasNotification = NO;
@@ -272,7 +250,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         return YES;
     }
     
-    return NO;    
+    return NO;
 }
 
 -(void) fastUserSwitch: (NSNotification *) notification {
