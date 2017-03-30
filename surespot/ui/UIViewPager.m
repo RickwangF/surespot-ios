@@ -1,6 +1,6 @@
 #import "UIViewPager.h"
 #import "UIUtils.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 
 
 
@@ -16,9 +16,9 @@
 @end
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 static CGFloat const alpha = 0.4;

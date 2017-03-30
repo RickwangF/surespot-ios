@@ -25,21 +25,20 @@
 - (NSString *)formatLogMessage:(DDLogMessage *)logMessage
 {
     NSString *logLevel;
-    switch (logMessage->logFlag)
+    switch (logMessage.flag)
     {
-        case LOG_FLAG_ERROR : logLevel = @"E"; break;
-        case LOG_FLAG_WARN  : logLevel = @"W"; break;
-        case LOG_FLAG_INFO  : logLevel = @"I"; break;
-        default             : logLevel = @"V"; break;
+        case DDLogFlagError   : logLevel = @"E"; break;
+        case DDLogFlagWarning : logLevel = @"W"; break;
+        case DDLogFlagInfo    : logLevel = @"I"; break;
+        default               : logLevel = @"V"; break;
     }
     
-    NSString * function = [[NSString stringWithCString: logMessage->function encoding:NSASCIIStringEncoding] stringByPaddingToLength:12 withString:@" " startingAtIndex:0];
+    NSString * function = [logMessage.function stringByPaddingToLength:12 withString:@" " startingAtIndex:0];
     
-    NSString *dateAndTime = [threadUnsafeDateFormatter stringFromDate:(logMessage->timestamp)];
-    NSString *path = [NSString stringWithCString:logMessage->file encoding:NSASCIIStringEncoding];
-    NSString *fileName = [[[path lastPathComponent] stringByDeletingPathExtension] stringByPaddingToLength:12 withString:@" " startingAtIndex:0];
+    NSString *dateAndTime = [threadUnsafeDateFormatter stringFromDate:(logMessage.timestamp)];
+    NSString *fileName = [[[logMessage.file lastPathComponent] stringByDeletingPathExtension] stringByPaddingToLength:12 withString:@" " startingAtIndex:0];
     
 //    NSString *qLabel = [NSString stringWithUTF8String:logMessage->queueLabel] substringFromIndex:
-    return [NSString stringWithFormat:@"%@ %@ [%5u:%.12s] [%8@:%@ %3d] %@",logLevel, dateAndTime, logMessage->machThreadID, logMessage->queueLabel, fileName, function, logMessage->lineNumber, logMessage->logMsg];
+    return [NSString stringWithFormat:@"%@ %@ [%5@:%@] [%8@:%@ %3lu] %@",logLevel, dateAndTime, logMessage.threadID, logMessage.queueLabel, fileName, function, (unsigned long) logMessage.line, logMessage.message];
 }
 @end

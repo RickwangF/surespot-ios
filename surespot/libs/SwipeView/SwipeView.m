@@ -33,12 +33,12 @@
 
 #import "SwipeView.h"
 #import <objc/message.h>
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_WARN;
+static const DDLogLevel ddLogLevel = DDLogLevelWarning;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 

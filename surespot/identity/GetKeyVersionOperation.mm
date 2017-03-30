@@ -9,12 +9,12 @@
 #import "GetKeyVersionOperation.h"
 #import "NetworkController.h"
 #import "EncryptionController.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 

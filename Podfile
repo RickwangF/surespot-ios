@@ -10,4 +10,11 @@ target 'surespot' do
   pod 'GoogleAPIClientForREST'
   pod 'GoogleAPIClientForREST/Drive'
   pod 'InAppSettingsKit'
+  pod 'AGWindowView'
+  pod 'Toast', '~> 3.1.0'
+  pod 'CocoaLumberjack'
+  pod 'SVPullToRefresh'
+  pod 'REMenu', '~> 1.10'
+  pod 'UIImageViewAligned'
+  pod 'HPGrowingTextView'
 end

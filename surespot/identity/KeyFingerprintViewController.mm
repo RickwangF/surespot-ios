@@ -12,7 +12,7 @@
 #import "IdentityKeys.h"
 #import "EncryptionController.h"
 #import "CredentialCachingController.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "GetPublicKeysOperation.h"
 #import "KeyFingerprintCell.h"
 #import "KeyFingerprint.h"
@@ -24,9 +24,9 @@
 #import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface KeyFingerprintViewController()

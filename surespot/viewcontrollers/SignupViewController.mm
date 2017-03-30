@@ -13,7 +13,7 @@
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
 #import "UIUtils.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "LoadingView.h"
 #import "RestoreIdentitiesViewController.h"
 #import "HelpViewController.h"
@@ -24,9 +24,9 @@
 #import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 
@@ -477,7 +477,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     if (!_menu) {
         _menu = [self createMenu];
         if (_menu) {
-            [_menu showSensiblyInView:self.view];
+            [_menu showInView:self.view];
         }
     }
     else {

@@ -14,7 +14,7 @@
 #import "NSData+SRB64Additions.h"
 #import "UIUtils.h"
 #import "LoadingView.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "RestoreIdentitiesViewController.h"
 #import "RemoveIdentityFromDeviceViewController.h"
 #import "SwipeViewController.h"
@@ -22,9 +22,9 @@
 #import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface LoginViewController ()
@@ -421,7 +421,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
         [_textPassword resignFirstResponder];
         _menu = [self createMenu];
         if (_menu) {
-            [_menu showSensiblyInView:self.view];
+            [_menu showInView:self.view];
         }
     }
     else {

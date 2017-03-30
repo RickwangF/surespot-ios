@@ -9,13 +9,14 @@
 #import "HomeDataSource.h"
 #import "NetworkController.h"
 #import "FileController.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "SDWebImageManager.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
+//static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 

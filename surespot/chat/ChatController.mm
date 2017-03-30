@@ -13,7 +13,7 @@
 #import "SurespotControlMessage.h"
 #import "NetworkController.h"
 #import "ChatUtils.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "UIUtils.h"
 #import "SurespotConstants.h"
 #import "FileController.h"
@@ -26,9 +26,9 @@
 #import "SocketIO-swift.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 static const int MAX_CONNECTION_RETRIES = 60;

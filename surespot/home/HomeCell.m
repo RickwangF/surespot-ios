@@ -8,13 +8,13 @@
 
 #import "HomeCell.h"
 #import "UIUtils.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 
@@ -26,7 +26,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
 
 
 
-- (IBAction)inviteAction:(id)sender {
+- (IBAction)inviteAction:(UIButton*)sender {
     NSString * action;
     switch ([sender tag]) {
         case 0:

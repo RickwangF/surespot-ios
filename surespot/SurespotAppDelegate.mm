@@ -9,7 +9,7 @@
 #import "SurespotAppDelegate.h"
 #import "SurespotMessage.h"
 #import "ChatController.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "DDTTYLogger.h"
 #import "SurespotLogFormatter.h"
 #import "UIUtils.h"
@@ -25,9 +25,9 @@
 #import "NetworkController.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface SurespotAppDelegate()

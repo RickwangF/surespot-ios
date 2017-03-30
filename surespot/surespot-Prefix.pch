@@ -4,6 +4,7 @@
 
 #import <Availability.h>
 
+
 #ifndef __IPHONE_5_0
 #warning "This project uses features only available in iOS SDK 5.0 and later."
 #endif
@@ -16,3 +17,5 @@
 #ifdef DEBUG
     #define _AFNETWORKING_ALLOW_INVALID_SSL_CERTIFICATES_
 #endif
+
+#define LOG_LEVEL_DEF ddLogLevel

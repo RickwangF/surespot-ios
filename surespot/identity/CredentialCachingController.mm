@@ -11,13 +11,13 @@
 #import "GetKeyVersionOperation.h"
 #import "NetworkController.h"
 #import "FileController.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "GetPublicKeysOperation.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface CredentialCachingController()

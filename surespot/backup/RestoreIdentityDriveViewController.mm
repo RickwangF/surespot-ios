@@ -9,7 +9,7 @@
 #import "RestoreIdentityDriveViewController.h"
 #import "GTLRDrive.h"
 #import "GTMOAuth2ViewControllerTouch.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "SurespotConstants.h"
 #import "IdentityCell.h"
 #import "IdentityController.h"
@@ -19,9 +19,9 @@
 #import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 static NSString *const kKeychainItemName = @"Google Drive surespot";

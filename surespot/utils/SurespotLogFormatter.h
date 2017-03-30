@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 
 @interface SurespotLogFormatter : NSObject<DDLogFormatter> {
     int loggerCount;

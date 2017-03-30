@@ -56,7 +56,6 @@
 		6646AE26185CADC700CBACDE /* MWPhotoBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6646AE0A185CADC700CBACDE /* MWPhotoBrowser.bundle */; };
 		6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2B185CB08200CBACDE /* SurespotPhoto.m */; };
 		6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2E185CB2EF00CBACDE /* EncryptionParams.m */; };
-		6646AE33185CBCA800CBACDE /* UIImageViewAligned.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE32185CBCA800CBACDE /* UIImageViewAligned.m */; };
 		6648B1E5186CB9BF007037B1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E4186CB9BF007037B1 /* MediaPlayer.framework */; };
 		6648B1E8186CB9D9007037B1 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E6186CB9D9007037B1 /* CoreMotion.framework */; };
 		6648B1E9186CB9D9007037B1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E7186CB9D9007037B1 /* CoreText.framework */; };
@@ -69,11 +68,6 @@
 		6659531E1885B97000BA2CC7 /* BackupHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6659531D1885B97000BA2CC7 /* BackupHelpView.xib */; };
 		665953221886021300BA2CC7 /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 665953211886021300BA2CC7 /* UIAlertView+Blocks.m */; };
 		6659532518882DF500BA2CC7 /* MWPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 6659532418882DF500BA2CC7 /* MWPhoto.m */; };
-		665F4DF51831923C0083BCE7 /* RECommonFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 665F4DEC1831923C0083BCE7 /* RECommonFunctions.m */; };
-		665F4DF61831923C0083BCE7 /* REMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 665F4DEE1831923C0083BCE7 /* REMenu.m */; };
-		665F4DF71831923C0083BCE7 /* REMenuContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665F4DF01831923C0083BCE7 /* REMenuContainerView.m */; };
-		665F4DF81831923C0083BCE7 /* REMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 665F4DF21831923C0083BCE7 /* REMenuItem.m */; };
-		665F4DF91831923C0083BCE7 /* REMenuItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665F4DF41831923C0083BCE7 /* REMenuItemView.m */; };
 		665F4E0F183325C50083BCE7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 665F4E0E183325C50083BCE7 /* AdSupport.framework */; };
 		666659A31DD338CF0099B284 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2CA17626B9E0072216A /* main.m */; };
 		666D3364187F69AD00B73F69 /* invite-accept.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D335E187F69AD00B73F69 /* invite-accept.caf */; };
@@ -114,13 +108,10 @@
 		668D24F6186A24D90096D155 /* QREncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 668D24F3186A24D90096D155 /* QREncoder.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		668D24FF186A36520096D155 /* QRInviteView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 668D24FE186A36520096D155 /* QRInviteView.xib */; };
 		668D2502186A373A0096D155 /* QRInviteViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 668D2501186A373A0096D155 /* QRInviteViewController.mm */; };
-		6698585118663157003624DA /* AGWindowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6698584E18663157003624DA /* AGWindowView.m */; };
 		669BC187187DAACD00C3C752 /* HelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 669BC186187DAACD00C3C752 /* HelpView.xib */; };
 		669BC195187DBF3500C3C752 /* AboutView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 669BC194187DBF3500C3C752 /* AboutView.xib */; };
 		669BC199187DC1CB00C3C752 /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 669BC197187DC1CB00C3C752 /* AboutViewController.m */; };
 		66A2D919183A7A7F00785270 /* SurespotConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D918183A7A7F00785270 /* SurespotConstants.m */; };
-		66A2D940183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D932183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m */; };
-		66A2D941183C25E800785270 /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D934183C25E800785270 /* UIScrollView+SVPullToRefresh.m */; };
 		66AC20AB18690CBD004E58E1 /* KeyFingerprintLoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */; };
 		66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */; };
 		66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */; };
@@ -184,12 +175,7 @@
 		66EBE13F1855C97100F2452D /* HomeDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AA1855C97100F2452D /* HomeDataSource.m */; };
 		66EBE1401855C97100F2452D /* MessageIndicatorNewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AC1855C97100F2452D /* MessageIndicatorNewView.m */; };
 		66F831FF185B9EB500ADD2F1 /* OurMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBDF171855C96F00F2452D /* OurMessageCell.xib */; };
-		66FB799718905360009CA47B /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66FB799418905360009CA47B /* HPGrowingTextView.m */; };
-		66FB799818905360009CA47B /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 66FB799618905360009CA47B /* HPTextViewInternal.m */; };
-		66FF0FE218242B6B0038ECA6 /* Toast+UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66FF0FE118242B6B0038ECA6 /* Toast+UIView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		66FF0FF6182AE6960038ECA6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FF0FF5182AE6960038ECA6 /* QuartzCore.framework */; };
-		66FF1001182D3D920038ECA6 /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 66FF0FFE182D3D920038ECA6 /* DDLog.m */; };
-		66FF1002182D3D920038ECA6 /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 66FF1000182D3D920038ECA6 /* DDTTYLogger.m */; };
 		6761F09264FD201A9C63491D /* Pods_surespot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */; };
 /* End PBXBuildFile section */
 
@@ -281,8 +267,6 @@
 		6646AE2B185CB08200CBACDE /* SurespotPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SurespotPhoto.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		6646AE2D185CB2EF00CBACDE /* EncryptionParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncryptionParams.h; sourceTree = "<group>"; };
 		6646AE2E185CB2EF00CBACDE /* EncryptionParams.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncryptionParams.m; sourceTree = "<group>"; };
-		6646AE31185CBCA800CBACDE /* UIImageViewAligned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImageViewAligned.h; sourceTree = "<group>"; };
-		6646AE32185CBCA800CBACDE /* UIImageViewAligned.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImageViewAligned.m; sourceTree = "<group>"; };
 		6648B1E4186CB9BF007037B1 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		6648B1E6186CB9D9007037B1 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		6648B1E7186CB9D9007037B1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -301,16 +285,6 @@
 		665953211886021300BA2CC7 /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Blocks.m"; sourceTree = "<group>"; };
 		6659532318882DF500BA2CC7 /* MWPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPhoto.h; sourceTree = "<group>"; };
 		6659532418882DF500BA2CC7 /* MWPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPhoto.m; sourceTree = "<group>"; };
-		665F4DEB1831923C0083BCE7 /* RECommonFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RECommonFunctions.h; sourceTree = "<group>"; };
-		665F4DEC1831923C0083BCE7 /* RECommonFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RECommonFunctions.m; sourceTree = "<group>"; };
-		665F4DED1831923C0083BCE7 /* REMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REMenu.h; sourceTree = "<group>"; };
-		665F4DEE1831923C0083BCE7 /* REMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REMenu.m; sourceTree = "<group>"; };
-		665F4DEF1831923C0083BCE7 /* REMenuContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REMenuContainerView.h; sourceTree = "<group>"; };
-		665F4DF01831923C0083BCE7 /* REMenuContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REMenuContainerView.m; sourceTree = "<group>"; };
-		665F4DF11831923C0083BCE7 /* REMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REMenuItem.h; sourceTree = "<group>"; };
-		665F4DF21831923C0083BCE7 /* REMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REMenuItem.m; sourceTree = "<group>"; };
-		665F4DF31831923C0083BCE7 /* REMenuItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REMenuItemView.h; sourceTree = "<group>"; };
-		665F4DF41831923C0083BCE7 /* REMenuItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REMenuItemView.m; sourceTree = "<group>"; };
 		665F4E0E183325C50083BCE7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		666D335E187F69AD00B73F69 /* invite-accept.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "invite-accept.caf"; sourceTree = "<group>"; };
 		666D3362187F69AD00B73F69 /* message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = message.caf; sourceTree = "<group>"; };
@@ -383,20 +357,12 @@
 		66974AF1187F1692007BB80F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		66974AF2187F169F007BB80F /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		66974AF3187F16AA007BB80F /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
-		6698584D18663157003624DA /* AGWindowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGWindowView.h; sourceTree = "<group>"; };
-		6698584E18663157003624DA /* AGWindowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGWindowView.m; sourceTree = "<group>"; };
-		6698584F18663157003624DA /* AGWindowViewDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGWindowViewDefines.h; sourceTree = "<group>"; };
 		669BC186187DAACD00C3C752 /* HelpView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HelpView.xib; sourceTree = "<group>"; };
 		669BC194187DBF3500C3C752 /* AboutView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutView.xib; sourceTree = "<group>"; };
 		669BC196187DC1CB00C3C752 /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
 		669BC197187DC1CB00C3C752 /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
 		66A2D917183A7A7F00785270 /* SurespotConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotConstants.h; sourceTree = "<group>"; };
 		66A2D918183A7A7F00785270 /* SurespotConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotConstants.m; sourceTree = "<group>"; };
-		66A2D930183C25E800785270 /* SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVPullToRefresh.h; sourceTree = "<group>"; };
-		66A2D931183C25E800785270 /* UIScrollView+SVInfiniteScrolling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVInfiniteScrolling.h"; sourceTree = "<group>"; };
-		66A2D932183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVInfiniteScrolling.m"; sourceTree = "<group>"; };
-		66A2D933183C25E800785270 /* UIScrollView+SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVPullToRefresh.h"; sourceTree = "<group>"; };
-		66A2D934183C25E800785270 /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
 		66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeyFingerprintLoadingView.xib; sourceTree = "<group>"; };
 		66B8360F1CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+FallbackLanguage.h"; sourceTree = "<group>"; };
 		66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+FallbackLanguage.m"; sourceTree = "<group>"; };
@@ -640,17 +606,7 @@
 		66EBE0AA1855C97100F2452D /* HomeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HomeDataSource.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		66EBE0AB1855C97100F2452D /* MessageIndicatorNewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageIndicatorNewView.h; sourceTree = "<group>"; };
 		66EBE0AC1855C97100F2452D /* MessageIndicatorNewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageIndicatorNewView.m; sourceTree = "<group>"; };
-		66FB799318905360009CA47B /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
-		66FB799418905360009CA47B /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
-		66FB799518905360009CA47B /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
-		66FB799618905360009CA47B /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
-		66FF0FE018242B6B0038ECA6 /* Toast+UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Toast+UIView.h"; sourceTree = "<group>"; };
-		66FF0FE118242B6B0038ECA6 /* Toast+UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Toast+UIView.m"; sourceTree = "<group>"; };
 		66FF0FF5182AE6960038ECA6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		66FF0FFD182D3D920038ECA6 /* DDLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DDLog.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		66FF0FFE182D3D920038ECA6 /* DDLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DDLog.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		66FF0FFF182D3D920038ECA6 /* DDTTYLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DDTTYLogger.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		66FF1000182D3D920038ECA6 /* DDTTYLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DDTTYLogger.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7B53B5F6E4E57EE43909DCFB /* Pods-surespot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-surespot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-surespot/Pods-surespot.debug.xcconfig"; sourceTree = "<group>"; };
 		ECFAFC1095B845ABD0054564 /* Pods-surespot.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-surespot.release.xcconfig"; path = "Pods/Target Support Files/Pods-surespot/Pods-surespot.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -882,15 +838,6 @@
 			path = MBProgressHUD;
 			sourceTree = "<group>";
 		};
-		6646AE30185CBCA800CBACDE /* UIImageViewAligned */ = {
-			isa = PBXGroup;
-			children = (
-				6646AE31185CBCA800CBACDE /* UIImageViewAligned.h */,
-				6646AE32185CBCA800CBACDE /* UIImageViewAligned.m */,
-			);
-			path = UIImageViewAligned;
-			sourceTree = "<group>";
-		};
 		6654441017F37A3F00F62F7F /* SwipeView */ = {
 			isa = PBXGroup;
 			children = (
@@ -907,23 +854,6 @@
 				665953211886021300BA2CC7 /* UIAlertView+Blocks.m */,
 			);
 			name = UIAlertViewBlocks;
-			sourceTree = "<group>";
-		};
-		665F4DEA1831923C0083BCE7 /* REMenu */ = {
-			isa = PBXGroup;
-			children = (
-				665F4DEB1831923C0083BCE7 /* RECommonFunctions.h */,
-				665F4DEC1831923C0083BCE7 /* RECommonFunctions.m */,
-				665F4DED1831923C0083BCE7 /* REMenu.h */,
-				665F4DEE1831923C0083BCE7 /* REMenu.m */,
-				665F4DEF1831923C0083BCE7 /* REMenuContainerView.h */,
-				665F4DF01831923C0083BCE7 /* REMenuContainerView.m */,
-				665F4DF11831923C0083BCE7 /* REMenuItem.h */,
-				665F4DF21831923C0083BCE7 /* REMenuItem.m */,
-				665F4DF31831923C0083BCE7 /* REMenuItemView.h */,
-				665F4DF41831923C0083BCE7 /* REMenuItemView.m */,
-			);
-			path = REMenu;
 			sourceTree = "<group>";
 		};
 		666D335D187F69AD00B73F69 /* sounds */ = {
@@ -993,29 +923,6 @@
 			name = qr;
 			sourceTree = "<group>";
 		};
-		6698584218663105003624DA /* AGWindowView */ = {
-			isa = PBXGroup;
-			children = (
-				6698584D18663157003624DA /* AGWindowView.h */,
-				6698584E18663157003624DA /* AGWindowView.m */,
-				6698584F18663157003624DA /* AGWindowViewDefines.h */,
-			);
-			name = AGWindowView;
-			sourceTree = "<group>";
-		};
-		66A2D92F183C25E800785270 /* SVPullToRefresh */ = {
-			isa = PBXGroup;
-			children = (
-				66A2D930183C25E800785270 /* SVPullToRefresh.h */,
-				66A2D931183C25E800785270 /* UIScrollView+SVInfiniteScrolling.h */,
-				66A2D932183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m */,
-				66A2D933183C25E800785270 /* UIScrollView+SVPullToRefresh.h */,
-				66A2D934183C25E800785270 /* UIScrollView+SVPullToRefresh.m */,
-			);
-			name = SVPullToRefresh;
-			path = SVPullToRefresh/SVPullToRefresh;
-			sourceTree = "<group>";
-		};
 		66DAB62B186DEEDC006C262F /* voice */ = {
 			isa = PBXGroup;
 			children = (
@@ -1042,17 +949,10 @@
 		66E4F517176298CB00596E6B /* libs */ = {
 			isa = PBXGroup;
 			children = (
-				66FB799218905360009CA47B /* HPGrowingTextView */,
 				6659531F188601FD00BA2CC7 /* UIAlertViewBlocks */,
 				668D24ED186A24D90096D155 /* qr */,
-				6698584218663105003624DA /* AGWindowView */,
-				6646AE30185CBCA800CBACDE /* UIImageViewAligned */,
 				6646ADD2185CADC700CBACDE /* MWPhotoBrowser */,
 				66866244185B6A2E001491B1 /* SDWebImage */,
-				66A2D92F183C25E800785270 /* SVPullToRefresh */,
-				665F4DEA1831923C0083BCE7 /* REMenu */,
-				66FF0FFC182D3D920038ECA6 /* Lumberjack */,
-				66FF0FDF18242B6B0038ECA6 /* Toast */,
 				6654441017F37A3F00F62F7F /* SwipeView */,
 				66E4F518176298CB00596E6B /* cryptopp */,
 				661C2ED41763D493000649E7 /* NSData+Gunzip.h */,
@@ -1449,37 +1349,6 @@
 			path = home;
 			sourceTree = "<group>";
 		};
-		66FB799218905360009CA47B /* HPGrowingTextView */ = {
-			isa = PBXGroup;
-			children = (
-				66FB799318905360009CA47B /* HPGrowingTextView.h */,
-				66FB799418905360009CA47B /* HPGrowingTextView.m */,
-				66FB799518905360009CA47B /* HPTextViewInternal.h */,
-				66FB799618905360009CA47B /* HPTextViewInternal.m */,
-			);
-			path = HPGrowingTextView;
-			sourceTree = "<group>";
-		};
-		66FF0FDF18242B6B0038ECA6 /* Toast */ = {
-			isa = PBXGroup;
-			children = (
-				66FF0FE018242B6B0038ECA6 /* Toast+UIView.h */,
-				66FF0FE118242B6B0038ECA6 /* Toast+UIView.m */,
-			);
-			path = Toast;
-			sourceTree = "<group>";
-		};
-		66FF0FFC182D3D920038ECA6 /* Lumberjack */ = {
-			isa = PBXGroup;
-			children = (
-				66FF0FFD182D3D920038ECA6 /* DDLog.h */,
-				66FF0FFE182D3D920038ECA6 /* DDLog.m */,
-				66FF0FFF182D3D920038ECA6 /* DDTTYLogger.h */,
-				66FF1000182D3D920038ECA6 /* DDTTYLogger.m */,
-			);
-			path = Lumberjack;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1650,7 +1519,6 @@
 			files = (
 				666659A31DD338CF0099B284 /* main.m in Sources */,
 				6646AE13185CADC700CBACDE /* MWZoomingScrollView.m in Sources */,
-				665F4DF81831923C0083BCE7 /* REMenuItem.m in Sources */,
 				661F3B941868ECFE003C7AE3 /* KeyFingerprintLoadingCell.m in Sources */,
 				660F0A9818D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm in Sources */,
 				66866263185B6A2E001491B1 /* NSData+GIF.m in Sources */,
@@ -1665,12 +1533,10 @@
 				6686623E18565AD5001491B1 /* SignupViewController.mm in Sources */,
 				66EBE13B1855C97100F2452D /* UIUtils.mm in Sources */,
 				661F46A91865EDC3004A71B0 /* ChangePasswordViewController.mm in Sources */,
-				66FB799718905360009CA47B /* HPGrowingTextView.m in Sources */,
 				661F469F1864C0BE004A71B0 /* BackupIdentityViewController.mm in Sources */,
 				66EBE0D91855C97100F2452D /* EncryptionController.mm in Sources */,
 				66866269185B6A2E001491B1 /* SDWebImageManager.m in Sources */,
 				6604A2CF17626B9E0072216A /* SurespotAppDelegate.mm in Sources */,
-				6698585118663157003624DA /* AGWindowView.m in Sources */,
 				66EBE0C31855C97100F2452D /* SurespotButton.m in Sources */,
 				66EBE0C11855C97100F2452D /* MessageView.m in Sources */,
 				6611BE9D1BC852C40035C86B /* base64.c in Sources */,
@@ -1679,13 +1545,10 @@
 				6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */,
 				66EBE0BC1855C97100F2452D /* ChatDataSource.mm in Sources */,
 				6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */,
-				66FF1001182D3D920038ECA6 /* DDLog.m in Sources */,
-				66A2D941183C25E800785270 /* UIScrollView+SVPullToRefresh.m in Sources */,
 				660F0A9B18D789E900FD8C4D /* RestoreIdentitiesViewController.m in Sources */,
 				666D337D188476B100B73F69 /* EAGLView.m in Sources */,
 				66EBE1381855C97100F2452D /* NSString+Sensitivize.m in Sources */,
 				66EBE1361855C97100F2452D /* FileController.mm in Sources */,
-				665F4DF61831923C0083BCE7 /* REMenu.m in Sources */,
 				6646AE10185CADC700CBACDE /* MWPhotoBrowser.m in Sources */,
 				66EBE0D01855C97100F2452D /* IdentityCell.m in Sources */,
 				6686626C185B6A2E001491B1 /* UIImage+GIF.m in Sources */,
@@ -1695,7 +1558,6 @@
 				5AF842511B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm in Sources */,
 				66EBE0CB1855C97100F2452D /* KeyboardState.m in Sources */,
 				66EBE0B21855C97100F2452D /* GenerateSharedSecretOperation.mm in Sources */,
-				66A2D940183C25E800785270 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
 				66EBE0B51855C97100F2452D /* GetSharedSecretOperation.mm in Sources */,
 				66DEA49318DA6E5A00AAF24C /* UsernameAliasMap.m in Sources */,
 				66EBE0BE1855C97100F2452D /* FilledRectView.m in Sources */,
@@ -1703,14 +1565,11 @@
 				666D337A188476B100B73F69 /* CADebugPrintf.cpp in Sources */,
 				666D337B188476B100B73F69 /* CAStreamBasicDescription.cpp in Sources */,
 				661F3B8118689A19003C7AE3 /* KeyFingerprintViewController.mm in Sources */,
-				6646AE33185CBCA800CBACDE /* UIImageViewAligned.m in Sources */,
 				66EBE0C51855C97100F2452D /* SurespotErrorMessage.m in Sources */,
 				661F4695186375F0004A71B0 /* MessageView+WebImageCache.m in Sources */,
 				66A2D919183A7A7F00785270 /* SurespotConstants.m in Sources */,
-				66FB799818905360009CA47B /* HPTextViewInternal.m in Sources */,
 				6611BE991BC84F530035C86B /* NSData+SRB64Additions.m in Sources */,
 				66866265185B6A2E001491B1 /* SDWebImageCompat.m in Sources */,
-				665F4DF71831923C0083BCE7 /* REMenuContainerView.m in Sources */,
 				66EBE0C41855C97100F2452D /* SurespotControlMessage.m in Sources */,
 				66EBE0BF1855C97100F2452D /* MessageDecryptionOperation.mm in Sources */,
 				66EBE0B41855C97100F2452D /* GetPublicKeysOperation.mm in Sources */,
@@ -1723,7 +1582,6 @@
 				6686626E185B6A2E001491B1 /* UIImage+WebP.m in Sources */,
 				6659531C1885B95900BA2CC7 /* BackupHelpViewController.m in Sources */,
 				668D24F5186A24D90096D155 /* QR_Encode.cpp in Sources */,
-				66FF0FE218242B6B0038ECA6 /* Toast+UIView.m in Sources */,
 				66EBE0B71855C97100F2452D /* KeychainItemWrapper.m in Sources */,
 				66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */,
 				6646AE0E185CADC700CBACDE /* MWCaptionView.m in Sources */,
@@ -1741,14 +1599,12 @@
 				66BB5A49187C7672007B5C47 /* HelpViewController.m in Sources */,
 				66EBE1371855C97100F2452D /* NSData+Base64.m in Sources */,
 				666D3378188476B100B73F69 /* aurio_helper.cpp in Sources */,
-				66FF1002182D3D920038ECA6 /* DDTTYLogger.m in Sources */,
 				666D3379188476B100B73F69 /* CADebugMacros.cpp in Sources */,
 				66EBE0D21855C97100F2452D /* RestoreIdentityDriveViewController.mm in Sources */,
 				66EBE0B11855C97100F2452D /* CredentialCachingController.mm in Sources */,
 				6646AE14185CADC700CBACDE /* DACircularProgressView.m in Sources */,
 				66EBE0CD1855C97100F2452D /* UIViewPager.m in Sources */,
 				66EBE0DA1855C97100F2452D /* IdentityKeys.mm in Sources */,
-				665F4DF51831923C0083BCE7 /* RECommonFunctions.m in Sources */,
 				66EBE0B81855C97100F2452D /* PublicKeys.mm in Sources */,
 				66EBE0B61855C97100F2452D /* IdentityController.mm in Sources */,
 				661F46981864C0A4004A71B0 /* GenerateKeysViewController.mm in Sources */,
@@ -1764,7 +1620,6 @@
 				66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */,
 				66EBE0D41855C97100F2452D /* UIImage+Scale.m in Sources */,
 				661F3B8E1868C3C9003C7AE3 /* KeyFingerprint.m in Sources */,
-				665F4DF91831923C0083BCE7 /* REMenuItemView.m in Sources */,
 				66EBE0C61855C97100F2452D /* SurespotMessage.m in Sources */,
 				665953221886021300BA2CC7 /* UIAlertView+Blocks.m in Sources */,
 				66EBE0B31855C97100F2452D /* GetKeyVersionOperation.mm in Sources */,
@@ -1919,7 +1774,7 @@
 				GCC_PREFIX_HEADER = "surespot/surespot-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "surespot/surespot-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1966,7 +1821,7 @@
 				GCC_PREFIX_HEADER = "surespot/surespot-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "surespot/surespot-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

@@ -11,7 +11,7 @@
 #include <zlib.h>
 #include "secblock.h"
 #import "IdentityController.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "ChatUtils.h"
 #import "EncryptionController.h"
 #import "NSData+Gunzip.h"
@@ -46,9 +46,9 @@ NSInteger const GZIP_MAGIC_1 = 0x1f;
 NSInteger const GZIP_MAGIC_2 = 0x8b;
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 

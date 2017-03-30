@@ -19,7 +19,7 @@
 #import "FriendDelegate.h"
 #import "UIUtils.h"
 #import "LoginViewController.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "REMenu.h"
 #import "SVPullToRefresh.h"
 #import "SurespotConstants.h"
@@ -43,9 +43,9 @@
 #import "SideMenu-Swift.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_DEBUG;
+static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 //#import <QuartzCore/CATransaction.h>
@@ -1016,7 +1016,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     
-    //  DDLogVerbose(@"cell for row, index: %d, indexPath: %@", index, indexPath);
+    DDLogDebug(@"cell for row, index: %ld, indexPath: %@", (long)index, indexPath);
     if (index == NSNotFound) {
         static NSString *CellIdentifier = @"Cell";
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -1996,7 +1996,7 @@ const Float32 voiceRecordDelay = 0.3;
     REMenuItem * titleItem = [[REMenuItem alloc] initWithTitle: nil image:nil highlightedImage:nil action:nil];
     
     [titleItem setSubtitle:aliasName];
-    [titleItem setTitleEnabled:NO];
+  //  [titleItem setTitleEnabled:NO];
     
     [menuItems addObject:titleItem];
     
@@ -2357,7 +2357,7 @@ const Float32 voiceRecordDelay = 0.3;
         _menu = [self createMenuMenu];
         if (_menu) {
             [self resignAllResponders];
-            [_menu showSensiblyInView:self.view];
+            [_menu showInView:self.view];
             _swipeView.userInteractionEnabled = NO;
         }
     }
@@ -2389,7 +2389,7 @@ const Float32 voiceRecordDelay = 0.3;
         if (_menu) {
             [self resignAllResponders];
             _swipeView.userInteractionEnabled = NO;
-            [_menu showSensiblyInView:self.view];
+            [_menu showInView:self.view];
         }
     }
     else {

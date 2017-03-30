@@ -10,7 +10,7 @@
 #import "CredentialCachingController.h"
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "SurespotConstants.h"
 #import "cryptlib.h"
 #import "filters.h"
@@ -21,9 +21,9 @@ using CryptoPP::BitBucket;
 static CryptoPP::AutoSeededRandomPool randomRng(true, 32);
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface EncryptionController()

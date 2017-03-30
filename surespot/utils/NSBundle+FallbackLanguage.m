@@ -1,11 +1,11 @@
 #import "NSBundle+FallbackLanguage.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 #import "UIUtils.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @implementation NSBundle (FallbackLanguage)

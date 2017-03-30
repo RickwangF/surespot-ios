@@ -13,12 +13,12 @@
 #import <mach/mach.h>
 #import <mach/mach_host.h>
 #import "CredentialCachingController.h"
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 static const NSInteger kDefaultCacheMaxCacheAge = 60 * 60 * 24 * 7; // 1 week

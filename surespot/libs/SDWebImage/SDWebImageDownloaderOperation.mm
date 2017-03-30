@@ -12,12 +12,12 @@
 #import <ImageIO/ImageIO.h>
 #import "CredentialCachingController.h"
 
-#import "DDLog.h"
+#import "CocoaLumberjack.h"
 
 #ifdef DEBUG
-static const int ddLogLevel = LOG_LEVEL_INFO;
+static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #else
-static const int ddLogLevel = LOG_LEVEL_OFF;
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface SDWebImageDownloaderOperation ()
