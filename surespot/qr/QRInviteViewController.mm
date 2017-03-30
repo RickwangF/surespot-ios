@@ -7,7 +7,6 @@
 //
 
 #import "QRInviteViewController.h"
-#import "QREncoder.h"
 #import "SurespotConstants.h"
 #import "NSBundle+FallbackLanguage.h"
 
@@ -54,14 +53,22 @@
 -(UIImage *) generateQRInviteImage: (NSString *) username {
     int qrcodeImageDimension = 250;
     NSString * inviteUrl = [NSString stringWithFormat:@"%@%@%@", @"https://server.surespot.me/autoinvite/", [username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/qr_ios"];
+
     
-    //first encode the string into a matrix of bools, TRUE for black dot and FALSE for white. Let the encoder decide the error correction level and version
-    DataMatrix* qrMatrix = [QREncoder encodeWithECLevel:QR_ECLEVEL_Q version:QR_VERSION_AUTO string:inviteUrl];
+    // Generation of QR code image
+    NSData *qrCodeData = [inviteUrl dataUsingEncoding:NSUTF8StringEncoding]; // recommended encoding
+    CIFilter *qrCodeFilter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
+    [qrCodeFilter setValue:qrCodeData forKey:@"inputMessage"];
+    [qrCodeFilter setValue:@"Q" forKey:@"inputCorrectionLevel"]; //default of L,M,Q & H modes
     
-    //then render the matrix
-    UIImage* qrcodeImage = [QREncoder renderDataMatrix:qrMatrix imageDimension:qrcodeImageDimension];
+    CIImage *qrCodeImage = qrCodeFilter.outputImage;
     
-    return qrcodeImage;
+    CGRect imageSize = CGRectIntegral(qrCodeImage.extent); // generated image size
+    CGSize outputSize = CGSizeMake(qrcodeImageDimension, qrcodeImageDimension); // required image size
+    CIImage *imageByTransform = [qrCodeImage imageByApplyingTransform:CGAffineTransformMakeScale(outputSize.width/CGRectGetWidth(imageSize), outputSize.height/CGRectGetHeight(imageSize))];
+    
+    UIImage *qrCodeImageByTransform = [UIImage imageWithCIImage:imageByTransform];
+    return qrCodeImageByTransform;
 }
 
 @end

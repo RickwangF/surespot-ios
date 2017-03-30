@@ -80,6 +80,8 @@
 		666D337D188476B100B73F69 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 666D3377188476B100B73F69 /* EAGLView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		666D338118847B5000B73F69 /* surespot-invite.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D338018847B5000B73F69 /* surespot-invite.caf */; };
 		666D33861884805600B73F69 /* SoundController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 666D33851884805600B73F69 /* SoundController.mm */; };
+		666FE55F1E8CB69300F16569 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666FE55E1E8CB69300F16569 /* CoreImage.framework */; };
+		666FE5601E8CB6DE00F16569 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FF0FF5182AE6960038ECA6 /* QuartzCore.framework */; };
 		6674FF71186CB91300B8E77B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF70186CB91300B8E77B /* CoreMedia.framework */; };
 		6674FF73186CB92200B8E77B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF72186CB92200B8E77B /* AVFoundation.framework */; };
 		6674FF75186CB94500B8E77B /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF74186CB94500B8E77B /* Accounts.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -103,9 +105,6 @@
 		6686626E185B6A2E001491B1 /* UIImage+WebP.m in Sources */ = {isa = PBXBuildFile; fileRef = 6686625F185B6A2E001491B1 /* UIImage+WebP.m */; };
 		6686626F185B6A2E001491B1 /* HomeCell+WebImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 66866261185B6A2E001491B1 /* HomeCell+WebImageCache.m */; };
 		66866271185B86FD001491B1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66866270185B86FD001491B1 /* ImageIO.framework */; };
-		668D24F4186A24D90096D155 /* DataMatrix.mm in Sources */ = {isa = PBXBuildFile; fileRef = 668D24EF186A24D90096D155 /* DataMatrix.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		668D24F5186A24D90096D155 /* QR_Encode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668D24F0186A24D90096D155 /* QR_Encode.cpp */; };
-		668D24F6186A24D90096D155 /* QREncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 668D24F3186A24D90096D155 /* QREncoder.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		668D24FF186A36520096D155 /* QRInviteView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 668D24FE186A36520096D155 /* QRInviteView.xib */; };
 		668D2502186A373A0096D155 /* QRInviteViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 668D2501186A373A0096D155 /* QRInviteViewController.mm */; };
 		669BC187187DAACD00C3C752 /* HelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 669BC186187DAACD00C3C752 /* HelpView.xib */; };
@@ -175,7 +174,6 @@
 		66EBE13F1855C97100F2452D /* HomeDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AA1855C97100F2452D /* HomeDataSource.m */; };
 		66EBE1401855C97100F2452D /* MessageIndicatorNewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AC1855C97100F2452D /* MessageIndicatorNewView.m */; };
 		66F831FF185B9EB500ADD2F1 /* OurMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBDF171855C96F00F2452D /* OurMessageCell.xib */; };
-		66FF0FF6182AE6960038ECA6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FF0FF5182AE6960038ECA6 /* QuartzCore.framework */; };
 		6761F09264FD201A9C63491D /* Pods_surespot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */; };
 /* End PBXBuildFile section */
 
@@ -305,6 +303,7 @@
 		666D338018847B5000B73F69 /* surespot-invite.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "surespot-invite.caf"; sourceTree = "<group>"; };
 		666D33841884805600B73F69 /* SoundController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundController.h; sourceTree = "<group>"; };
 		666D33851884805600B73F69 /* SoundController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundController.mm; sourceTree = "<group>"; };
+		666FE55E1E8CB69300F16569 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		6674FF70186CB91300B8E77B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		6674FF72186CB92200B8E77B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6674FF74186CB94500B8E77B /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -344,12 +343,6 @@
 		668707C91E6FCBF20029A06B /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = "../../Library/Developer/Xcode/DerivedData/surespot-aceyqzdxqfcjupemnvyuhvwyqceu/Build/Products/Debug-iphoneos/AFNetworking/AFNetworking.framework"; sourceTree = "<group>"; };
 		668707CA1E6FCBF20029A06B /* SocketIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SocketIO.framework; path = "../../Library/Developer/Xcode/DerivedData/surespot-aceyqzdxqfcjupemnvyuhvwyqceu/Build/Products/Debug-iphoneos/Socket.IO-Client-Swift/SocketIO.framework"; sourceTree = "<group>"; };
 		668707CB1E6FCBF20029A06B /* TTTAttributedLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TTTAttributedLabel.framework; path = "../../Library/Developer/Xcode/DerivedData/surespot-aceyqzdxqfcjupemnvyuhvwyqceu/Build/Products/Debug-iphoneos/TTTAttributedLabel/TTTAttributedLabel.framework"; sourceTree = "<group>"; };
-		668D24EE186A24D90096D155 /* DataMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataMatrix.h; sourceTree = "<group>"; };
-		668D24EF186A24D90096D155 /* DataMatrix.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataMatrix.mm; sourceTree = "<group>"; };
-		668D24F0186A24D90096D155 /* QR_Encode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = QR_Encode.cpp; sourceTree = "<group>"; };
-		668D24F1186A24D90096D155 /* QR_Encode.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = QR_Encode.h; sourceTree = "<group>"; };
-		668D24F2186A24D90096D155 /* QREncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QREncoder.h; sourceTree = "<group>"; };
-		668D24F3186A24D90096D155 /* QREncoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QREncoder.mm; sourceTree = "<group>"; };
 		668D24FE186A36520096D155 /* QRInviteView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = QRInviteView.xib; path = qr/QRInviteView.xib; sourceTree = "<group>"; };
 		668D2500186A373A0096D155 /* QRInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QRInviteViewController.h; path = qr/QRInviteViewController.h; sourceTree = "<group>"; };
 		668D2501186A373A0096D155 /* QRInviteViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QRInviteViewController.mm; path = qr/QRInviteViewController.mm; sourceTree = "<group>"; };
@@ -616,6 +609,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				666FE5601E8CB6DE00F16569 /* QuartzCore.framework in Frameworks */,
+				666FE55F1E8CB69300F16569 /* CoreImage.framework in Frameworks */,
 				667F800D1A3FB9A900181B42 /* OpenGLES.framework in Frameworks */,
 				667F800C1A3FB99100181B42 /* UIKit.framework in Frameworks */,
 				662CA5AA18734E9500684790 /* StoreKit.framework in Frameworks */,
@@ -639,7 +634,6 @@
 				66E21DFB1847D8A10005D91E /* MessageUI.framework in Frameworks */,
 				667EFF9718425D82002C0406 /* SystemConfiguration.framework in Frameworks */,
 				665F4E0F183325C50083BCE7 /* AdSupport.framework in Frameworks */,
-				66FF0FF6182AE6960038ECA6 /* QuartzCore.framework in Frameworks */,
 				661C2ED31763CB57000649E7 /* libz.dylib in Frameworks */,
 				66E4F5C417629B6400596E6B /* Security.framework in Frameworks */,
 				66E4F5C217629B5C00596E6B /* libicucore.dylib in Frameworks */,
@@ -684,6 +678,7 @@
 		6604A2BD17626B9E0072216A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				666FE55E1E8CB69300F16569 /* CoreImage.framework */,
 				668707C91E6FCBF20029A06B /* AFNetworking.framework */,
 				668707CA1E6FCBF20029A06B /* SocketIO.framework */,
 				668707CB1E6FCBF20029A06B /* TTTAttributedLabel.framework */,
@@ -900,19 +895,6 @@
 			path = SDWebImage;
 			sourceTree = "<group>";
 		};
-		668D24ED186A24D90096D155 /* qr */ = {
-			isa = PBXGroup;
-			children = (
-				668D24EE186A24D90096D155 /* DataMatrix.h */,
-				668D24EF186A24D90096D155 /* DataMatrix.mm */,
-				668D24F0186A24D90096D155 /* QR_Encode.cpp */,
-				668D24F1186A24D90096D155 /* QR_Encode.h */,
-				668D24F2186A24D90096D155 /* QREncoder.h */,
-				668D24F3186A24D90096D155 /* QREncoder.mm */,
-			);
-			path = qr;
-			sourceTree = "<group>";
-		};
 		668D24F9186A36250096D155 /* qr */ = {
 			isa = PBXGroup;
 			children = (
@@ -950,7 +932,6 @@
 			isa = PBXGroup;
 			children = (
 				6659531F188601FD00BA2CC7 /* UIAlertViewBlocks */,
-				668D24ED186A24D90096D155 /* qr */,
 				6646ADD2185CADC700CBACDE /* MWPhotoBrowser */,
 				66866244185B6A2E001491B1 /* SDWebImage */,
 				6654441017F37A3F00F62F7F /* SwipeView */,
@@ -1581,11 +1562,9 @@
 				6686626D185B6A2E001491B1 /* UIImage+MultiFormat.mm in Sources */,
 				6686626E185B6A2E001491B1 /* UIImage+WebP.m in Sources */,
 				6659531C1885B95900BA2CC7 /* BackupHelpViewController.m in Sources */,
-				668D24F5186A24D90096D155 /* QR_Encode.cpp in Sources */,
 				66EBE0B71855C97100F2452D /* KeychainItemWrapper.m in Sources */,
 				66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */,
 				6646AE0E185CADC700CBACDE /* MWCaptionView.m in Sources */,
-				668D24F4186A24D90096D155 /* DataMatrix.mm in Sources */,
 				661C2ED61763D4B9000649E7 /* NSData+Gunzip.m in Sources */,
 				668D2502186A373A0096D155 /* QRInviteViewController.mm in Sources */,
 				669BC199187DC1CB00C3C752 /* AboutViewController.m in Sources */,
@@ -1614,7 +1593,6 @@
 				661F3B8618689D78003C7AE3 /* KeyFingerprintCell.m in Sources */,
 				66866267185B6A2E001491B1 /* SDWebImageDownloader.m in Sources */,
 				6654441317F37A3F00F62F7F /* SwipeView.m in Sources */,
-				668D24F6186A24D90096D155 /* QREncoder.mm in Sources */,
 				6686626F185B6A2E001491B1 /* HomeCell+WebImageCache.m in Sources */,
 				66EBE0BD1855C97100F2452D /* ChatUtils.mm in Sources */,
 				66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */,
