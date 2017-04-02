@@ -1971,7 +1971,7 @@ const Float32 voiceRecordDelay = 0.3;
         NSString * getCurrentChat = [self getCurrentTabName];
         if (getCurrentChat) {
             id currentTableView =[_chats objectForKey:getCurrentChat];
-            if (currentTableView ) {
+            if ([currentTableView respondsToSelector:@selector(deselectRowAtIndexPath:animated:)]) {
                 [currentTableView deselectRowAtIndexPath:[currentTableView indexPathForSelectedRow] animated:YES];
             }
         }
