@@ -2842,7 +2842,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     NSString * to = [defaults objectForKey:@"notificationTo"];
     if ([notificationType isEqualToString:@"message"]) {
         NSString * from = [defaults objectForKey:@"notificationFrom"];
-        if ([to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]]) {
+        if (from && [to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]]) {
             [self showChat:from];
         }
     }

@@ -482,7 +482,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) handleNotification {
     
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    DDLogInfo(@"handleNotification, defaults: %@", defaults);
+    DDLogInfo(@"handleNotification");
     //if we entered app via notification defaults will be set
     NSString * notificationType = [defaults objectForKey:@"notificationType"];
     

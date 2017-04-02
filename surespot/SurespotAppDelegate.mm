@@ -24,14 +24,13 @@
 #import "NetworkController.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelInfo;
+static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface SurespotAppDelegate()
-
-
+@property NSMutableDictionary * lastUsers;
 @end
 
 @implementation SurespotAppDelegate
@@ -73,6 +72,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    _lastUsers = [[NSMutableDictionary alloc] init];
     
     // iOS 8 Notifications
     [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
@@ -194,7 +194,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         //todo download and add the message or just move to tab and tell it to load
         switch ([application applicationState]) {
-                case UIApplicationStateActive:
+            case UIApplicationStateActive:
                 
                 //application was running when we received
                 //if we're not on the tab, show notification
@@ -219,23 +219,20 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }
                 break;
                 
-                case UIApplicationStateInactive:
-                case UIApplicationStateBackground:
+            case UIApplicationStateInactive:
+            case UIApplicationStateBackground:
                 //started application from notification, move to correct tab
                 
-                BOOL hasNotification = NO;
                 //set user default so we can move to the right tab
                 if ([notificationType isEqualToString:@"notification_invite"] || [notificationType isEqualToString:@"notification_invite_accept"]) {
                     [[NSUserDefaults standardUserDefaults] setObject:@"invite" forKey:@"notificationType"];
                     [[NSUserDefaults standardUserDefaults] setObject:to forKey:@"notificationTo"];
-                    hasNotification = YES;
                 }
                 else {
                     if ([notificationType isEqualToString:@"notification_message"]) {
                         [[NSUserDefaults standardUserDefaults] setObject:@"message" forKey:@"notificationType"];
                         [[NSUserDefaults standardUserDefaults] setObject:to forKey:@"notificationTo"];
                         [[NSUserDefaults standardUserDefaults] setObject:from forKey:@"notificationFrom"];
-                        hasNotification = YES;
                     }
                 }
                 
@@ -244,7 +241,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"openedFromNotification" object:nil ];
                 }
                 else {
-                    [self userSwitch:to];
+                    [self userSwitch:to fromNotification:YES];
                 }
         }
         return YES;
@@ -254,11 +251,42 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) fastUserSwitch: (NSNotification *) notification {
-    [self userSwitch: notification.userInfo[@"username"]];
+    [self userSwitch: notification.userInfo[@"username"] fromNotification:NO];
 }
 
--(void) userSwitch: (NSString *) username {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"userSwitch" object:nil ];
+-(void) userSwitch: (NSString *) username fromNotification: (BOOL) fromNotification {
+    DDLogDebug(@"userSwitch, username: %@, fromNotification: %@", username, (fromNotification ? @"YES" : @"NO"));
+    //save current tab
+    NSString * currentUser = [[IdentityController sharedInstance] getLoggedInUser];
+    NSString * currentChat = [[ChatController sharedInstance] getCurrentChat];
+    if (currentChat) {
+        [_lastUsers setObject:currentChat forKey:currentUser];
+        DDLogDebug(@"userSwitch saving last chat: %@ for user: %@", currentChat, currentUser);
+    }
+    else {
+        [_lastUsers removeObjectForKey:currentUser];
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"userSwitch" object:nil];
+    
+    //if we're fast user switching, see if there's a last user and if there is use the switch to notification user functionality to switch to the tab
+    if (!fromNotification) {
+        NSString * to = username;
+        
+        //set "notification" defaults to switch back to that user
+        [[NSUserDefaults standardUserDefaults] setObject:@"message" forKey:@"notificationType"];
+        [[NSUserDefaults standardUserDefaults] setObject:to forKey:@"notificationTo"];
+        
+        NSString * from = [_lastUsers objectForKey:username];
+        if (from) {
+            [[NSUserDefaults standardUserDefaults] setObject:from forKey:@"notificationFrom"];
+        }
+        
+        DDLogDebug(@"userSwitch restoring last chat: %@ for user: %@", from, to);
+    }
+    
+    
+    
     //set the session
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
     [[NetworkController sharedInstance] logout];
