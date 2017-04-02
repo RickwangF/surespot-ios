@@ -477,7 +477,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if (!_menu) {
         _menu = [self createMenu];
         if (_menu) {
-            [_menu showInView:self.view];
+            [_menu showSensiblyInView:self.view];
         }
     }
     else {

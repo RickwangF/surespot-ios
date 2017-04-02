@@ -13,7 +13,6 @@ target 'surespot' do
   pod 'AGWindowView'
   pod 'CocoaLumberjack'
   pod 'SVPullToRefresh'
-  pod 'REMenu', '~> 1.10'
   pod 'UIImageViewAligned'
   pod 'HPGrowingTextView'
 end

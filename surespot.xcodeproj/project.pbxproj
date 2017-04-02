@@ -68,6 +68,11 @@
 		6659531E1885B97000BA2CC7 /* BackupHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6659531D1885B97000BA2CC7 /* BackupHelpView.xib */; };
 		665953221886021300BA2CC7 /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 665953211886021300BA2CC7 /* UIAlertView+Blocks.m */; };
 		6659532518882DF500BA2CC7 /* MWPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 6659532418882DF500BA2CC7 /* MWPhoto.m */; };
+		665CA9A21E9098210045EEDD /* RECommonFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9991E9098210045EEDD /* RECommonFunctions.m */; };
+		665CA9A31E9098210045EEDD /* REMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA99B1E9098210045EEDD /* REMenu.m */; };
+		665CA9A41E9098210045EEDD /* REMenuContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA99D1E9098210045EEDD /* REMenuContainerView.m */; };
+		665CA9A51E9098210045EEDD /* REMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA99F1E9098210045EEDD /* REMenuItem.m */; };
+		665CA9A61E9098210045EEDD /* REMenuItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9A11E9098210045EEDD /* REMenuItemView.m */; };
 		665F4E0F183325C50083BCE7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 665F4E0E183325C50083BCE7 /* AdSupport.framework */; };
 		666659A31DD338CF0099B284 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2CA17626B9E0072216A /* main.m */; };
 		666D3364187F69AD00B73F69 /* invite-accept.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D335E187F69AD00B73F69 /* invite-accept.caf */; };
@@ -284,6 +289,16 @@
 		665953211886021300BA2CC7 /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Blocks.m"; sourceTree = "<group>"; };
 		6659532318882DF500BA2CC7 /* MWPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPhoto.h; sourceTree = "<group>"; };
 		6659532418882DF500BA2CC7 /* MWPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPhoto.m; sourceTree = "<group>"; };
+		665CA9981E9098210045EEDD /* RECommonFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RECommonFunctions.h; path = REMenu/RECommonFunctions.h; sourceTree = "<group>"; };
+		665CA9991E9098210045EEDD /* RECommonFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RECommonFunctions.m; path = REMenu/RECommonFunctions.m; sourceTree = "<group>"; };
+		665CA99A1E9098210045EEDD /* REMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = REMenu.h; path = REMenu/REMenu.h; sourceTree = "<group>"; };
+		665CA99B1E9098210045EEDD /* REMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = REMenu.m; path = REMenu/REMenu.m; sourceTree = "<group>"; };
+		665CA99C1E9098210045EEDD /* REMenuContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = REMenuContainerView.h; path = REMenu/REMenuContainerView.h; sourceTree = "<group>"; };
+		665CA99D1E9098210045EEDD /* REMenuContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = REMenuContainerView.m; path = REMenu/REMenuContainerView.m; sourceTree = "<group>"; };
+		665CA99E1E9098210045EEDD /* REMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = REMenuItem.h; path = REMenu/REMenuItem.h; sourceTree = "<group>"; };
+		665CA99F1E9098210045EEDD /* REMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = REMenuItem.m; path = REMenu/REMenuItem.m; sourceTree = "<group>"; };
+		665CA9A01E9098210045EEDD /* REMenuItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = REMenuItemView.h; path = REMenu/REMenuItemView.h; sourceTree = "<group>"; };
+		665CA9A11E9098210045EEDD /* REMenuItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = REMenuItemView.m; path = REMenu/REMenuItemView.m; sourceTree = "<group>"; };
 		665F4E0E183325C50083BCE7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		666D335E187F69AD00B73F69 /* invite-accept.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "invite-accept.caf"; sourceTree = "<group>"; };
 		666D3362187F69AD00B73F69 /* message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = message.caf; sourceTree = "<group>"; };
@@ -854,6 +869,23 @@
 			name = UIAlertViewBlocks;
 			sourceTree = "<group>";
 		};
+		665CA9971E9097E40045EEDD /* REMenu */ = {
+			isa = PBXGroup;
+			children = (
+				665CA9981E9098210045EEDD /* RECommonFunctions.h */,
+				665CA9991E9098210045EEDD /* RECommonFunctions.m */,
+				665CA99A1E9098210045EEDD /* REMenu.h */,
+				665CA99B1E9098210045EEDD /* REMenu.m */,
+				665CA99C1E9098210045EEDD /* REMenuContainerView.h */,
+				665CA99D1E9098210045EEDD /* REMenuContainerView.m */,
+				665CA99E1E9098210045EEDD /* REMenuItem.h */,
+				665CA99F1E9098210045EEDD /* REMenuItem.m */,
+				665CA9A01E9098210045EEDD /* REMenuItemView.h */,
+				665CA9A11E9098210045EEDD /* REMenuItemView.m */,
+			);
+			name = REMenu;
+			sourceTree = "<group>";
+		};
 		666D335D187F69AD00B73F69 /* sounds */ = {
 			isa = PBXGroup;
 			children = (
@@ -943,6 +975,7 @@
 		66E4F517176298CB00596E6B /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				665CA9971E9097E40045EEDD /* REMenu */,
 				666FE5631E8D7F7200F16569 /* Toast */,
 				6659531F188601FD00BA2CC7 /* UIAlertViewBlocks */,
 				6646ADD2185CADC700CBACDE /* MWPhotoBrowser */,
@@ -1524,9 +1557,11 @@
 				661F46A31865E063004A71B0 /* DeleteIdentityViewController.mm in Sources */,
 				6646AE15185CADC700CBACDE /* MBProgressHUD.m in Sources */,
 				66EBE13C1855C97100F2452D /* Friend.mm in Sources */,
+				665CA9A21E9098210045EEDD /* RECommonFunctions.m in Sources */,
 				6686623E18565AD5001491B1 /* SignupViewController.mm in Sources */,
 				66EBE13B1855C97100F2452D /* UIUtils.mm in Sources */,
 				661F46A91865EDC3004A71B0 /* ChangePasswordViewController.mm in Sources */,
+				665CA9A61E9098210045EEDD /* REMenuItemView.m in Sources */,
 				661F469F1864C0BE004A71B0 /* BackupIdentityViewController.mm in Sources */,
 				66EBE0D91855C97100F2452D /* EncryptionController.mm in Sources */,
 				66866269185B6A2E001491B1 /* SDWebImageManager.m in Sources */,
@@ -1563,6 +1598,7 @@
 				661F4695186375F0004A71B0 /* MessageView+WebImageCache.m in Sources */,
 				66A2D919183A7A7F00785270 /* SurespotConstants.m in Sources */,
 				6611BE991BC84F530035C86B /* NSData+SRB64Additions.m in Sources */,
+				665CA9A31E9098210045EEDD /* REMenu.m in Sources */,
 				66866265185B6A2E001491B1 /* SDWebImageCompat.m in Sources */,
 				66EBE0C41855C97100F2452D /* SurespotControlMessage.m in Sources */,
 				66EBE0BF1855C97100F2452D /* MessageDecryptionOperation.mm in Sources */,
@@ -1607,6 +1643,7 @@
 				66866267185B6A2E001491B1 /* SDWebImageDownloader.m in Sources */,
 				6654441317F37A3F00F62F7F /* SwipeView.m in Sources */,
 				6686626F185B6A2E001491B1 /* HomeCell+WebImageCache.m in Sources */,
+				665CA9A41E9098210045EEDD /* REMenuContainerView.m in Sources */,
 				666FE5661E8D7F8100F16569 /* Toast+UIView.m in Sources */,
 				66EBE0BD1855C97100F2452D /* ChatUtils.mm in Sources */,
 				66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */,
@@ -1614,6 +1651,7 @@
 				661F3B8E1868C3C9003C7AE3 /* KeyFingerprint.m in Sources */,
 				66EBE0C61855C97100F2452D /* SurespotMessage.m in Sources */,
 				665953221886021300BA2CC7 /* UIAlertView+Blocks.m in Sources */,
+				665CA9A51E9098210045EEDD /* REMenuItem.m in Sources */,
 				66EBE0B31855C97100F2452D /* GetKeyVersionOperation.mm in Sources */,
 				6646AE12185CADC700CBACDE /* MWTapDetectingView.m in Sources */,
 			);

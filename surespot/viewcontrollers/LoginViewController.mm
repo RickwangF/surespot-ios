@@ -421,7 +421,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [_textPassword resignFirstResponder];
         _menu = [self createMenu];
         if (_menu) {
-            [_menu showInView:self.view];
+            [_menu showSensiblyInView:self.view];
         }
     }
     else {

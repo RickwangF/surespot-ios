@@ -238,8 +238,8 @@ const Float32 voiceRecordDelay = 0.3;
     [SideMenuManager setMenuLeftNavigationController:sideC];
     _sideMenuGestures = [[NSMutableArray alloc]init];
     [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
-    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
-    [_sideMenuGestures addObjectsFromArray:  [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
     SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
     SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
     
@@ -1016,7 +1016,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     
-    DDLogDebug(@"cell for row, index: %ld, indexPath: %@", (long)index, indexPath);
+//    DDLogDebug(@"cell for row, index: %ld, indexPath: %@", (long)index, indexPath);
     if (index == NSNotFound) {
         static NSString *CellIdentifier = @"Cell";
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -2357,7 +2357,7 @@ const Float32 voiceRecordDelay = 0.3;
         _menu = [self createMenuMenu];
         if (_menu) {
             [self resignAllResponders];
-            [_menu showInView:self.view];
+            [_menu showSensiblyInView:self.view];
             _swipeView.userInteractionEnabled = NO;
         }
     }
@@ -2389,7 +2389,7 @@ const Float32 voiceRecordDelay = 0.3;
         if (_menu) {
             [self resignAllResponders];
             _swipeView.userInteractionEnabled = NO;
-            [_menu showInView:self.view];
+            [_menu showSensiblyInView:self.view];
         }
     }
     else {
