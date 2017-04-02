@@ -2793,6 +2793,17 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     [controller.tableView reloadData];
+    
+    @synchronized (_chats) {
+        for (NSString * key in [_chats allKeys]) {
+            id tableView = [_chats objectForKey:key];
+            if ([tableView respondsToSelector:@selector(reloadData)]) {
+               [tableView reloadData];
+            }
+        }
+    }
+    
+    [_friendView reloadData];
 }
 
 -(void) viewWillAppear:(BOOL)animated {
