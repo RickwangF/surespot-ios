@@ -11,7 +11,7 @@
 #import "EncryptionController.h"
 #import "NSData+Base64.h"
 #import "SurespotControlMessage.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "ChatUtils.h"
 #import "CocoaLumberjack.h"
 #import "UIUtils.h"
@@ -40,7 +40,7 @@ static const int MAX_RETRY_DELAY = 30;
 @interface ChatController() {
     
 }
-
+@property (strong, atomic) NSString * username;
 @property (strong, atomic) NSMutableDictionary * chatDataSources;
 @property (strong, atomic) HomeDataSource * homeDataSource;
 @property (assign, atomic) NSInteger connectionRetries;
@@ -53,24 +53,13 @@ static const int MAX_RETRY_DELAY = 30;
 @property (assign, atomic) UIBackgroundTaskIdentifier bgHttpTaskId;
 @property (assign, atomic) UIBackgroundTaskIdentifier bgSocketTaskId;
 @property (strong, atomic) NSTimer * bgSendTimer;
-@property (assign, atomic) BOOL paused;
+
 @end
 
 @implementation ChatController
 
 
-+(ChatController*)sharedInstance
-{
-    static ChatController *sharedInstance = nil;
-    static dispatch_once_t oncePredicate;
-    dispatch_once(&oncePredicate, ^{
-        sharedInstance = [[self alloc] init];
-    });
-    
-    return sharedInstance;
-}
-
--(ChatController*)init
+-(ChatController*)init: (NSString *) username
 {
     //call super init
     self = [super init];
@@ -78,6 +67,7 @@ static const int MAX_RETRY_DELAY = 30;
     
     
     if (self != nil) {
+        _username = username;
         
         _bgHttpTaskId = UIBackgroundTaskInvalid;
         _bgSocketTaskId = UIBackgroundTaskInvalid;
@@ -86,34 +76,7 @@ static const int MAX_RETRY_DELAY = 30;
         _sendBuffer = [NSMutableArray new];
         _resendBuffer = [NSMutableArray new];
         
-        //listen for network changes so we can reconnect
-        [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-            ChatController * controller =
-            [ChatController sharedInstance];
-            //if we're foregrounded
-            if (![controller paused]) {
-                BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
-                
-                
-                //   [self setReachabilityStatus:status];
-                _connectionRetries = 0;
-                
-                if(isReachable)
-                {
-                    
-                    DDLogInfo(@"wifi: %d, wwan, %d",status == AFNetworkReachabilityStatusReachableViaWiFi, status == AFNetworkReachabilityStatusReachableViaWWAN);
-                    //reachibility changed, disconnect and reconnect
-                    [controller disconnect];
-                    [controller reconnect];
-                }
-                else
-                {
-                    DDLogInfo(@"Notification Says Unreachable");
-                }
-            }
             
-        }];
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAutoinvitesNotification:) name:@"autoinvites" object:nil];
         
         
@@ -165,12 +128,12 @@ static const int MAX_RETRY_DELAY = 30;
             
             //if we're in reauth cycle and we've hit maximum, bail
             if (_reauthing && _connectionRetries >= MAX_REAUTH_RETRIES) {
-                [[NetworkController sharedInstance] setUnauthorized];
+                [[[NetworkManager sharedInstance] getNetworkController:_username] setUnauthorized];
                 return;
             }
             
             //login again then try reconnecting
-            reAuthing = [[NetworkController sharedInstance] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
+            reAuthing = [[[NetworkManager sharedInstance] getNetworkController:_username] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
                 DDLogInfo(@"relogin success");
                 _reauthing = YES;
                 [self reconnect];
@@ -182,7 +145,7 @@ static const int MAX_RETRY_DELAY = 30;
             
             if (!reAuthing) {
                 DDLogInfo(@"not attempting to reauth");
-                [[NetworkController sharedInstance] setUnauthorized];
+                [[[NetworkManager sharedInstance] getNetworkController:_username] setUnauthorized];
                 return;
             }
             
@@ -488,14 +451,14 @@ static const int MAX_RETRY_DELAY = 30;
     DDLogVerbose(@"before network call");
     
     
-    [[NetworkController sharedInstance] getLatestDataSinceUserControlId: _homeDataSource.latestUserControlId spotIds:messageIds successBlock:^(NSURLSessionTask *task, id JSON) {
+    [[[NetworkManager sharedInstance] getNetworkController:_username] getLatestDataSinceUserControlId: _homeDataSource.latestUserControlId spotIds:messageIds successBlock:^(NSURLSessionTask *task, id JSON) {
         
         DDLogVerbose(@"network call complete");
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             if ([JSON objectForKey:@"sigs2"]) {
                 NSDictionary * sigs = [[IdentityController sharedInstance] updateSignatures];
-                [[NetworkController sharedInstance] updateSigs:sigs];
+                [[[NetworkManager sharedInstance] getNetworkController:_username] updateSigs:sigs];
             }
         });
         
@@ -567,7 +530,7 @@ static const int MAX_RETRY_DELAY = 30;
 - (HomeDataSource *) getHomeDataSource {
     
     if (_homeDataSource == nil) {
-        _homeDataSource = [[HomeDataSource alloc] init];
+        _homeDataSource = [[HomeDataSource alloc] init: _username];
     }
     return _homeDataSource;
 }
@@ -722,7 +685,7 @@ static const int MAX_RETRY_DELAY = 30;
                 [messagesJson addObject:[message toNSDictionary]];
             }];
             
-            [[NetworkController sharedInstance]
+            [[[NetworkManager sharedInstance] getNetworkController:_username]
              sendMessages:messagesJson
              
              successBlock:^(NSURLSessionTask *task, id JSON) {
@@ -1043,7 +1006,7 @@ static const int MAX_RETRY_DELAY = 30;
 -(void) inviteAction:(NSString *) action forUsername:(NSString *)username{
     DDLogVerbose(@"Invite action: %@, for username: %@", action, username);
     [self startProgress];
-    [[NetworkController sharedInstance]  respondToInviteName:username action:action
+    [[[NetworkManager sharedInstance] getNetworkController:_username]  respondToInviteName:username action:action
      
      
                                                 successBlock:^(NSURLSessionTask * task, id responseObject) {
@@ -1089,7 +1052,7 @@ static const int MAX_RETRY_DELAY = 30;
     }
     
     [self startProgress];
-    [[NetworkController sharedInstance]
+    [[[NetworkManager sharedInstance] getNetworkController:_username]
      inviteFriend:username
      successBlock:^(NSURLSessionTask *operation, id responseObject) {
          DDLogVerbose(@"invite friend response: %ld",  (long)[(NSHTTPURLResponse*) operation.response statusCode]);
@@ -1214,8 +1177,8 @@ static const int MAX_RETRY_DELAY = 30;
                 //clear http cache
                 NSInteger maxVersion = [version integerValue];
                 for (NSInteger i=1;i<=maxVersion;i++) {
-                    // NSString * path = [[NetworkController sharedInstance] buildPublicKeyPathForUsername:deleted version: [@(i) stringValue]];
-                    // [[NetworkController sharedInstance] deleteFromCache: path];
+                    // NSString * path = [[[NetworkManager sharedInstance] getNetworkController:_username] buildPublicKeyPathForUsername:deleted version: [@(i) stringValue]];
+                    // [[[NetworkManager sharedInstance] getNetworkController:_username] deleteFromCache: path];
                 }
             }];
         }
@@ -1268,7 +1231,7 @@ static const int MAX_RETRY_DELAY = 30;
 -(void) login {
     DDLogInfo(@"login");
     // [self connect];
-    _homeDataSource = [[HomeDataSource alloc] init];
+    _homeDataSource = [[HomeDataSource alloc] init: _username];
 }
 
 -(void) logout {
@@ -1292,7 +1255,7 @@ static const int MAX_RETRY_DELAY = 30;
         
         [self startProgress];
         
-        [[NetworkController sharedInstance] deleteFriend:friendname successBlock:^(NSURLSessionTask *operation, id responseObject) {
+        [[[NetworkManager sharedInstance] getNetworkController:_username] deleteFriend:friendname successBlock:^(NSURLSessionTask *operation, id responseObject) {
             [self handleDeleteUser:friendname deleter:username];
             [self stopProgress];
         } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
@@ -1309,7 +1272,7 @@ static const int MAX_RETRY_DELAY = 30;
             if (message.serverid > 0) {
                 
                 [self startProgress];
-                [[NetworkController sharedInstance] deleteMessageName:[message getOtherUser] serverId:[message serverid] successBlock:^(NSURLSessionTask *operation, id responseObject) {
+                [[[NetworkManager sharedInstance] getNetworkController:_username] deleteMessageName:[message getOtherUser] serverId:[message serverid] successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds deleteMessage: message initiatedByMe: YES];
                     [self stopProgress];
                 } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
@@ -1346,7 +1309,7 @@ static const int MAX_RETRY_DELAY = 30;
         lastMessageId = [afriend lastReceivedMessageId];
     }
     [self startProgress];
-    [[NetworkController sharedInstance] deleteMessagesUTAI:lastMessageId name:afriend.name successBlock:^(NSURLSessionTask *operation, id responseObject) {
+    [[[NetworkManager sharedInstance] getNetworkController:_username] deleteMessagesUTAI:lastMessageId name:afriend.name successBlock:^(NSURLSessionTask *operation, id responseObject) {
         
         [cds deleteAllMessagesUTAI:lastMessageId];
         [self stopProgress];
@@ -1381,7 +1344,7 @@ static const int MAX_RETRY_DELAY = 30;
             if (message.serverid > 0) {
                 
                 [self startProgress];
-                [[NetworkController sharedInstance] setMessageShareable:[message getOtherUser] serverId:[message serverid] shareable:!message.shareable successBlock:^(NSURLSessionTask *operation, id responseObject) {
+                [[[NetworkManager sharedInstance] getNetworkController:_username] setMessageShareable:[message getOtherUser] serverId:[message serverid] shareable:!message.shareable successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds setMessageId: message.serverid shareable: [[[NSString alloc] initWithData: responseObject encoding:NSUTF8StringEncoding] isEqualToString:@"shareable"] ? YES : NO];
                     [self stopProgress];
                 } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
@@ -1408,7 +1371,7 @@ static const int MAX_RETRY_DELAY = 30;
             ChatDataSource * cds = [self getDataSourceForFriendname:[message getOtherUser]];
             [cds postRefresh];
             [self startProgress];
-            [[NetworkController sharedInstance] postFileStreamData: data
+            [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData: data
                                                         ourVersion:[message getOurVersion]
                                                      theirUsername:[message getOtherUser]
                                                       theirVersion:[message getTheirVersion]
@@ -1496,7 +1459,7 @@ static const int MAX_RETRY_DELAY = 30;
                                               NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
                                               //upload friend image to server
                                               DDLogInfo(@"assigning friend alias");
-                                              [[NetworkController sharedInstance]
+                                              [[[NetworkManager sharedInstance] getNetworkController:_username]
                                                assignFriendAlias:b64data
                                                friendname:friendname
                                                version:version
@@ -1543,7 +1506,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) removeFriendAlias: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock {
     [self startProgress];
-    [[NetworkController sharedInstance]
+    [[[NetworkManager sharedInstance] getNetworkController:_username]
      deleteFriendAlias:friendname
      successBlock:^(NSURLSessionTask *operation, id responseObject) {
          [_homeDataSource removeFriendAlias: friendname];
@@ -1556,7 +1519,7 @@ static const int MAX_RETRY_DELAY = 30;
 }
 -(void) removeFriendImage: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock {
     [self startProgress];
-    [[NetworkController sharedInstance]
+    [[[NetworkManager sharedInstance] getNetworkController:_username]
      deleteFriendImage:friendname
      successBlock:^(NSURLSessionTask *operation, id responseObject) {
          [_homeDataSource removeFriendImage: friendname];

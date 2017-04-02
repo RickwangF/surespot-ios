@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "FastUserSwitchController.h"
 #import "IdentityController.h"
-#import "ChatController.h"
+#import "ChatManager.h"
 #import "CredentialCachingController.h"
 
 @interface FastUserSwitchController ()

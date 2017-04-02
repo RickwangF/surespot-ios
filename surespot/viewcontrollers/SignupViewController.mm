@@ -9,7 +9,7 @@
 #import "SignupViewController.h"
 #import "EncryptionController.h"
 #import "IdentityController.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
 #import "UIUtils.h"
@@ -150,7 +150,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         NSString * authSig = [[EncryptionController signUsername:username andPassword: [encPassword dataUsingEncoding:NSUTF8StringEncoding] withPrivateKey:keys.dsaPrivKey] SR_stringByBase64Encoding];
         NSString * clientSig = [[EncryptionController signUsername:username andVersion:1 andDhPubKey:sDhPub andDsaPubKey:sDsaPub withPrivateKey:keys.dsaPrivKey] SR_stringByBase64Encoding];
         
-        [[NetworkController sharedInstance]
+        [[[NetworkManager sharedInstance] getNetworkController:nil]
          createUser3WithUsername: username
          derivedPassword: encPassword
          dhKey: encodedDHKey
@@ -286,7 +286,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     _lastCheckedUsername = username;
     _progressView = [LoadingView showViewKey:@"user_exists_progress"];
     
-    [[NetworkController sharedInstance] userExists:username successBlock:^(NSURLSessionTask *operation, id responseObject) {
+    [[[NetworkManager sharedInstance] getNetworkController:nil] userExists:username successBlock:^(NSURLSessionTask *operation, id responseObject) {
         NSString * response = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         
         [_progressView removeView];

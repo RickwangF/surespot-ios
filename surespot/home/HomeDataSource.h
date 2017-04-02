@@ -11,6 +11,8 @@
 
 @interface HomeDataSource : NSObject
 
+-(HomeDataSource*)init: (NSString *) username;
+
 @property (strong, atomic) NSMutableArray *friends;
 @property (atomic, assign) NSInteger latestUserControlId;
 

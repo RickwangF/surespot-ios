@@ -19,7 +19,7 @@
 #import "NSData+SRB64Additions.h"
 
 #import "EncryptionController.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "BackupIdentityViewController.h"
 #import "NSBundle+FallbackLanguage.h"
 
@@ -142,7 +142,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
 
 
-    [[NetworkController sharedInstance] getKeyTokenForUsername:username
+    [[[NetworkManager sharedInstance] getNetworkController:username] getKeyTokenForUsername:username
                                                    andPassword:passwordString
                                                   andSignature:signatureString
                                                   successBlock:^(NSURLSessionTask *request, id JSON) {
@@ -167,7 +167,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
                                                       
                                                       [[IdentityController sharedInstance] setExpectedKeyVersionForUsername:username version:keyVersion];
-                                                      [[NetworkController sharedInstance] updateKeys3ForUsername:username
+                                                      [[[NetworkManager sharedInstance] getNetworkController:username] updateKeys3ForUsername:username
                                                                                                        password:passwordString
                                                                                                     publicKeyDH:[EncryptionController encodeDHPublicKey:keys.dhPubKey]
                                                                                                    publicKeyDSA:[EncryptionController encodeDSAPublicKey:keys.dsaPubKey]

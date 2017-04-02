@@ -19,7 +19,7 @@
 #import "NSData+SRB64Additions.h"
 
 #import "EncryptionController.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
@@ -135,7 +135,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString * signatureString = [signature SR_stringByBase64Encoding];
     NSString * version = [identity latestVersion];
     
-    [[NetworkController sharedInstance] getDeleteTokenForUsername:username
+    [[[NetworkManager sharedInstance] getNetworkController:username] getDeleteTokenForUsername:username
                                                       andPassword:passwordString
                                                      andSignature:signatureString
                                                      successBlock:^(NSURLSessionTask *operation, id responseObject) {
@@ -147,7 +147,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                          NSString * tokenSignatureString = [tokenSignature SR_stringByBase64Encoding];
                                                          
                                                          
-                                                         [[NetworkController sharedInstance] deleteUsername:username
+                                                         [[[NetworkManager sharedInstance] getNetworkController:username] deleteUsername:username
                                                                                                    password:passwordString
                                                                                                     authSig:signatureString
                                                                                                    tokenSig:tokenSignatureString

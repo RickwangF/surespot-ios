@@ -15,7 +15,9 @@
 #import "SurespotConstants.h"
 
 @interface ChatController : NSObject <FriendDelegate>
-+(ChatController*)sharedInstance;
+
+-(ChatController *) init: (NSString *) username;
+
 -(HomeDataSource *) getHomeDataSource;
 -(ChatDataSource *) createDataSourceForFriendname: (NSString *) friendname availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId callback:(CallbackBlock) createCallback;
 -(ChatDataSource *) getDataSourceForFriendname: (NSString *) friendname;
@@ -42,4 +44,8 @@
 -(void) removeFriendAlias: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock;
 -(void) removeFriendImage: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock;
 @property (nonatomic, assign) BOOL hasInet;
+@property (assign, atomic) BOOL paused;
+-(void) disconnect;
+-(void) reconnect;
+
 @end

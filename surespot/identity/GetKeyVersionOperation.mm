@@ -7,7 +7,7 @@
 //
 
 #import "GetKeyVersionOperation.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "EncryptionController.h"
 #import "CocoaLumberjack.h"
 
@@ -53,7 +53,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString * latestVersion = [_cache.latestVersionsDict objectForKey:_username];
     if (!latestVersion) {
         
-        [[NetworkController sharedInstance]
+        [[[NetworkManager sharedInstance] getNetworkController:_username]
          getKeyVersionForUsername: _username
          successBlock:^(NSURLSessionTask *operation, id responseObject) {
              NSString * responseObjectS =   [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];

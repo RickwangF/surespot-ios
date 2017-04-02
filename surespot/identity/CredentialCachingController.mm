@@ -9,7 +9,7 @@
 #import "CredentialCachingController.h"
 #import "GetSharedSecretOperation.h"
 #import "GetKeyVersionOperation.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "FileController.h"
 #import "CocoaLumberjack.h"
 #import "GetPublicKeysOperation.h"

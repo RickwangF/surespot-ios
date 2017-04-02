@@ -73,6 +73,8 @@
 		665CA9A41E9098210045EEDD /* REMenuContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA99D1E9098210045EEDD /* REMenuContainerView.m */; };
 		665CA9A51E9098210045EEDD /* REMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA99F1E9098210045EEDD /* REMenuItem.m */; };
 		665CA9A61E9098210045EEDD /* REMenuItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9A11E9098210045EEDD /* REMenuItemView.m */; };
+		665CA9A91E9186E10045EEDD /* ChatManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9A81E9186E10045EEDD /* ChatManager.mm */; };
+		665CA9AB1E918E4C0045EEDD /* NetworkManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9AA1E918E4C0045EEDD /* NetworkManager.mm */; };
 		665F4E0F183325C50083BCE7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 665F4E0E183325C50083BCE7 /* AdSupport.framework */; };
 		666659A31DD338CF0099B284 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2CA17626B9E0072216A /* main.m */; };
 		666D3364187F69AD00B73F69 /* invite-accept.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D335E187F69AD00B73F69 /* invite-accept.caf */; };
@@ -177,7 +179,7 @@
 		66EBE13C1855C97100F2452D /* Friend.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0A41855C97100F2452D /* Friend.mm */; };
 		66EBE13D1855C97100F2452D /* HomeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0A71855C97100F2452D /* HomeCell.m */; };
 		66EBE13E1855C97100F2452D /* HomeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBE0A81855C97100F2452D /* HomeCell.xib */; };
-		66EBE13F1855C97100F2452D /* HomeDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AA1855C97100F2452D /* HomeDataSource.m */; };
+		66EBE13F1855C97100F2452D /* HomeDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AA1855C97100F2452D /* HomeDataSource.mm */; };
 		66EBE1401855C97100F2452D /* MessageIndicatorNewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AC1855C97100F2452D /* MessageIndicatorNewView.m */; };
 		66F831FF185B9EB500ADD2F1 /* OurMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBDF171855C96F00F2452D /* OurMessageCell.xib */; };
 		6761F09264FD201A9C63491D /* Pods_surespot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */; };
@@ -299,6 +301,10 @@
 		665CA99F1E9098210045EEDD /* REMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = REMenuItem.m; path = REMenu/REMenuItem.m; sourceTree = "<group>"; };
 		665CA9A01E9098210045EEDD /* REMenuItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = REMenuItemView.h; path = REMenu/REMenuItemView.h; sourceTree = "<group>"; };
 		665CA9A11E9098210045EEDD /* REMenuItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = REMenuItemView.m; path = REMenu/REMenuItemView.m; sourceTree = "<group>"; };
+		665CA9A71E9186C70045EEDD /* ChatManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChatManager.h; sourceTree = "<group>"; };
+		665CA9A81E9186E10045EEDD /* ChatManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChatManager.mm; sourceTree = "<group>"; };
+		665CA9AA1E918E4C0045EEDD /* NetworkManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkManager.mm; sourceTree = "<group>"; };
+		665CA9AC1E918E590045EEDD /* NetworkManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkManager.h; sourceTree = "<group>"; };
 		665F4E0E183325C50083BCE7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		666D335E187F69AD00B73F69 /* invite-accept.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "invite-accept.caf"; sourceTree = "<group>"; };
 		666D3362187F69AD00B73F69 /* message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = message.caf; sourceTree = "<group>"; };
@@ -614,7 +620,7 @@
 		66EBE0A71855C97100F2452D /* HomeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HomeCell.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		66EBE0A81855C97100F2452D /* HomeCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeCell.xib; sourceTree = "<group>"; };
 		66EBE0A91855C97100F2452D /* HomeDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataSource.h; sourceTree = "<group>"; };
-		66EBE0AA1855C97100F2452D /* HomeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HomeDataSource.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		66EBE0AA1855C97100F2452D /* HomeDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = HomeDataSource.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		66EBE0AB1855C97100F2452D /* MessageIndicatorNewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageIndicatorNewView.h; sourceTree = "<group>"; };
 		66EBE0AC1855C97100F2452D /* MessageIndicatorNewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageIndicatorNewView.m; sourceTree = "<group>"; };
 		66FF0FF5182AE6960038ECA6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -1201,6 +1207,8 @@
 		66EBDF081855C96F00F2452D /* chat */ = {
 			isa = PBXGroup;
 			children = (
+				665CA9A71E9186C70045EEDD /* ChatManager.h */,
+				665CA9A81E9186E10045EEDD /* ChatManager.mm */,
 				66EBDF091855C96F00F2452D /* ChatController.h */,
 				66EBDF0A1855C96F00F2452D /* ChatController.mm */,
 				66EBDF0B1855C96F00F2452D /* ChatDataSource.h */,
@@ -1307,6 +1315,8 @@
 		66EBDF3D1855C96F00F2452D /* network */ = {
 			isa = PBXGroup;
 			children = (
+				665CA9AC1E918E590045EEDD /* NetworkManager.h */,
+				665CA9AA1E918E4C0045EEDD /* NetworkManager.mm */,
 				66EBDF3E1855C96F00F2452D /* NetworkController.h */,
 				66EBDF3F1855C96F00F2452D /* NetworkController.mm */,
 			);
@@ -1369,7 +1379,7 @@
 				66EBE0A71855C97100F2452D /* HomeCell.m */,
 				66EBE0A81855C97100F2452D /* HomeCell.xib */,
 				66EBE0A91855C97100F2452D /* HomeDataSource.h */,
-				66EBE0AA1855C97100F2452D /* HomeDataSource.m */,
+				66EBE0AA1855C97100F2452D /* HomeDataSource.mm */,
 				66EBE0AB1855C97100F2452D /* MessageIndicatorNewView.h */,
 				66EBE0AC1855C97100F2452D /* MessageIndicatorNewView.m */,
 			);
@@ -1552,7 +1562,7 @@
 				5A4EF5CE1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m in Sources */,
 				66EBE0BA1855C97100F2452D /* SurespotIdentity.mm in Sources */,
 				66EBE0BB1855C97100F2452D /* ChatController.mm in Sources */,
-				66EBE13F1855C97100F2452D /* HomeDataSource.m in Sources */,
+				66EBE13F1855C97100F2452D /* HomeDataSource.mm in Sources */,
 				6686623F18565AD5001491B1 /* SwipeViewController.mm in Sources */,
 				661F46A31865E063004A71B0 /* DeleteIdentityViewController.mm in Sources */,
 				6646AE15185CADC700CBACDE /* MBProgressHUD.m in Sources */,
@@ -1576,6 +1586,7 @@
 				6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */,
 				660F0A9B18D789E900FD8C4D /* RestoreIdentitiesViewController.m in Sources */,
 				666D337D188476B100B73F69 /* EAGLView.m in Sources */,
+				665CA9A91E9186E10045EEDD /* ChatManager.mm in Sources */,
 				66EBE1381855C97100F2452D /* NSString+Sensitivize.m in Sources */,
 				66EBE1361855C97100F2452D /* FileController.mm in Sources */,
 				6646AE10185CADC700CBACDE /* MWPhotoBrowser.m in Sources */,
@@ -1607,6 +1618,7 @@
 				6652F2AA1875F16D00E023A7 /* PwylViewController.m in Sources */,
 				66866268185B6A2E001491B1 /* SDWebImageDownloaderOperation.mm in Sources */,
 				66EBE13D1855C97100F2452D /* HomeCell.m in Sources */,
+				665CA9AB1E918E4C0045EEDD /* NetworkManager.mm in Sources */,
 				661F3B911868D160003C7AE3 /* KeyFingerprintCollectionCell.m in Sources */,
 				6686626D185B6A2E001491B1 /* UIImage+MultiFormat.mm in Sources */,
 				6686626E185B6A2E001491B1 /* UIImage+WebP.m in Sources */,

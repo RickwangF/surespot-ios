@@ -10,14 +10,14 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "UIImage+Scale.h"
 #import "EncryptionController.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "SurespotConstants.h"
 #import "IdentityController.h"
 #import "ALAssetsLibrary+CustomPhotoAlbum.h"
 #import "SwipeViewController.h"
 #import "SurespotMessage.h"
 #import "FileController.h"
-#import "ChatController.h"
+#import "ChatManager.h"
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
 #import "SDWebImageManager.h"
@@ -206,12 +206,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                           [[[SDWebImageManager sharedManager] imageCache] storeImage:scaledImage imageData:encryptedImageData mimeType:MIME_TYPE_IMAGE forKey:key toDisk:YES];
                                                           
                                                           //add message locally before we upload it
-                                                          ChatDataSource * cds = [[ChatController sharedInstance] getDataSourceForFriendname:_theirUsername];
+                                                          ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname:_theirUsername];
                                                           [cds addMessage:message refresh:YES];
                                                           
                                                           //upload image to server
                                                           DDLogInfo(@"uploading image %@ to server", key);
-                                                          [[NetworkController sharedInstance] postFileStreamData:encryptedImageData
+                                                          [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData:encryptedImageData
                                                                                                       ourVersion:_ourVersion
                                                                                                    theirUsername:_theirUsername
                                                                                                     theirVersion:version
@@ -296,7 +296,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                   
                                                   //upload friend image to server
                                                   DDLogInfo(@"uploading friend image %@ to server", key);
-                                                  [[NetworkController sharedInstance] postFriendStreamData:encryptedImageData
+                                                  [[[NetworkManager sharedInstance] getNetworkController:_username] postFriendStreamData:encryptedImageData
                                                                                                 ourVersion:_ourVersion
                                                                                              theirUsername:_theirUsername
                                                                                                         iv:[iv SR_stringByBase64Encoding]
@@ -320,7 +320,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                                                                           DDLogInfo(@"key exists for %@: %@", key, [[[SDWebImageManager sharedManager] imageCache] diskImageExistsWithKey:key] ? @"YES" : @"NO" );
                                                                                                       }
                                                                                                       
-                                                                                                      [[ChatController sharedInstance] setFriendImageUrl:url forFriendname:_theirUsername version:_ourVersion iv: b64iv hashed: YES];
+                                                                                                      [[[ChatManager sharedInstance] getChatController: _username] setFriendImageUrl:url forFriendname:_theirUsername version:_ourVersion iv: b64iv hashed: YES];
                                                                                                   }
                                                                                                   else {
                                                                                                       DDLogInfo(@"uploading friend image to server succeeded but there is no response object, wtf?");

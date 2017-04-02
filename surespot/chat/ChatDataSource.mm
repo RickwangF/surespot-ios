@@ -7,16 +7,17 @@
 //
 
 #import "ChatDataSource.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "MessageDecryptionOperation.h"
 #import "ChatUtils.h"
 #import "IdentityController.h"
 #import "FileController.h"
 #import "CocoaLumberjack.h"
 #import "UIUtils.h"
-#import "ChatController.h"
+//#import "ChatManager.h"
 #import "SurespotConstants.h"
 #import "SDWebImageManager.h"
+#import "ChatManager.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelInfo;
@@ -59,7 +60,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
          //   DDLogInfo(@"dispatch group 1 notified");
             //If the socket is connected get the data from the server, otherwise it'll be retrieved when the socket connects
-            if ([[ChatController sharedInstance] isConnected] && (availableId > _latestMessageId || availableControlId > _latestControlMessageId)) {
+            if ([[[ChatManager sharedInstance] getChatController: _username] isConnected] && (availableId > _latestMessageId || availableControlId > _latestControlMessageId)) {
                 dispatch_group_t group2 = dispatch_group_create();
            //                   DDLogInfo(@"dispatch group enter %@", username);
                 dispatch_group_enter(group2);
@@ -74,7 +75,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 //load message data
              //   DDLogInfo(@"startProgress: %@", username);
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
-                [[NetworkController sharedInstance] getMessageDataForUsername:_username andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
+                [[[NetworkManager sharedInstance] getNetworkController:_username] getMessageDataForUsername:_username andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
                 //    DDLogInfo(@"get messageData response");
                     
                     NSArray * controlMessages =[((NSDictionary *) JSON) objectForKey:@"controlMessages"];
@@ -137,7 +138,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 else {
                     //if the message doesn't have a server id and it's a text message, add it to the resend buffer
                     if (message.serverid <= 0 && ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
-                        [[ChatController sharedInstance] enqueueResendMessage: message];
+                        [[[ChatManager sharedInstance] getChatController: _username] enqueueResendMessage: message];
                     }
                 }
             }
@@ -594,7 +595,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             return;
         }
         
-        [[NetworkController sharedInstance] getEarlierMessagesForUsername:_username messageId:earliestMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
+        [[[NetworkManager sharedInstance] getNetworkController:_username] getEarlierMessagesForUsername:_username messageId:earliestMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
             
             NSArray * messages = JSON;
             if (messages.count == 0) {

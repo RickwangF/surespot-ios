@@ -9,7 +9,7 @@
 #import "LoginViewController.h"
 #import "EncryptionController.h"
 #import "IdentityController.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
 #import "UIUtils.h"
@@ -263,7 +263,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         NSString * signatureString = [signature SR_stringByBase64Encoding];
         
         DDLogVerbose(@"logging in to server");
-        [[NetworkController sharedInstance]
+        [[[NetworkManager sharedInstance] getNetworkController:nil]
          loginWithUsername:identity.username
          andPassword:passwordString
          andSignature: signatureString

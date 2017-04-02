@@ -28,17 +28,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @implementation NetworkController
 
-+(NetworkController*)sharedInstance
-{
-    static NetworkController *sharedInstance = nil;
-    static dispatch_once_t oncePredicate;
-    dispatch_once(&oncePredicate, ^{
-        sharedInstance = [[self alloc] init];
-        
-    });
-    
-    return sharedInstance;
-}
 
 -(NetworkController*)init
 {
@@ -49,11 +38,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
    // [shared clear]
    // [self clearCookies];
     
-//    NSURLSessionConfiguration * sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-//    [sessionConfiguration setHTTPCookieStorage: [NSHTTPCookieStorage sharedHTTPCookieStorage]];
+    NSURLSessionConfiguration * sessionConfiguration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+//    [sessionConfiguration setHTTPCookieStorage: [NSHTTPCookieStorage sharedCookieStorageForGroupContainerIdentifier:username] ];
 //    //call super init
-    self = [super initWithBaseURL:[NSURL URLWithString: baseUrl]];
-             //sessionConfiguration:sessionConfiguration];
+    self = [super initWithBaseURL:[NSURL URLWithString: baseUrl] sessionConfiguration:sessionConfiguration];
     
     if (self != nil) {
         _baseUrl = baseUrl;
@@ -63,6 +51,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         self.responseSerializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[[AFJSONResponseSerializer serializer],
                                                                                                             [AFHTTPResponseSerializer serializer]]];
         self.requestSerializer = [AFJSONRequestSerializer serializer];
+        
+
+        
       //  self.requestSerializer.HTTPShouldHandleCookies = YES;
         //        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
         
@@ -72,10 +63,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
        
     }
     
-    
-    
     return self;
 }
+
 
 
 //inject cookie for current user
@@ -116,14 +106,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) setCookie: (NSHTTPCookie *) cookie {
-    NSHTTPCookieStorage * shared = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    [shared setCookie:cookie];
+    [self.requestSerializer setValue:cookie.value forHTTPHeaderField:cookie.name];
 }
 
 -(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
              successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock
 {
-    [self clearCookies];
+//   [self clearCookies];
     
     NSString *appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     NSString *appBuildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
@@ -150,6 +139,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
        success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable JSON) {
            NSHTTPCookie * cookie = [self extractConnectCookie];
            if (cookie) {
+               [self setCookie:cookie];
                successBlock(task, JSON, cookie);
            }
            else {
@@ -197,8 +187,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             NSString * signatureString = [signature SR_stringByBase64Encoding];
             
             DDLogInfo(@"logging in to server");
-            [[NetworkController sharedInstance]
-             loginWithUsername:identity.username
+            [self loginWithUsername:identity.username
              andPassword:passwordString
              andSignature: signatureString
              successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie * cookie) {
@@ -247,6 +236,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self POST:@"users3" parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSHTTPCookie * cookie = [self extractConnectCookie];
         if (cookie) {
+            [self setCookie:cookie];
             successBlock(task, responseObject, cookie);
         }
         else {
@@ -260,7 +250,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(NSHTTPCookie *) extractConnectCookie {
     //save the cookie
-    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:_baseUrl]];
+    NSArray *cookies = [[[[self session]configuration ] HTTPCookieStorage] cookiesForURL:[NSURL URLWithString:_baseUrl]];
     
     for (NSHTTPCookie *cookie in cookies)
     {

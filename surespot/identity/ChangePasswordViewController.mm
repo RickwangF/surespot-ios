@@ -18,7 +18,7 @@
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
 #import "EncryptionController.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "SurespotAppDelegate.h"
 #import "BackupIdentityViewController.h"
 #import "NSBundle+FallbackLanguage.h"
@@ -337,7 +337,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString * passwordString = [derivedPassword SR_stringByBase64Encoding];
     NSString * signatureString = [signature SR_stringByBase64Encoding];
     
-    [[NetworkController sharedInstance] getPasswordTokenForUsername:username
+    [[[NetworkManager sharedInstance] getNetworkController:username] getPasswordTokenForUsername:username
                                                         andPassword:passwordString
                                                        andSignature:signatureString
                                                        successBlock:^(NSURLSessionTask *operation, id responseObject) {
@@ -350,7 +350,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                            NSData * tokenSignature = [EncryptionController signData1:[NSData dataFromBase64String:passwordToken] data2:encodedNewPassword withPrivateKey:[identity getDsaPrivateKey]];
                                                            NSString * tokenSignatureString = [tokenSignature SR_stringByBase64Encoding];
                                                            
-                                                           [[NetworkController sharedInstance] changePasswordForUsername:username
+                                                           [[[NetworkManager sharedInstance] getNetworkController:username] changePasswordForUsername:username
                                                                                                              oldPassword:passwordString
                                                                                                              newPassword:newPasswordString
                                                                                                                  authSig:signatureString

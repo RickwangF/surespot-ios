@@ -22,7 +22,7 @@ typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
 
 @interface NetworkController : AFHTTPSessionManager
 
-+(NetworkController*)sharedInstance;
+//-(NetworkController*)init: (NSString*) username;
 
 -(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock;
 -(void) createUser3WithUsername: (NSString *) username derivedPassword: (NSString *)derivedPassword dhKey: (NSString *)encodedDHKey dsaKey: (NSString *)encodedDSAKey authSig: (NSString *)authSig clientSig: (NSString *) clientSig successBlock:(HTTPCookieSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;

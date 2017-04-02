@@ -18,7 +18,7 @@
 #import "KeyFingerprint.h"
 #import "KeyFingerprintCollectionCell.h"
 #import "KeyFingerprintLoadingCell.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "UIUtils.h"
 #import "UsernameAliasMap.h"
 #import "NSBundle+FallbackLanguage.h"
@@ -30,7 +30,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface KeyFingerprintViewController()
-@property (strong, nonatomic) UsernameAliasMap * username;
+@property (strong, nonatomic) UsernameAliasMap * usernameMap;
 @property (strong, nonatomic) NSMutableDictionary * myFingerprints;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSMutableDictionary * theirFingerprints;
@@ -43,10 +43,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @implementation KeyFingerprintViewController
 
--(id) initWithNibName:(NSString *)nibNameOrNil username: (UsernameAliasMap *) username {
+-(id) initWithNibName:(NSString *)nibNameOrNil usernameMap: (UsernameAliasMap *) usernameMap {
     self = [super initWithNibName:nibNameOrNil bundle:nil];
     if (self) {
-        _username = username;
+        _usernameMap = usernameMap;
         _queue = [[NSOperationQueue alloc] init];
         [_queue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         _theirLatestVersion = 1;
@@ -79,7 +79,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     //sort by name
     
-    _meFirst = [[_username username] compare:identity.username options:NSCaseInsensitiveSearch] > 0 ? YES : NO;
+    _meFirst = [[_usernameMap username] compare:identity.username options:NSCaseInsensitiveSearch] > 0 ? YES : NO;
     
     
     //todo handle no identity
@@ -115,7 +115,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     });
     
     _theirFingerprints = [NSMutableDictionary new];
-    [self addAllPublicKeysForUsername:[_username username] toDictionary:_theirFingerprints];
+    [self addAllPublicKeysForUsername:[_usernameMap username] toDictionary:_theirFingerprints];
     
     
 }
@@ -202,7 +202,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 -(void) addAllPublicKeysForUsername: (NSString *) username toDictionary: (NSMutableDictionary *) dictionary {
-    [[NetworkController sharedInstance] getKeyVersionForUsername:username
+    [[[NetworkManager sharedInstance] getNetworkController:[_usernameMap username]] getKeyVersionForUsername:username
                                                     successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                         NSString * latestVersion = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
                                                         if ([latestVersion length] > 0) {
@@ -280,7 +280,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     BOOL useMyData = (_meFirst && section == 0) || (!_meFirst && section == 1);
     return useMyData ?
         [[IdentityController sharedInstance] getLoggedInUser] :
-        [UIUtils buildAliasStringForUsername:[_username username] alias:[_username alias]];
+        [UIUtils buildAliasStringForUsername:[_usernameMap username] alias:[_usernameMap alias]];
 }
 
 

@@ -8,7 +8,7 @@
 
 #import "SurespotAppDelegate.h"
 #import "SurespotMessage.h"
-#import "ChatController.h"
+#import "ChatManager.h"
 #import "CocoaLumberjack.h"
 #import "DDTTYLogger.h"
 #import "SurespotLogFormatter.h"
@@ -21,7 +21,7 @@
 #import "CredentialCachingController.h"
 #import "FileController.h"
 #import "NSBundle+FallbackLanguage.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -258,7 +258,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     DDLogDebug(@"userSwitch, username: %@, fromNotification: %@", username, (fromNotification ? @"YES" : @"NO"));
     //save current tab
     NSString * currentUser = [[IdentityController sharedInstance] getLoggedInUser];
-    NSString * currentChat = [[ChatController sharedInstance] getCurrentChat];
+    NSString * currentChat = [[[ChatManager sharedInstance] getChatController: currentUser] getCurrentChat];
     if (currentChat) {
         [_lastUsers setObject:currentChat forKey:currentUser];
         DDLogDebug(@"userSwitch saving last chat: %@ for user: %@", currentChat, currentUser);
@@ -289,11 +289,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     //set the session
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
-    [[NetworkController sharedInstance] logout];
-    [[ChatController sharedInstance] logout];
+   // [[[NetworkManager sharedInstance] getNetworkController:_username] logout];
+//    [[[ChatManager sharedInstance] getChatController: currentUser] logout];
     if ([[CredentialCachingController sharedInstance] setSessionForUsername:username]) {
-        [[NetworkController sharedInstance] setCookie: [[CredentialCachingController sharedInstance] getCookieForUsername:username]];
-        [[ChatController sharedInstance] login];
+   //     [[[NetworkManager sharedInstance] getNetworkController:_username] setCookie: [[CredentialCachingController sharedInstance] getCookieForUsername:username]];
+   //     [[[ChatManager sharedInstance] getChatController: username] login];
         [(UINavigationController *) self.window.rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"]]];
     }
     else {

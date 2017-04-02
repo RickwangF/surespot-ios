@@ -11,7 +11,7 @@
 #import "CocoaLumberjack.h"
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "PwylViewController.h"
 
 #ifdef DEBUG
@@ -158,7 +158,7 @@ NSString *  const PRODUCT_ID_VOICE_MESSAGING = @"voice_messaging";
     [storage setObject: b64receipt forKey:@"appStoreReceipt"];
     
     //upload to server
- //   [[NetworkController sharedInstance] uploadReceipt:b64receipt successBlock:^(NSURLSessionTask *operation, id responseObject) {
+ //   [[[NetworkManager sharedInstance] getNetworkController:_username] uploadReceipt:b64receipt successBlock:^(NSURLSessionTask *operation, id responseObject) {
         
 //    } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
 //        DDLogInfo(@"could not validate purchase receipt on server, please login to validate");

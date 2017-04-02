@@ -9,14 +9,14 @@
 
 #import "IdentityController.h"
 #import "EncryptionController.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "FileController.h"
 #import "SurespotIdentity.h"
 #import "NSData+Gunzip.h"
 #import "PublicKeys.h"
 #include <zlib.h>
 #import "CredentialCachingController.h"
-#import "ChatController.h"
+#import "ChatManager.h"
 #import "CocoaLumberjack.h"
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
@@ -152,7 +152,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         [[NSUserDefaults standardUserDefaults] setObject:identity.username forKey:@"last_user"];
         
         if (!relogin) {
-            [[ChatController sharedInstance] login];
+            [[[ChatManager sharedInstance] getChatController: identity.username] login];
         }
     }
 }
@@ -326,7 +326,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
 -(void) deleteIdentityUsername: (NSString *) username preserveBackedUpIdentity: (BOOL) preserveBackedUpIdentity {
     //make sure we wipe the identity file first so it doesn't show when we return to login screen
     [FileController wipeIdentityData: username preserveBackedUpIdentity: preserveBackedUpIdentity];
-    [[NetworkController sharedInstance] setUnauthorized];
+    [[[NetworkManager sharedInstance] getNetworkController:username] setUnauthorized];
     
     [[CredentialCachingController sharedInstance] clearIdentityData:username];
     
@@ -404,7 +404,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     
     
     
-    [[NetworkController sharedInstance] validateUsername:identity.username
+    [[[NetworkManager sharedInstance] getNetworkController:identity.username] validateUsername:identity.username
                                                 password:passwordString
                                                signature:signatureString
                                             successBlock:^(NSURLSessionTask *operation, id responseObject) {
@@ -469,7 +469,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     
     
     
-    [[NetworkController sharedInstance] validateUsername:username password:passwordString signature:signatureString successBlock:^(NSURLSessionTask *operation, id responseObject) {
+    [[[NetworkManager sharedInstance] getNetworkController:username] validateUsername:username password:passwordString signature:signatureString successBlock:^(NSURLSessionTask *operation, id responseObject) {
         
         
         if ([self saveIdentityDocuments:identity withPassword:password]) {
@@ -508,7 +508,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     
     
     
-    [[NetworkController sharedInstance] validateUsername:username password:passwordString signature:signatureString successBlock:^(NSURLSessionTask *operation, id responseObject) {
+    [[[NetworkManager sharedInstance] getNetworkController:username] validateUsername:username password:passwordString signature:signatureString successBlock:^(NSURLSessionTask *operation, id responseObject) {
         callback(nil, [self encryptIdentity:identity withPassword:[password stringByAppendingString:EXPORT_IDENTITY_ID]]);
         
     } failureBlock:^(NSURLSessionTask *operation, NSError *error) {

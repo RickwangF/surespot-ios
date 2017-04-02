@@ -18,7 +18,7 @@
 #import "NSString+Sensitivize.h"
 #import "NSData+Base64.h"
 #import "EncryptionController.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 
 #import "SignUpViewController.h"
 #import "NSBundle+FallbackLanguage.h"

@@ -7,7 +7,7 @@
 //
 
 #import "GetPublicKeysOperation.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "EncryptionController.h"
 #import "IdentityController.h"
 #import "NSData+Base64.h"
@@ -81,7 +81,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         return;
     }
     
-    [[NetworkController sharedInstance]
+    [[[NetworkManager sharedInstance] getNetworkController:_username]
      getPublicKeys2ForUsername: self.username
      andVersion: [@(validatedKeyVersion+1) stringValue]
      successBlock:^(NSURLSessionTask *request, id JSON) {

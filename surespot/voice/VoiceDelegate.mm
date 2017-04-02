@@ -13,9 +13,9 @@
 #import "UIUtils.h"
 #import "NSData+Base64.h"
 #import "NSData+SRB64Additions.h"
-#import "ChatController.h"
+#import "ChatManager.h"
 #import "ChatDataSource.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "AudioUnit/AudioUnit.h"
 #import "CAXException.h"
 #import "SurespotAppDelegate.h"
@@ -446,13 +446,13 @@ const NSInteger SEND_THRESHOLD = 25;
                                                           
                                                           
                                                           //add message locally before we upload it
-                                                          ChatDataSource * cds = [[ChatController sharedInstance] getDataSourceForFriendname:_theirUsername];
+                                                          ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname:_theirUsername];
                                                           [cds addMessage:message refresh:YES];
                                                           
                                                           
                                                           //upload image to server
                                                           //     DDLogInfo(@"uploading image %@ to server", key);
-                                                          [[NetworkController sharedInstance] postFileStreamData:encryptedVoiceData
+                                                          [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData:encryptedVoiceData
                                                                                                       ourVersion:_ourVersion
                                                                                                    theirUsername:_theirUsername
                                                                                                     theirVersion:version

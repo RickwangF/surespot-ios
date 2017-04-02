@@ -7,10 +7,11 @@
 //
 
 #import "HomeDataSource.h"
-#import "NetworkController.h"
+#import "NetworkManager.h"
 #import "FileController.h"
 #import "CocoaLumberjack.h"
 #import "SDWebImageManager.h"
+#import "IdentityController.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
@@ -22,13 +23,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @interface  HomeDataSource()
 @property (strong, atomic) NSString * cChat;
+@property (strong, atomic) NSString * username;
 @end
 
 @implementation HomeDataSource
--(HomeDataSource*)init {
+-(HomeDataSource*)init: (NSString *) username {
     self = [super init];
     
     if (self != nil) {
+        _username = username;
         //if we have data on file, load it
         //otherwise load from network
         NSString * path =[FileController getHomeFilename];
@@ -51,7 +54,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
     }
     
-    DDLogVerbose(@"HomeDataSource init, latestUserControlId: %ld", (long)_latestUserControlId);
+    DDLogVerbose(@"HomeDataSource init username: %@, latestUserControlId: %ld", _username, (long)_latestUserControlId);
     return self;
 }
 
@@ -59,7 +62,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     DDLogInfo(@"startProgress");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
     
-    [[NetworkController sharedInstance] getFriendsSuccessBlock:^(NSURLSessionTask *task, id JSON) {
+    [[[NetworkManager sharedInstance] getNetworkController:_username] getFriendsSuccessBlock:^(NSURLSessionTask *task, id JSON) {
         //DDLogInfo(@"get friends response: %ld",  (long)[task.response statusCode]);
         
         _latestUserControlId = [[JSON objectForKey:@"userControlId"] integerValue];
