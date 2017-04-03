@@ -16,7 +16,7 @@
 #import "CredentialCachingController.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelInfo;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -24,27 +24,30 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface NetworkController()
 @property (nonatomic, strong) NSString * baseUrl;
 @property (atomic, assign) BOOL loggedOut;
+@property (nonatomic, strong) NSString * username;
+
 @end
 
 @implementation NetworkController
 
 
--(NetworkController*)init
+-(NetworkController*)init: (NSString *) username
 {
     //set cookie
-//    NSHTTPCookie  *cookie = [[CredentialCachingController sharedInstance] getCookieForUsername:[[IdentityController sharedInstance] getLoggedInUser]];
-//    NSHTTPCookieStorage * shared = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-//    [shared setCookie:cookie];
-   // [shared clear]
-   // [self clearCookies];
+    //    NSHTTPCookie  *cookie = [[CredentialCachingController sharedInstance] getCookieForUsername:[[IdentityController sharedInstance] getLoggedInUser]];
+    //    NSHTTPCookieStorage * shared = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    //    [shared setCookie:cookie];
+    // [shared clear]
+    // [self clearCookies];
     
     NSURLSessionConfiguration * sessionConfiguration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-//    [sessionConfiguration setHTTPCookieStorage: [NSHTTPCookieStorage sharedCookieStorageForGroupContainerIdentifier:username] ];
-//    //call super init
+    //    [sessionConfiguration setHTTPCookieStorage: [NSHTTPCookieStorage sharedCookieStorageForGroupContainerIdentifier:username] ];
+    //    //call super init
     self = [super initWithBaseURL:[NSURL URLWithString: baseUrl] sessionConfiguration:sessionConfiguration];
     
     if (self != nil) {
         _baseUrl = baseUrl;
+        _username = username;
         
         [self.requestSerializer setValue:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)] forHTTPHeaderField:@"User-Agent"];
         
@@ -52,20 +55,22 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                                                                             [AFHTTPResponseSerializer serializer]]];
         self.requestSerializer = [AFJSONRequestSerializer serializer];
         
-
-        
-      //  self.requestSerializer.HTTPShouldHandleCookies = YES;
-        //        [self setDefaultHeader:@"Accept-Charset" value:@"utf-8"];
-        
-        //        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HTTPOperationDidFinish:) name:AFNetworkingOperationDidFinishNotification object:nil];
-        
-      //  [self sesionM]
-       
     }
     
     return self;
 }
 
+- (void)URLSession:(NSURLSession *)session
+didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+ completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler{
+    
+    [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+    } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+    }];
+    
+}
 
 
 //inject cookie for current user
@@ -106,13 +111,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) setCookie: (NSHTTPCookie *) cookie {
-    [self.requestSerializer setValue:cookie.value forHTTPHeaderField:cookie.name];
+    DDLogDebug(@"setCookie: %@", cookie);
+    if (cookie) {
+        [self.requestSerializer setValue:cookie.value forHTTPHeaderField:cookie.name];
+    }
 }
 
 -(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
              successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock
 {
-//   [self clearCookies];
+    //   [self clearCookies];
     
     NSString *appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     NSString *appBuildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
@@ -125,7 +133,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                    versionString, @"version",
                                    @"ios", @"platform", nil];
     
-   // [self addPurchaseReceiptToParams:params];
+    // [self addPurchaseReceiptToParams:params];
     
     //add apnToken if we have one
     NSData *  apnToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"apnToken"];
@@ -188,14 +196,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             
             DDLogInfo(@"logging in to server");
             [self loginWithUsername:identity.username
-             andPassword:passwordString
-             andSignature: signatureString
-             successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie * cookie) {
-                 DDLogVerbose(@"login response");
-                 [[IdentityController sharedInstance] userLoggedInWithIdentity:identity password: password cookie: cookie reglogin:YES];
-                 successBlock(task, JSON, cookie);
-             }
-             failureBlock: failureBlock];
+                        andPassword:passwordString
+                       andSignature: signatureString
+                       successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie * cookie) {
+                           DDLogVerbose(@"login response");
+                           
+                           [[IdentityController sharedInstance] userLoggedInWithIdentity:identity password: password cookie: cookie reglogin:YES];
+                           successBlock(task, JSON, cookie);
+                       }
+                       failureBlock: failureBlock];
         });
         
         return YES;
@@ -236,7 +245,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self POST:@"users3" parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSHTTPCookie * cookie = [self extractConnectCookie];
         if (cookie) {
-            [self setCookie:cookie];
+            //     [self setCookie:cookie];
             successBlock(task, responseObject, cookie);
         }
         else {
@@ -310,7 +319,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
-
+    
     NSMutableDictionary *params = nil;
     if ([spotIds count] > 0) {
         NSData * jsonData = [NSJSONSerialization dataWithJSONObject:spotIds options:0 error:nil];
@@ -332,14 +341,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) logout {
     //send logout
-  //  if (!_loggedOut) {
-        DDLogInfo(@"logout");
-        [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            [self deleteCookies];
-        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            [self deleteCookies];
-        }];
-   // }
+    //  if (!_loggedOut) {
+    DDLogInfo(@"logout");
+    [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        // [self deleteCookies];
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        //     [self deleteCookies];
+    }];
+    // }
 }
 
 -(void) deleteCookies {

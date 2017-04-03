@@ -26,7 +26,7 @@
 -(void) inviteUser: (NSString *) username;
 -(void) setCurrentChat: (NSString *) username;
 -(NSString *) getCurrentChat;
--(void) login;
+//-(void) login;
 -(void) logout;
 -(void) deleteFriend: (Friend *) thefriend;
 -(void) deleteMessage: (SurespotMessage *) message;

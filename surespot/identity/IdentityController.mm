@@ -151,9 +151,9 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         //set last logged in user pref
         [[NSUserDefaults standardUserDefaults] setObject:identity.username forKey:@"last_user"];
         
-        if (!relogin) {
-            [[[ChatManager sharedInstance] getChatController: identity.username] login];
-        }
+//        if (!relogin) {
+//            [[[ChatManager sharedInstance] getChatController: identity.username] login];
+//        }
     }
 }
 

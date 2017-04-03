@@ -133,7 +133,7 @@ static const int MAX_RETRY_DELAY = 30;
             }
             
             //login again then try reconnecting
-            reAuthing = [[[NetworkManager sharedInstance] getNetworkController:_username] reloginWithUsername:[[IdentityController sharedInstance] getLoggedInUser] successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
+            reAuthing = [[[NetworkManager sharedInstance] getNetworkController:_username] reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
                 DDLogInfo(@"relogin success");
                 _reauthing = YES;
                 [self reconnect];
@@ -267,12 +267,12 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) connect {
-    NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
+ //   NSString * loggedInUser = _username;//[[IdentityController sharedInstance] getLoggedInUser];
     
-    if (loggedInUser) {
+    //if (loggedInUser) {
         DDLogDebug(@"connecting socket");
         
-        NSHTTPCookie * cookie = [[CredentialCachingController sharedInstance] getCookieForUsername: loggedInUser];
+        NSHTTPCookie * cookie = [[CredentialCachingController sharedInstance] getCookieForUsername: _username];
         NSMutableDictionary * opts = [[NSMutableDictionary alloc] init];
         
         if (cookie) {
@@ -297,7 +297,7 @@ static const int MAX_RETRY_DELAY = 30;
         self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:baseUrl] config: opts];
         [self addHandlers];
         [self.socket connect];
-    }
+  //  }
 }
 
 -(BOOL) isConnected {
@@ -1228,11 +1228,11 @@ static const int MAX_RETRY_DELAY = 30;
 }
 
 
--(void) login {
-    DDLogInfo(@"login");
-    // [self connect];
-    _homeDataSource = [[HomeDataSource alloc] init: _username];
-}
+//-(void) login {
+//    DDLogInfo(@"login");
+//    // [self connect];
+//    _homeDataSource = [[HomeDataSource alloc] init: _username];
+//}
 
 -(void) logout {
     DDLogInfo(@"logout");

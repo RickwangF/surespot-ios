@@ -1744,7 +1744,7 @@ const Float32 voiceRecordDelay = 0.3;
     if ([_tabLoading objectForKey:username]) {
         return;
     }
-    \
+    
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
     DDLogDebug(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
     

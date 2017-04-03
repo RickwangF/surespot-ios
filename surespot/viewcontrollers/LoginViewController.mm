@@ -263,7 +263,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         NSString * signatureString = [signature SR_stringByBase64Encoding];
         
         DDLogVerbose(@"logging in to server");
-        [[[NetworkManager sharedInstance] getNetworkController:nil]
+        [[[NetworkManager sharedInstance] getNetworkController:username]
          loginWithUsername:identity.username
          andPassword:passwordString
          andSignature: signatureString

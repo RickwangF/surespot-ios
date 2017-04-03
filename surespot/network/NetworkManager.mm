@@ -54,19 +54,19 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(NetworkController *) getNetworkController: (NSString *) username {
     if (username) {
-    
-    NetworkController * networkController = [_networkControllers objectForKey:username];
-    if (!networkController) {
-        networkController = [[NetworkController alloc] init];
-        //set cookie
-        [networkController setCookie:[[CredentialCachingController sharedInstance] getCookieForUsername:username]];
-        [_networkControllers setObject:networkController forKey:username];
-    }
-    return networkController;
+        
+        NetworkController * networkController = [_networkControllers objectForKey:username];
+        if (!networkController) {
+            networkController = [[NetworkController alloc] init: username];
+            //set cookie
+            [networkController setCookie:[[CredentialCachingController sharedInstance] getCookieForUsername:username]];
+            [_networkControllers setObject:networkController forKey:username];
+        }
+        return networkController;
     }
     else {
         if (!_nilController) {
-            _nilController = [[NetworkController alloc] init];
+            _nilController = [[NetworkController alloc] init: username];
         }
         return _nilController;
     }
