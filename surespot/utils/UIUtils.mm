@@ -161,14 +161,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
 }
 
-+(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size {
++(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername {
     NSString * plaintext = message.plainData;
     
     //figure out message height for both orientations
     if (plaintext){
         NSInteger offset = 0;
         NSInteger heightAdj = 35;
-        BOOL ours = [ChatUtils isOurMessage:message];
+        BOOL ours = [ChatUtils isOurMessage:message ourUsername:ourUsername];
         if (ours) {
             offset = 50;
         }
@@ -490,8 +490,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
 }
 
-+(BOOL) isBlackTheme {
-    return [UIUtils getBoolPrefWithDefaultNoForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_black_theme"];
++(BOOL) isBlackTheme: (NSString *) username {
+    return [UIUtils getBoolPrefWithDefaultNoForUser:username key:@"_user_pref_black_theme"];
 }
 
 

@@ -48,6 +48,7 @@
 @interface MessageView (WebCache)
 
 - (void)setMessage:(SurespotMessage *) message
+       ourUsername:(NSString *) ourUsername
           progress:(SDWebImageDownloaderProgressBlock)progressBlock
          completed:(SDWebImageCompletedBlock)completedBlock
       retryAttempt:(NSInteger) retryAttempt;

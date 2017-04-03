@@ -117,6 +117,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
 
 - (id<SDWebImageOperation>)downloadImageWithURL:(NSURL *)url
                                        mimeType: (NSString *) mimeType
+                                    ourUsername: (NSString *) ourUsername
                                      ourVersion: (NSString *) ourversion
                                   theirUsername: (NSString *) theirUsername
                                    theirVersion: (NSString *) theirVersion
@@ -143,6 +144,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
          }
          operation = [SDWebImageDownloaderOperation.alloc initWithRequest:request
                                                                  mimeType: mimeType
+                                                              ourUsername: ourUsername
                                                                ourVersion: ourversion
                                                             theirUsername: theirUsername
                                                              theirVersion: theirVersion

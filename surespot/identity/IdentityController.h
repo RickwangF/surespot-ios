@@ -23,7 +23,7 @@
 - (void) userLoggedInWithIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie:(NSHTTPCookie *) cookie reglogin: (BOOL) relogin;
 - (NSString *) getLoggedInUser;
 - (NSString *) getOurLatestVersion;
-- (void) getTheirLatestVersionForUsername: (NSString *) username callback:(CallbackStringBlock) callback;
+- (void) getTheirLatestVersionForOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback;
 -(BOOL) verifyPublicKeys: (NSDictionary *) keys;
 -(PublicKeys *) loadPublicKeysUsername: (NSString * ) username version: (NSString *) version;
 -(void) savePublicKeys: (NSDictionary * ) keys username: (NSString *)username version: (NSString *)version;

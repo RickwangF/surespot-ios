@@ -37,9 +37,9 @@
 @property (nonatomic, assign) BOOL playVoice;
 
 
-- (NSString *) getOtherUser;
-- (NSString *) getTheirVersion;
-- (NSString *) getOurVersion;
+- (NSString *) getOtherUser: (NSString *) ourUsername;
+- (NSString *) getTheirVersion: (NSString *) ourUsername;
+- (NSString *) getOurVersion: (NSString *) ourUsername;
 - (NSString * ) toJsonString;
 - (NSMutableDictionary * ) toNSDictionary;
 - (BOOL) readyToSend;

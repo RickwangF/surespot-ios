@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface Friend : NSObject<NSCoding>
-- (id) initWithDictionary:(NSDictionary *) dictionary;
+- (id) initWithDictionary:(NSDictionary *) dictionary ourUsername: (NSString *) ourUsername;
 @property (atomic,strong) NSString * name;
 @property (atomic,assign) NSInteger flags;
 @property (atomic, strong) NSString * imageUrl;

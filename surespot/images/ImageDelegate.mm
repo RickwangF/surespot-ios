@@ -151,8 +151,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     //update settings string
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     NSString * removeString = NSLocalizedString(@"pref_title_background_image_remove", nil);
-    [defaults setObject:removeString forKey: [[[IdentityController sharedInstance] getLoggedInUser] stringByAppendingString: @"_user_assign_background_image_key"]];
-    [defaults setURL:url forKey:[NSString stringWithFormat:@"%@%@", [[IdentityController sharedInstance] getLoggedInUser], @"_background_image_url"]];
+    [defaults setObject:removeString forKey: [_username stringByAppendingString: @"_user_assign_background_image_key"]];
+    [defaults setURL:url forKey:[NSString stringWithFormat:@"%@%@", _username, @"_background_image_url"]];
 
     
     //update UI
@@ -175,7 +175,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        [[IdentityController sharedInstance] getTheirLatestVersionForUsername:_theirUsername callback:^(NSString *version) {
+        [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername:_username theirUsername: _theirUsername callback:^(NSString *version) {
             if (version) {
                 //compress encrypt and upload the image
                 UIImage * scaledImage = [image imageScaledToMaxWidth:400 maxHeight:400];
@@ -184,6 +184,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 
                 //encrypt
                 [EncryptionController symmetricEncryptData:imageData
+                                               ourUsername: _username
                                                 ourVersion:_ourVersion
                                              theirUsername:_theirUsername
                                               theirVersion:version
@@ -281,6 +282,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         //encrypt
         [EncryptionController symmetricEncryptData:imageData
+                                       ourUsername:_username
                                         ourVersion:_ourVersion
                                      theirUsername:_username
                                       theirVersion:_ourVersion

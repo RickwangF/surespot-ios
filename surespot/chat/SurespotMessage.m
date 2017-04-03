@@ -75,21 +75,22 @@
     }
 }
 
-- (NSString *) getOtherUser {
-    return [ChatUtils getOtherUserWithFrom:_from andTo:_to];
+- (NSString *) getOtherUser: (NSString *) ourUsername{
+    return [ChatUtils getOtherUserWithFrom:_from andTo:_to ourUsername:ourUsername];
 }
-- (NSString *) getTheirVersion {
-    NSString * otherUser = [self getOtherUser];
+
+- (NSString *) getTheirVersion: (NSString *) ourUsername{
+    NSString * otherUser = [self getOtherUser: ourUsername];
     if ([_from  isEqualToString:otherUser]) {
         return _fromVersion;
     }
     else {
         return _toVersion;
     }
-    
 }
-- (NSString *) getOurVersion {
-    NSString * otherUser = [self getOtherUser];
+
+- (NSString *) getOurVersion: (NSString *) ourUsername {
+    NSString * otherUser = [self getOtherUser: ourUsername];
     if ([_from  isEqualToString:otherUser]) {
         return _toVersion;
     }

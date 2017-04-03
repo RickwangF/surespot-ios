@@ -16,7 +16,7 @@
 @property (nonatomic, strong) void (^callback) (SurespotMessage *);
 @property (nonatomic, assign) CGSize size;
 
--(id) initWithMessage: (SurespotMessage *) message size: (CGSize) size completionCallback:(void(^)(SurespotMessage *))  callback;
+-(id) initWithMessage: (SurespotMessage *) message size: (CGSize) size ourUsername: (NSString *) ourUsername completionCallback:(void(^)(SurespotMessage *))  callback;
 @end
 
 

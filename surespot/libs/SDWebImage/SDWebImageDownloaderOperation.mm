@@ -31,6 +31,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (assign, nonatomic) long long expectedSize;
 @property (strong, atomic) NSMutableData *imageData;
 @property (strong, nonatomic) NSURLConnection *connection;
+@property (strong, nonatomic) NSString * ourUsername;
 @property (strong, nonatomic) NSString * ourVersion;
 @property (strong, nonatomic) NSString * theirUsername;
 @property (strong, nonatomic) NSString * theirVersion;
@@ -58,6 +59,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (id)initWithRequest:(NSURLRequest *)request
              mimeType: (NSString *) mimeType
+          ourUsername: (NSString *) ourUsername
            ourVersion: (NSString *) ourversion
         theirUsername: (NSString *) theirUsername
          theirVersion: (NSString *) theirVersion
@@ -354,7 +356,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
         else
         {
-            [[CredentialCachingController sharedInstance] getSharedSecretForOurVersion:_ourVersion theirUsername:_theirUsername theirVersion:_theirVersion hashed: _hashed callback:^(id key) {
+            [[CredentialCachingController sharedInstance] getSharedSecretForOurUsername: _ourUsername ourVersion:_ourVersion theirUsername:_theirUsername theirVersion:_theirVersion hashed: _hashed callback:^(id key) {
                 
                 
                 if ([_mimeType isEqualToString:MIME_TYPE_IMAGE]) {

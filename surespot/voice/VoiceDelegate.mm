@@ -170,48 +170,57 @@ const NSInteger SEND_THRESHOLD = 25;
         cell.message = message;
         DDLogVerbose(@"attaching message %@ to cell %@", [message iv], cell);
         
-        [[SDWebImageManager sharedManager] downloadWithURL:[NSURL URLWithString: message.data] mimeType:message.mimeType ourVersion:[message getOurVersion] theirUsername:[message getOtherUser] theirVersion:[message getTheirVersion] iv:message.iv hashed: message.hashed options: SDWebImageRetryFailed progress:nil completed:^(id data, NSString *mimeType, NSError *error, SDImageCacheType cacheType, BOOL finished) {
-            
-            if ((!data || error) && finished) {
-                message.playVoice = NO;
-                message.voicePlayed = YES;
-                if (error) {
-                    DDLogError(@"error downloading voice message: %@ - %@", error.localizedDescription, error.localizedFailureReason);
-                }
-                
-                cell.messageStatusLabel.text = NSLocalizedString(@"error_downloading_message_data", nil);
-                return;
-            }
-            
-            _player = [[AVAudioPlayer alloc] initWithData: data error:nil];
-            if ([_player duration] > 0) {
-                _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
-                _cell.audioSlider.maximumValue = [_player duration];
-                [_playLock lock];
-                [_playTimer invalidate];
-                _playTimer = [NSTimer timerWithTimeInterval:.05
-                                                     target:self
-                                                   selector:@selector(updateTime:)
-                                                   userInfo:nil
-                                                    repeats:YES];
-                
-                if (message.formattedDate) {
-                    cell.messageStatusLabel.text = message.formattedDate;
-                }
-                
-                //default loop is suspended when scrolling so timer events don't fire
-                //http://bynomial.com/blog/?p=67
-                [[NSRunLoop mainRunLoop] addTimer:_playTimer forMode:NSRunLoopCommonModes];
-                [_playLock unlock];
-                [_player setDelegate:self];
-                [_player play];
-            }
-            else {
-                [self stopPlayingDeactivateSession:YES];
-            }
-            message.playVoice = NO;
-            message.voicePlayed = YES;
-        }];
+        [[SDWebImageManager sharedManager] downloadWithURL:[NSURL URLWithString: message.data]
+                                                  mimeType:message.mimeType
+                                                ourVersion:[message getOurVersion: _username]
+                                             theirUsername:[message getOtherUser: _username]
+                                              theirVersion:[message getTheirVersion: _username]
+                                                        iv:message.iv
+                                                    hashed: message.hashed
+                                                   options: SDWebImageRetryFailed
+                                                  progress:nil
+                                                 completed:^(id data, NSString *mimeType, NSError *error, SDImageCacheType cacheType, BOOL finished) {
+                                                     
+                                                     if ((!data || error) && finished) {
+                                                         message.playVoice = NO;
+                                                         message.voicePlayed = YES;
+                                                         if (error) {
+                                                             DDLogError(@"error downloading voice message: %@ - %@", error.localizedDescription, error.localizedFailureReason);
+                                                         }
+                                                         
+                                                         cell.messageStatusLabel.text = NSLocalizedString(@"error_downloading_message_data", nil);
+                                                         return;
+                                                     }
+                                                     
+                                                     _player = [[AVAudioPlayer alloc] initWithData: data error:nil];
+                                                     if ([_player duration] > 0) {
+                                                         _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
+                                                         _cell.audioSlider.maximumValue = [_player duration];
+                                                         [_playLock lock];
+                                                         [_playTimer invalidate];
+                                                         _playTimer = [NSTimer timerWithTimeInterval:.05
+                                                                                              target:self
+                                                                                            selector:@selector(updateTime:)
+                                                                                            userInfo:nil
+                                                                                             repeats:YES];
+                                                         
+                                                         if (message.formattedDate) {
+                                                             cell.messageStatusLabel.text = message.formattedDate;
+                                                         }
+                                                         
+                                                         //default loop is suspended when scrolling so timer events don't fire
+                                                         //http://bynomial.com/blog/?p=67
+                                                         [[NSRunLoop mainRunLoop] addTimer:_playTimer forMode:NSRunLoopCommonModes];
+                                                         [_playLock unlock];
+                                                         [_player setDelegate:self];
+                                                         [_player play];
+                                                     }
+                                                     else {
+                                                         [self stopPlayingDeactivateSession:YES];
+                                                     }
+                                                     message.playVoice = NO;
+                                                     message.voicePlayed = YES;
+                                                 }];
     }
 }
 
@@ -270,10 +279,10 @@ const NSInteger SEND_THRESHOLD = 25;
         
         if (![self hasPermissionForMic]) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Use of microphone disabled"
-                                                        message:@"This device is not configured to allow Surespot to access your microphone."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
+                                                            message:@"This device is not configured to allow Surespot to access your microphone."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
             [alert show];
             return;
         }
@@ -307,8 +316,8 @@ const NSInteger SEND_THRESHOLD = 25;
         
         
         
-      //  UIWindow * aWindow =((SurespotAppDelegate *)[[UIApplication sharedApplication] delegate]).overlayWindow;
-     //   aWindow.userInteractionEnabled = YES;
+        //  UIWindow * aWindow =((SurespotAppDelegate *)[[UIApplication sharedApplication] delegate]).overlayWindow;
+        //   aWindow.userInteractionEnabled = YES;
         
         AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
         CGRect frame = overlayView.frame;
@@ -380,14 +389,14 @@ const NSInteger SEND_THRESHOLD = 25;
         
         
         AudioOutputUnitStop(rioUnit);
-    
+        
         DDLogInfo(@"deactivating audio session");
         AVAudioSession *audioSession = [AVAudioSession sharedInstance];
         [audioSession setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
         
         
-    //    UIWindow * aWindow =((SurespotAppDelegate *)[[UIApplication sharedApplication] delegate]).overlayWindow;
-    //    aWindow.userInteractionEnabled = NO;
+        //    UIWindow * aWindow =((SurespotAppDelegate *)[[UIApplication sharedApplication] delegate]).overlayWindow;
+        //    aWindow.userInteractionEnabled = NO;
         
         
         
@@ -414,7 +423,7 @@ const NSInteger SEND_THRESHOLD = 25;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        [[IdentityController sharedInstance] getTheirLatestVersionForUsername:_theirUsername callback:^(NSString *version) {
+        [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername:_username theirUsername: _theirUsername callback:^(NSString *version) {
             if (version) {
                 //encrypt and upload the voice data
                 NSData * voiceData = [NSData dataWithContentsOfURL: url];
@@ -423,6 +432,7 @@ const NSInteger SEND_THRESHOLD = 25;
                 
                 //encrypt
                 [EncryptionController symmetricEncryptData:voiceData
+                                               ourUsername:_username
                                                 ourVersion:_ourVersion
                                              theirUsername:_theirUsername
                                               theirVersion:version
@@ -453,40 +463,40 @@ const NSInteger SEND_THRESHOLD = 25;
                                                           //upload image to server
                                                           //     DDLogInfo(@"uploading image %@ to server", key);
                                                           [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData:encryptedVoiceData
-                                                                                                      ourVersion:_ourVersion
-                                                                                                   theirUsername:_theirUsername
-                                                                                                    theirVersion:version
-                                                                                                          fileid:[iv SR_stringByBase64Encoding]
-                                                                                                        mimeType:MIME_TYPE_M4A
-                                                                                                    successBlock:^(id JSON) {
-                                                                                                        NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
-                                                                                                        NSString * url = [JSON objectForKey:@"url"];
-                                                                                                        NSInteger size = [[JSON objectForKey:@"size"] integerValue];
-                                                                                                        NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
-                                                                                                        
-                                                                                                        DDLogInfo(@"uploaded voice data %@ to server successfully, server id: %d, url: %@, date: %@, size: %d", message.iv, serverid, url, date, size);
-                                                                                                        
-                                                                                                        SurespotMessage * updatedMessage = [message copyWithZone:nil];
-                                                                                                        
-                                                                                                        updatedMessage.serverid = serverid;
-                                                                                                        updatedMessage.data = url;
-                                                                                                        updatedMessage.dateTime = date;
-                                                                                                        updatedMessage.dataSize = size;
-                                                                                                        
-                                                                                                        [cds addMessage:updatedMessage refresh:YES];
-                                                                                                        
-                                                                                                        //[self stopProgress];
-                                                                                                    }
-                                                                                                    failureBlock:^(NSURLResponse *operation, NSError *ErroN) {
-                                                                                                        
-                                                                                                        
-                                                                                                        DDLogInfo(@"uploaded voice %@ to server failed", key);
-                                                                                           
-                                                                                                        message.errorStatus = 500;
-                                                                                                        
-                                                                                                        
-                                                                                                        [cds postRefresh];
-                                                                                                    }];
+                                                                                                                                    ourVersion:_ourVersion
+                                                                                                                                 theirUsername:_theirUsername
+                                                                                                                                  theirVersion:version
+                                                                                                                                        fileid:[iv SR_stringByBase64Encoding]
+                                                                                                                                      mimeType:MIME_TYPE_M4A
+                                                                                                                                  successBlock:^(id JSON) {
+                                                                                                                                      NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
+                                                                                                                                      NSString * url = [JSON objectForKey:@"url"];
+                                                                                                                                      NSInteger size = [[JSON objectForKey:@"size"] integerValue];
+                                                                                                                                      NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
+                                                                                                                                      
+                                                                                                                                      DDLogInfo(@"uploaded voice data %@ to server successfully, server id: %d, url: %@, date: %@, size: %d", message.iv, serverid, url, date, size);
+                                                                                                                                      
+                                                                                                                                      SurespotMessage * updatedMessage = [message copyWithZone:nil];
+                                                                                                                                      
+                                                                                                                                      updatedMessage.serverid = serverid;
+                                                                                                                                      updatedMessage.data = url;
+                                                                                                                                      updatedMessage.dateTime = date;
+                                                                                                                                      updatedMessage.dataSize = size;
+                                                                                                                                      
+                                                                                                                                      [cds addMessage:updatedMessage refresh:YES];
+                                                                                                                                      
+                                                                                                                                      //[self stopProgress];
+                                                                                                                                  }
+                                                                                                                                  failureBlock:^(NSURLResponse *operation, NSError *ErroN) {
+                                                                                                                                      
+                                                                                                                                      
+                                                                                                                                      DDLogInfo(@"uploaded voice %@ to server failed", key);
+                                                                                                                                      
+                                                                                                                                      message.errorStatus = 500;
+                                                                                                                                      
+                                                                                                                                      
+                                                                                                                                      [cds postRefresh];
+                                                                                                                                  }];
                                                       }
                                                       else {
                                                           [UIUtils showToastKey:@"error_message_generic" duration:2];
@@ -522,7 +532,7 @@ void rioInterruptionListener(void *inClientData, UInt32 inInterruption)
         printf("Session interrupted! --- %s ---", inInterruption == kAudioSessionBeginInterruption ? "Begin Interruption" : "End Interruption");
         
         VoiceDelegate *THIS = (__bridge VoiceDelegate*)inClientData;
-              
+        
         if (inInterruption == kAudioSessionBeginInterruption) {
             XThrowIfError(AudioOutputUnitStop(THIS->rioUnit), "couldn't stop unit");
         }
@@ -833,7 +843,7 @@ static OSStatus	PerformThru(
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {
-	//stop animation before going into background
+    //stop animation before going into background
     [self stopRecordingSendInternal:[NSNumber numberWithBool:NO]];
     view.applicationResignedActive = YES;
 }

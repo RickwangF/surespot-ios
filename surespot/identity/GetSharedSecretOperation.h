@@ -12,6 +12,7 @@
 
 @interface GetSharedSecretOperation : NSOperation
 -(id) initWithCache: (CredentialCachingController *) cache
+        ourUsername: (NSString *) ourUsername
          ourVersion: (NSString *) ourVersion
       theirUsername: (NSString *) theirUsername
        theirVersion: (NSString *) theirVersion

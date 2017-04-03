@@ -25,12 +25,12 @@
 @property (atomic, strong) NSString * loggedInUsername;
 
 
--(void) getSharedSecretForOurVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion hashed: (BOOL) hashed callback: (CallbackBlock) callback;
+-(void) getSharedSecretForOurUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion hashed: (BOOL) hashed callback: (CallbackBlock) callback;
 -(void) loginIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie: (NSHTTPCookie *) cookie;
 
-- (void) getLatestVersionForUsername: (NSString *) username callback:(CallbackStringBlock) callback;
--(void) clearUserData: (NSString *) username;
--(void) updateLatestVersionForUsername: (NSString *) username version: (NSString * ) version;
+- (void) getLatestVersionForOurUsername: (NSString *) ourUsername  theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback;
+-(void) clearUserData: (NSString *) ourUsername theirUsername: (NSString *) theirUsername;
+-(void) updateLatestVersionForUsername: (NSString *) username version: (NSString *) version;
 
 -(void) logout;
 -(void) clearIdentityData:(NSString *) username;

@@ -279,7 +279,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     BOOL useMyData = (_meFirst && section == 0) || (!_meFirst && section == 1);
     return useMyData ?
-        [[IdentityController sharedInstance] getLoggedInUser] :
+        _usernameMap.username :
         [UIUtils buildAliasStringForUsername:[_usernameMap username] alias:[_usernameMap alias]];
 }
 

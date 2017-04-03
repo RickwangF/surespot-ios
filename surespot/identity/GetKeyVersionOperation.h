@@ -12,5 +12,5 @@
 
 @interface GetKeyVersionOperation : NSOperation
 
--(id) initWithCache: (CredentialCachingController *) cache username: (NSString *) username completionCallback: (CallbackStringBlock)  callback;
+-(id) initWithCache: (CredentialCachingController *) cache ourUsername: (NSString *) ourUsername theirUsername:(NSString *) theirUsername completionCallback: (CallbackStringBlock)  callback;
 @end

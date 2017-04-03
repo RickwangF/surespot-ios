@@ -92,7 +92,7 @@ const Float32 voiceRecordDelay = 0.3;
 {
     DDLogDebug(@"swipeviewdidload %@", self);
     [super viewDidLoad];
-   
+    
     _username = [[IdentityController sharedInstance] getLoggedInUser];
     _assetLibrary = [ALAssetsLibrary new];
     
@@ -194,7 +194,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     //app settings
     _appSettingsViewController = [IASKAppSettingsViewController new];
-    _appSettingsViewController.settingsStore = [[SurespotSettingsStore alloc] initWithUsername:[[IdentityController sharedInstance] getLoggedInUser]];
+    _appSettingsViewController.settingsStore = [[SurespotSettingsStore alloc] initWithUsername:_username];
     _appSettingsViewController.delegate = self;
     
     
@@ -290,7 +290,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (BOOL) growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *) string
 {
     if ([string isEqualToString:@"\n"]) {
-        if (growingTextView != _messageTextView || [UIUtils getBoolPrefWithDefaultYesForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_return_sends_message"]) {
+        if (growingTextView != _messageTextView || [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_return_sends_message"]) {
             [self handleTextAction];
             return NO;
         } else {
@@ -1002,7 +1002,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(UIColor *) getTextColor {
-    return _hasBackgroundImage ? [UIUtils surespotGrey] : ([UIUtils isBlackTheme] ? [UIColor whiteColor] : [UIColor blackColor]);
+    return _hasBackgroundImage ? [UIUtils surespotGrey] : ([UIUtils isBlackTheme: _username] ? [UIColor whiteColor] : [UIColor blackColor]);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -1016,7 +1016,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     
-//    DDLogDebug(@"cell for row, index: %ld, indexPath: %@", (long)index, indexPath);
+    //    DDLogDebug(@"cell for row, index: %ld, indexPath: %@", (long)index, indexPath);
     if (index == NSNotFound) {
         static NSString *CellIdentifier = @"Cell";
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -1102,7 +1102,7 @@ const Float32 voiceRecordDelay = 0.3;
         cell.selectedBackgroundView = bgColorView;
         
         if ([afriend hasFriendImageAssigned]) {
-            EncryptionParams * ep = [[EncryptionParams alloc] initWithOurUsername:[[IdentityController sharedInstance] getLoggedInUser]
+            EncryptionParams * ep = [[EncryptionParams alloc] initWithOurUsername:_username
                                                                        ourVersion:afriend.imageVersion
                                                                     theirUsername:afriend.name
                                                                      theirVersion:afriend.imageVersion
@@ -1169,7 +1169,7 @@ const Float32 voiceRecordDelay = 0.3;
             NSString * cellIdentifier;
             BOOL ours = NO;
             
-            if ([ChatUtils isOurMessage:message]) {
+            if ([ChatUtils isOurMessage:message ourUsername: _username]) {
                 ours = YES;
                 cellIdentifier = OurCellIdentifier;
                 
@@ -1312,6 +1312,7 @@ const Float32 voiceRecordDelay = 0.3;
                     }
                     
                     [cell setMessage:message
+                         ourUsername: _username
                             progress:^(NSUInteger receivedSize, long long expectedSize) {
                                 
                             }
@@ -1364,6 +1365,7 @@ const Float32 voiceRecordDelay = 0.3;
                         }
                         else {
                             [cell setMessage:message
+                                 ourUsername:_username
                                     progress:^(NSUInteger receivedSize, long long expectedSize) {
                                         
                                     }
@@ -1606,7 +1608,7 @@ const Float32 voiceRecordDelay = 0.3;
         
         if ([text length] > 0) {
             
-            NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
+            NSString * loggedInUser = _username;
             if ([text isEqualToString:loggedInUser]) {
                 [UIUtils showToastKey:@"friend_self_error"];
                 return YES;
@@ -1706,7 +1708,7 @@ const Float32 voiceRecordDelay = 0.3;
                 [_theButton setImage:[UIImage imageNamed:@"ic_menu_send"] forState:UIControlStateNormal];
             }
             else {
-                BOOL disableVoice = [UIUtils getBoolPrefWithDefaultNoForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_disable_voice"];
+                BOOL disableVoice = [UIUtils getBoolPrefWithDefaultNoForUser:_username key:@"_user_pref_disable_voice"];
                 if (disableVoice) {
                     
                     [_theButton setImage:[UIImage imageNamed:@"ic_menu_home"] forState:UIControlStateNormal];
@@ -1833,7 +1835,7 @@ const Float32 voiceRecordDelay = 0.3;
                                             action:^(REMenuItem * item){
                                                 
                                                 _imageDelegate = [[ImageDelegate alloc]
-                                                                  initWithUsername:[[IdentityController sharedInstance] getLoggedInUser]
+                                                                  initWithUsername:_username
                                                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion]
                                                                   theirUsername:theirUsername
                                                                   assetLibrary:_assetLibrary];
@@ -1852,7 +1854,7 @@ const Float32 voiceRecordDelay = 0.3;
                                              action:^(REMenuItem * item){
                                                  
                                                  _imageDelegate = [[ImageDelegate alloc]
-                                                                   initWithUsername:[[IdentityController sharedInstance] getLoggedInUser]
+                                                                   initWithUsername:_username
                                                                    ourVersion:[[IdentityController sharedInstance] getOurLatestVersion]
                                                                    theirUsername:theirUsername
                                                                    assetLibrary:_assetLibrary];
@@ -1874,7 +1876,7 @@ const Float32 voiceRecordDelay = 0.3;
         REMenuItem * deleteAllItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_delete_all_messages", nil) image:[UIImage imageNamed:@"ic_menu_delete"] highlightedImage:nil action:^(REMenuItem * item){
             //confirm if necessary
             
-            BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_delete_all_messages"];
+            BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_delete_all_messages"];
             if (confirm) {
                 NSString * okString = NSLocalizedString(@"ok", nil);
                 [UIAlertView showWithTitle:NSLocalizedString(@"delete_all_title", nil)
@@ -1903,7 +1905,7 @@ const Float32 voiceRecordDelay = 0.3;
     REMenuItem * shareItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"share_invite_link", nil) image:[UIImage imageNamed:@"blue_heart"] highlightedImage:nil action:^(REMenuItem * menuitem){
         
         _progressView = [LoadingView showViewKey:@"invite_progress_text"];
-        NSString * inviteUrl = [NSString stringWithFormat:@"%@%@%@", @"https://server.surespot.me/autoinvite/", [[[IdentityController sharedInstance] getLoggedInUser] stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/ios"];
+        NSString * inviteUrl = [NSString stringWithFormat:@"%@%@%@", @"https://server.surespot.me/autoinvite/", [_username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/ios"];
         
         
         [[[NetworkManager sharedInstance] getNetworkController:_username] getShortUrl:inviteUrl callback:^(id shortUrl) {
@@ -1996,7 +1998,7 @@ const Float32 voiceRecordDelay = 0.3;
     REMenuItem * titleItem = [[REMenuItem alloc] initWithTitle: nil image:nil highlightedImage:nil action:nil];
     
     [titleItem setSubtitle:aliasName];
-  //  [titleItem setTitleEnabled:NO];
+    //  [titleItem setTitleEnabled:NO];
     
     [menuItems addObject:titleItem];
     
@@ -2014,7 +2016,7 @@ const Float32 voiceRecordDelay = 0.3;
         REMenuItem * deleteAllHomeItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_delete_all_messages", nil) image:[UIImage imageNamed:@"ic_menu_delete"] highlightedImage:nil action:^(REMenuItem * item){
             
             //confirm if necessary
-            BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_delete_all_messages"];
+            BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_delete_all_messages"];
             if (confirm) {
                 NSString * okString = NSLocalizedString(@"ok", nil);
                 [UIAlertView showWithTitle:NSLocalizedString(@"delete_all_title", nil)
@@ -2041,7 +2043,7 @@ const Float32 voiceRecordDelay = 0.3;
             REMenuItem * fingerprintsItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"verify_key_fingerprints", nil) image:[UIImage imageNamed:@"fingerprint_zoom"] highlightedImage:nil action:^(REMenuItem * item){
                 //cameraUI
                 if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                    _popover = [[UIPopoverController alloc] initWithContentViewController:[[KeyFingerprintViewController alloc]                                                                                                            initWithNibName:@"KeyFingerprintView" username:map]];
+                    _popover = [[UIPopoverController alloc] initWithContentViewController:[[KeyFingerprintViewController alloc]                                                                                                            initWithNibName:@"KeyFingerprintView" usernameMap:map]];
                     _popover.delegate = self;
                     CGFloat x = self.view.bounds.size.width;
                     CGFloat y =self.view.bounds.size.height;
@@ -2052,7 +2054,7 @@ const Float32 voiceRecordDelay = 0.3;
                 } else {
                     
                     
-                    [self.navigationController pushViewController:[[KeyFingerprintViewController alloc] initWithNibName:@"KeyFingerprintView" username:map] animated:YES];
+                    [self.navigationController pushViewController:[[KeyFingerprintViewController alloc] initWithNibName:@"KeyFingerprintView" usernameMap:map] animated:YES];
                 }
                 
             }];
@@ -2067,7 +2069,7 @@ const Float32 voiceRecordDelay = 0.3;
                                                 action:^(REMenuItem * item){
                                                     
                                                     _imageDelegate = [[ImageDelegate alloc]
-                                                                      initWithUsername:[[IdentityController sharedInstance] getLoggedInUser]
+                                                                      initWithUsername:_username
                                                                       ourVersion:[[IdentityController sharedInstance] getOurLatestVersion]
                                                                       theirUsername:thefriend.name
                                                                       assetLibrary:nil];
@@ -2180,7 +2182,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(REMenu *) createChatMenuMessage: (SurespotMessage *) message {
-    BOOL ours = [ChatUtils isOurMessage:message];
+    BOOL ours = [ChatUtils isOurMessage:message ourUsername:_username];
     NSMutableArray * menuItems = [NSMutableArray new];
     
     //copy
@@ -2238,9 +2240,9 @@ const Float32 voiceRecordDelay = 0.3;
                 if (message.shareable && !ours) {
                     [SDWebImageManager.sharedManager downloadWithURL: [NSURL URLWithString:message.data]
                                                             mimeType: MIME_TYPE_IMAGE
-                                                          ourVersion: [message getOurVersion]
-                                                       theirUsername: [message getOtherUser]
-                                                        theirVersion: [message getTheirVersion]
+                                                          ourVersion: [message getOurVersion: _username]
+                                                       theirUsername: [message getOtherUser: _username]
+                                                        theirVersion: [message getTheirVersion: _username]
                                                                   iv: [message iv]
                                                               hashed: [message hashed]
                                                              options: (SDWebImageOptions) 0
@@ -2293,7 +2295,7 @@ const Float32 voiceRecordDelay = 0.3;
     REMenuItem * deleteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_delete_message", nil) image:[UIImage imageNamed:@"ic_menu_delete"] highlightedImage:nil action:^(REMenuItem * item){
         
         //confirm if necessary
-        BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_delete_message"];
+        BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_delete_message"];
         if (confirm) {
             NSString * okString = NSLocalizedString(@"ok", nil);
             [UIAlertView showWithTitle:NSLocalizedString(@"delete_message", nil)
@@ -2515,7 +2517,7 @@ const Float32 voiceRecordDelay = 0.3;
 -(void) ensureVoiceDelegate {
     
     if (!_voiceDelegate) {
-        _voiceDelegate = [[VoiceDelegate alloc] initWithUsername:[[IdentityController sharedInstance] getLoggedInUser] ourVersion:[[IdentityController sharedInstance] getOurLatestVersion ]];
+        _voiceDelegate = [[VoiceDelegate alloc] initWithUsername:_username ourVersion:[[IdentityController sharedInstance] getOurLatestVersion ]];
     }
 }
 
@@ -2525,7 +2527,7 @@ const Float32 voiceRecordDelay = 0.3;
     [_buttonTimer invalidate];
     
     NSTimeInterval interval = -[_buttonDownDate timeIntervalSinceNow];
-   // Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
+    // Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
     
     if (interval < voiceRecordDelay) {
         
@@ -2584,7 +2586,7 @@ const Float32 voiceRecordDelay = 0.3;
         }
         else {
             if (![self handleTextActionResign:NO]) {
-                BOOL disableVoice = [UIUtils getBoolPrefWithDefaultNoForUser:[[IdentityController sharedInstance] getLoggedInUser] key:@"_user_pref_disable_voice"];
+                BOOL disableVoice = [UIUtils getBoolPrefWithDefaultNoForUser:_username key:@"_user_pref_disable_voice"];
                 if (!disableVoice) {
                     
                     [self ensureVoiceDelegate];
@@ -2651,7 +2653,7 @@ const Float32 voiceRecordDelay = 0.3;
     NSString * currentChat = [self getCurrentTabName];
     //show toast if we're not on the tab or home page, and pulse if we're logged in as the user
     if (currentChat) {
-        [UIUtils showToastMessage:[NSString stringWithFormat:NSLocalizedString(@"notification_invite", nil), [[IdentityController sharedInstance] getLoggedInUser], thefriend.nameOrAlias] duration:1];
+        [UIUtils showToastMessage:[NSString stringWithFormat:NSLocalizedString(@"notification_invite", nil), _username, thefriend.nameOrAlias] duration:1];
         
         [UIUtils startPulseAnimation:_backImageView];
     }
@@ -2683,13 +2685,13 @@ const Float32 voiceRecordDelay = 0.3;
     
     if ([specifier.key isEqualToString:@"_user_assign_background_image_key"]) {
         NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-        NSString * key = [NSString stringWithFormat:@"%@%@", [[IdentityController sharedInstance] getLoggedInUser], @"_background_image_url"];
+        NSString * key = [NSString stringWithFormat:@"%@%@", _username, @"_background_image_url"];
         NSURL * bgImageUrl = [defaults URLForKey:key];
         
         if (bgImageUrl) {
             NSString * assignString = NSLocalizedString(@"pref_title_background_image_select", nil);
             //set preference string
-            [defaults setObject:assignString forKey:[ [[IdentityController sharedInstance] getLoggedInUser] stringByAppendingString:specifier.key]];
+            [defaults setObject:assignString forKey:[ _username stringByAppendingString:specifier.key]];
             //remove image url from defaults
             [defaults removeObjectForKey:key];
             //delete image file from disk
@@ -2723,7 +2725,14 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (SurespotPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
     if (index == 0 && _imageMessage)
-        return [[SurespotPhoto alloc] initWithURL:[NSURL URLWithString:_imageMessage.data] encryptionParams:[[EncryptionParams alloc] initWithOurUsername:nil ourVersion:[_imageMessage getOurVersion] theirUsername: [_imageMessage getOtherUser] theirVersion:[_imageMessage getTheirVersion] iv:_imageMessage.iv hashed: [_imageMessage hashed]]];
+        return [[SurespotPhoto alloc] initWithURL:[NSURL URLWithString:_imageMessage.data]
+                                 encryptionParams:[[EncryptionParams alloc]
+                                                   initWithOurUsername:nil
+                                                   ourVersion:[_imageMessage getOurVersion: _username]
+                                                   theirUsername: [_imageMessage getOtherUser: _username]
+                                                   theirVersion:[_imageMessage getTheirVersion: _username]
+                                                   iv:_imageMessage.iv
+                                                   hashed: [_imageMessage hashed]]];
     return nil;
 }
 
@@ -2742,7 +2751,7 @@ const Float32 voiceRecordDelay = 0.3;
     self.popover = nil;
 }
 - (IBAction)qrTouch:(id)sender {
-    QRInviteViewController * controller = [[QRInviteViewController alloc] initWithNibName:@"QRInviteView" username: [[IdentityController sharedInstance] getLoggedInUser]];
+    QRInviteViewController * controller = [[QRInviteViewController alloc] initWithNibName:@"QRInviteView" username: _username];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         _popover = [[UIPopoverController alloc] initWithContentViewController:controller];
@@ -2776,7 +2785,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 -(void) setBackgroundImageController: (IASKAppSettingsViewController *) controller {
     NSUserDefaults  * defaults = [NSUserDefaults standardUserDefaults];
-    NSString * username = [[IdentityController sharedInstance] getLoggedInUser];
+    NSString * username = _username;
     NSURL * url = [defaults URLForKey:[NSString stringWithFormat:@"%@%@",username, @"_background_image_url"]];
     if (url) {
         _hasBackgroundImage = YES;
@@ -2788,7 +2797,7 @@ const Float32 voiceRecordDelay = 0.3;
         _hasBackgroundImage = NO;
         _bgImageView.image = nil;
         
-        [_bgImageView setBackgroundColor: [UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor]];
+        [_bgImageView setBackgroundColor: [UIUtils isBlackTheme: _username] ? [UIColor blackColor] : [UIColor whiteColor]];
         
     }
     
@@ -2798,7 +2807,7 @@ const Float32 voiceRecordDelay = 0.3;
         for (NSString * key in [_chats allKeys]) {
             id tableView = [_chats objectForKey:key];
             if ([tableView respondsToSelector:@selector(reloadData)]) {
-               [tableView reloadData];
+                [tableView reloadData];
             }
         }
     }
@@ -2842,13 +2851,13 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     NSString * to = [defaults objectForKey:@"notificationTo"];
     if ([notificationType isEqualToString:@"message"]) {
         NSString * from = [defaults objectForKey:@"notificationFrom"];
-        if (from && [to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]]) {
+        if (from && [to isEqualToString:_username]) {
             [self showChat:from];
         }
     }
     else {
         if ([notificationType isEqualToString:@"invite"]) {
-            if ([to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]]) {
+            if ([to isEqualToString:_username]) {
                 [self scrollHome];
             }
         }

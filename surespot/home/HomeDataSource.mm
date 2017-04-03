@@ -69,7 +69,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         NSArray * friendDicts = [JSON objectForKey:@"friends"];
         for (NSDictionary * friendDict in friendDicts) {
-            [_friends addObject:[[Friend alloc] initWithDictionary: friendDict]];
+            [_friends addObject:[[Friend alloc] initWithDictionary: friendDict ourUsername:_username]];
         };
         [self writeToDisk];
         [self postRefresh];

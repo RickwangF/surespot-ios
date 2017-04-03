@@ -30,6 +30,7 @@ static const NSInteger retryAttempts = 5;
 
 
 - (void)setMessage:(SurespotMessage *) message
+       ourUsername:(NSString *) ourUsername
           progress:(SDWebImageDownloaderProgressBlock)progressBlock
          completed:(SDWebImageCompletedBlock)completedBlock
       retryAttempt:(NSInteger) retryAttempt
@@ -43,9 +44,9 @@ static const NSInteger retryAttempts = 5;
         __weak MessageView *wself = self;
         id<SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadWithURL: url
                                                                                     mimeType: [message mimeType]
-                                                                                  ourVersion: [message getOurVersion]
-                                                                               theirUsername: [message getOtherUser]
-                                                                                theirVersion: [message getTheirVersion]
+                                                                                  ourVersion: [message getOurVersion: ourUsername]
+                                                                               theirUsername: [message getOtherUser: ourUsername]
+                                                                                theirVersion: [message getTheirVersion: ourUsername]
                                                                                           iv: [message iv]
                                                                                       hashed: [message hashed]
                                                                                      options: SDWebImageRetryFailed
@@ -82,7 +83,7 @@ static const NSInteger retryAttempts = 5;
                                                                                   //retry
                                                                                   if (retryAttempt < retryAttempts) {
                                                                                       DDLogVerbose(@"no data downloaded, retrying attempt: %ld", (long)retryAttempt+1);
-                                                                                      [self setMessage:message progress:progressBlock completed:completedBlock retryAttempt:retryAttempt+1];
+                                                                                      [self setMessage:message ourUsername: ourUsername progress:progressBlock completed:completedBlock retryAttempt:retryAttempt+1];
                                                                                       return;
                                                                                   }
                                                                                   else {

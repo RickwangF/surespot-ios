@@ -24,7 +24,7 @@
 +(CGFloat) keyboardHeightAdjustedForOrientation: (CGSize) size;
 +(UIColor *) surespotGrey;
 +(UIColor *) surespotTransparentGrey;
-+(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size;
++(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername;
 +(void) setImageMessageHeights: (SurespotMessage *)  message size: (CGSize) size;
 +(void) setVoiceMessageHeights: (SurespotMessage *)  message size: (CGSize) size;
 +(void) startSpinAnimation: (UIView *) view;
@@ -49,6 +49,6 @@
 + (NSString *) buildAliasStringForUsername: (NSString *) username alias: (NSString *) alias;
 + (BOOL) isIOS8Plus;
 + (NSString *)localizedStringForKey:(NSString *)key replaceValue:(NSString *)comment bundle: (NSBundle *) bundle table: (NSString *) table;
-+(BOOL) isBlackTheme;
++(BOOL) isBlackTheme: (NSString *) ourUsername;
 @end
 

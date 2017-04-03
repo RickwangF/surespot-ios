@@ -61,11 +61,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 
--(void) getSharedSecretForOurVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion hashed: (BOOL) hashed callback: (CallbackBlock) callback {
+-(void) getSharedSecretForOurUsername: ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion hashed: (BOOL) hashed callback: (CallbackBlock) callback {
     
     DDLogVerbose(@"getSharedSecretForOurVersion, queue size: %lu", (unsigned long)[_getSecretQueue operationCount] );
     
-    GetSharedSecretOperation * op = [[GetSharedSecretOperation alloc] initWithCache:self ourVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: hashed callback:callback];
+    GetSharedSecretOperation * op = [[GetSharedSecretOperation alloc] initWithCache:self ourUsername: ourUsername ourVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: hashed callback:callback];
     
     [self.getSecretQueue addOperation:op];
     
@@ -214,10 +214,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
 }
 
-- (void) getLatestVersionForUsername: (NSString *) username callback:(CallbackStringBlock) callback {
+- (void) getLatestVersionForOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback {
     DDLogVerbose(@"getLatestVersionForUsername, queue size: %lu", (unsigned long)[_keyVersionQueue operationCount] );
     
-    GetKeyVersionOperation * op = [[GetKeyVersionOperation alloc] initWithCache:self username:username completionCallback: callback];
+    GetKeyVersionOperation * op = [[GetKeyVersionOperation alloc] initWithCache:self ourUsername:ourUsername theirUsername: theirUsername completionCallback: callback];
     [self.getSecretQueue addOperation:op];
     
     

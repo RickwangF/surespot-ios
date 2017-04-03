@@ -24,15 +24,15 @@
     }    
 }
 
-+ (NSString *)  getOtherUserWithFrom: (NSString *) from andTo: (NSString *) to {
-    return [to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser] ] ? from : to;
++ (NSString *) getOtherUserWithFrom: (NSString *) from andTo: (NSString *) to ourUsername: (NSString *) ourUsername {
+    return [to isEqualToString: ourUsername] ? from : to;
 }
 + (NSString *) getOtherUserFromSpot: (NSString *) spot andUser: (NSString *) user {
     NSArray * split = [spot componentsSeparatedByString:@":"];
     return [split[0] isEqualToString:user] ? split[1] : split[0];
 }
-+ (BOOL) isOurMessage: (SurespotMessage *) message {
-    return  [[message from] isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]];
++ (BOOL) isOurMessage: (SurespotMessage *) message ourUsername: (NSString *) ourUsername {
+    return  [[message from] isEqualToString:ourUsername];
 }
 
 + (NSString *) hexFromData: (NSData *) data {

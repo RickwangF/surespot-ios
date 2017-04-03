@@ -163,7 +163,7 @@ static const int MAX_RETRY_DELAY = 30;
         SurespotMessage * message = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
         
         //mark voice message to play automatically if tab is open
-        if (![ChatUtils isOurMessage: message] && [message.mimeType isEqualToString:MIME_TYPE_M4A] && [[message getOtherUser] isEqualToString:[self getCurrentChat]]) {
+        if (![ChatUtils isOurMessage: message ourUsername:_username] && [message.mimeType isEqualToString:MIME_TYPE_M4A] && [[message getOtherUser: _username] isEqualToString:[self getCurrentChat]]) {
             message.playVoice = YES;
         }
         
@@ -267,7 +267,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) connect {
- //   NSString * loggedInUser = _username;//[[IdentityController sharedInstance] getLoggedInUser];
+ //   NSString * loggedInUser = _username;//_username;
     
     //if (loggedInUser) {
         DDLogDebug(@"connecting socket");
@@ -347,7 +347,7 @@ static const int MAX_RETRY_DELAY = 30;
     @synchronized (_chatDataSources) {
         ChatDataSource * dataSource = [self.chatDataSources objectForKey:friendname];
         if (dataSource == nil) {
-            dataSource = [[ChatDataSource alloc] initWithUsername:friendname loggedInUser:[[IdentityController sharedInstance] getLoggedInUser] availableId: availableId availableControlId:availableControlId callback: createCallback] ;
+            dataSource = [[ChatDataSource alloc] initWithTheirUsername:friendname ourUsername:_username availableId: availableId availableControlId:availableControlId callback: createCallback] ;
             
             Friend  * afriend = [_homeDataSource getFriendByName:friendname];
             if (afriend && [afriend isDeleted]) {
@@ -436,7 +436,7 @@ static const int MAX_RETRY_DELAY = 30;
     @synchronized (_chatDataSources) {
         for (id username in [_chatDataSources allKeys]) {
             ChatDataSource * chatDataSource = [self getDataSourceForFriendname: username];
-            NSString * spot = [ChatUtils getSpotUserA: [[IdentityController sharedInstance] getLoggedInUser] userB: username];
+            NSString * spot = [ChatUtils getSpotUserA: _username userB: username];
             
             DDLogVerbose(@"getting message and control data for spot: %@",spot );
             NSMutableDictionary * messageId = [[NSMutableDictionary alloc] init];
@@ -470,7 +470,7 @@ static const int MAX_RETRY_DELAY = 30;
             while (spot = [keyEnumerator nextObject]) {
                 
                 NSInteger availableId = [[conversationIds objectForKey:spot] integerValue];
-                NSString * user = [ChatUtils getOtherUserFromSpot:spot andUser:[[IdentityController sharedInstance] getLoggedInUser]];
+                NSString * user = [ChatUtils getOtherUserFromSpot:spot andUser:_username];
                 [_homeDataSource setAvailableMessageId:availableId forFriendname: user suppressNew: suppressNew];
             }
         }
@@ -481,7 +481,7 @@ static const int MAX_RETRY_DELAY = 30;
             NSString * spot;
             while (spot = [keyEnumerator nextObject]) {
                 NSInteger availableId = [[controlIds objectForKey:spot] integerValue];
-                NSString * user = [ChatUtils getOtherUserFromSpot:spot andUser:[[IdentityController sharedInstance] getLoggedInUser]];
+                NSString * user = [ChatUtils getOtherUserFromSpot:spot andUser:_username];
                 
                 [_homeDataSource setAvailableMessageControlId:availableId forFriendname: user];
             }
@@ -546,14 +546,14 @@ static const int MAX_RETRY_DELAY = 30;
     DDLogVerbose(@"message: %@", message);
     
     NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion];
-    NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
+   // NSString * loggedInUser = _username;
     NSData * iv = [EncryptionController getIv];
     
     NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
     [dict setObject:friendname forKey:@"to"];
-    [dict setObject:loggedInUser forKey:@"from"];
+    [dict setObject:_username forKey:@"from"];
     [dict setObject:ourLatestVersion forKey:@"fromVersion"];
     [dict setObject:b64iv forKey:@"iv"];
     [dict setObject:@"text/plain" forKey:@"mimeType"];
@@ -563,7 +563,7 @@ static const int MAX_RETRY_DELAY = 30;
     
     //cache the plain data locally
     sm.plainData = message;
-    [UIUtils setTextMessageHeights:sm size:[UIScreen mainScreen].bounds.size];
+    [UIUtils setTextMessageHeights:sm size:[UIScreen mainScreen].bounds.size ourUsername:_username];
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
@@ -571,11 +571,11 @@ static const int MAX_RETRY_DELAY = 30;
     
     
     //todo execute in background
-    [[IdentityController sharedInstance] getTheirLatestVersionForUsername:[sm to] callback:^(NSString * version) {
+    [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername: _username theirUsername: [sm to] callback:^(NSString * version) {
         
         if (version) {
             
-            [EncryptionController symmetricEncryptString: [sm plainData] ourVersion:[sm fromVersion] theirUsername:[sm to] theirVersion:version iv:iv callback:^(NSString * cipherText) {
+            [EncryptionController symmetricEncryptString: [sm plainData] ourUsername: _username ourVersion:[sm fromVersion] theirUsername:[sm to] theirVersion:version iv:iv callback:^(NSString * cipherText) {
                 
                 if (cipherText) {
                     sm.toVersion = version;
@@ -756,7 +756,7 @@ static const int MAX_RETRY_DELAY = 30;
         
         if ([message readyToSend]) {
             //see if we have plain text, re-encrypt and send
-            NSString * otherUser = [message getOtherUser];
+            NSString * otherUser = [message getOtherUser: _username];
             NSInteger lastMessageId = 0;
             ChatDataSource * cds = [_chatDataSources objectForKey:otherUser];
             if (cds) {
@@ -788,7 +788,7 @@ static const int MAX_RETRY_DELAY = 30;
     if (foundMessage ) {
         [_resendBuffer removeObject:foundMessage];
         foundMessage.errorStatus = errorMessage.status;
-        ChatDataSource * cds = [self getDataSourceForFriendname:[foundMessage getOtherUser]];
+        ChatDataSource * cds = [self getDataSourceForFriendname:[foundMessage getOtherUser: _username]];
         if (cds) {
             [cds postRefresh];
         }
@@ -797,7 +797,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) handleMessage: (SurespotMessage *) message {
-    NSString * otherUser = [message getOtherUser];
+    NSString * otherUser = [message getOtherUser: _username];
     BOOL isNew = YES;
     ChatDataSource * cds = [self getDataSourceForFriendname:otherUser];
     if (cds) {
@@ -908,7 +908,7 @@ static const int MAX_RETRY_DELAY = 30;
     }
     else {
         if ([message.type isEqualToString:@"message"]) {
-            NSString * otherUser = [ChatUtils getOtherUserFromSpot:message.data andUser:[[IdentityController sharedInstance] getLoggedInUser]];
+            NSString * otherUser = [ChatUtils getOtherUserFromSpot:message.data andUser:_username];
             ChatDataSource * cds = [_chatDataSources objectForKey:otherUser];
             
             
@@ -971,7 +971,7 @@ static const int MAX_RETRY_DELAY = 30;
                 if ([message.action isEqualToString:@"invite"]) {
                     user = message.data;
                     
-                    [[SoundController sharedInstance] playInviteSoundForUser: [[IdentityController sharedInstance] getLoggedInUser]];
+                    [[SoundController sharedInstance] playInviteSoundForUser: _username];
                     [_homeDataSource addFriendInviter: user ];
                 }
                 else {
@@ -1046,7 +1046,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 - (void) inviteUser: (NSString *) username {
-    NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
+    NSString * loggedInUser = _username;
     if ([UIUtils stringIsNilOrEmpty:username] || [username isEqualToString:loggedInUser]) {
         return;
     }
@@ -1091,9 +1091,9 @@ static const int MAX_RETRY_DELAY = 30;
     [_homeDataSource setFriend: username];
     
     //if i'm not the accepter fire a notification saying such
-    if (![byUsername isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]]) {
-        [UIUtils showToastMessage:[NSString stringWithFormat:NSLocalizedString(@"notification_invite_accept", nil), [[IdentityController sharedInstance] getLoggedInUser], byUsername] duration:1];
-        [[SoundController sharedInstance] playInviteAcceptedSoundForUser:[[IdentityController sharedInstance] getLoggedInUser]];
+    if (![byUsername isEqualToString:_username]) {
+        [UIUtils showToastMessage:[NSString stringWithFormat:NSLocalizedString(@"notification_invite_accept", nil), _username, byUsername] duration:1];
+        [[SoundController sharedInstance] playInviteAcceptedSoundForUser:_username];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:@"inviteAccepted" object:byUsername];
         });
@@ -1152,14 +1152,14 @@ static const int MAX_RETRY_DELAY = 30;
     Friend * theFriend = [_homeDataSource getFriendByName:deleted];
     
     if (theFriend) {
-        NSString * username = [[IdentityController sharedInstance] getLoggedInUser];
-        BOOL iDeleted = [deleter isEqualToString:username];
+
+        BOOL iDeleted = [deleter isEqualToString:_username];
         NSArray * data = [NSArray arrayWithObjects:theFriend.name, [NSNumber numberWithBool: iDeleted], nil];
         
         
         if (iDeleted) {
             //get latest version
-            [[CredentialCachingController sharedInstance] getLatestVersionForUsername:deleted callback:^(NSString *version) {
+            [[CredentialCachingController sharedInstance] getLatestVersionForOurUsername: _username theirUsername: deleted callback:^(NSString *version) {
                 
                 //fire this first so tab closes and saves data before we delete all the data
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"deleteFriend" object: data];
@@ -1168,10 +1168,10 @@ static const int MAX_RETRY_DELAY = 30;
                 [_homeDataSource removeFriend:theFriend withRefresh:YES];
                 
                 //wipe user state
-                [FileController wipeDataForUsername:username friendUsername:deleted];
+                [FileController wipeDataForUsername:_username friendUsername:deleted];
                 
                 //clear cached user data
-                [[CredentialCachingController sharedInstance] clearUserData: deleted];
+                [[CredentialCachingController sharedInstance] clearUserData: _username theirUsername: deleted];
                 
                 
                 //clear http cache
@@ -1250,7 +1250,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 - (void) deleteFriend: (Friend *) thefriend {
     if (thefriend) {
-        NSString * username = [[IdentityController sharedInstance] getLoggedInUser];
+        NSString * username = _username;
         NSString * friendname = thefriend.name;
         
         [self startProgress];
@@ -1267,12 +1267,12 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) deleteMessage: (SurespotMessage *) message {
     if (message) {
-        ChatDataSource * cds = [_chatDataSources objectForKey:[message getOtherUser]];
+        ChatDataSource * cds = [_chatDataSources objectForKey:[message getOtherUser: _username]];
         if (cds) {
             if (message.serverid > 0) {
                 
                 [self startProgress];
-                [[[NetworkManager sharedInstance] getNetworkController:_username] deleteMessageName:[message getOtherUser] serverId:[message serverid] successBlock:^(NSURLSessionTask *operation, id responseObject) {
+                [[[NetworkManager sharedInstance] getNetworkController:_username] deleteMessageName:[message getOtherUser: _username] serverId:[message serverid] successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds deleteMessage: message initiatedByMe: YES];
                     [self stopProgress];
                 } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
@@ -1339,12 +1339,12 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) toggleMessageShareable: (SurespotMessage *) message {
     if (message) {
-        ChatDataSource * cds = [_chatDataSources objectForKey:[message getOtherUser]];
+        ChatDataSource * cds = [_chatDataSources objectForKey:[message getOtherUser: _username]];
         if (cds) {
             if (message.serverid > 0) {
                 
                 [self startProgress];
-                [[[NetworkManager sharedInstance] getNetworkController:_username] setMessageShareable:[message getOtherUser] serverId:[message serverid] shareable:!message.shareable successBlock:^(NSURLSessionTask *operation, id responseObject) {
+                [[[NetworkManager sharedInstance] getNetworkController:_username] setMessageShareable:[message getOtherUser: _username] serverId:[message serverid] shareable:!message.shareable successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds setMessageId: message.serverid shareable: [[[NSString alloc] initWithData: responseObject encoding:NSUTF8StringEncoding] isEqualToString:@"shareable"] ? YES : NO];
                     [self stopProgress];
                 } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
@@ -1368,13 +1368,13 @@ static const int MAX_RETRY_DELAY = 30;
         NSData * data = [[[SDWebImageManager sharedManager] imageCache] diskImageDataBySearchingAllPathsForKey:message.data];
         if (data) {
             resendMessage.errorStatus = 0;
-            ChatDataSource * cds = [self getDataSourceForFriendname:[message getOtherUser]];
+            ChatDataSource * cds = [self getDataSourceForFriendname:[message getOtherUser: _username]];
             [cds postRefresh];
             [self startProgress];
             [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData: data
-                                                        ourVersion:[message getOurVersion]
-                                                     theirUsername:[message getOtherUser]
-                                                      theirVersion:[message getTheirVersion]
+                                                        ourVersion:[message getOurVersion: _username]
+                                                     theirUsername:[message getOtherUser: _username]
+                                                      theirVersion:[message getTheirVersion: _username]
                                                             fileid:message.iv
                                                           mimeType:message.mimeType
                                                       successBlock:^(id JSON) {
@@ -1445,10 +1445,11 @@ static const int MAX_RETRY_DELAY = 30;
 -(void) assignFriendAlias: (NSString *) alias toFriendName: (NSString *) friendname  callbackBlock: (CallbackBlock) callbackBlock {
     [self startProgress];
     NSString * version = [[IdentityController sharedInstance] getOurLatestVersion];
-    NSString * username = [[IdentityController sharedInstance] getLoggedInUser];
+    NSString * username = _username;
     NSData * iv = [EncryptionController getIv];
     //encrypt
     [EncryptionController symmetricEncryptData:[alias dataUsingEncoding:NSUTF8StringEncoding]
+                                   ourUsername:_username
                                     ourVersion:version
                                  theirUsername:username
                                   theirVersion:version

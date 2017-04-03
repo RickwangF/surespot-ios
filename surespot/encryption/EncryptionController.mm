@@ -595,9 +595,9 @@ int const PBKDF_ROUNDS = 20000;
     
 }
 
-+(void) symmetricEncryptString: (NSString *) plaintext ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSData *) iv callback: (CallbackBlock) callback {
++(void) symmetricEncryptString: (NSString *) plaintext ourUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSData *) iv callback: (CallbackBlock) callback {
     
-    [[CredentialCachingController sharedInstance] getSharedSecretForOurVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: YES callback: ^(NSData * secret) {
+    [[CredentialCachingController sharedInstance] getSharedSecretForOurUsername: ourUsername ourVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: YES callback: ^(NSData * secret) {
         if (secret) {
             NSData * cipherText = [EncryptionController encryptPlain:plaintext usingKey:secret usingIv:iv];
             callback([cipherText SR_stringByBase64Encoding]);
@@ -609,9 +609,9 @@ int const PBKDF_ROUNDS = 20000;
     
 }
 
-+(void) symmetricEncryptData: (NSData *) data ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSData *) iv callback: (CallbackBlock) callback {
++(void) symmetricEncryptData: (NSData *) data ourUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSData *) iv callback: (CallbackBlock) callback {
     
-    [[CredentialCachingController sharedInstance] getSharedSecretForOurVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: YES callback: ^(NSData * secret) {
+    [[CredentialCachingController sharedInstance] getSharedSecretForOurUsername:ourUsername ourVersion: ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: YES callback: ^(NSData * secret) {
         if (secret) {
             NSData * cipherData = [EncryptionController encryptData:data usingKey:secret usingIv:iv];
             callback(cipherData);
@@ -623,9 +623,9 @@ int const PBKDF_ROUNDS = 20000;
     
 }
 
-+(void) symmetricDecryptString: (NSString *) cipherData ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSString *) iv hashed:(BOOL) hashed callback: (CallbackBlock) callback {
++(void) symmetricDecryptString: (NSString *) cipherData ourUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSString *) iv hashed:(BOOL) hashed callback: (CallbackBlock) callback {
     
-    [[CredentialCachingController sharedInstance] getSharedSecretForOurVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: hashed callback: ^(NSData * secret) {
+    [[CredentialCachingController sharedInstance] getSharedSecretForOurUsername: ourUsername ourVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: hashed callback: ^(NSData * secret) {
         if (secret) {
             NSData * ivData = [NSData dataFromBase64String:iv];
             NSString * plainText = [EncryptionController decryptCipher:cipherData usingKey:secret usingIv:ivData];

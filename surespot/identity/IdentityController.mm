@@ -249,9 +249,9 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     return [[[CredentialCachingController sharedInstance] getLoggedInIdentity] latestVersion];
 }
 
-- (void) getTheirLatestVersionForUsername: (NSString *) username callback:(CallbackStringBlock) callback {
+- (void) getTheirLatestVersionForOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback {
     DDLogVerbose(@"getTheirLatestVersionForUsername");
-    [[CredentialCachingController sharedInstance] getLatestVersionForUsername: username callback: callback];
+    [[CredentialCachingController sharedInstance] getLatestVersionForOurUsername: ourUsername theirUsername: theirUsername callback: callback];
 }
 
 -(BOOL) verifyPublicKeys: (NSDictionary *) keys {

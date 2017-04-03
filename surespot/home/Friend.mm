@@ -20,35 +20,39 @@
 
 @interface  Friend()
 @property (nonatomic, assign) BOOL newMessages;
+@property (nonatomic, assign) NSString * ourUsername;
 @end
 
 @implementation Friend
-- (id) initWithJSONString: (NSString *) jsonString {
-    
-    // Call superclass's initializer
-    self = [super init];
-    if( !self ) return nil;
-    
-    NSDictionary * friendData = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
-    
-    [self parseDictionary:friendData];
-    [self decryptAlias];
-    return self;
-}
+//- (id) initWithJSONString: (NSString *) jsonString ourUsername: (NSString *) ourUsername {
+//    
+//    // Call superclass's initializer
+//    self = [super init];
+//    if( !self ) return nil;
+//    
+//    NSDictionary * friendData = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
+//    
+//    [self parseDictionary:friendData];
+//    [self decryptAlias];
+//    self.ourUsername = ourUsername;
+//    return self;
+//}
 
-- (id) initWithDictionary:(NSDictionary *) dictionary {
+- (id) initWithDictionary:(NSDictionary *) dictionary ourUsername: (NSString *) ourUsername {
     
     // Call superclass's initializer
     self = [super init];
     if( !self ) return nil;
     [self parseDictionary:dictionary];
     [self decryptAlias];
+    self.ourUsername = ourUsername;
     return self;
 }
 
 -(id) initWithCoder:(NSCoder *)coder {
     self = [super init];
     if (self) {
+        _ourUsername = [coder decodeObjectForKey:@"ourUsername"];
         _name = [coder decodeObjectForKey:@"name"];
         _flags = [coder decodeIntegerForKey:@"flags"];
         _newMessages = [coder decodeBoolForKey:@"hasNewMessages"];
@@ -70,6 +74,7 @@
 
 
 -(void) parseDictionary:(NSDictionary *) dictionary {
+  //  _ourUsername = [dictionary objectForKey:@"ourUsername"];
     _name = [dictionary objectForKey:@"name"];
     _flags = [[dictionary  objectForKey:@"flags"] integerValue];
     _imageVersion = [dictionary objectForKey:@"imageVersion"];
@@ -84,6 +89,7 @@
 }
 
 -(void) encodeWithCoder:(NSCoder *)encoder {
+    [encoder encodeObject:_ourUsername forKey:@"ourUsername"];
     [encoder encodeObject:_name forKey:@"name"];
     [encoder encodeInteger:_flags forKey:@"flags"];
     [encoder encodeBool:_newMessages forKey:@"hasNewMessages"];
@@ -103,7 +109,7 @@
 
 -(void) decryptAlias {
     if ([self hasFriendAliasAssigned] && [UIUtils stringIsNilOrEmpty: _aliasPlain]) {
-        [EncryptionController symmetricDecryptString:_aliasData ourVersion:_aliasVersion theirUsername:[[IdentityController sharedInstance] getLoggedInUser] theirVersion:_aliasVersion iv:_aliasIv hashed: _aliasHashed callback:^(id result) {
+        [EncryptionController symmetricDecryptString:_aliasData ourUsername: _ourUsername ourVersion:_aliasVersion theirUsername:_ourUsername theirVersion:_aliasVersion iv:_aliasIv hashed: _aliasHashed callback:^(id result) {
             _aliasPlain = result;
         }];
         

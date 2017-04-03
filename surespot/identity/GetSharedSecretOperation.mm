@@ -31,6 +31,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @interface GetSharedSecretOperation()
 @property (nonatomic) CredentialCachingController * cache;
+@property (nonatomic) NSString * ourUsername;
 @property (nonatomic) NSString * ourVersion;
 @property (nonatomic) NSString * theirUsername;
 @property (nonatomic) NSString * theirVersion;
@@ -45,6 +46,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @implementation GetSharedSecretOperation
 
 -(id) initWithCache: (CredentialCachingController *) cache
+        ourUsername: (NSString *) ourUsername
          ourVersion: (NSString *) ourVersion
       theirUsername: (NSString *) theirUsername
        theirVersion: (NSString *) theirVersion
@@ -77,11 +79,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     if (_hashed) {
         sharedSecretKey =
-        [NSString stringWithFormat:@"%@:%@:%@:%@:%d", self.cache.loggedInUsername, self.ourVersion, self.theirUsername, self.theirVersion, self.hashed];
+        [NSString stringWithFormat:@"%@:%@:%@:%@:%d", self.ourUsername, self.ourVersion, self.theirUsername, self.theirVersion, self.hashed];
     }
     else {
         sharedSecretKey =
-        [NSString stringWithFormat:@"%@:%@:%@:%@", self.cache.loggedInUsername, self.ourVersion, self.theirUsername, self.theirVersion];
+        [NSString stringWithFormat:@"%@:%@:%@:%@", self.ourUsername, self.ourVersion, self.theirUsername, self.theirVersion];
     }
     
     DDLogVerbose(@"checking dictionary for shared secret for:  %@" , sharedSecretKey);

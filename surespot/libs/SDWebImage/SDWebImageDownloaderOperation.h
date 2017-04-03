@@ -17,7 +17,8 @@
 
 - (id)initWithRequest:(NSURLRequest *)request
              mimeType: (NSString *) mimeType
-           ourVersion: (NSString *) ourversion
+          ourUsername: (NSString *) ourUsername
+           ourVersion: (NSString *) ourVersion
         theirUsername: (NSString *) theirUsername
          theirVersion: (NSString *) theirVersion
                    iv: (NSString *) iv

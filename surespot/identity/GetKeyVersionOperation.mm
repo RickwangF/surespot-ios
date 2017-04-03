@@ -20,7 +20,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @interface GetKeyVersionOperation()
 @property (nonatomic) CredentialCachingController * cache;
-@property (nonatomic, strong) NSString * username;
+@property (nonatomic, strong) NSString * ourUsername;
+@property (nonatomic, strong) NSString * theirUsername;
 @property (nonatomic, strong) CallbackStringBlock callback;
 @property (nonatomic) BOOL isExecuting;
 @property (nonatomic) BOOL isFinished;
@@ -31,13 +32,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @implementation GetKeyVersionOperation
 
--(id) initWithCache: (CredentialCachingController *) cache username: (NSString *) username completionCallback: (CallbackStringBlock)  callback {
+-(id) initWithCache: (CredentialCachingController *) cache ourUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername completionCallback: (CallbackStringBlock)  callback {
     
 
     if (self = [super init]) {
         self.cache = cache;
         self.callback = callback;
-        self.username = username;
+        self.ourUsername = ourUsername;
+        self.theirUsername = theirUsername;
         
         _isExecuting = NO;
         _isFinished = NO;
@@ -50,16 +52,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     _isExecuting = YES;
     [self didChangeValueForKey:@"isExecuting"];
     
-    NSString * latestVersion = [_cache.latestVersionsDict objectForKey:_username];
+    NSString * latestVersion = [_cache.latestVersionsDict objectForKey:_theirUsername];
     if (!latestVersion) {
         
-        [[[NetworkManager sharedInstance] getNetworkController:_username]
-         getKeyVersionForUsername: _username
+        [[[NetworkManager sharedInstance] getNetworkController:_ourUsername]
+         getKeyVersionForUsername: _theirUsername
          successBlock:^(NSURLSessionTask *operation, id responseObject) {
              NSString * responseObjectS =   [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-             DDLogVerbose(@"caching key version: %@ for username: %@", responseObjectS, _username);
+             DDLogVerbose(@"caching key version: %@ for username: %@", responseObjectS, _theirUsername);
              
-             [_cache.latestVersionsDict setObject:responseObjectS forKey:_username];
+             [_cache.latestVersionsDict setObject:responseObjectS forKey:_theirUsername];
              [_cache saveLatestVersions];
              [self finish:responseObjectS];
              
@@ -72,7 +74,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
          }];
     }
     else {
-        DDLogVerbose(@"returning cached key version: %@ for user: %@", latestVersion, _username);
+        DDLogVerbose(@"returning cached key version: %@ for user: %@", latestVersion, _theirUsername);
         [self finish: latestVersion];
     }
 
