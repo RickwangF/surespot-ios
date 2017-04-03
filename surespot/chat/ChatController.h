@@ -38,7 +38,6 @@
 -(void) toggleMessageShareable: (SurespotMessage *) message;
 -(void) resendFileMessage: (SurespotMessage *) message;
 -(void) setFriendImageUrl: (NSString *) url forFriendname: (NSString *) name version: (NSString *) version iv: (NSString *) iv hashed:(BOOL)hashed;
--(void) clearData;
 -(BOOL) isConnected;
 -(void) assignFriendAlias: (NSString *) alias toFriendName: (NSString *) friendname  callbackBlock: (CallbackBlock) callbackBlock;
 -(void) removeFriendAlias: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock;

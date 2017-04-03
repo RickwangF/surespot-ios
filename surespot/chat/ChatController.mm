@@ -909,6 +909,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) handleUserControlMessage: (SurespotControlMessage *) message {
     if (message.controlId > _homeDataSource.latestUserControlId) {
+        DDLogDebug(@"handleUserControlMessage setting latestUserControlId: %ld", (long)message.controlId);
         _homeDataSource.latestUserControlId = message.controlId;
     }
     NSString * user;
@@ -1194,15 +1195,6 @@ static const int MAX_RETRY_DELAY = 30;
 -(void) logout {
     DDLogInfo(@"logout");
     [self pause];
-    [self clearData];
-}
-
--(void) clearData {
-    @synchronized (_chatDataSources) {
-        [_chatDataSources removeAllObjects];
-    }
-    //  _homeDataSource.currentChat = nil;
-    _homeDataSource = nil;
 }
 
 - (void) deleteFriend: (Friend *) thefriend {

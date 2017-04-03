@@ -644,7 +644,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 - (void) swipeViewDidScroll:(SwipeView *)scrollView {
-    DDLogVerbose(@"swipeViewDidScroll");
+   // DDLogVerbose(@"swipeViewDidScroll");
     [_viewPager scrollViewDidScroll: scrollView.scrollView];
     
 }
@@ -672,7 +672,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(NSString * ) titleForLabelForPage:(NSInteger)page {
-    DDLogVerbose(@"titleForLabelForPage %ld", (long)page);
+   // DDLogVerbose(@"titleForLabelForPage %ld", (long)page);
     if (page == 0) {
         return @"home";
     }
@@ -2448,42 +2448,17 @@ const Float32 voiceRecordDelay = 0.3;
     DDLogVerbose(@"logout");
     
     //blow the views away
-    
     _friendView = nil;
-    //
-    //    for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
-    //        DDLogVerbose(@"gesture: %@)", gesture);
-    //        for (UIGestureRecognizer *sideMenuGesture in _sideMenuGestures) {
-    //            [gesture rem];
-    //        }
-    //    }
-    
-    //remove gestures
-    for (id gesture in _sideMenuGestures) {
-        [self.view removeGestureRecognizer:gesture];
-        [self.navigationController.view removeGestureRecognizer:gesture];
-        [self.swipeView.scrollView removeGestureRecognizer:gesture];
-    }
-    
-    
     
     [[[NetworkManager sharedInstance] getNetworkController:_username] logout];
     [[[ChatManager sharedInstance] getChatController: _username] logout];
     [[IdentityController sharedInstance] logout];
-    @synchronized (_chats) {
-        [_chats removeAllObjects];
-        // [_swipeView reloadData];
-    }
-    
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
     
     [_swipeView removeFromSuperview];
     _swipeView = nil;
-    
-    
-    
-    
+ 
     //could be logging out as a result of deleting the logged in identity, which could be the only identity
     //if this is the case we want to go to the signup screen not the login screen
     //make it like a pop by inserting view controller into stack and popping
@@ -2501,16 +2476,10 @@ const Float32 voiceRecordDelay = 0.3;
     NSArray *vcs =  @[viewController, self];
     [self.navigationController setViewControllers:vcs animated:NO];
     [self.navigationController popViewControllerAnimated:YES];
-    
-    
-    
-    
 }
 
-
-
 -(void) ensureVoiceDelegate {
-    
+
     if (!_voiceDelegate) {
         _voiceDelegate = [[VoiceDelegate alloc] initWithUsername:_username ourVersion:[[IdentityController sharedInstance] getOurLatestVersion ]];
     }
@@ -2529,7 +2498,6 @@ const Float32 voiceRecordDelay = 0.3;
         if (![self handleTextActionResign:NO]) {
             [self resignAllResponders];
             [self scrollHome];
-            
         }
     }
     else {

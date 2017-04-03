@@ -14,8 +14,7 @@
 #import "IdentityController.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelOff;
-//static const DDLogLevel ddLogLevel = DDLogLevelOff;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -59,7 +58,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) loadFriendsCallback: (void(^)(BOOL success)) callback{
-    DDLogInfo(@"startProgress");
+    DDLogInfo(@"loadFriends");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
     
     [[[NetworkManager sharedInstance] getNetworkController:_username] getFriendsSuccessBlock:^(NSURLSessionTask *task, id JSON) {
@@ -74,14 +73,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [self writeToDisk];
         [self postRefresh];
         callback(YES);
-        DDLogInfo(@"stopProgress");
+        DDLogInfo(@"loadFriends success");
         [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
         
     } failureBlock:^(NSURLSessionTask *operation,  NSError *Error) {
         DDLogInfo(@"response failure: %@",  Error);
         [self postRefresh];
         callback(NO);
-        DDLogInfo(@"stopProgress");
+        DDLogInfo(@"loadFriends failure");
         [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
         
     }];
