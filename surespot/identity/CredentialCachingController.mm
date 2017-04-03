@@ -63,7 +63,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) getSharedSecretForOurUsername: ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion hashed: (BOOL) hashed callback: (CallbackBlock) callback {
     
-    DDLogVerbose(@"getSharedSecretForOurVersion, queue size: %lu", (unsigned long)[_getSecretQueue operationCount] );
+    DDLogVerbose(@"getSharedSecretForOurUsername, queue size: %lu", (unsigned long)[_getSecretQueue operationCount] );
     
     GetSharedSecretOperation * op = [[GetSharedSecretOperation alloc] initWithCache:self ourUsername: ourUsername ourVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: hashed callback:callback];
     

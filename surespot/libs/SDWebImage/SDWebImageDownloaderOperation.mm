@@ -70,6 +70,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if ((self = [super init]))
     {
         _request = request;
+        _ourUsername = ourUsername;
         _ourVersion = ourversion;
         _theirUsername = theirUsername;
         _theirVersion = theirVersion;
