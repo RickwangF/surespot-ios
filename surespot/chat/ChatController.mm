@@ -1128,7 +1128,7 @@ static const int MAX_RETRY_DELAY = 30;
                 [FileController wipeDataForUsername:_username friendUsername:deleted];
                 
                 //clear cached user data
-                [[CredentialCachingController sharedInstance] clearUserData: _username theirUsername: deleted];
+                [[CredentialCachingController sharedInstance] clearUserData: deleted];
                 
                 
                 //clear http cache

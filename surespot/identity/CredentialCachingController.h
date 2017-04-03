@@ -27,9 +27,9 @@
 
 -(void) getSharedSecretForOurUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion hashed: (BOOL) hashed callback: (CallbackBlock) callback;
 -(void) loginIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie: (NSHTTPCookie *) cookie;
+-(void) clearUserData: (NSString *) theirUsername;
 
-- (void) getLatestVersionForOurUsername: (NSString *) ourUsername  theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback;
--(void) clearUserData: (NSString *) ourUsername theirUsername: (NSString *) theirUsername;
+-(void) getLatestVersionForOurUsername: (NSString *) ourUsername  theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback;
 -(void) updateLatestVersionForUsername: (NSString *) username version: (NSString *) version;
 
 -(void) logout;
