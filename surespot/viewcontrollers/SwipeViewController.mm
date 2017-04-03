@@ -2696,9 +2696,9 @@ const Float32 voiceRecordDelay = 0.3;
         else {
             //select and assign image
             _imageDelegate = [[ImageDelegate alloc]
-                              initWithUsername:nil
-                              ourVersion:nil
-                              theirUsername:nil
+                              initWithUsername:_username
+                              ourVersion:[[IdentityController sharedInstance] getOurLatestVersion]
+                              theirUsername:_username
                               assetLibrary:_assetLibrary];
             [ImageDelegate startBackgroundImageSelectControllerFromViewController:sender usingDelegate:_imageDelegate];
         }
