@@ -75,7 +75,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 //load message data
                 //   DDLogInfo(@"startProgress: %@", username);
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
-                [[[NetworkManager sharedInstance] getNetworkController:_username] getMessageDataForUsername:_username andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
+                [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getMessageDataForUsername:_username andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
                     //    DDLogInfo(@"get messageData response");
                     
                     NSArray * controlMessages =[((NSDictionary *) JSON) objectForKey:@"controlMessages"];
@@ -599,7 +599,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             return;
         }
         
-        [[[NetworkManager sharedInstance] getNetworkController:_username] getEarlierMessagesForUsername:_username messageId:earliestMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
+        [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getEarlierMessagesForUsername:_username messageId:earliestMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
             
             NSArray * messages = JSON;
             if (messages.count == 0) {
