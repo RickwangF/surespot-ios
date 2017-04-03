@@ -356,6 +356,9 @@ static const int MAX_RETRY_DELAY = 30;
             
             [self.chatDataSources setObject: dataSource forKey: friendname];
         }
+        else {
+            createCallback(nil);
+        }
         return dataSource;
     }
 }

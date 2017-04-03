@@ -557,20 +557,17 @@ const Float32 voiceRecordDelay = 0.3;
     //save scroll indices
     
     @synchronized (_chats) {
-        for (NSString * key in [_chats allKeys]) {
+        for (NSString * key in [_chats allKeys]) {                          
+            id tableView = [_chats objectForKey:key];
             
-            UITableView * tableView = [_chats objectForKey:key];
-            
-            NSArray * visibleCells = [tableView indexPathsForVisibleRows];
-            
-            if ([visibleCells count ] > 0) {
+            if ([tableView respondsToSelector:@selector(indexPathsForVisibleRows)]) {
+                NSArray * visibleCells = [tableView indexPathsForVisibleRows];
                 
-                id indexPath =[visibleCells objectAtIndex:[visibleCells count]-1];
-                
-                DDLogVerbose(@"saving index path %@ for key %@", indexPath , key);
-                
-                [_bottomIndexPaths setObject: indexPath forKey: key ];
-                
+                if ([visibleCells count ] > 0) {
+                    id indexPath =[visibleCells objectAtIndex:[visibleCells count]-1];
+                    DDLogVerbose(@"saving index path %@ for key %@", indexPath , key);
+                    [_bottomIndexPaths setObject: indexPath forKey: key ];
+                }
             }
         }
     }
