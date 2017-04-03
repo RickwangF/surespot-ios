@@ -60,15 +60,21 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return self;
 }
 
+
 - (void)URLSession:(NSURLSession *)session
 didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
  completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler{
     
-    [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
-        completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
-    } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
-        completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
-    }];
+    if (_username) {
+        [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
+            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+        } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
+            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+        }];
+    }
+    else {
+        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+    }
     
 }
 

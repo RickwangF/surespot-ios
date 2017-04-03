@@ -43,7 +43,7 @@
 #import "SideMenu-Swift.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelDebug;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -1902,7 +1902,7 @@ const Float32 voiceRecordDelay = 0.3;
         NSString * inviteUrl = [NSString stringWithFormat:@"%@%@%@", @"https://server.surespot.me/autoinvite/", [_username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/ios"];
         
         
-        [[[NetworkManager sharedInstance] getNetworkController:_username] getShortUrl:inviteUrl callback:^(id shortUrl) {
+        [[[NetworkManager sharedInstance] getNetworkController:nil] getShortUrl:inviteUrl callback:^(id shortUrl) {
             [_progressView removeView];
             NSString * text = [NSString stringWithFormat:NSLocalizedString(@"external_invite_message", nil), shortUrl];
             
