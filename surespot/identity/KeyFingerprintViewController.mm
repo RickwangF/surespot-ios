@@ -30,6 +30,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface KeyFingerprintViewController()
+@property (strong, nonatomic) NSString * ourUsername;
 @property (strong, nonatomic) UsernameAliasMap * usernameMap;
 @property (strong, nonatomic) NSMutableDictionary * myFingerprints;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
@@ -43,9 +44,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @implementation KeyFingerprintViewController
 
--(id) initWithNibName:(NSString *)nibNameOrNil usernameMap: (UsernameAliasMap *) usernameMap {
+-(id) initWithNibName:(NSString *)nibNameOrNil ourUsername: (NSString *) ourUsername usernameMap: (UsernameAliasMap *) usernameMap {
     self = [super initWithNibName:nibNameOrNil bundle:nil];
     if (self) {
+        _ourUsername = ourUsername;
         _usernameMap = usernameMap;
         _queue = [[NSOperationQueue alloc] init];
         [_queue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
@@ -75,7 +77,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     
     //generate fingerprints
-    SurespotIdentity * identity = [[CredentialCachingController sharedInstance] getLoggedInIdentity];
+    SurespotIdentity * identity = [[CredentialCachingController sharedInstance] getIdentityForUsername:_ourUsername password:nil];
     
     //sort by name
     
@@ -202,7 +204,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 -(void) addAllPublicKeysForUsername: (NSString *) username toDictionary: (NSMutableDictionary *) dictionary {
-    [[[NetworkManager sharedInstance] getNetworkController:[_usernameMap username]] getKeyVersionForUsername:username
+    [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getKeyVersionForUsername:username
                                                     successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                         NSString * latestVersion = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
                                                         if ([latestVersion length] > 0) {
@@ -220,7 +222,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                                     DDLogVerbose(@"public keys not cached for %@", publicKeysKey );
                                                                     
                                                                     //get the public keys we need
-                                                                    GetPublicKeysOperation * pkOp = [[GetPublicKeysOperation alloc] initWithUsername:username ourUsername: [_usernameMap username] version:version completionCallback:
+                                                                    GetPublicKeysOperation * pkOp = [[GetPublicKeysOperation alloc] initWithUsername:username ourUsername: _ourUsername version:version completionCallback:
                                                                                                      ^(PublicKeys * keys) {
                                                                                                          if (keys) {
                                                                                                              //reverse the order
@@ -279,7 +281,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     BOOL useMyData = (_meFirst && section == 0) || (!_meFirst && section == 1);
     return useMyData ?
-        _usernameMap.username :
+        _ourUsername :
         [UIUtils buildAliasStringForUsername:[_usernameMap username] alias:[_usernameMap alias]];
 }
 

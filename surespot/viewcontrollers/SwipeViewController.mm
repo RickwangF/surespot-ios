@@ -2037,7 +2037,7 @@ const Float32 voiceRecordDelay = 0.3;
             REMenuItem * fingerprintsItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"verify_key_fingerprints", nil) image:[UIImage imageNamed:@"fingerprint_zoom"] highlightedImage:nil action:^(REMenuItem * item){
                 //cameraUI
                 if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                    _popover = [[UIPopoverController alloc] initWithContentViewController:[[KeyFingerprintViewController alloc]                                                                                                            initWithNibName:@"KeyFingerprintView" usernameMap:map]];
+                    _popover = [[UIPopoverController alloc] initWithContentViewController:[[KeyFingerprintViewController alloc]                                                                                                            initWithNibName:@"KeyFingerprintView" ourUsername: _username usernameMap:map]];
                     _popover.delegate = self;
                     CGFloat x = self.view.bounds.size.width;
                     CGFloat y =self.view.bounds.size.height;
@@ -2048,7 +2048,7 @@ const Float32 voiceRecordDelay = 0.3;
                 } else {
                     
                     
-                    [self.navigationController pushViewController:[[KeyFingerprintViewController alloc] initWithNibName:@"KeyFingerprintView" usernameMap:map] animated:YES];
+                    [self.navigationController pushViewController:[[KeyFingerprintViewController alloc] initWithNibName:@"KeyFingerprintView" ourUsername:_username usernameMap:map] animated:YES];
                 }
                 
             }];
