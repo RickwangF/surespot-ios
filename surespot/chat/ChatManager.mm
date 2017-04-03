@@ -22,6 +22,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @interface ChatManager() {}
 @property (strong, atomic) NSMutableDictionary * chatControllers;
+@property (strong, atomic) NSString * activeUser;
 
 @end
 
@@ -76,6 +77,29 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return self;
 }
 
+-(void)setReachabilityStatus:(AFNetworkReachabilityStatus) status {
+    switch (status)
+    {
+        case AFNetworkReachabilityStatusReachableViaWWAN:
+        case AFNetworkReachabilityStatusReachableViaWiFi:
+        {
+          //  self.hasInet = YES;
+            break;
+        }
+            
+        case AFNetworkReachabilityStatusNotReachable:
+        default:
+        {
+          //  self.hasInet = NO;
+            break;
+        }
+    }
+}
+
+-(ChatController *) getChatControllerIfPresent: (NSString *) username {
+    return [_chatControllers objectForKey:username];
+}
+
 -(ChatController *) getChatController: (NSString *) username {
     ChatController * chatController = [_chatControllers objectForKey:username];
     if (!chatController) {
@@ -84,6 +108,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
     return chatController;
     
+}
+
+-(void) pause: (NSString *) username {
+    //don't want to create one
+    [[self getChatControllerIfPresent:username] pause];
+}
+
+-(void) resume: (NSString *) username {
+    _activeUser = username;
+    [[self getChatController:username] resume];
 }
 
 @end

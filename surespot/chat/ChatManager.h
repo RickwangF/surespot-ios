@@ -14,6 +14,9 @@
 @interface ChatManager : NSObject
 +(ChatManager *) sharedInstance;
 -(ChatController *) getChatController: (NSString *) username;
+-(ChatController *) getChatControllerIfPresent: (NSString *) username;
+-(void) pause: (NSString *) username;
+-(void) resume: (NSString *) username;
 @end
 
 #endif /* ChatManager_h */

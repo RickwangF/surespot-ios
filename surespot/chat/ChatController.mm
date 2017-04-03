@@ -184,52 +184,6 @@ static const int MAX_RETRY_DELAY = 30;
     }];
 }
 
-
--(void)setReachabilityStatus:(AFNetworkReachabilityStatus) status {
-    switch (status)
-    {
-        case AFNetworkReachabilityStatusReachableViaWWAN:
-        case AFNetworkReachabilityStatusReachableViaWiFi:
-        {
-            self.hasInet = YES;
-            break;
-        }
-            
-        case AFNetworkReachabilityStatusNotReachable:
-        default:
-        {
-            self.hasInet = NO;
-            break;
-        }
-    }
-}
-
--(void)reachabilityChanged:(AFNetworkReachabilityStatus) status
-{
-    //if we're foregrounded
-    if (!_paused) {
-        BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
-        
-        
-        //   [self setReachabilityStatus:status];
-        _connectionRetries = 0;
-        
-        if(isReachable)
-        {
-            
-            DDLogInfo(@"wifi: %d, wwan, %d",status == AFNetworkReachabilityStatusReachableViaWiFi, status == AFNetworkReachabilityStatusReachableViaWWAN);
-            //reachibility changed, disconnect and reconnect
-            [self disconnect];
-            [self reconnect];
-        }
-        else
-        {
-            DDLogInfo(@"Notification Says Unreachable");
-        }
-    }
-}
-
-
 -(void) disconnect {
     if (_socket) {
         DDLogDebug(@"disconnecting socket");

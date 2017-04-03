@@ -356,17 +356,14 @@ const Float32 voiceRecordDelay = 0.3;
 
 -(void) pause: (NSNotification *)  notification{
     DDLogVerbose(@"pause");
-    [[[ChatManager sharedInstance] getChatController: _username] pause];
-    
+    [[ChatManager sharedInstance] pause: _username];
 }
 
 
 -(void) resume: (NSNotification *) notification {
     DDLogVerbose(@"resume");
-    [[[ChatManager sharedInstance] getChatController: _username] resume];
-    
+   [[ChatManager sharedInstance] resume: _username];
 }
-
 
 
 - (void)registerForKeyboardNotifications
