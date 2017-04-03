@@ -44,6 +44,7 @@ static NSInteger const retryAttempts = 5;
         __weak HomeCell *wself = self;
         id<SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadWithURL: nsurl
                                                                                     mimeType: MIME_TYPE_IMAGE
+                                                                                 ourUsername:encryptionParams.ourUsername
                                                                                   ourVersion:encryptionParams.ourVersion
                                                                                theirUsername:encryptionParams.ourUsername
                                                                                 theirVersion:encryptionParams.ourVersion

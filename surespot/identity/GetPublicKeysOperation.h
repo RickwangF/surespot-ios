@@ -11,5 +11,5 @@
 
 @interface GetPublicKeysOperation : NSOperation
 @property (nonatomic, strong) void(^callback)(PublicKeys *);
--(id) initWithUsername: (NSString *) username version: (NSString *) version completionCallback:(void(^)(PublicKeys *))  callback;
+-(id) initWithUsername: (NSString *) theirUsername ourUsername: (NSString *) ourUsername version: (NSString *) version completionCallback:(void(^)(PublicKeys *))  callback;
 @end

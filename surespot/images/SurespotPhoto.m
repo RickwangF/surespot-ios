@@ -124,7 +124,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     // Load async from web (using SDWebImage)
                     @try {
                         SDWebImageManager *manager = [SDWebImageManager sharedManager];
-                        [manager downloadWithURL:_photoURL mimeType: MIME_TYPE_IMAGE  ourVersion:_encryptionParams.ourVersion theirUsername:_encryptionParams.theirUsername theirVersion:_encryptionParams.theirVersion iv:_encryptionParams.iv hashed:_encryptionParams.hashed 
+                        [manager downloadWithURL:_photoURL mimeType: MIME_TYPE_IMAGE
+                                     ourUsername:_encryptionParams.ourUsername
+                                      ourVersion:_encryptionParams.ourVersion
+                                   theirUsername:_encryptionParams.theirUsername
+                                    theirVersion:_encryptionParams.theirVersion
+                                              iv:_encryptionParams.iv
+                                          hashed:_encryptionParams.hashed
                                          options:0
                                         progress:^(NSUInteger receivedSize, long long expectedSize) {
                                             float progress = receivedSize / (float)expectedSize;

@@ -172,6 +172,7 @@ const NSInteger SEND_THRESHOLD = 25;
         
         [[SDWebImageManager sharedManager] downloadWithURL:[NSURL URLWithString: message.data]
                                                   mimeType:message.mimeType
+                                               ourUsername:_username
                                                 ourVersion:[message getOurVersion: _username]
                                              theirUsername:[message getOtherUser: _username]
                                               theirVersion:[message getTheirVersion: _username]

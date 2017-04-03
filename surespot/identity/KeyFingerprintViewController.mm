@@ -220,7 +220,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                                     DDLogVerbose(@"public keys not cached for %@", publicKeysKey );
                                                                     
                                                                     //get the public keys we need
-                                                                    GetPublicKeysOperation * pkOp = [[GetPublicKeysOperation alloc] initWithUsername:username version:version completionCallback:
+                                                                    GetPublicKeysOperation * pkOp = [[GetPublicKeysOperation alloc] initWithUsername:username ourUsername: [_usernameMap username] version:version completionCallback:
                                                                                                      ^(PublicKeys * keys) {
                                                                                                          if (keys) {
                                                                                                              //reverse the order

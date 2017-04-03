@@ -85,6 +85,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (id<SDWebImageOperation>)downloadWithURL:(NSURL *)url
                                   mimeType: (NSString *) mimeType
+                               ourUsername: (NSString *) ourUsername
                                 ourVersion: (NSString *) ourversion
                              theirUsername: (NSString *) theirUsername
                               theirVersion: (NSString *) theirVersion
@@ -134,7 +135,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString *key = [self cacheKeyForURL:url];
 
     operation.cacheOperation = [self.imageCache queryDiskCacheForKey:key
-                                                            mimeType: mimeType
+                                                            mimeType:mimeType
+                                                         ourUsername:ourUsername
                                                           ourVersion:ourversion
                                                        theirUsername:theirUsername
                                                         theirVersion:theirVersion
@@ -182,6 +184,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             }
             id<SDWebImageOperation> subOperation = [self.imageDownloader downloadImageWithURL:url
                                                                                      mimeType:mimeType
+                                                                                  ourUsername: ourUsername
                                                                                    ourVersion: ourversion
                                                                                 theirUsername: theirUsername
                                                                                  theirVersion: theirVersion

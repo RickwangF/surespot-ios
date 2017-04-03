@@ -53,6 +53,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(NetworkController *) getNetworkController: (NSString *) username {
+        DDLogVerbose(@"getNetworkController: %@", username);
     if (username) {
         
         NetworkController * networkController = [_networkControllers objectForKey:username];

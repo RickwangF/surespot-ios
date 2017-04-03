@@ -44,6 +44,7 @@ static const NSInteger retryAttempts = 5;
         __weak MessageView *wself = self;
         id<SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadWithURL: url
                                                                                     mimeType: [message mimeType]
+                                                                                 ourUsername: ourUsername
                                                                                   ourVersion: [message getOurVersion: ourUsername]
                                                                                theirUsername: [message getOtherUser: ourUsername]
                                                                                 theirVersion: [message getTheirVersion: ourUsername]

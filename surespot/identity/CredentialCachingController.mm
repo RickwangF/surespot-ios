@@ -283,6 +283,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(BOOL) setSessionForUsername: (NSString *) username {
+    DDLogVerbose(@"setSessionForUsername: %@", username);
     SurespotIdentity * identity = [self getIdentityForUsername:username password:nil];
     NSString * password = [[IdentityController sharedInstance] getStoredPasswordForIdentity:username];
     

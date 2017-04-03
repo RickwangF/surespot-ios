@@ -2240,6 +2240,7 @@ const Float32 voiceRecordDelay = 0.3;
                 if (message.shareable && !ours) {
                     [SDWebImageManager.sharedManager downloadWithURL: [NSURL URLWithString:message.data]
                                                             mimeType: MIME_TYPE_IMAGE
+                                                         ourUsername: _username
                                                           ourVersion: [message getOurVersion: _username]
                                                        theirUsername: [message getOtherUser: _username]
                                                         theirVersion: [message getTheirVersion: _username]

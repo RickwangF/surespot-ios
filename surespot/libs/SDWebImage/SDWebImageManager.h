@@ -174,6 +174,7 @@ SDWebImageManager *manager = [SDWebImageManager sharedManager];
  */
 - (id<SDWebImageOperation>)downloadWithURL:(NSURL *)url
                                   mimeType: (NSString *) mimeType
+                               ourUsername: (NSString *) ourUsername
                                 ourVersion: (NSString *) ourversion
                              theirUsername: (NSString *) theirUsername
                               theirVersion: (NSString *) theirVersion

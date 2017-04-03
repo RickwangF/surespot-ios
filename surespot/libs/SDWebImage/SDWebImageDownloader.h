@@ -126,6 +126,7 @@ typedef void(^SDWebImageDownloaderCompletedBlock)(id image,  NSData *data, NSStr
  */
 - (id<SDWebImageOperation>)downloadImageWithURL:(NSURL *)url
                                        mimeType: (NSString *) mimeType
+                                    ourUsername: (NSString *) ourUsername
                                      ourVersion: (NSString *) ourversion
                                   theirUsername: (NSString *) theirUsername
                                    theirVersion: (NSString *) theirVersion

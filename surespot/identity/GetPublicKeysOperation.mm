@@ -24,7 +24,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 @interface GetPublicKeysOperation()
-@property (nonatomic, strong) NSString * username;
+@property (nonatomic, strong) NSString * ourUsername;
+@property (nonatomic, strong) NSString * theirUsername;
 @property (nonatomic, strong) NSString * version;
 @property (nonatomic) BOOL isExecuting;
 @property (nonatomic) BOOL isFinished;
@@ -35,10 +36,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @implementation GetPublicKeysOperation
 
--(id) initWithUsername: (NSString *) username version: (NSString *) version completionCallback:(void(^)(PublicKeys *))  callback {
+-(id) initWithUsername: (NSString *) theirUsername ourUsername: (NSString *) ourUsername version: (NSString *) version completionCallback:(void(^)(PublicKeys *))  callback {
     if (self = [super init]) {
         self.callback = callback;
-        self.username = username;
+        self.ourUsername = ourUsername;
+        self.theirUsername = theirUsername;
         self.version = version;
         
         _isExecuting = NO;
@@ -65,7 +67,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     while (currentVersion > 0) {
         NSString * sCurrentVersion = [@(currentVersion) stringValue];
-        keys = [[IdentityController sharedInstance] loadPublicKeysUsername: _username version:  sCurrentVersion];
+        keys = [[IdentityController sharedInstance] loadPublicKeysUsername: _theirUsername version:  sCurrentVersion];
         if (keys) {
             validatedKeys = keys;
             validatedKeyVersion = currentVersion;
@@ -76,13 +78,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     
     if (validatedKeys && wantedVersion == validatedKeyVersion) {
-        DDLogInfo(@"Loaded public keys from disk for user: %@, version: %@", _username, _version);
+        DDLogInfo(@"Loaded public keys from disk for user: %@, version: %@", _theirUsername, _version);
         [self finish:keys];
         return;
     }
     
-    [[[NetworkManager sharedInstance] getNetworkController:_username]
-     getPublicKeys2ForUsername: self.username
+    [[[NetworkManager sharedInstance] getNetworkController:_ourUsername]
+     getPublicKeys2ForUsername: self.theirUsername
      andVersion: [@(validatedKeyVersion+1) stringValue]
      successBlock:^(NSURLSessionTask *request, id JSON) {
          
@@ -108,7 +110,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                  
                  NSDictionary * wantedKey = [resultKeys objectForKey:_version];
                  if ([wantedKey objectForKey:@"clientSig2"]) {
-                     DDLogInfo(@"validating username: %@, version: %@, keys using v3 code", _username, _version);
+                     DDLogInfo(@"validating username: %@, version: %@, keys using v3 code", _theirUsername, _version);
                      
                      ECDSAPublicKey * previousDsaKey = nil;
                      if (validatedKeys) {
@@ -135,7 +137,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                          sDhPub = [[EncryptionController encodeDHPublicKeyData:dhPub] SR_stringByBase64Encoding];
                          sDsaPub = [[EncryptionController encodeDSAPublicKeyData:dsaPub] SR_stringByBase64Encoding];
                          
-                         BOOL verified = [EncryptionController verifySigUsingKey:[EncryptionController serverPublicKey] signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"serverSig2"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
+                         BOOL verified = [EncryptionController verifySigUsingKey:[EncryptionController serverPublicKey] signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"serverSig2"]] username:_theirUsername version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
                          
                          if (!verified) {
                              DDLogWarn(@"server signature check failed");
@@ -143,14 +145,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                              return;
                          }
                          
-                         verified = [EncryptionController verifySigUsingKey:previousDsaKey signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"clientSig2"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
+                         verified = [EncryptionController verifySigUsingKey:previousDsaKey signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"clientSig2"]] username:_theirUsername version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
                          if (!verified) {
                              DDLogWarn(@"client signature check failed");
                              [self finish:nil];
                              return;
                          }
                          
-                         [[IdentityController sharedInstance] savePublicKeys: jsonKey username: _username version: sValidatingVersion];
+                         [[IdentityController sharedInstance] savePublicKeys: jsonKey username: _theirUsername version: sValidatingVersion];
                          [[dsaKeys objectForKey: sValidatingVersion] getValue:&previousDsaKey];
                      }
                      
@@ -168,7 +170,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                      
                      if ([wantedKey objectForKey:@"clientSig"]) {
                          
-                         DDLogInfo(@"validating username: %@, version: %@, keys using v2 code", _username, _version);
+                         DDLogInfo(@"validating username: %@, version: %@, keys using v2 code", _theirUsername, _version);
                          
                          ECDSAPublicKey * previousDsaKey = nil;
                          if (validatedKeys) {
@@ -187,7 +189,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                              sDhPub = [jsonKey objectForKey:@"dhPub"];
                              sDsaPub = [jsonKey objectForKey:@"dsaPub"];
                              
-                             BOOL verified = [EncryptionController verifySigUsingKey:[EncryptionController serverPublicKey] signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"serverSig"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
+                             BOOL verified = [EncryptionController verifySigUsingKey:[EncryptionController serverPublicKey] signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"serverSig"]] username:_theirUsername version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
                              
                              if (!verified) {
                                  DDLogWarn(@"server signature check failed");
@@ -195,14 +197,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                  return;
                              }
                              
-                             verified = [EncryptionController verifySigUsingKey:previousDsaKey signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"clientSig"]] username:_username version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
+                             verified = [EncryptionController verifySigUsingKey:previousDsaKey signature:[NSData dataFromBase64String:[jsonKey objectForKey:@"clientSig"]] username:_theirUsername version:validatingVersion dhPubKey:sDhPub dsaPubKey:sDsaPub];
                              if (!verified) {
                                  DDLogWarn(@"client signature check failed");
                                  [self finish:nil];
                                  return;
                              }
                              
-                             [[IdentityController sharedInstance] savePublicKeys: jsonKey  username: _username version: sValidatingVersion];
+                             [[IdentityController sharedInstance] savePublicKeys: jsonKey username: _theirUsername version: sValidatingVersion];
                              [[dsaKeys objectForKey: sValidatingVersion] getValue:&previousDsaKey];
                          }
                          
@@ -221,8 +223,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                          
                      }
                      else {
-                         DDLogInfo(@"validating username: %@, version: %@, keys using v1 code", _username, _version);
-                         [self finish:[self getPublicKeysForUsername:_username version:_version jsonKeys:wantedKey]];
+                         DDLogInfo(@"validating username: %@, version: %@, keys using v1 code", _theirUsername, _version);
+                         [self finish:[self getPublicKeysForUsername:_theirUsername version:_version jsonKeys:wantedKey]];
                          return;
                      }
                  }
@@ -254,7 +256,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
         
         
-        DDLogInfo(@"verifying public keys for %@", _username);
+        DDLogInfo(@"verifying public keys for %@", _theirUsername);
         BOOL verified = [[IdentityController sharedInstance  ] verifyPublicKeys: JSON];
         
         if (!verified) {
@@ -280,7 +282,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             pk.lastModified = [NSDate date];
             
             //save keys to disk
-            [[IdentityController sharedInstance] savePublicKeys: JSON username: _username version:  _version];
+            [[IdentityController sharedInstance] savePublicKeys: JSON username: _theirUsername version:  _version];
             
             DDLogVerbose(@"get public keys calling callback");
             return pk;

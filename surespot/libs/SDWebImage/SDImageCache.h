@@ -92,6 +92,7 @@ typedef enum SDImageCacheType SDImageCacheType;
 
 - (NSOperation *)queryDiskCacheForKey:(NSString *)key
                              mimeType: (NSString *) mimeType
+                          ourUsername: (NSString *) ourUsername
                            ourVersion: (NSString *) ourversion
                         theirUsername: (NSString *) theirUsername
                          theirVersion: (NSString *) theirVersion

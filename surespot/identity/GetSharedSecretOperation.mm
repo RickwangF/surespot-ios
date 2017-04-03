@@ -23,7 +23,7 @@
 #import "FileController.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelInfo;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -54,6 +54,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
            callback: (CallbackBlock) callback {
     if (self = [super init]) {
         self.cache = cache;
+        self.ourUsername = ourUsername;
         self.ourVersion = ourVersion;
         self.theirUsername = theirUsername;
         self.theirVersion = theirVersion;
@@ -86,7 +87,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [NSString stringWithFormat:@"%@:%@:%@:%@", self.ourUsername, self.ourVersion, self.theirUsername, self.theirVersion];
     }
     
-    DDLogVerbose(@"checking dictionary for shared secret for:  %@" , sharedSecretKey);
+    DDLogVerbose(@"checking dictionary for shared secret for: %@" , sharedSecretKey);
     NSData * sharedSecret = [self.cache.sharedSecretsDict objectForKey:sharedSecretKey];
     
     if (sharedSecret) {
@@ -95,7 +96,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
     else {
         DDLogVerbose(@"shared secret not cached");
-        SurespotIdentity * identity = [self.cache getLoggedInIdentity];
+        SurespotIdentity * identity = [self.cache getIdentityForUsername:_ourUsername password:nil];
         if (!identity) {
             [self finish:nil];
             return;
@@ -124,7 +125,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             DDLogVerbose(@"public keys not cached for %@", publicKeysKey );
             
             //get the public keys we need
-            GetPublicKeysOperation * pkOp = [[GetPublicKeysOperation alloc] initWithUsername:self.theirUsername version:self.theirVersion completionCallback:
+            GetPublicKeysOperation * pkOp = [[GetPublicKeysOperation alloc] initWithUsername:self.theirUsername ourUsername: self.ourUsername version:self.theirVersion completionCallback:
                                              ^(PublicKeys * keys) {
                                                  if (keys) {
                                                      DDLogVerbose(@"caching public keys for %@", publicKeysKey);
