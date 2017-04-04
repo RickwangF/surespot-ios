@@ -45,15 +45,6 @@
 		662CA5A31873496F00684790 /* PurchaseDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 662CA5A21873496F00684790 /* PurchaseDelegate.m */; };
 		662CA5AA18734E9500684790 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 662CA5A918734E9500684790 /* StoreKit.framework */; };
 		6637012D187A33A6006D17CA /* PWYLView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6637012C187A33A6006D17CA /* PWYLView.xib */; };
-		6646AE0E185CADC700CBACDE /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646ADD5185CADC700CBACDE /* MWCaptionView.m */; };
-		6646AE10185CADC700CBACDE /* MWPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646ADDA185CADC700CBACDE /* MWPhotoBrowser.m */; };
-		6646AE11185CADC700CBACDE /* MWTapDetectingImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646ADDD185CADC700CBACDE /* MWTapDetectingImageView.m */; };
-		6646AE12185CADC700CBACDE /* MWTapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646ADDF185CADC700CBACDE /* MWTapDetectingView.m */; };
-		6646AE13185CADC700CBACDE /* MWZoomingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646ADE1185CADC700CBACDE /* MWZoomingScrollView.m */; };
-		6646AE14185CADC700CBACDE /* DACircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646ADE5185CADC700CBACDE /* DACircularProgressView.m */; };
-		6646AE15185CADC700CBACDE /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646ADE8185CADC700CBACDE /* MBProgressHUD.m */; };
-		6646AE16185CADC700CBACDE /* README.mdown in Resources */ = {isa = PBXBuildFile; fileRef = 6646ADE9185CADC700CBACDE /* README.mdown */; };
-		6646AE26185CADC700CBACDE /* MWPhotoBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6646AE0A185CADC700CBACDE /* MWPhotoBrowser.bundle */; };
 		6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2B185CB08200CBACDE /* SurespotPhoto.m */; };
 		6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2E185CB2EF00CBACDE /* EncryptionParams.m */; };
 		6648B1E5186CB9BF007037B1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E4186CB9BF007037B1 /* MediaPlayer.framework */; };
@@ -67,7 +58,6 @@
 		6659531C1885B95900BA2CC7 /* BackupHelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6659531B1885B95900BA2CC7 /* BackupHelpViewController.m */; };
 		6659531E1885B97000BA2CC7 /* BackupHelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6659531D1885B97000BA2CC7 /* BackupHelpView.xib */; };
 		665953221886021300BA2CC7 /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 665953211886021300BA2CC7 /* UIAlertView+Blocks.m */; };
-		6659532518882DF500BA2CC7 /* MWPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 6659532418882DF500BA2CC7 /* MWPhoto.m */; };
 		665CA9A21E9098210045EEDD /* RECommonFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9991E9098210045EEDD /* RECommonFunctions.m */; };
 		665CA9A31E9098210045EEDD /* REMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA99B1E9098210045EEDD /* REMenu.m */; };
 		665CA9A41E9098210045EEDD /* REMenuContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA99D1E9098210045EEDD /* REMenuContainerView.m */; };
@@ -251,24 +241,6 @@
 		662CA5A21873496F00684790 /* PurchaseDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = PurchaseDelegate.m; path = purchases/PurchaseDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		662CA5A918734E9500684790 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		6637012C187A33A6006D17CA /* PWYLView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PWYLView.xib; path = purchases/PWYLView.xib; sourceTree = "<group>"; };
-		6646ADD4185CADC700CBACDE /* MWCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWCaptionView.h; sourceTree = "<group>"; };
-		6646ADD5185CADC700CBACDE /* MWCaptionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWCaptionView.m; sourceTree = "<group>"; };
-		6646ADD6185CADC700CBACDE /* MWCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWCommon.h; sourceTree = "<group>"; };
-		6646ADD9185CADC700CBACDE /* MWPhotoBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPhotoBrowser.h; sourceTree = "<group>"; };
-		6646ADDA185CADC700CBACDE /* MWPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPhotoBrowser.m; sourceTree = "<group>"; };
-		6646ADDB185CADC700CBACDE /* MWPhotoProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPhotoProtocol.h; sourceTree = "<group>"; };
-		6646ADDC185CADC700CBACDE /* MWTapDetectingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWTapDetectingImageView.h; sourceTree = "<group>"; };
-		6646ADDD185CADC700CBACDE /* MWTapDetectingImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWTapDetectingImageView.m; sourceTree = "<group>"; };
-		6646ADDE185CADC700CBACDE /* MWTapDetectingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWTapDetectingView.h; sourceTree = "<group>"; };
-		6646ADDF185CADC700CBACDE /* MWTapDetectingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWTapDetectingView.m; sourceTree = "<group>"; };
-		6646ADE0185CADC700CBACDE /* MWZoomingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWZoomingScrollView.h; sourceTree = "<group>"; };
-		6646ADE1185CADC700CBACDE /* MWZoomingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWZoomingScrollView.m; sourceTree = "<group>"; };
-		6646ADE4185CADC700CBACDE /* DACircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DACircularProgressView.h; sourceTree = "<group>"; };
-		6646ADE5185CADC700CBACDE /* DACircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DACircularProgressView.m; sourceTree = "<group>"; };
-		6646ADE7185CADC700CBACDE /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
-		6646ADE8185CADC700CBACDE /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
-		6646ADE9185CADC700CBACDE /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = "<group>"; };
-		6646AE0A185CADC700CBACDE /* MWPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MWPhotoBrowser.bundle; sourceTree = "<group>"; };
 		6646AE2A185CB08200CBACDE /* SurespotPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotPhoto.h; sourceTree = "<group>"; };
 		6646AE2B185CB08200CBACDE /* SurespotPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SurespotPhoto.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		6646AE2D185CB2EF00CBACDE /* EncryptionParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncryptionParams.h; sourceTree = "<group>"; };
@@ -289,8 +261,6 @@
 		6659531D1885B97000BA2CC7 /* BackupHelpView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BackupHelpView.xib; sourceTree = "<group>"; };
 		665953201886021300BA2CC7 /* UIAlertView+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Blocks.h"; sourceTree = "<group>"; };
 		665953211886021300BA2CC7 /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Blocks.m"; sourceTree = "<group>"; };
-		6659532318882DF500BA2CC7 /* MWPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPhoto.h; sourceTree = "<group>"; };
-		6659532418882DF500BA2CC7 /* MWPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPhoto.m; sourceTree = "<group>"; };
 		665CA9981E9098210045EEDD /* RECommonFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RECommonFunctions.h; path = REMenu/RECommonFunctions.h; sourceTree = "<group>"; };
 		665CA9991E9098210045EEDD /* RECommonFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RECommonFunctions.m; path = REMenu/RECommonFunctions.m; sourceTree = "<group>"; };
 		665CA99A1E9098210045EEDD /* REMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = REMenu.h; path = REMenu/REMenu.h; sourceTree = "<group>"; };
@@ -799,66 +769,6 @@
 			name = purchases;
 			sourceTree = "<group>";
 		};
-		6646ADD2185CADC700CBACDE /* MWPhotoBrowser */ = {
-			isa = PBXGroup;
-			children = (
-				6646ADD3185CADC700CBACDE /* Classes */,
-				6646ADE2185CADC700CBACDE /* Libraries */,
-				6646AE0A185CADC700CBACDE /* MWPhotoBrowser.bundle */,
-			);
-			name = MWPhotoBrowser;
-			path = MWPhotoBrowser/MWPhotoBrowser;
-			sourceTree = "<group>";
-		};
-		6646ADD3185CADC700CBACDE /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				6659532318882DF500BA2CC7 /* MWPhoto.h */,
-				6659532418882DF500BA2CC7 /* MWPhoto.m */,
-				6646ADD4185CADC700CBACDE /* MWCaptionView.h */,
-				6646ADD5185CADC700CBACDE /* MWCaptionView.m */,
-				6646ADD6185CADC700CBACDE /* MWCommon.h */,
-				6646ADD9185CADC700CBACDE /* MWPhotoBrowser.h */,
-				6646ADDA185CADC700CBACDE /* MWPhotoBrowser.m */,
-				6646ADDB185CADC700CBACDE /* MWPhotoProtocol.h */,
-				6646ADDC185CADC700CBACDE /* MWTapDetectingImageView.h */,
-				6646ADDD185CADC700CBACDE /* MWTapDetectingImageView.m */,
-				6646ADDE185CADC700CBACDE /* MWTapDetectingView.h */,
-				6646ADDF185CADC700CBACDE /* MWTapDetectingView.m */,
-				6646ADE0185CADC700CBACDE /* MWZoomingScrollView.h */,
-				6646ADE1185CADC700CBACDE /* MWZoomingScrollView.m */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
-		6646ADE2185CADC700CBACDE /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				6646ADE3185CADC700CBACDE /* DACircularProgress */,
-				6646ADE6185CADC700CBACDE /* MBProgressHUD */,
-			);
-			path = Libraries;
-			sourceTree = "<group>";
-		};
-		6646ADE3185CADC700CBACDE /* DACircularProgress */ = {
-			isa = PBXGroup;
-			children = (
-				6646ADE4185CADC700CBACDE /* DACircularProgressView.h */,
-				6646ADE5185CADC700CBACDE /* DACircularProgressView.m */,
-			);
-			path = DACircularProgress;
-			sourceTree = "<group>";
-		};
-		6646ADE6185CADC700CBACDE /* MBProgressHUD */ = {
-			isa = PBXGroup;
-			children = (
-				6646ADE7185CADC700CBACDE /* MBProgressHUD.h */,
-				6646ADE8185CADC700CBACDE /* MBProgressHUD.m */,
-				6646ADE9185CADC700CBACDE /* README.mdown */,
-			);
-			path = MBProgressHUD;
-			sourceTree = "<group>";
-		};
 		6654441017F37A3F00F62F7F /* SwipeView */ = {
 			isa = PBXGroup;
 			children = (
@@ -986,7 +896,6 @@
 				665CA9971E9097E40045EEDD /* REMenu */,
 				666FE5631E8D7F7200F16569 /* Toast */,
 				6659531F188601FD00BA2CC7 /* UIAlertViewBlocks */,
-				6646ADD2185CADC700CBACDE /* MWPhotoBrowser */,
 				66866244185B6A2E001491B1 /* SDWebImage */,
 				6654441017F37A3F00F62F7F /* SwipeView */,
 				66E4F518176298CB00596E6B /* cryptopp */,
@@ -1481,7 +1390,6 @@
 				666D3368187F69AD00B73F69 /* message.caf in Resources */,
 				666D338118847B5000B73F69 /* surespot-invite.caf in Resources */,
 				66DAB62A186D0461006C262F /* SurespotSHKSharers.plist in Resources */,
-				6646AE26185CADC700CBACDE /* MWPhotoBrowser.bundle in Resources */,
 				66EBE13E1855C97100F2452D /* HomeCell.xib in Resources */,
 				6604A2D817626B9E0072216A /* MainStoryboard.storyboard in Resources */,
 				66D3B04F182EAB4200B37A6C /* surespot.xcassets in Resources */,
@@ -1493,7 +1401,6 @@
 				6621BB841762704D00BC2850 /* Localizable.strings in Resources */,
 				669BC195187DBF3500C3C752 /* AboutView.xib in Resources */,
 				669BC187187DAACD00C3C752 /* HelpView.xib in Resources */,
-				6646AE16185CADC700CBACDE /* README.mdown in Resources */,
 				66EBE0B91855C97100F2452D /* RestoreIdentityDocumentsView.xib in Resources */,
 				661F3B7E186898B9003C7AE3 /* KeyFingerprintView.xib in Resources */,
 				66EBE0C71855C97100F2452D /* TheirMessageCell.xib in Resources */,
@@ -1560,7 +1467,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				666659A31DD338CF0099B284 /* main.m in Sources */,
-				6646AE13185CADC700CBACDE /* MWZoomingScrollView.m in Sources */,
 				661F3B941868ECFE003C7AE3 /* KeyFingerprintLoadingCell.m in Sources */,
 				660F0A9818D7895400FD8C4D /* RestoreIdentityDocumentsViewController.mm in Sources */,
 				66866263185B6A2E001491B1 /* NSData+GIF.m in Sources */,
@@ -1570,7 +1476,6 @@
 				66EBE13F1855C97100F2452D /* HomeDataSource.mm in Sources */,
 				6686623F18565AD5001491B1 /* SwipeViewController.mm in Sources */,
 				661F46A31865E063004A71B0 /* DeleteIdentityViewController.mm in Sources */,
-				6646AE15185CADC700CBACDE /* MBProgressHUD.m in Sources */,
 				66EBE13C1855C97100F2452D /* Friend.mm in Sources */,
 				665CA9A21E9098210045EEDD /* RECommonFunctions.m in Sources */,
 				6686623E18565AD5001491B1 /* SignupViewController.mm in Sources */,
@@ -1585,7 +1490,6 @@
 				66EBE0C11855C97100F2452D /* MessageView.m in Sources */,
 				6611BE9D1BC852C40035C86B /* base64.c in Sources */,
 				662CA5911871BB7300684790 /* SurespotNavigationController.m in Sources */,
-				6659532518882DF500BA2CC7 /* MWPhoto.m in Sources */,
 				6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */,
 				66EBE0BC1855C97100F2452D /* ChatDataSource.mm in Sources */,
 				6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */,
@@ -1594,7 +1498,6 @@
 				665CA9A91E9186E10045EEDD /* ChatManager.mm in Sources */,
 				66EBE1381855C97100F2452D /* NSString+Sensitivize.m in Sources */,
 				66EBE1361855C97100F2452D /* FileController.mm in Sources */,
-				6646AE10185CADC700CBACDE /* MWPhotoBrowser.m in Sources */,
 				66EBE0D01855C97100F2452D /* IdentityCell.m in Sources */,
 				6686626C185B6A2E001491B1 /* UIImage+GIF.m in Sources */,
 				66EBE13A1855C97100F2452D /* SurespotLogFormatter.m in Sources */,
@@ -1619,7 +1522,6 @@
 				66EBE0C41855C97100F2452D /* SurespotControlMessage.m in Sources */,
 				66EBE0BF1855C97100F2452D /* MessageDecryptionOperation.mm in Sources */,
 				66EBE0B41855C97100F2452D /* GetPublicKeysOperation.mm in Sources */,
-				6646AE11185CADC700CBACDE /* MWTapDetectingImageView.m in Sources */,
 				6652F2AA1875F16D00E023A7 /* PwylViewController.m in Sources */,
 				66866268185B6A2E001491B1 /* SDWebImageDownloaderOperation.mm in Sources */,
 				66EBE13D1855C97100F2452D /* HomeCell.m in Sources */,
@@ -1630,7 +1532,6 @@
 				6659531C1885B95900BA2CC7 /* BackupHelpViewController.m in Sources */,
 				66EBE0B71855C97100F2452D /* KeychainItemWrapper.m in Sources */,
 				66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */,
-				6646AE0E185CADC700CBACDE /* MWCaptionView.m in Sources */,
 				661C2ED61763D4B9000649E7 /* NSData+Gunzip.m in Sources */,
 				668D2502186A373A0096D155 /* QRInviteViewController.mm in Sources */,
 				669BC199187DC1CB00C3C752 /* AboutViewController.m in Sources */,
@@ -1647,7 +1548,6 @@
 				666D3379188476B100B73F69 /* CADebugMacros.cpp in Sources */,
 				66EBE0D21855C97100F2452D /* RestoreIdentityDriveViewController.mm in Sources */,
 				66EBE0B11855C97100F2452D /* CredentialCachingController.mm in Sources */,
-				6646AE14185CADC700CBACDE /* DACircularProgressView.m in Sources */,
 				66EBE0CD1855C97100F2452D /* UIViewPager.m in Sources */,
 				66EBE0DA1855C97100F2452D /* IdentityKeys.mm in Sources */,
 				66EBE0B81855C97100F2452D /* PublicKeys.mm in Sources */,
@@ -1670,7 +1570,6 @@
 				665953221886021300BA2CC7 /* UIAlertView+Blocks.m in Sources */,
 				665CA9A51E9098210045EEDD /* REMenuItem.m in Sources */,
 				66EBE0B31855C97100F2452D /* GetKeyVersionOperation.mm in Sources */,
-				6646AE12185CADC700CBACDE /* MWTapDetectingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

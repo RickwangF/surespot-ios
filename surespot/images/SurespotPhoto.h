@@ -12,6 +12,7 @@
 
 @interface SurespotPhoto : NSObject<MWPhoto>
 // Properties
+@property (nonatomic, readonly, strong) UIImage *underlyingImage;
 @property (nonatomic, strong) NSString *caption;
 @property (nonatomic, readonly) UIImage *image;
 @property (nonatomic, readonly) NSURL *photoURL;

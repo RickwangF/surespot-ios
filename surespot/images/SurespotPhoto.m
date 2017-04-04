@@ -27,7 +27,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 // Properties
-@property (nonatomic, strong) UIImage *underlyingImage; // holds the decompressed image
+@property (nonatomic, readwrite, strong) UIImage *underlyingImage; // holds the decompressed image
 
 // Methods
 - (void)decompressImageAndFinishLoading;

@@ -15,4 +15,5 @@ target 'surespot' do
   pod 'SVPullToRefresh'
   pod 'UIImageViewAligned'
   pod 'HPGrowingTextView'
+  pod 'MWPhotoBrowser'
 end
