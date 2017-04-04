@@ -15,5 +15,5 @@ target 'surespot' do
   pod 'SVPullToRefresh'
   pod 'UIImageViewAligned'
   pod 'HPGrowingTextView'
-  pod 'MWPhotoBrowser'
+  pod 'MWPhotoBrowser', :git => 'git@github.com:surespot/MWPhotoBrowser.git'
 end

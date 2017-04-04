@@ -1416,18 +1416,14 @@ const Float32 voiceRecordDelay = 0.3;
             SurespotMessage * message = [cds.messages objectAtIndex:indexPath.row];
             
             if ([message.mimeType isEqualToString: MIME_TYPE_IMAGE]) {
-                // Create array of `MWPhoto` objects
                 _imageMessage = message;
-                // Create & present browser
                 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
-                // Set options
                 browser.displayActionButton = NO; // Show action button to allow sharing, copying, etc (defaults to YES)
                 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
                 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
-                [browser.navigationController setNavigationBarHidden:NO];
-                
-                // Present
+                browser.alwaysShowControls = YES;
                 browser.navigationItem.title = NSLocalizedString(@"pan_and_zoom", nil);
+                [browser setNavBarAppearance:NO tintColor:[UIUtils surespotBlue]];
                 [self.navigationController pushViewController:browser animated:YES];
             }
             else {

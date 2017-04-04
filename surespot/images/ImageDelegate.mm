@@ -109,22 +109,23 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             {
                 _selectedImage = imageToSave;
                 _assetsLibrary = nil;
-                //preview and allow user to say yay or nay
-                // Create & present browser
+               
                 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
-                // Set options
+               
                 browser.displayActionButton = YES; // Show action button to allow sharing, copying, etc (defaults to YES)
                 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
                 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
-            
+                browser.alwaysShowControls = YES;
+                
                 if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
                     [_popover dismissPopoverAnimated:NO];
                     _popover = nil;
                 }
-
-                [browser.navigationController setNavigationBarHidden:NO];
+               
                 browser.navigationItem.title = NSLocalizedString(@"pan_and_zoom", nil);
-                [self.controller.navigationController pushViewController:browser animated:YES];
+
+                [self.controller.navigationController pushViewController:browser animated:NO];
+                [browser setNavBarAppearance:NO tintColor: [UIUtils surespotBlue]];
             }
                 break;
             case kSurespotImageDelegateModeFriendImage:
