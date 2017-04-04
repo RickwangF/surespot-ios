@@ -243,7 +243,7 @@ const Float32 voiceRecordDelay = 0.3;
     [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
     SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
     SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
-    SideMenuManager.menuAnimationFadeStrength = 0.85;
+    SideMenuManager.menuAnimationFadeStrength = 0.9;
     SideMenuManager.menuAnimationTransformScaleFactor = 0.9;
     SideMenuManager.menuFadeStatusBar = NO;
     //set gesture recognizer priority
@@ -1424,9 +1424,10 @@ const Float32 voiceRecordDelay = 0.3;
                 browser.displayActionButton = NO; // Show action button to allow sharing, copying, etc (defaults to YES)
                 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
                 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
-                //  browser.wantsFullScreenLayout = NO; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
+                [browser.navigationController setNavigationBarHidden:NO];
                 
                 // Present
+                browser.navigationItem.title = NSLocalizedString(@"pan_and_zoom", nil);
                 [self.navigationController pushViewController:browser animated:YES];
             }
             else {
