@@ -43,7 +43,7 @@
 #import "SideMenu-Swift.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -168,11 +168,12 @@ const Float32 voiceRecordDelay = 0.3;
     [self.view addSubview:_viewPager];
     _viewPager.delegate = self;
     
+    NSString * chatFromDefaults = [self checkDefaultsForChat];
     
     //open active tabs, don't load data now well get it after connect
     for (Friend * afriend in [[[[ChatManager sharedInstance] getChatController:_username] getHomeDataSource] friends]) {
         if ([afriend isChatActive]) {
-            [self loadChat:[afriend name] show:NO availableId: -1 availableControlId:-1];
+            [self loadChat:[afriend name] show:[[afriend name] isEqualToString:chatFromDefaults] scroll: NO availableId: -1 availableControlId:-1];
         }
     }
     
@@ -1401,7 +1402,7 @@ const Float32 voiceRecordDelay = 0.3;
         
         if (afriend && [afriend isFriend]) {
             NSString * friendname =[afriend name];
-            [self showChat:friendname];
+            [self showChat:friendname scroll: YES];
         }
         
         [_friendView deselectRowAtIndexPath:[_friendView indexPathForSelectedRow] animated:YES];
@@ -1466,8 +1467,8 @@ const Float32 voiceRecordDelay = 0.3;
     return sortedValues;
 }
 
--(void) loadChat:(NSString *) username show: (BOOL) show  availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId {
-    DDLogDebug(@"loadChat username: %@", username);
+-(void) loadChat:(NSString *) username show: (BOOL) show scroll: (BOOL) scroll availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId {
+    DDLogDebug(@"loadChat username: %@, show: %@", username, show ? @"YES" : @"NO");
     //get existing view if there is one
     UITableView * cView;
     @synchronized (_chats) {
@@ -1501,7 +1502,12 @@ const Float32 voiceRecordDelay = 0.3;
         
         if (show) {
             _scrollingTo = index;
-            [_swipeView scrollToPage:index duration:0.500];
+            if (scroll) {
+                [_swipeView scrollToPage:index duration:0.5];
+            }
+            else {
+                [_swipeView setCurrentPage:index];
+            }
             [[[ChatManager sharedInstance] getChatController: _username] setCurrentChat: username];
         }
         
@@ -1576,17 +1582,17 @@ const Float32 voiceRecordDelay = 0.3;
             
             DDLogVerbose(@"scrolling to index: %ld", (long)index);
             _scrollingTo = index;
-            [_swipeView scrollToPage:index duration:0.500];
+            [_swipeView scrollToPage:index duration:0.5];
         }
     }
 }
 
--(void) showChat:(NSString *) username {
+-(void) showChat:(NSString *) username scroll: (BOOL) scroll {
     DDLogVerbose(@"showChat, %@", username);
     
     Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:username];
     
-    [self loadChat:username show:YES availableId:[afriend availableMessageId] availableControlId:[afriend availableMessageControlId]];
+    [self loadChat:username show:YES scroll: scroll availableId:[afriend availableMessageId] availableControlId:[afriend availableMessageControlId]];
     //   [_textField resignFirstResponder];
 }
 
@@ -2815,7 +2821,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     if ([notificationType isEqualToString:@"message"]) {
         NSString * from = [defaults objectForKey:@"notificationFrom"];
         if (from && [to isEqualToString:_username]) {
-            [self showChat:from];
+            [self showChat:from scroll: NO];
         }
     }
     else {
@@ -2830,6 +2836,21 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [defaults removeObjectForKey:@"notificationTo"];
     [defaults removeObjectForKey:@"notificationFrom"];
 }
+
+-(NSString *) checkDefaultsForChat {
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    NSString * notificationType = [defaults objectForKey:@"notificationType"];
+    NSString * to = [defaults objectForKey:@"notificationTo"];
+    if ([notificationType isEqualToString:@"message"]) {
+        NSString * from = [defaults objectForKey:@"notificationFrom"];
+        if (from && [to isEqualToString:_username]) {
+            return from;
+        }
+    }
+    return nil;
+}
+
+
 
 -(void) userSwitch {
     DDLogDebug(@"userSwitch");
