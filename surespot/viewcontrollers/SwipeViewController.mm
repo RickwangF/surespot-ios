@@ -243,7 +243,9 @@ const Float32 voiceRecordDelay = 0.3;
     [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
     SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
     SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
-    
+    SideMenuManager.menuAnimationFadeStrength = 0.85;
+    SideMenuManager.menuAnimationTransformScaleFactor = 0.9;
+    SideMenuManager.menuFadeStatusBar = NO;
     //set gesture recognizer priority
     
     for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {

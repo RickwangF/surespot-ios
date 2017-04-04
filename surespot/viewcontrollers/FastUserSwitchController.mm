@@ -11,9 +11,11 @@
 #import "IdentityController.h"
 #import "ChatManager.h"
 #import "CredentialCachingController.h"
+#import "UIUtils.h"
 
 @interface FastUserSwitchController ()
 @property (atomic, strong) NSArray * identityNames;
+@property (weak, nonatomic) IBOutlet UILabel *activeIdentityLabel;
 @property (weak, nonatomic) IBOutlet UITableView *userTableView;
 @end
 
@@ -33,13 +35,26 @@
             index = 0;
         }
     }
+    [_userTableView setScrollEnabled:NO];
     
+    [_userTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] animated:NO scrollPosition:UITableViewScrollPositionMiddle];
     
+    [[self view] setBackgroundColor: [UIColor clearColor]];
+    [_activeIdentityLabel setTextColor:[UIUtils surespotBlue]];
+    [_userTableView setBackgroundColor:[UIColor clearColor]];
+    [_userTableView setSeparatorColor:[UIColor clearColor]];
+    
+    [self.navigationController setNavigationBarHidden:YES];
+    
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-     return [_identityNames count];
+    return [_identityNames count];
 }
 
 // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
@@ -53,6 +68,11 @@
     
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+        [cell setBackgroundColor:[UIColor clearColor]];
+        cell.textLabel.textColor = [UIColor whiteColor];
+        UIView * bgColorView = [[UIView alloc] init];
+        bgColorView.backgroundColor = [UIUtils surespotSelectionBlue];
+        [cell setSelectedBackgroundView:bgColorView];
     }
     
     cell.textLabel.text = [_identityNames objectAtIndex:indexPath.row];
@@ -65,11 +85,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
-    [self dismissViewControllerAnimated:YES completion:^{
-        NSDictionary *userInfo = @{@"username": [_identityNames objectAtIndex:indexPath.row]};
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"fastUserSwitch" object:nil userInfo: userInfo];
-    }];
+    
+    if ( [[_identityNames objectAtIndex:indexPath.row]isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]]) {
+        return;
+    }
+    else {
+        [self dismissViewControllerAnimated:YES completion:^{
+            NSDictionary *userInfo = @{@"username": [_identityNames objectAtIndex:indexPath.row]};
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"fastUserSwitch" object:nil userInfo: userInfo];
+        }];
+    }
 }
 
 

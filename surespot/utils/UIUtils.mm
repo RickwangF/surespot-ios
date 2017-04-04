@@ -94,20 +94,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 + (void)setAppAppearances {
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
-        [[UINavigationBar appearance] setBarTintColor: [self surespotGrey]];
-    }
-    else {
-        [[UINavigationBar appearance] setTintColor: [self surespotGrey]];
-        //  [[UINavigationBar appearance] setOpaque:YES];
-    }
+    [[UINavigationBar appearance] setBarTintColor: [self surespotGrey]];
     
-    [[UIBarButtonItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [self surespotBlue],  UITextAttributeTextColor,nil] forState:UIControlStateNormal];
+    [[UIBarButtonItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [self surespotBlue],  NSForegroundColorAttributeName,nil] forState:UIControlStateNormal];
     
     [[UIButton appearance] setTitleColor:[self surespotBlue] forState:UIControlStateNormal];
-    
-    
-    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [UIColor lightGrayColor],  UITextAttributeTextColor,nil]];
+        
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [UIColor lightGrayColor],  NSForegroundColorAttributeName,nil]];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     
     
