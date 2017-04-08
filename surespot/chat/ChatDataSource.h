@@ -14,7 +14,6 @@
 @interface ChatDataSource : NSObject
 
 @property (nonatomic, strong) NSMutableArray * messages;
-@property (nonatomic, strong) NSString * username;
 @property (nonatomic, assign) NSInteger latestMessageId;
 @property (nonatomic, assign) NSInteger latestControlMessageId;
 

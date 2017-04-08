@@ -28,6 +28,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface ChatDataSource()
 @property (nonatomic, strong) NSOperationQueue * decryptionQueue;
 @property (nonatomic, strong) NSString * ourUsername;
+@property (nonatomic, strong) NSString * theirUsername;
 @property (nonatomic, strong) NSMutableDictionary * controlMessages;
 @property (atomic, assign) BOOL noEarlierMessages;
 @property (atomic, assign) BOOL loadingEarlier;
@@ -45,7 +46,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         _decryptionQueue = [[NSOperationQueue alloc] init];
         [_decryptionQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         _ourUsername = ourUsername;
-        _username = theirUsername;
+        _theirUsername = theirUsername;
         _messages = [NSMutableArray new];
         _controlMessages = [NSMutableDictionary new];
         
@@ -60,12 +61,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             //   DDLogInfo(@"dispatch group 1 notified");
             //If the socket is connected get the data from the server, otherwise it'll be retrieved when the socket connects
-            if ([[[ChatManager sharedInstance] getChatController: _username] isConnected] && (availableId > _latestMessageId || availableControlId > _latestControlMessageId)) {
+            if ([[[ChatManager sharedInstance] getChatController: _ourUsername] isConnected] && (availableId > _latestMessageId || availableControlId > _latestControlMessageId)) {
                 dispatch_group_t group2 = dispatch_group_create();
                 //                   DDLogInfo(@"dispatch group enter %@", username);
                 dispatch_group_enter(group2);
                 dispatch_group_notify(group2, dispatch_get_main_queue(), ^{
-                    DDLogInfo(@"stopProgress username: %@", _username);
+                    DDLogInfo(@"stopProgress username: %@", _theirUsername);
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
                     initCallback(nil);
                 });
@@ -75,7 +76,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 //load message data
                 //   DDLogInfo(@"startProgress: %@", username);
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
-                [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getMessageDataForUsername:_username andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
+                [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getMessageDataForUsername:_theirUsername andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
                     //    DDLogInfo(@"get messageData response");
                     
                     NSArray * controlMessages =[((NSDictionary *) JSON) objectForKey:@"controlMessages"];
@@ -124,7 +125,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             
             //convert messages to SurespotMessage
             for (SurespotMessage * message in messages) {
-                //   DDLogVerbose(@"adding message %@, iv: %@", _username, message.iv);
+                //   DDLogVerbose(@"adding message %@, iv: %@", _theirUsername, message.iv);
                 dispatch_group_enter(group);
                 [self addMessage:message refresh:NO callback:^(id result) {
                     //     DDLogInfo(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
@@ -138,7 +139,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 else {
                     //if the message doesn't have a server id and it's a text message, add it to the resend buffer
                     if (message.serverid <= 0 && ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
-                        [[[ChatManager sharedInstance] getChatController: _username] enqueueResendMessage: message];
+                        [[[ChatManager sharedInstance] getChatController: _ourUsername] enqueueResendMessage: message];
                     }
                 }
             }
@@ -193,7 +194,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 refresh = false;
                 CGSize size = [UIScreen mainScreen ].bounds.size;
                 
-                DDLogVerbose(@"added %@,  now decrypting message iv: %@, width: %f, height: %f",_username, message.iv, size.width, size.height);
+                DDLogVerbose(@"added %@,  now decrypting message iv: %@, width: %f, height: %f",_theirUsername, message.iv, size.width, size.height);
                 
                 MessageDecryptionOperation * op = [[MessageDecryptionOperation alloc]
                                                    initWithMessage:message
@@ -293,11 +294,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     
     
-    //    if (refresh) {
-    //        if ([_decryptionQueue operationCount] == 0) {
-    //            [self postRefresh];
-    //        }
-    //    }
+    if (refresh) {
+        if ([_decryptionQueue operationCount] == 0) {
+            [self postRefresh];
+        }
+    }
     
     DDLogVerbose(@"isNew: %hhd", (char)isNew);
     
@@ -312,13 +313,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) postRefreshScroll: (BOOL) scroll {
-    DDLogInfo(@"postRefreshScroll username: %@, %hhd", _username, (char)scroll);
+    DDLogInfo(@"postRefreshScroll username: %@, %hhd", _theirUsername, (char)scroll);
     [self sort];
     dispatch_async(dispatch_get_main_queue(), ^{
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshMessages"
                                                             object:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                    _username, @"username",
+                                                                    _theirUsername, @"username",
                                                                     [NSNumber numberWithBool:scroll],  @"scroll",
                                                                     nil] ];
     });
@@ -327,7 +328,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) writeToDisk {
     
     
-    NSString * spot = [ChatUtils getSpotUserA:_ourUsername userB:_username];
+    NSString * spot = [ChatUtils getSpotUserA:_ourUsername userB:_theirUsername];
     NSString * filename =[FileController getChatDataFilenameForSpot: spot];
     DDLogInfo(@"saving chat data to disk,filename: %@, spot: %@", filename, spot);
     NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
@@ -343,7 +344,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [dict setObject:[NSNumber numberWithInteger:_latestControlMessageId] forKey:@"latestControlMessageId"];
         BOOL saved =[NSKeyedArchiver archiveRootObject:dict toFile:filename];
         
-        DDLogInfo(@"saved %lu messages for user %@, success?: %@",(unsigned long)[messages count],_username, saved ? @"YES" : @"NO");
+        DDLogInfo(@"saved %lu messages for user %@, success?: %@",(unsigned long)[messages count],_theirUsername, saved ? @"YES" : @"NO");
     }
     
 }
@@ -542,7 +543,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) sort {
     @synchronized (_messages) {
-        DDLogVerbose(@"sorting messages for %@", _username);
+        DDLogVerbose(@"sorting messages for %@", _theirUsername);
         NSArray *sortedArray;
         sortedArray = [_messages sortedArrayUsingComparator:^NSComparisonResult(SurespotMessage * a, SurespotMessage * b) {
             // DDLogVerbose(@"comparing a serverid: %ld, b serverId: %ld", (long)a.serverid, (long)b.serverid);
@@ -599,7 +600,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             return;
         }
         
-        [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getEarlierMessagesForUsername:_username messageId:earliestMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
+        [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getEarlierMessagesForUsername:_theirUsername messageId:earliestMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
             
             NSArray * messages = JSON;
             if (messages.count == 0) {

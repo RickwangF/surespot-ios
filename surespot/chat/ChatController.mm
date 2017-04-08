@@ -479,6 +479,7 @@ static const int MAX_RETRY_DELAY = 30;
         [self stopProgress];
         [_homeDataSource postRefresh];
     } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
+        DDLogWarn(@"getLatestData failed: %@", Error.localizedDescription);
         [self stopProgress];
         [UIUtils showToastKey:@"loading_latest_messages_failed"];
     }];
