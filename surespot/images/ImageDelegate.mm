@@ -100,7 +100,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             case kSurespotImageDelegateModeCapture:
             {
                 [_assetsLibrary saveImage:imageToSave toAlbum:@"surespot" withCompletionBlock:^(NSError *error, NSURL * url) {
-                    _assetsLibrary = nil;                                       
+                    _assetsLibrary = nil;
                     [self uploadImage:imageToSave];
                 }];
                 break;
@@ -109,9 +109,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             {
                 _selectedImage = imageToSave;
                 _assetsLibrary = nil;
-               
+                
                 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
-               
+                
                 browser.displayActionButton = YES; // Show action button to allow sharing, copying, etc (defaults to YES)
                 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
                 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
@@ -121,9 +121,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     [_popover dismissPopoverAnimated:NO];
                     _popover = nil;
                 }
-               
+                
                 browser.navigationItem.title = NSLocalizedString(@"pan_and_zoom", nil);
-
+                
                 [self.controller.navigationController pushViewController:browser animated:NO];
                 [browser setNavBarAppearance:NO tintColor: [UIUtils surespotBlue]];
             }
@@ -156,7 +156,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString * removeString = NSLocalizedString(@"pref_title_background_image_remove", nil);
     [defaults setObject:removeString forKey: [_username stringByAppendingString: @"_user_assign_background_image_key"]];
     [defaults setURL:url forKey:[NSString stringWithFormat:@"%@%@", _username, @"_background_image_url"]];
-
+    
     
     //update UI
     [[NSNotificationCenter defaultCenter] postNotificationName:@"backgroundImageChanged" object:_controller];
@@ -216,44 +216,48 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                           //upload image to server
                                                           DDLogInfo(@"uploading image %@ to server", key);
                                                           [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData:encryptedImageData
-                                                                                                      ourVersion:_ourVersion
-                                                                                                   theirUsername:_theirUsername
-                                                                                                    theirVersion:version
-                                                                                                          fileid:[iv SR_stringByBase64Encoding]
-                                                                                                        mimeType:MIME_TYPE_IMAGE
-                                                                                                    successBlock:^(id JSON) {
-                                                                                                        
-                                                                                                        //update the message with the id and url
-                                                                                                        NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
-                                                                                                        NSString * url = [JSON objectForKey:@"url"];
-                                                                                                        NSInteger size = [[JSON objectForKey:@"size"] integerValue];
-                                                                                                        NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
-                                                                                                        
-                                                                                                        DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, (long)size);
-                                                                                                        
-                                                                                                        SurespotMessage * updatedMessage = [message copyWithZone:nil];
-                                                                                                        
-                                                                                                        updatedMessage.serverid = serverid;
-                                                                                                        updatedMessage.data = url;
-                                                                                                        updatedMessage.dateTime = date;
-                                                                                                        updatedMessage.dataSize = size;
-                                                                                                        
-                                                                                                        [cds addMessage:updatedMessage refresh:YES];
-                                                                                                        
-                                                                                                        [self stopProgress];
-                                                                                                    } failureBlock:^(NSURLResponse *operation, NSError *Error) {
-                                                                                                        long statusCode = [(NSHTTPURLResponse *) operation statusCode];
-                                                                                                        DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", key, statusCode);
-                                                                                                        [self stopProgress];
-                                                                                                        if (statusCode == 402) {
-                                                                                                            message.errorStatus = 402;
-                                                                                                        }
-//                                                                                                        else {
-//                                                                                                            message.errorStatus = 500;
-//                                                                                                        }
-                                                                                                        
-                                                                                                        [cds postRefresh];
-                                                                                                    }];
+                                                                                                                                    ourVersion:_ourVersion
+                                                                                                                                 theirUsername:_theirUsername
+                                                                                                                                  theirVersion:version
+                                                                                                                                        fileid:[iv SR_stringByBase64Encoding]
+                                                                                                                                      mimeType:MIME_TYPE_IMAGE
+                                                                                                                                  successBlock:^(id JSON) {
+                                                                                                                                      
+                                                                                                                                      //update the message with the id and url
+                                                                                                                                      NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
+                                                                                                                                      NSString * url = [JSON objectForKey:@"url"];
+                                                                                                                                      NSInteger size = [[JSON objectForKey:@"size"] integerValue];
+                                                                                                                                      NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
+                                                                                                                                      
+                                                                                                                                      DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, (long)size);
+                                                                                                                                      
+                                                                                                                                      SurespotMessage * updatedMessage = [message copyWithZone:nil];
+                                                                                                                                      
+                                                                                                                                      updatedMessage.serverid = serverid;
+                                                                                                                                      updatedMessage.data = url;
+                                                                                                                                      updatedMessage.dateTime = date;
+                                                                                                                                      updatedMessage.dataSize = size;
+                                                                                                                                      
+                                                                                                                                      [cds addMessage:updatedMessage refresh:YES];
+                                                                                                                                      
+                                                                                                                                      [self stopProgress];
+                                                                                                                                  } failureBlock:^(NSURLResponse *operation, NSError *Error) {
+                                                                                                                                      long statusCode = [(NSHTTPURLResponse *) operation statusCode];
+                                                                                                                                      DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", key, statusCode);
+                                                                                                                                      [self stopProgress];
+                                                                                                                                      if (statusCode == 401) {
+                                                                                                                                          message.errorStatus = 401;
+                                                                                                                                      }
+                                                                                                                                      else {
+                                                                                                                                          if (statusCode == 402) {
+                                                                                                                                              message.errorStatus = 402;
+                                                                                                                                          }                                                                                                   else {
+                                                                                                                                              message.errorStatus = 500;
+                                                                                                                                          }
+                                                                                                                                      }
+                                                                                                                                      
+                                                                                                                                      [cds postRefresh];
+                                                                                                                                  }];
                                                       }
                                                       else {
                                                           [self stopProgress];
@@ -302,50 +306,50 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                   //upload friend image to server
                                                   DDLogInfo(@"uploading friend image %@ to server", key);
                                                   [[[NetworkManager sharedInstance] getNetworkController:_username] postFriendStreamData:encryptedImageData
-                                                                                                ourVersion:_ourVersion
-                                                                                             theirUsername:_theirUsername
-                                                                                                        iv:[iv SR_stringByBase64Encoding]
-                                                                                              successBlock:^(id responseObject) {
-                                                                                                  [self stopProgress];
-                                                                                                  if (responseObject) {
-                                                                                                      NSString * url = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-                                                                                                      DDLogInfo(@"uploaded friend image %@ to server successfully", key);
-                                                                                                      //get cached image datas
-                                                                                                      UIImage * image = [[[SDWebImageManager sharedManager] imageCache] imageFromMemoryCacheForKey:key];
-                                                                                                      NSData * encryptedImageData = [[[SDWebImageManager sharedManager] imageCache] diskImageDataBySearchingAllPathsForKey:key];
-                                                                                                      
-                                                                                                      if (image && encryptedImageData) {
-                                                                                                          //save data for new remote key
-                                                                                                          [[[SDWebImageManager sharedManager] imageCache] storeImage:image imageData:encryptedImageData mimeType: MIME_TYPE_IMAGE forKey:url
-                                                                                                                                                              toDisk:YES];
-                                                                                                          
-                                                                                                          //remove now defunct cached local data
-                                                                                                          [[[SDWebImageManager sharedManager] imageCache] removeImageForKey:key fromDisk:YES];
-                                                                                                          
-                                                                                                          DDLogInfo(@"key exists for %@: %@", key, [[[SDWebImageManager sharedManager] imageCache] diskImageExistsWithKey:key] ? @"YES" : @"NO" );
-                                                                                                      }
-                                                                                                      
-                                                                                                      [[[ChatManager sharedInstance] getChatController: _username] setFriendImageUrl:url forFriendname:_theirUsername version:_ourVersion iv: b64iv hashed: YES];
-                                                                                                  }
-                                                                                                  else {
-                                                                                                      DDLogInfo(@"uploading friend image to server succeeded but there is no response object, wtf?");
-                                                                                                      [UIUtils showToastKey:@"could_not_upload_friend_image" duration:2];
-                                                                                                  }
-                                                                                                  
-                                                                                                  if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                                                                                                      [_popover dismissPopoverAnimated:YES];
-                                                                                                  }
-                                                                                                  
-                                                                                                  
-                                                                                              } failureBlock:^(NSURLResponse *operation, NSError *error) {
-                                                                                                  [self stopProgress];
-                                                                                                  DDLogInfo(@"uploading friend image %@ to server failed", key);
-                                                                                                  [UIUtils showToastKey:@"could_not_upload_friend_image" duration:2];
-                                                                                                  
-                                                                                                  if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                                                                                                      [_popover dismissPopoverAnimated:YES];
-                                                                                                  }
-                                                                                              }];
+                                                                                                                              ourVersion:_ourVersion
+                                                                                                                           theirUsername:_theirUsername
+                                                                                                                                      iv:[iv SR_stringByBase64Encoding]
+                                                                                                                            successBlock:^(id responseObject) {
+                                                                                                                                [self stopProgress];
+                                                                                                                                if (responseObject) {
+                                                                                                                                    NSString * url = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+                                                                                                                                    DDLogInfo(@"uploaded friend image %@ to server successfully", key);
+                                                                                                                                    //get cached image datas
+                                                                                                                                    UIImage * image = [[[SDWebImageManager sharedManager] imageCache] imageFromMemoryCacheForKey:key];
+                                                                                                                                    NSData * encryptedImageData = [[[SDWebImageManager sharedManager] imageCache] diskImageDataBySearchingAllPathsForKey:key];
+                                                                                                                                    
+                                                                                                                                    if (image && encryptedImageData) {
+                                                                                                                                        //save data for new remote key
+                                                                                                                                        [[[SDWebImageManager sharedManager] imageCache] storeImage:image imageData:encryptedImageData mimeType: MIME_TYPE_IMAGE forKey:url
+                                                                                                                                                                                            toDisk:YES];
+                                                                                                                                        
+                                                                                                                                        //remove now defunct cached local data
+                                                                                                                                        [[[SDWebImageManager sharedManager] imageCache] removeImageForKey:key fromDisk:YES];
+                                                                                                                                        
+                                                                                                                                        DDLogInfo(@"key exists for %@: %@", key, [[[SDWebImageManager sharedManager] imageCache] diskImageExistsWithKey:key] ? @"YES" : @"NO" );
+                                                                                                                                    }
+                                                                                                                                    
+                                                                                                                                    [[[ChatManager sharedInstance] getChatController: _username] setFriendImageUrl:url forFriendname:_theirUsername version:_ourVersion iv: b64iv hashed: YES];
+                                                                                                                                }
+                                                                                                                                else {
+                                                                                                                                    DDLogInfo(@"uploading friend image to server succeeded but there is no response object, wtf?");
+                                                                                                                                    [UIUtils showToastKey:@"could_not_upload_friend_image" duration:2];
+                                                                                                                                }
+                                                                                                                                
+                                                                                                                                if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+                                                                                                                                    [_popover dismissPopoverAnimated:YES];
+                                                                                                                                }
+                                                                                                                                
+                                                                                                                                
+                                                                                                                            } failureBlock:^(NSURLResponse *operation, NSError *error) {
+                                                                                                                                [self stopProgress];
+                                                                                                                                DDLogInfo(@"uploading friend image %@ to server failed", key);
+                                                                                                                                [UIUtils showToastKey:@"could_not_upload_friend_image" duration:2];
+                                                                                                                                
+                                                                                                                                if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+                                                                                                                                    [_popover dismissPopoverAnimated:YES];
+                                                                                                                                }
+                                                                                                                            }];
                                               }
                                               else {
                                                   [self stopProgress];
@@ -520,7 +524,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) stopProgress {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object: nil];
-
+    
 }
 
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {

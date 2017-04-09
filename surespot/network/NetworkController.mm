@@ -25,9 +25,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface NetworkController()
 @property (nonatomic, strong) NSString * baseUrl;
 @property (nonatomic, strong) NSString * username;
-
 @end
-
 @implementation NetworkController
 
 
@@ -50,118 +48,113 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return self;
 }
 
+#pragma mark - reauth
 
-//- (void)URLSession:(NSURLSession *)session
-//didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
-// completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler{
-//    DDLogInfo(@"URLSession auth delegate");
-//    if ([challenge previousFailureCount] > 0) {
-//        //this will cause an authentication failure
-//        NSLog(@"Bad Username Or Password");
-//        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
-//    }
-//
-//
-//
-//    if (_username) {
-//        [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
-//            // [session s]
-//          //  [self setCookie:cookie];
-//            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-//        } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
-//            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-//        }];
-//    }
-//    else {
-//        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-//    }
-//
-//}
-//
-
-// USELESS
-// Can't find a way to set a header (ie. the new cookie from the re-login) for the second auth'd request
-// how the fuck are you supposed to implement your own auth mechanism
-// weak
-
-//- (void)URLSession:(NSURLSession *)session
-//              task:(NSURLSessionTask *)task
-//didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
-// completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
-//{
-//     DDLogInfo(@"%@: URLSession auth task delegate", _username);
-//    if (completionHandler) {
-////        if ([challenge previousFailureCount] > 0) {
-////
-////            completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
-////            return;
-////        }
-////
-//   //  DDLogDebug(@"task: %@",  [[task currentRequest] valueForHTTPHeaderField:@"Cookie"] );
-//        if ([[[challenge protectionSpace] realm] isEqualToString:@"surespot Authorization Required"]) {
-//            if (_username) {
-//                [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task2, id JSON, NSHTTPCookie *cookie) {
-//                    //can't set the friggin cookie for the request
-//                    DDLogDebug(@"task ccokie: %@",  [[task currentRequest] valueForHTTPHeaderField:@"Cookie"] );
-//                     DDLogDebug(@"session cookie: %@",  [[[session configuration] HTTPAdditionalHeaders ]objectForKey:@"Cookie"] );
-//
-//               //     [[session configuration] setHTTPAdditionalHeaders:@{@"Cookie":[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value]}];
-//                 //   [self setCookie:cookie];
-//                    NSMutableURLRequest * mRequest = [[task currentRequest] mutableCopy];
-//                    [mRequest setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
-//                    completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
-//                } failureBlock:^(NSURLSessionTask *task2, NSError *Error) {
-//                    completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
-//                    [self setUnauthorized];
-//                }];
-//            }
-//            else {
-//                completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-//            }
-//        }
-//        else {
-//            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-//
-//        }
-//    }
-//}
-
-
-
-//handle 401s globally
-- (void)HTTPOperationDidFinish:(NSNotification *)notification {
-    //TODO figure out token refresh
-    //    AFHTTPRequestOperation *operation = (AFHTTPRequestOperation *)[notification object];
-    //
-    //    if (![operation isKindOfClass:[AFHTTPRequestOperation class]]) {
-    //        return;
-    //    }
-    //
-    //    if ([operation.response statusCode] == 401) {
-    //        DDLogInfo(@"path components: %@", operation.request.URL.pathComponents[1]);
-    //        //ignore on logout
-    //        if (![operation.request.URL.pathComponents[1] isEqualToString:@"logout"]) {
-    //            DDLogInfo(@"received 401");
-    //            [self setUnauthorized];
-    //        }
-    //        else {
-    //            DDLogInfo(@"logout 401'd");
-    //        }
-    //    }
-}
-
--(void) setUnauthorized {
-    //TODO send username in notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"unauthorized" object: nil];
+- (NSURLSessionDataTask *)reauthGET:(NSString *)URLString
+                         parameters:(id)parameters
+                            success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success
+                            failure:(void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure
+{
+    return [self GET:URLString
+          parameters:parameters
+            progress:nil
+             success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                 if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
+                     [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+                         //relogin success, call original method
+                         [self reauthGET:URLString parameters:parameters success:success failure:failure];
+                     } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
+                         //relogin failed, call fail block  with original task and error
+                         failure(task, error);
+                         if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                             [self setUnauthorized];
+                         }
+                
+                     }];
+                 }
+                 else {
+                     failure(task, error);
+                 }
+             }];
 }
 
 
--(void) setCookie: (NSHTTPCookie *) cookie {
-    DDLogDebug(@"%@: setCookie: %@",_username, cookie);
-    if (cookie && _username) {
-        [self.requestSerializer setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
-    }
+- (NSURLSessionDataTask *)reauthPOST:(NSString *)URLString
+                          parameters:(id)parameters
+                             success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success
+                             failure:(void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure
+{
+    return [self POST:URLString parameters:parameters progress:nil success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+                //relogin success, call original method
+                [self reauthPOST:URLString parameters:parameters success:success failure:failure];
+            } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
+                //relogin failed, call fail block  with original task and error
+                failure(task, error);
+                if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                    [self setUnauthorized];
+                }
+            }];
+        }
+        else {
+            failure(task, error);
+        }
+        
+    }];
 }
+
+- (NSURLSessionDataTask *)reauthDELETE:(NSString *)URLString
+                      parameters:(id)parameters
+                         success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
+                         failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure
+{
+    return [self DELETE:URLString parameters:parameters success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+                //relogin success, call original method
+                [self reauthDELETE:URLString parameters:parameters success:success failure:failure];
+            } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
+                //relogin failed, call fail block  with original task and error
+                failure(task, error);
+                if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                    [self setUnauthorized];
+                }
+            }];
+        }
+        else {
+            failure(task, error);
+        }
+
+    }];
+}
+
+- (NSURLSessionDataTask *)reauthPUT:(NSString *)URLString
+                            parameters:(id)parameters
+                               success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
+                               failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure
+{
+    return [self PUT:URLString parameters:parameters success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+                //relogin success, call original method
+                [self reauthPUT:URLString parameters:parameters success:success failure:failure];
+            } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
+                //relogin failed, call fail block  with original task and error
+                failure(task, error);
+                if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                    [self setUnauthorized];
+                }
+            }];
+        }
+        else {
+            failure(task, error);
+        }
+        
+    }];
+}
+
+#pragma mark - non reauth'd methods
 
 -(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
              successBlock:(HTTPCookieSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock
@@ -304,65 +297,49 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }];
 }
 
-
--(NSHTTPCookie *) extractConnectCookie {
-    //save the cookie
-    NSArray *cookies = [[[[self session]configuration ] HTTPCookieStorage] cookiesForURL:[NSURL URLWithString:_baseUrl]];
-    
-    for (NSHTTPCookie *cookie in cookies)
-    {
-        if ([cookie.name isEqualToString:@"connect.sid"]) {
-            return cookie;
-        }
-    }
-    
-    return nil;
-    
+-(void) logout {
+    //send logout
+    DDLogInfo(@"logout");
+    [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+     
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+      
+    }];
 }
 
+
+#pragma mark reauth'd methods
+
+
 -(void) getFriendsSuccessBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
-    [self GET:@"friends" parameters:nil progress:nil success:successBlock failure:failureBlock];
+    [self reauthGET:@"friends" parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) inviteFriend: (NSString *) friendname successBlock: (HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat: @"invite/%@",friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    [self POST:path parameters:nil progress:nil success:successBlock failure:failureBlock];
-    
+    [self reauthPOST:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 - (void) getKeyVersionForUsername:(NSString *)username successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock
 {
     NSString * path = [[NSString stringWithFormat: @"keyversion/%@",username] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    [self GET:path parameters:nil progress:nil success:successBlock failure:failureBlock];
-    
+    [self reauthGET:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 - (void) getPublicKeys2ForUsername:(NSString *)username andVersion:(NSString *)version successBlock:(HTTPSuccessBlock)successBlock failureBlock:(HTTPFailureBlock) failureBlock{
-    
-    
-    [self GET:[self buildPublicKeyPathForUsername:username version:version] parameters:nil progress:nil success:successBlock
-      failure:failureBlock];
-    
-}
-
--(NSString *) buildPublicKeyPathForUsername: (NSString *) username version: (NSString *) version {
-    NSString * path = [[NSString stringWithFormat: @"publickeys/%@/since/%@",username, version]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ;
-    
-    return path;
+    [self reauthGET:[self buildPublicKeyPathForUsername:username version:version] parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) getMessageDataForUsername:(NSString *)username andMessageId:(NSInteger)messageId andControlId:(NSInteger) controlId successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"messagedataopt/%@/%ld/%ld", username, (long)messageId, (long)controlId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self GET: path parameters:nil progress:nil success:successBlock failure:failureBlock];
+    [self reauthGET: path parameters:nil success:successBlock failure:failureBlock];
     
 }
 
 -(void) respondToInviteName:(NSString *) friendname action: (NSString *) action successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat:@"invites/%@/%@", friendname, action] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self POST:path parameters:nil progress:nil success:successBlock failure:failureBlock];
+    [self reauthPOST:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
@@ -377,77 +354,223 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     [self addPurchaseReceiptToParams:params];
     
-    
     NSString * path = [NSString stringWithFormat:@"optdata/%ld", (long)latestUserControlId];
-    [self POST:path parameters:params progress:nil success:successBlock failure:failureBlock];
-    
-    
+    [self reauthPOST:path parameters:params success:successBlock failure:failureBlock];
 }
-
-
-
--(void) logout {
-    //send logout
-    //  if (!_loggedOut) {
-    DDLogInfo(@"logout");
-    [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        // [self deleteCookies];
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        //     [self deleteCookies];
-    }];
-    // }
-}
-
 
 -(void) deleteFriend:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat:@"friends/%@", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
+    [self reauthDELETE:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 
 -(void) deleteMessageName:(NSString *) name serverId: (NSInteger) serverid successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"messages/%@/%ld", name, (long)serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self DELETE:path parameters:nil success:successBlock failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        //if it's 401, relogin and try again
-        if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
-                //relogin success, call original method
-                
-                [self deleteMessageName:name serverId:serverid successBlock:successBlock failureBlock:failureBlock];
-            } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
-                //relogin failed, call fail block  with original task and error
-                failureBlock(task, error);
-            }];
-        }
-        else {
-            failureBlock(task, error);
-        }
-    }];
+    [self reauthDELETE:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) deleteMessagesUTAI:(NSInteger) utaiId name: (NSString *) name successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"messagesutai/%@/%ld", name, (long)utaiId] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
+    [self reauthDELETE:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) userExists: (NSString *) username successBlock: (HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat:@"users/%@/exists", username] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self GET:path parameters:nil progress:nil success:successBlock failure:failureBlock];
+    [self reauthGET:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) getEarlierMessagesForUsername: (NSString *) username messageId: (NSInteger) messageId successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"messagesopt/%@/before/%ld", username, (long)messageId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self GET:path parameters:nil progress:nil success:successBlock failure:failureBlock];
+    [self reauthGET:path parameters:nil success:successBlock failure:failureBlock];
 }
 
 -(void) validateUsername: (NSString *) username password: (NSString *) password signature: (NSString *) signature successBlock:(HTTPSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:username,@"username",password,@"password",signature,@"authSig", nil];
-    [self POST:@"validate" parameters:params progress:nil success:successBlock failure:failureBlock];
+    [self reauthPOST:@"validate" parameters:params success:successBlock failure:failureBlock];
 }
+
+-(void) setMessageShareable:(NSString *) name
+                   serverId: (NSInteger) serverid
+                  shareable: (BOOL) shareable
+               successBlock:(HTTPSuccessBlock)successBlock
+               failureBlock: (HTTPFailureBlock) failureBlock {
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:(shareable ? @YES : @NO),@"shareable", nil];
+    NSString * path = [[NSString stringWithFormat:@"messages/%@/%ld/shareable", name, (long)serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self reauthPUT:path parameters:params success:successBlock failure:failureBlock];
+    
+}
+
+-(void) getKeyTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
+                  successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock
+{
+    
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   username,@"username",
+                                   password,@"password",
+                                   signature, @"authSig",
+                                   nil];
+    
+    [self reauthPOST:@"/keytoken" parameters:params success:successBlock failure:failureBlock];
+}
+
+
+-(void) updateKeys3ForUsername:(NSString *) username
+                      password:(NSString *) password
+                   publicKeyDH:(NSString *) pkDH
+                  publicKeyDSA:(NSString *) pkDSA
+                       authSig:(NSString *) authSig
+                      tokenSig:(NSString *) tokenSig
+                    keyVersion:(NSString *) keyversion
+                     clientSig:(NSString *) clientSig
+                  successBlock:(HTTPSuccessBlock) successBlock
+                  failureBlock:(HTTPFailureBlock) failureBlock
+{
+    
+    NSString *appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    NSString *appBuildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+    NSString *versionString = [NSString stringWithFormat:@"%@:%@", appVersionString, appBuildString];
+    
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   username,@"username",
+                                   password,@"password",
+                                   pkDH, @"dhPub",
+                                   pkDSA, @"dsaPub",
+                                   authSig, @"authSig",
+                                   tokenSig, @"tokenSig",
+                                   clientSig, @"clientSig2",
+                                   keyversion, @"keyVersion",
+                                   versionString, @"version",
+                                   @"ios", @"platform", nil];
+    
+    //add apnToken if we have one
+    NSData *  apnToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"apnToken"];
+    if (apnToken) {
+        [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
+    }
+    
+    [self reauthPOST:@"/keys3" parameters:params success:successBlock failure:failureBlock];
+    
+    
+}
+
+-(void) getDeleteTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
+                     successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   username,@"username",
+                                   password,@"password",
+                                   signature, @"authSig",
+                                   nil];
+    
+    [self reauthPOST:@"/deletetoken" parameters:params success:successBlock failure:failureBlock];
+}
+
+-(void) deleteUsername:(NSString *) username
+              password:(NSString *) password
+               authSig:(NSString *) authSig
+              tokenSig:(NSString *) tokenSig
+            keyVersion:(NSString *) keyversion
+          successBlock:(HTTPSuccessBlock) successBlock
+          failureBlock:(HTTPFailureBlock) failureBlock {
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   username,@"username",
+                                   password,@"password",
+                                   authSig, @"authSig",
+                                   tokenSig, @"tokenSig",
+                                   keyversion, @"keyVersion",
+                                   nil];
+    
+    [self reauthPOST:@"/users/delete" parameters:params success:successBlock failure:failureBlock];
+}
+
+
+-(void) getPasswordTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
+                       successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   username,@"username",
+                                   password,@"password",
+                                   signature, @"authSig",
+                                   nil];
+    
+    [self reauthPOST:@"/passwordtoken" parameters:params success:successBlock failure:failureBlock];
+    
+}
+
+-(void) changePasswordForUsername:(NSString *) username
+                      oldPassword:(NSString *) password
+                      newPassword:(NSString *) newPassword
+                          authSig:(NSString *) authSig
+                         tokenSig:(NSString *) tokenSig
+                       keyVersion:(NSString *) keyversion
+                     successBlock:(HTTPSuccessBlock) successBlock
+                     failureBlock:(HTTPFailureBlock) failureBlock {
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   username,@"username",
+                                   password,@"password",
+                                   authSig, @"authSig",
+                                   tokenSig, @"tokenSig",
+                                   keyversion, @"keyVersion",
+                                   newPassword, @"newPassword",
+                                   nil];
+    
+    [self reauthPUT:@"/users/password" parameters:params success:successBlock failure:failureBlock];
+    
+}
+
+
+-(void) assignFriendAlias:(NSString *) data friendname: (NSString *) friendname version: (NSString *) version iv: (NSString *) iv successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   data, @"data",
+                                   iv,@"iv",
+                                   version,@"version",
+                                   nil];
+    
+    NSString * path = [[NSString stringWithFormat:@"users/%@/alias2", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    [self reauthPUT:path parameters:params success:successBlock failure:failureBlock];
+}
+
+-(void) deleteFriendAlias:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
+    
+    NSString * path = [[NSString stringWithFormat:@"users/%@/alias", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self reauthDELETE:path parameters:nil success:successBlock failure:failureBlock];
+}
+
+-(void) deleteFriendImage:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
+    
+    NSString * path = [[NSString stringWithFormat:@"users/%@/image", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self reauthDELETE:path parameters:nil success:successBlock failure:failureBlock];
+}
+
+-(void) sendMessages:(NSArray *)messages successBlock:(HTTPSuccessBlock)successBlock failureBlock:(HTTPFailureBlock)failureBlock {
+    NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:messages, @"messages", nil];
+    [self reauthPOST:@"messages" parameters:params success:successBlock failure:failureBlock];
+    
+}
+
+-(void) updateSigs: (NSDictionary *) sigs {
+    NSString * path = [NSString stringWithFormat:@"%@/sigs2",_baseUrl];
+    NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:sigs, @"sigs2", nil];
+    //NSMutableURLRequest * req = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:path parameters:params error:nil];
+    //NSURLSessionDataTask * task = [self dataTaskWithRequest:req completionHandler:nil];
+    //[task resume];
+    
+    [self reauthPOST:path parameters:params success:nil failure:nil];
+}
+
+#pragma mark streaming methods
+
 
 -(void) postFileStreamData: (NSData *) data
                 ourVersion: (NSString *) ourVersion
@@ -508,143 +631,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [task resume];
 }
 
--(void) setMessageShareable:(NSString *) name
-                   serverId: (NSInteger) serverid
-                  shareable: (BOOL) shareable
-               successBlock:(HTTPSuccessBlock)successBlock
-               failureBlock: (HTTPFailureBlock) failureBlock {
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:(shareable ? @YES : @NO),@"shareable", nil];
-    NSString * path = [[NSString stringWithFormat:@"messages/%@/%ld/shareable", name, (long)serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self PUT:path parameters:params success:successBlock failure:failureBlock];
-    
-}
 
--(void) getKeyTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
-                  successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock
-{
-    
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   username,@"username",
-                                   password,@"password",
-                                   signature, @"authSig",
-                                   nil];
-    
-    [self POST:@"/keytoken" parameters:params progress:nil success:successBlock failure:failureBlock];
-}
-
-
--(void) updateKeys3ForUsername:(NSString *) username
-                      password:(NSString *) password
-                   publicKeyDH:(NSString *) pkDH
-                  publicKeyDSA:(NSString *) pkDSA
-                       authSig:(NSString *) authSig
-                      tokenSig:(NSString *) tokenSig
-                    keyVersion:(NSString *) keyversion
-                     clientSig:(NSString *) clientSig
-                  successBlock:(HTTPSuccessBlock) successBlock
-                  failureBlock:(HTTPFailureBlock) failureBlock
-{
-    
-    NSString *appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    NSString *appBuildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-    NSString *versionString = [NSString stringWithFormat:@"%@:%@", appVersionString, appBuildString];
-    
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   username,@"username",
-                                   password,@"password",
-                                   pkDH, @"dhPub",
-                                   pkDSA, @"dsaPub",
-                                   authSig, @"authSig",
-                                   tokenSig, @"tokenSig",
-                                   clientSig, @"clientSig2",
-                                   keyversion, @"keyVersion",
-                                   versionString, @"version",
-                                   @"ios", @"platform", nil];
-    
-    //add apnToken if we have one
-    NSData *  apnToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"apnToken"];
-    if (apnToken) {
-        [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
-    }
-    
-    [self POST:@"/keys3" parameters:params progress:nil success:successBlock failure:failureBlock];
-    
-    
-}
-
--(void) getDeleteTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
-                     successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   username,@"username",
-                                   password,@"password",
-                                   signature, @"authSig",
-                                   nil];
-    
-    [self POST:@"/deletetoken" parameters:params progress:nil success:successBlock failure:failureBlock];
-}
-
--(void) deleteUsername:(NSString *) username
-              password:(NSString *) password
-               authSig:(NSString *) authSig
-              tokenSig:(NSString *) tokenSig
-            keyVersion:(NSString *) keyversion
-          successBlock:(HTTPSuccessBlock) successBlock
-          failureBlock:(HTTPFailureBlock) failureBlock {
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   username,@"username",
-                                   password,@"password",
-                                   authSig, @"authSig",
-                                   tokenSig, @"tokenSig",
-                                   keyversion, @"keyVersion",
-                                   nil];
-    
-    [self POST:@"/users/delete" parameters:params progress:nil success:successBlock failure:failureBlock];
-}
-
-
--(void) getPasswordTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
-                       successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   username,@"username",
-                                   password,@"password",
-                                   signature, @"authSig",
-                                   nil];
-    
-    [self POST:@"/passwordtoken" parameters:params progress:nil success:successBlock failure:failureBlock];
-    
-}
-
--(void) changePasswordForUsername:(NSString *) username
-                      oldPassword:(NSString *) password
-                      newPassword:(NSString *) newPassword
-                          authSig:(NSString *) authSig
-                         tokenSig:(NSString *) tokenSig
-                       keyVersion:(NSString *) keyversion
-                     successBlock:(HTTPSuccessBlock) successBlock
-                     failureBlock:(HTTPFailureBlock) failureBlock {
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   username,@"username",
-                                   password,@"password",
-                                   authSig, @"authSig",
-                                   tokenSig, @"tokenSig",
-                                   keyversion, @"keyVersion",
-                                   newPassword, @"newPassword",
-                                   nil];
-    
-    [self PUT:@"/users/password" parameters:params success:successBlock failure:failureBlock];
-    
-}
-
--(void) deleteFromCache: (NSURLRequest *) request {
-    [[NSURLCache sharedURLCache] removeCachedResponseForRequest:request];
-}
+#pragma mark external urls
 
 -(void) getShortUrl:(NSString*) longUrl callback: (CallbackBlock) callback
 {
@@ -663,6 +651,35 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [task resume];
 }
 
+#pragma mark helper methods
+
+-(void) setUnauthorized {
+    //TODO send username in notification
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"unauthorized" object: nil];
+}
+
+-(NSHTTPCookie *) extractConnectCookie {
+    //save the cookie
+    NSArray *cookies = [[[[self session]configuration ] HTTPCookieStorage] cookiesForURL:[NSURL URLWithString:_baseUrl]];
+    
+    for (NSHTTPCookie *cookie in cookies)
+    {
+        if ([cookie.name isEqualToString:@"connect.sid"]) {
+            return cookie;
+        }
+    }
+    
+    return nil;
+    
+}
+
+-(void) setCookie: (NSHTTPCookie *) cookie {
+    DDLogDebug(@"%@: setCookie: %@",_username, cookie);
+    if (cookie && _username) {
+        [self.requestSerializer setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
+    }
+}
+
 -(void) addPurchaseReceiptToParams: (NSMutableDictionary *) params {
     NSString * purchaseReceipt = nil;
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
@@ -676,43 +693,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
 }
 
--(void) assignFriendAlias:(NSString *) data friendname: (NSString *) friendname version: (NSString *) version iv: (NSString *) iv successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   data, @"data",
-                                   iv,@"iv",
-                                   version,@"version",
-                                   nil];
-    
-    NSString * path = [[NSString stringWithFormat:@"users/%@/alias2", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    [self PUT:path parameters:params success:successBlock failure:failureBlock];
+-(void) deleteFromCache: (NSURLRequest *) request {
+    [[NSURLCache sharedURLCache] removeCachedResponseForRequest:request];
 }
 
--(void) deleteFriendAlias:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
-    
-    NSString * path = [[NSString stringWithFormat:@"users/%@/alias", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
-}
-
--(void) deleteFriendImage:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
-    
-    NSString * path = [[NSString stringWithFormat:@"users/%@/image", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
-}
-
--(void) updateSigs: (NSDictionary *) sigs {
-    NSString * path = [NSString stringWithFormat:@"%@/sigs2",_baseUrl];
-    NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:sigs, @"sigs2", nil];
-    NSMutableURLRequest * req = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:path parameters:params error:nil];
-    NSURLSessionDataTask * task = [self dataTaskWithRequest:req completionHandler:nil];
-    [task resume];
-}
-
--(void) sendMessages:(NSArray *)messages successBlock:(HTTPSuccessBlock)successBlock failureBlock:(HTTPFailureBlock)failureBlock {
-    NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:messages, @"messages", nil];
-    [self POST:@"messages" parameters:params progress:nil success:successBlock failure:failureBlock];
-    
+-(NSString *) buildPublicKeyPathForUsername: (NSString *) username version: (NSString *) version {
+    NSString * path = [[NSString stringWithFormat: @"publickeys/%@/since/%@",username, version]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] ;
+    return path;
 }
 
 -(NSString *) encodeBase64: (NSString *) base64 {
