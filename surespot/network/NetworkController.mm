@@ -226,16 +226,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             DDLogInfo(@"logging in to server");
             //use nil controller otherwise the request seems to block if we use the same network controller that is trying to auth the request to auth the request
             [[[NetworkManager sharedInstance] getNetworkController:nil] loginWithUsername:identity.username
-                        andPassword:passwordString
-                       andSignature: signatureString
-                       successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie * cookie) {
-                           DDLogVerbose(@"login response");
-                           
-                           
-                           [[IdentityController sharedInstance] userLoggedInWithIdentity:identity password: password cookie: cookie relogin:YES];
-                           successBlock(task, JSON, cookie);
-                       }
-                       failureBlock: failureBlock];
+                                                                              andPassword:passwordString
+                                                                             andSignature: signatureString
+                                                                             successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie * cookie) {
+                                                                                 DDLogVerbose(@"login response");
+                                                                                 
+                                                                                 [self setCookie:cookie];
+                                                                                 [[IdentityController sharedInstance] userLoggedInWithIdentity:identity password: password cookie: cookie relogin:YES];
+                                                                                 successBlock(task, JSON, cookie);
+                                                                             }
+                                                                             failureBlock: failureBlock];
         });
         
         return YES;
