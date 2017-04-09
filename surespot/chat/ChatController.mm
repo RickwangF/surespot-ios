@@ -621,7 +621,6 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) sendMessagesViaHttp {
-    return;
     //socket will be disconnected so try and send messages via http if we have messages to send
     //if we're not sending stuff, shut everything down
     @synchronized(self) {
