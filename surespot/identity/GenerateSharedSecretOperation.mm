@@ -12,7 +12,7 @@
 
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelInfo;
+//static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif

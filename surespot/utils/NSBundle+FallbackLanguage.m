@@ -3,7 +3,7 @@
 #import "UIUtils.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+//static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
