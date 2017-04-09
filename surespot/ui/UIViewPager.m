@@ -59,13 +59,13 @@ static CGFloat const alpha = 0.4;
 - (void) layoutSubviews {
     CGFloat width = self.bounds.size.width;
     
-    int currentPage = [_delegate currentPage];
-    int count = [_delegate pageCount];
+    long currentPage = [_delegate currentPage];
+    long count = [_delegate pageCount];
     float offset = _horizontalOffset - currentPage * width;
     UIView * firstView;
     UIView * secondView;
     
-    DDLogInfo(@"layoutsubviews, page: %d, count: %d,  adj offset: %f", currentPage, count, offset);
+    DDLogVerbose(@"layoutsubviews, page: %ld, count: %ld,  adj offset: %f", currentPage, count, offset);
     
     if (count == 0) {return;}
     
@@ -106,7 +106,15 @@ static CGFloat const alpha = 0.4;
         }
     }
     
-    
+    if (ABS(offset) < 60) {
+        //brighter the closer we get to the middle
+        double dAlpha = alpha +(1-ABS(offset)/60)*(1-alpha);
+        DDLogDebug(@"alpha: %f", dAlpha);
+        [secondView setAlpha:dAlpha];
+    }
+    else {
+        [secondView setAlpha:alpha];
+    }
     
     if ( currentPage < count - 1) {
         _thirdLabel.text = [_delegate titleForLabelForPage:currentPage + 1];
@@ -126,14 +134,14 @@ static CGFloat const alpha = 0.4;
         firstLabelOffset = 0;
     }
     
-    DDLogInfo(@"1st label offset: %f", firstLabelOffset);
+    DDLogVerbose(@"1st label offset: %f", firstLabelOffset);
     
     
     
     CGFloat secondLabelOffset = width/2 - _secondLabelWidth/2 - offset;
     
     
-    DDLogInfo(@"2nd label offset: %f", secondLabelOffset);
+    DDLogVerbose(@"2nd label offset: %f", secondLabelOffset);
     
     CGFloat thirdLabelOffset = width - _thirdLabelWidth;
     if (offset < 0) {
@@ -143,7 +151,7 @@ static CGFloat const alpha = 0.4;
         thirdLabelOffset = width - _thirdLabelWidth;
     }
     
-    DDLogInfo(@"3rd label offset: %f", thirdLabelOffset);
+    DDLogVerbose(@"3rd label offset: %f", thirdLabelOffset);
     
     
     if (secondLabelOffset < 0) {
@@ -176,8 +184,9 @@ static CGFloat const alpha = 0.4;
 #pragma mark UIScrollViewDelegate protocol implementation.
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
-    // DDLogVerbose(@"Content offset:%@",NSStringFromCGPoint(scrollView.contentOffset));
+     DDLogVerbose(@"Content offset:%@",NSStringFromCGPoint(scrollView.contentOffset));
     _horizontalOffset = scrollView.contentOffset.x;
+    
     [self setNeedsLayout];
 }
 
@@ -188,7 +197,8 @@ static CGFloat const alpha = 0.4;
     NSInteger count = [_delegate pageCount];
     if (locationInView.x < width/3 && page > 0) {
         [_delegate switchToPageIndex: page - 1];
-    } else if (locationInView.x > width * 2/3 && page < count - 1) {           [_delegate switchToPageIndex:page+1];
+    } else if (locationInView.x > width * 2/3 && page < count - 1) {
+        [_delegate switchToPageIndex:page+1];
     }
 }
 
