@@ -38,7 +38,7 @@
 -(void) saveLatestVersions;
 -(void) updateIdentity: (SurespotIdentity *) identity onlyIfExists: (BOOL) onlyIfExists;
 -(SurespotIdentity *) getIdentityForUsername: (NSString *) username password: (NSString *) password;
--(SurespotIdentity *) getLoggedInIdentity;
+-(SurespotIdentity *) getIdentityForUsername:(NSString *)username;
 -(NSHTTPCookie *) getCookieForUsername: (NSString *) username;
 -(BOOL) setSessionForUsername: (NSString *) username;
 @end

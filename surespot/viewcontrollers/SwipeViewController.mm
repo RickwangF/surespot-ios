@@ -1855,7 +1855,7 @@ const Float32 voiceRecordDelay = 0.3;
                                                 
                                                 _imageDelegate = [[ImageDelegate alloc]
                                                                   initWithUsername:_username
-                                                                  ourVersion:[[IdentityController sharedInstance] getOurLatestVersion]
+                                                                  ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                                                                   theirUsername:theirUsername
                                                                   assetLibrary:_assetLibrary];
                                                 
@@ -1874,7 +1874,7 @@ const Float32 voiceRecordDelay = 0.3;
                                                  
                                                  _imageDelegate = [[ImageDelegate alloc]
                                                                    initWithUsername:_username
-                                                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion]
+                                                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                                                                    theirUsername:theirUsername
                                                                    assetLibrary:_assetLibrary];
                                                  [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
@@ -2089,7 +2089,7 @@ const Float32 voiceRecordDelay = 0.3;
                                                     
                                                     _imageDelegate = [[ImageDelegate alloc]
                                                                       initWithUsername:_username
-                                                                      ourVersion:[[IdentityController sharedInstance] getOurLatestVersion]
+                                                                      ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                                                                       theirUsername:thefriend.name
                                                                       assetLibrary:nil];
                                                     
@@ -2506,7 +2506,7 @@ const Float32 voiceRecordDelay = 0.3;
 -(void) ensureVoiceDelegate {
     
     if (!_voiceDelegate) {
-        _voiceDelegate = [[VoiceDelegate alloc] initWithUsername:_username ourVersion:[[IdentityController sharedInstance] getOurLatestVersion ]];
+        _voiceDelegate = [[VoiceDelegate alloc] initWithUsername:_username ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]];
     }
 }
 
@@ -2690,7 +2690,7 @@ const Float32 voiceRecordDelay = 0.3;
             //select and assign image
             _imageDelegate = [[ImageDelegate alloc]
                               initWithUsername:_username
-                              ourVersion:[[IdentityController sharedInstance] getOurLatestVersion]
+                              ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                               theirUsername:_username
                               assetLibrary:_assetLibrary];
             [ImageDelegate startBackgroundImageSelectControllerFromViewController:sender usingDelegate:_imageDelegate];

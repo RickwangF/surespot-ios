@@ -129,10 +129,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return _meFirst ? [[[[CredentialCachingController sharedInstance] getLoggedInIdentity] latestVersion] integerValue] : [self theirCount];
+            return _meFirst ? [[[[CredentialCachingController sharedInstance] getIdentityForUsername:_ourUsername] latestVersion] integerValue] : [self theirCount];
             break;
         case 1:
-            return _meFirst ? [self theirCount] :  [[[[CredentialCachingController sharedInstance] getLoggedInIdentity] latestVersion] integerValue];
+            return _meFirst ? [self theirCount] :  [[[[CredentialCachingController sharedInstance] getIdentityForUsername:_ourUsername] latestVersion] integerValue];
             break;
         default:
             return 0;

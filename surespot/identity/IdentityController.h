@@ -22,11 +22,11 @@
 -(NSArray *) getIdentityNames;
 - (void) userLoggedInWithIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie:(NSHTTPCookie *) cookie relogin: (BOOL) relogin;
 - (NSString *) getLoggedInUser;
-- (NSString *) getOurLatestVersion;
+- (NSString *) getOurLatestVersion: (NSString *) ourUsername;
 - (void) getTheirLatestVersionForOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback;
 -(BOOL) verifyPublicKeys: (NSDictionary *) keys;
--(PublicKeys *) loadPublicKeysUsername: (NSString * ) username version: (NSString *) version;
--(void) savePublicKeys: (NSDictionary * ) keys username: (NSString *)username version: (NSString *)version;
+-(PublicKeys *) loadPublicKeysOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername version: (NSString *) version;
+-(void) savePublicKeys: (NSDictionary * ) keys ourUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername version: (NSString *)version;
 -(void) updateLatestVersionForUsername: (NSString *) username version: (NSString * ) version;
 -(void) logout;
 -(NSString *) getStoredPasswordForIdentity: (NSString *) username;
@@ -48,6 +48,6 @@
 -(BOOL) importIdentityFilename: (NSString *) filePath username: (NSString * ) username password: (NSString *) password;
 -(SurespotIdentity *) loadIdentityUsername: (NSString * ) username password: (NSString *) password;
 -(NSString *) getLastLoggedInUser;
--(NSDictionary *) updateSignatures;
+-(NSDictionary *) updateSignatures: (NSString *) username;
 @end
 

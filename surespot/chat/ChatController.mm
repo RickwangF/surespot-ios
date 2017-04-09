@@ -415,7 +415,7 @@ static const int MAX_RETRY_DELAY = 30;
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             if ([JSON objectForKey:@"sigs2"]) {
-                NSDictionary * sigs = [[IdentityController sharedInstance] updateSignatures];
+                NSDictionary * sigs = [[IdentityController sharedInstance] updateSignatures: _username];
                 [[[NetworkManager sharedInstance] getNetworkController:_username] updateSigs:sigs];
             }
         });
@@ -504,7 +504,7 @@ static const int MAX_RETRY_DELAY = 30;
     
     DDLogVerbose(@"message: %@", message);
     
-    NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion];
+    NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion: _username];
    // NSString * loggedInUser = _username;
     NSData * iv = [EncryptionController getIv];
     
@@ -1394,7 +1394,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) assignFriendAlias: (NSString *) alias toFriendName: (NSString *) friendname  callbackBlock: (CallbackBlock) callbackBlock {
     [self startProgress];
-    NSString * version = [[IdentityController sharedInstance] getOurLatestVersion];
+    NSString * version = [[IdentityController sharedInstance] getOurLatestVersion: _username];
     NSString * username = _username;
     NSData * iv = [EncryptionController getIv];
     //encrypt

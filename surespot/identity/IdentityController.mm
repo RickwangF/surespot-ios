@@ -245,8 +245,8 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     }
 }
 
-- (NSString *) getOurLatestVersion {
-    return [[[CredentialCachingController sharedInstance] getLoggedInIdentity] latestVersion];
+- (NSString *) getOurLatestVersion: (NSString *) ourUsername {
+    return [[[CredentialCachingController sharedInstance] getIdentityForUsername:ourUsername] latestVersion];
 }
 
 - (void) getTheirLatestVersionForOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback {
@@ -275,8 +275,8 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     return YES;
 }
 
--(PublicKeys *) loadPublicKeysUsername: (NSString * ) username version: (NSString *) version {
-    NSString * filename =[FileController getPublicKeyFilenameForUsername: username version: version];
+-(PublicKeys *) loadPublicKeysOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername version: (NSString *) version {
+    NSString * filename =[FileController getPublicKeyFilenameForOurUsername:ourUsername theirUsername:theirUsername version: version];
     NSDictionary * keys = [NSKeyedUnarchiver unarchiveObjectWithFile:filename];
     if (keys) {
         ECDHPublicKey * dhPub = [EncryptionController recreateDhPublicKey:[keys objectForKey:@"dhPub"]];
@@ -291,17 +291,17 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         NSDate *date = [attributes fileModificationDate];
         
         pk.lastModified = date;
-        DDLogInfo(@"loaded public keys for username: %@, version: %@ from filename: %@", username,version,filename);
+        DDLogInfo(@"loaded public keys for username: %@, version: %@ from filename: %@", theirUsername,version,filename);
         return pk;
     }
     
     return nil;
 }
 
--(void) savePublicKeys: (NSDictionary * ) keys username: (NSString *)username version: (NSString *)version{
-    NSString * filename =[FileController getPublicKeyFilenameForUsername: username version: version];
+-(void) savePublicKeys: (NSDictionary * ) keys ourUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername version: (NSString *)version{
+    NSString * filename =[FileController getPublicKeyFilenameForOurUsername: ourUsername theirUsername: theirUsername version: version];
     BOOL saved =[NSKeyedArchiver archiveRootObject:keys toFile:filename];
-    DDLogInfo(@"saved public keys for username: %@, version: %@ to filename: %@  with success: %@", username,version,filename, saved?@"YES":@"NO");
+    DDLogInfo(@"saved public keys for username: %@, version: %@ to filename: %@  with success: %@", theirUsername,version,filename, saved?@"YES":@"NO");
 }
 
 //we don't want to delete ourselves if we're in the process of generating new keys
@@ -310,11 +310,10 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
 }
 
 -(void) updateLatestVersionForUsername: (NSString *) username version: (NSString * ) version {
-    // see if we are the user that's been revoked
     // if we have the latest version locally, if we don't then this user has
     // been revoked from a different device
     // and should not be used on this device anymore
-    if ([username isEqualToString:[self getLoggedInUser]] && [version integerValue] > [[self getOurLatestVersion] integerValue] && ![[_expectedVersions objectForKey:username] isEqualToString:version]) {
+    if ([[self getIdentityNames] containsObject:username] && [version integerValue] > [[self getOurLatestVersion: username] integerValue] && ![[_expectedVersions objectForKey:username] isEqualToString:version]) {
         DDLogInfo(@"user key revoked, deleting data and logging out. username: %@", username);
         [self deleteIdentityUsername:username preserveBackedUpIdentity: NO];
     }
@@ -555,8 +554,8 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     return [self getIdentityNames].count;
 }
 
--(NSDictionary *) updateSignatures {
-    SurespotIdentity * identity = [[CredentialCachingController sharedInstance] getLoggedInIdentity];
+-(NSDictionary *) updateSignatures: (NSString *) username {
+    SurespotIdentity * identity = [[CredentialCachingController sharedInstance] getIdentityForUsername:username];
     ECDSAPrivateKey * privateDsaKey = [identity getDsaPrivateKeyForVersion:@"1"];
     NSMutableDictionary * signatures = [[NSMutableDictionary alloc] init];
     

@@ -241,8 +241,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self saveSharedSecrets];
 }
 
--(SurespotIdentity *) getLoggedInIdentity {
-    return [self getIdentityForUsername:_activeUsername password:nil];
+-(SurespotIdentity *) getIdentityForUsername: (NSString *) username {
+    return [self getIdentityForUsername:username password:nil];
 }
 
 -(SurespotIdentity *) getIdentityForUsername: (NSString *) username password: (NSString *) password {

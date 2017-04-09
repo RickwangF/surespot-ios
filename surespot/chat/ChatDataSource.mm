@@ -52,7 +52,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         NSArray * messages;
         
-        NSString * path =[FileController getChatDataFilenameForSpot:[ChatUtils getSpotUserA:theirUsername userB:ourUsername]];
+        NSString * path =[FileController getChatDataFilenameForSpot:[ChatUtils getSpotUserA:theirUsername userB:ourUsername] ourUsername: ourUsername];
         DDLogVerbose(@"looking for chat data at: %@", path);
         id chatData = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
         dispatch_group_t group = dispatch_group_create();
@@ -329,7 +329,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     
     NSString * spot = [ChatUtils getSpotUserA:_ourUsername userB:_theirUsername];
-    NSString * filename =[FileController getChatDataFilenameForSpot: spot];
+    NSString * filename =[FileController getChatDataFilenameForSpot: spot ourUsername:_ourUsername];
     DDLogInfo(@"saving chat data to disk,filename: %@, spot: %@", filename, spot);
     NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
     

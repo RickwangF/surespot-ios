@@ -67,7 +67,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     while (currentVersion > 0) {
         NSString * sCurrentVersion = [@(currentVersion) stringValue];
-        keys = [[IdentityController sharedInstance] loadPublicKeysUsername: _theirUsername version:  sCurrentVersion];
+        keys = [[IdentityController sharedInstance] loadPublicKeysOurUsername: _ourUsername theirUsername: _theirUsername version:  sCurrentVersion];
         if (keys) {
             validatedKeys = keys;
             validatedKeyVersion = currentVersion;
@@ -152,7 +152,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                              return;
                          }
                          
-                         [[IdentityController sharedInstance] savePublicKeys: jsonKey username: _theirUsername version: sValidatingVersion];
+                         [[IdentityController sharedInstance] savePublicKeys: jsonKey ourUsername: _ourUsername theirUsername:_theirUsername version: sValidatingVersion];
                          [[dsaKeys objectForKey: sValidatingVersion] getValue:&previousDsaKey];
                      }
                      
@@ -204,7 +204,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                  return;
                              }
                              
-                             [[IdentityController sharedInstance] savePublicKeys: jsonKey username: _theirUsername version: sValidatingVersion];
+                             [[IdentityController sharedInstance] savePublicKeys: jsonKey ourUsername: _ourUsername theirUsername: _theirUsername version: sValidatingVersion];
                              [[dsaKeys objectForKey: sValidatingVersion] getValue:&previousDsaKey];
                          }
                          
@@ -282,7 +282,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             pk.lastModified = [NSDate date];
             
             //save keys to disk
-            [[IdentityController sharedInstance] savePublicKeys: JSON username: _theirUsername version:  _version];
+            [[IdentityController sharedInstance] savePublicKeys: JSON ourUsername: _ourUsername theirUsername: _theirUsername version:  _version];
             
             DDLogVerbose(@"get public keys calling callback");
             return pk;

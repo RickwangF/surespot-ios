@@ -22,18 +22,18 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @interface  HomeDataSource()
 @property (strong, atomic) NSString * cChat;
-@property (strong, atomic) NSString * username;
+@property (strong, atomic) NSString * ourUsername;
 @end
 
 @implementation HomeDataSource
--(HomeDataSource*)init: (NSString *) username {
+-(HomeDataSource*)init: (NSString *) ourUsername {
     self = [super init];
     
     if (self != nil) {
-        _username = username;
+        _ourUsername = ourUsername;
         //if we have data on file, load it
         //otherwise load from network
-        NSString * path =[FileController getHomeFilename];
+        NSString * path =[FileController getHomeFilename: ourUsername];
         DDLogVerbose(@"looking for home data at: %@", path);
         id homeData = nil;
         @try {
@@ -53,7 +53,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
     }
     
-    DDLogVerbose(@"HomeDataSource init username: %@, latestUserControlId: %ld", _username, (long)_latestUserControlId);
+    DDLogVerbose(@"HomeDataSource init ourUsername: %@, latestUserControlId: %ld", _ourUsername, (long)_latestUserControlId);
     return self;
 }
 
@@ -61,14 +61,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     DDLogInfo(@"loadFriends");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
     
-    [[[NetworkManager sharedInstance] getNetworkController:_username] getFriendsSuccessBlock:^(NSURLSessionTask *task, id JSON) {
+    [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getFriendsSuccessBlock:^(NSURLSessionTask *task, id JSON) {
         //DDLogInfo(@"get friends response: %ld",  (long)[task.response statusCode]);
         
         _latestUserControlId = [[JSON objectForKey:@"userControlId"] integerValue];
         
         NSArray * friendDicts = [JSON objectForKey:@"friends"];
         for (NSDictionary * friendDict in friendDicts) {
-            [_friends addObject:[[Friend alloc] initWithDictionary: friendDict ourUsername:_username]];
+            [_friends addObject:[[Friend alloc] initWithDictionary: friendDict ourUsername:_ourUsername]];
         };
         [self writeToDisk];
         [self postRefresh];
@@ -189,7 +189,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) writeToDisk {
     @synchronized (_friends) {
         if (_latestUserControlId > 0 || _friends.count > 0) {
-            NSString * filename =[FileController getHomeFilename];
+            NSString * filename = [FileController getHomeFilename: _ourUsername];
             DDLogVerbose(@"saving home data to disk at %@, latestUserControlId: %ld, currentChat: %@",filename, (long)_latestUserControlId, [self getCurrentChat]);
             NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
             if (_friends.count > 0) {

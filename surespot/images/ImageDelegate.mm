@@ -147,7 +147,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     UIImage * scaledImage = [image imageScaledToMinDimension:maxf];
     
     //save to file
-    NSString * filepath =[FileController getBackgroundImageFilename];
+    NSString * filepath =[FileController getBackgroundImageFilename: _username];
     [UIImagePNGRepresentation(scaledImage) writeToFile: filepath atomically:YES];
     NSURL * url = [NSURL fileURLWithPath:filepath];
     

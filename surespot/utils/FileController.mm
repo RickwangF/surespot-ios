@@ -110,27 +110,27 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return cacheDir;
 }
 
-+(NSString *) getHomeFilename {
-    return [self getFilename:HOME_FILENAME];
++(NSString *) getHomeFilename: (NSString *) ourUsername {
+    return [self getFilename:HOME_FILENAME forUser:ourUsername];
 }
 
-+(NSString *) getBackgroundImageFilename {
-    NSString * dir = [self getBgImagesDirectoryForUser:[[IdentityController sharedInstance] getLoggedInUser]];
++(NSString *) getBackgroundImageFilename: (NSString *) username {
+    NSString * dir = [self getBgImagesDirectoryForUser:username];
     return [dir stringByAppendingPathComponent:BACKGROUND_IMAGE_FILENAME];
 }
 
-+(NSString *) getChatDataFilenameForSpot: (NSString *) spot {
-    return [self getFilename:[CHAT_DATA_PREFIX stringByAppendingString:spot]];
++(NSString *) getChatDataFilenameForSpot: (NSString *) spot ourUsername: (NSString *) ourUsername {
+    return [self getFilename:[CHAT_DATA_PREFIX stringByAppendingString:spot] forUser: ourUsername];
 }
 
-+(NSString*)getPublicKeyFilenameForUsername: (NSString *) username version: (NSString *)version {
-    NSString * dir = [self getPublicKeyDirectoryForUsername:username];
++(NSString*)getPublicKeyFilenameForOurUsername: (NSString *) ourUsername theirUsername: (NSString*) theirUsername version: (NSString *)version {
+    NSString * dir = [self getPublicKeyDirectoryForOurUsername:ourUsername theirUsername: theirUsername];
     return [dir stringByAppendingPathComponent:[version stringByAppendingPathExtension:PUBLIC_KEYS_EXTENSION]];
     
 }
-+(NSString*)getPublicKeyDirectoryForUsername: (NSString *) username  {
-    NSString * dir = [self getDirectoryForUser:[[IdentityController sharedInstance] getLoggedInUser] ];
-    NSString * pkdir = [[dir stringByAppendingPathComponent:PUBLIC_KEYS_DIR] stringByAppendingPathComponent:[username caseInsensitivize]];
++(NSString*)getPublicKeyDirectoryForOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername  {
+    NSString * dir = [self getDirectoryForUser:ourUsername];
+    NSString * pkdir = [[dir stringByAppendingPathComponent:PUBLIC_KEYS_DIR] stringByAppendingPathComponent:[theirUsername caseInsensitivize]];
     NSError * error;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:pkdir withIntermediateDirectories:YES attributes:nil error:&error]) {
         DDLogError(@"%@", error.localizedDescription);
@@ -142,12 +142,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 +(void) wipeDataForUsername: (NSString *) username friendUsername: (NSString *) friendUsername {
     NSError * error;
-    if (![[NSFileManager defaultManager] removeItemAtPath:[self getPublicKeyDirectoryForUsername:friendUsername] error:&error]) {
+    if (![[NSFileManager defaultManager] removeItemAtPath:[self getPublicKeyDirectoryForOurUsername:username theirUsername:friendUsername] error:&error]) {
         DDLogError(@"%@", error.localizedDescription);
     }
     
     NSString * spot = [ChatUtils getSpotUserA:username userB:friendUsername];
-    NSString * messageFile = [self getChatDataFilenameForSpot:spot];
+    NSString * messageFile = [self getChatDataFilenameForSpot:spot ourUsername:username];
     
     DDLogInfo( @"wiping data for username: %@, friendname: %@, path: %@", username,friendUsername,messageFile);
     //file manager thread safe supposedly
@@ -181,10 +181,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     DDLogInfo( @"wiping data for username: %@,  path: %@", username,identityDataDir);
     wiped = [fileMgr removeItemAtPath:identityDataDir error:nil];
     DDLogInfo(@"wiped: %@", wiped ? @"YES" : @"NO");
-}
-
-+(NSString *) getFilename: (NSString *) filename {
-    return [self getFilename:filename forUser:[[IdentityController sharedInstance] getLoggedInUser] ];
 }
 
 +(NSString *) getFilename: (NSString *) filename forUser: (NSString *) user {
