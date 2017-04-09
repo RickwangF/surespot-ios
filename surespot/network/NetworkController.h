@@ -105,7 +105,7 @@ typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
 //         failureBlock: (HTTPFailureBlock) failureBlock;
 
 -(void) setCookie: (NSHTTPCookie *) cookie;
--(BOOL) reloginSuccessBlock:(HTTPCookieSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock;
+-(BOOL) reloginSuccessBlock:(HTTPSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 
 -(void) assignFriendAlias:(NSString *) cipherAlias friendname: (NSString *) friendname version: (NSString *) version iv: (NSString *) iv successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) deleteFriendAlias:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;

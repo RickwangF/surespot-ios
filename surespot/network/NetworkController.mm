@@ -25,6 +25,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface NetworkController()
 @property (nonatomic, strong) NSString * baseUrl;
 @property (nonatomic, strong) NSString * username;
+@property (nonatomic, strong) NSHTTPCookie * cookie;
 @end
 @implementation NetworkController
 
@@ -60,7 +61,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             progress:nil
              success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                  if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-                     [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+                     [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
                          //relogin success, call original method
                          [self reauthGET:URLString parameters:parameters success:success failure:failure];
                      } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
@@ -69,7 +70,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                          if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
                              [self setUnauthorized];
                          }
-                
+                         
                      }];
                  }
                  else {
@@ -86,7 +87,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 {
     return [self POST:URLString parameters:parameters progress:nil success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
                 //relogin success, call original method
                 [self reauthPOST:URLString parameters:parameters success:success failure:failure];
             } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
@@ -105,13 +106,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 - (NSURLSessionDataTask *)reauthDELETE:(NSString *)URLString
-                      parameters:(id)parameters
-                         success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
-                         failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure
+                            parameters:(id)parameters
+                               success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
+                               failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure
 {
     return [self DELETE:URLString parameters:parameters success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
                 //relogin success, call original method
                 [self reauthDELETE:URLString parameters:parameters success:success failure:failure];
             } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
@@ -125,18 +126,18 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         else {
             failure(task, error);
         }
-
+        
     }];
 }
 
 - (NSURLSessionDataTask *)reauthPUT:(NSString *)URLString
-                            parameters:(id)parameters
-                               success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
-                               failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure
+                         parameters:(id)parameters
+                            success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
+                            failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure
 {
     return [self PUT:URLString parameters:parameters success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
                 //relogin success, call original method
                 [self reauthPUT:URLString parameters:parameters success:success failure:failure];
             } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
@@ -301,9 +302,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     //send logout
     DDLogInfo(@"logout");
     [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-     
+        
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-      
+        
     }];
 }
 
@@ -589,12 +590,37 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     DDLogInfo(@"postFileStream, path: %@", path);
     NSMutableURLRequest *request  = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
     [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    if (_cookie) {
+        [request setValue:[NSString stringWithFormat:@"%@=%@",_cookie.name,_cookie.value] forHTTPHeaderField:@"Cookie"];
+    }
     
     NSURLSessionUploadTask * task = [self uploadTaskWithRequest:request fromData:data progress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         if (error) {
-            failureBlock(response, error);
+            //reauth on 401
+            long statusCode = [(NSHTTPURLResponse *) response statusCode];
+            if (statusCode == 401) {
+                [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
+                    [self postFileStreamData:data
+                                  ourVersion:ourVersion
+                               theirUsername:theirUsername
+                                theirVersion:theirVersion
+                                      fileid:fileid
+                                    mimeType:mimeType
+                                successBlock:successBlock
+                                failureBlock:failureBlock];
+                }
+                             failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
+                                 failureBlock(response, error);
+                                 if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                                     [self setUnauthorized];
+                                 }
+                             }];
+            }
+            else {
+                failureBlock(response, error);
+            }
         }
         else {
             successBlock(responseObject);
@@ -675,6 +701,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) setCookie: (NSHTTPCookie *) cookie {
     DDLogDebug(@"%@: setCookie: %@",_username, cookie);
+    _cookie = cookie;
     if (cookie && _username) {
         [self.requestSerializer setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
     }
