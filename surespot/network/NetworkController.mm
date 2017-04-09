@@ -33,16 +33,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(NetworkController*)init: (NSString *) username
 {
-    //set cookie
-    //    NSHTTPCookie  *cookie = [[CredentialCachingController sharedInstance] getCookieForUsername:[[IdentityController sharedInstance] getLoggedInUser]];
-    //    NSHTTPCookieStorage * shared = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    //    [shared setCookie:cookie];
-    // [shared clear]
-    // [self clearCookies];
-    
     NSURLSessionConfiguration * sessionConfiguration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    //    [sessionConfiguration setHTTPCookieStorage: [NSHTTPCookieStorage sharedCookieStorageForGroupContainerIdentifier:username] ];
-    //    //call super init
     self = [super initWithBaseURL:[NSURL URLWithString: baseUrl] sessionConfiguration:sessionConfiguration];
     
     if (self != nil) {
@@ -54,51 +45,28 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         self.responseSerializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[[AFJSONResponseSerializer serializer],
                                                                                                             [AFHTTPResponseSerializer serializer]]];
         self.requestSerializer = [AFJSONRequestSerializer serializer];
-        
-        
-//        AFSecurityPolicy* securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
-//        [securityPolicy setValidatesDomainName:NO];
-//        [securityPolicy setAllowInvalidCertificates:YES];
-//        [self setSecurityPolicy:securityPolicy];
     }
     
     return self;
 }
 
-//
+
 //- (void)URLSession:(NSURLSession *)session
 //didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
 // completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler{
-//    
+//    DDLogInfo(@"URLSession auth delegate");
 //    if ([challenge previousFailureCount] > 0) {
 //        //this will cause an authentication failure
 //        NSLog(@"Bad Username Or Password");
 //        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
 //    }
-//    
-//    //this is checking the server certificate
-//    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-//        SecTrustResultType result;
-//        //This takes the serverTrust object and checkes it against your keychain
-//        SecTrustEvaluate(challenge.protectionSpace.serverTrust, &result);
-//        
-//        //if we want to ignore invalid server for certificates, we just accept the server
-//      //  if (kAllowsInvalidSSLCertificate) {
-//            id credential = [NSURLCredential credentialForTrust: challenge.protectionSpace.serverTrust];
-//        completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
-//        
-////        } else if(result == kSecTrustResultProceed || result == kSecTrustResultUnspecified) {
-////            //When testing this against a trusted server I got kSecTrustResultUnspecified every time. But the other two match the description of a trusted server
-////            *credential = [NSURLCredential credentialForTrust: challenge.protectionSpace.serverTrust];
-////            return NSURLSessionAuthChallengeUseCredential;
-////        }
-//        return;
-//    }
-//    
+//
+//
+//
 //    if (_username) {
 //        [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
-//           // [session s]
-//            [self setCookie:cookie];
+//            // [session s]
+//          //  [self setCookie:cookie];
 //            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 //        } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
 //            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
@@ -107,11 +75,57 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 //    else {
 //        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 //    }
-//    
+//
+//}
+//
+
+// USELESS
+// Can't find a way to set a header (ie. the new cookie from the re-login) for the second auth'd request
+// how the fuck are you supposed to implement your own auth mechanism
+// weak
+
+//- (void)URLSession:(NSURLSession *)session
+//              task:(NSURLSessionTask *)task
+//didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+// completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
+//{
+//     DDLogInfo(@"%@: URLSession auth task delegate", _username);
+//    if (completionHandler) {
+////        if ([challenge previousFailureCount] > 0) {
+////
+////            completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+////            return;
+////        }
+////
+//   //  DDLogDebug(@"task: %@",  [[task currentRequest] valueForHTTPHeaderField:@"Cookie"] );
+//        if ([[[challenge protectionSpace] realm] isEqualToString:@"surespot Authorization Required"]) {
+//            if (_username) {
+//                [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task2, id JSON, NSHTTPCookie *cookie) {
+//                    //can't set the friggin cookie for the request
+//                    DDLogDebug(@"task ccokie: %@",  [[task currentRequest] valueForHTTPHeaderField:@"Cookie"] );
+//                     DDLogDebug(@"session cookie: %@",  [[[session configuration] HTTPAdditionalHeaders ]objectForKey:@"Cookie"] );
+//
+//               //     [[session configuration] setHTTPAdditionalHeaders:@{@"Cookie":[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value]}];
+//                 //   [self setCookie:cookie];
+//                    NSMutableURLRequest * mRequest = [[task currentRequest] mutableCopy];
+//                    [mRequest setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
+//                    completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+//                } failureBlock:^(NSURLSessionTask *task2, NSError *Error) {
+//                    completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+//                    [self setUnauthorized];
+//                }];
+//            }
+//            else {
+//                completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+//            }
+//        }
+//        else {
+//            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+//
+//        }
+//    }
 //}
 
-
-//inject cookie for current user
 
 
 //handle 401s globally
@@ -137,19 +151,20 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) setUnauthorized {
+    //TODO send username in notification
     [[NSNotificationCenter defaultCenter] postNotificationName:@"unauthorized" object: nil];
 }
 
 
 -(void) setCookie: (NSHTTPCookie *) cookie {
-    DDLogDebug(@"setCookie: %@", cookie);
+    DDLogDebug(@"%@: setCookie: %@",_username, cookie);
     if (cookie && _username) {
         [self.requestSerializer setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
     }
 }
 
 -(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
-             successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock
+             successBlock:(HTTPCookieSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock
 {
     NSString *appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     NSString *appBuildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
@@ -188,22 +203,22 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
        }];
 }
 
--(BOOL) reloginWithUsername:(NSString*) username successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock
+-(BOOL) reloginSuccessBlock:(HTTPCookieSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock
 {
-    DDLogInfo(@"relogin: %@", username);
+    DDLogInfo(@"%@: relogin", _username);
     //if we have password login again
     NSString * password = nil;
     
-    if (username) {
-        password = [[IdentityController sharedInstance] getStoredPasswordForIdentity:username];
+    if (_username) {
+        password = [[IdentityController sharedInstance] getStoredPasswordForIdentity:_username];
     }
     
-    if (username && password) {
+    if (_username && password) {
         dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
         
         dispatch_async(q, ^{
             DDLogVerbose(@"getting identity");
-            SurespotIdentity * identity = [[IdentityController sharedInstance] getIdentityWithUsername:username andPassword:password];
+            SurespotIdentity * identity = [[IdentityController sharedInstance] getIdentityWithUsername:_username andPassword:password];
             DDLogVerbose(@"got identity");
             
             if (!identity) {
@@ -246,7 +261,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         dispatch_async(dispatch_get_main_queue(), ^{
             failureBlock(nil,nil);
         });
-
+        
         return NO;
     }
 }
@@ -305,7 +320,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
 }
 
--(void) getFriendsSuccessBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
+-(void) getFriendsSuccessBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     [self GET:@"friends" parameters:nil progress:nil success:successBlock failure:failureBlock];
 }
 
@@ -324,7 +339,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
 }
 
-- (void) getPublicKeys2ForUsername:(NSString *)username andVersion:(NSString *)version successBlock:(JSONSuccessBlock)successBlock failureBlock:(JSONFailureBlock) failureBlock{
+- (void) getPublicKeys2ForUsername:(NSString *)username andVersion:(NSString *)version successBlock:(HTTPSuccessBlock)successBlock failureBlock:(HTTPFailureBlock) failureBlock{
     
     
     [self GET:[self buildPublicKeyPathForUsername:username version:version] parameters:nil progress:nil success:successBlock
@@ -338,7 +353,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return path;
 }
 
--(void) getMessageDataForUsername:(NSString *)username andMessageId:(NSInteger)messageId andControlId:(NSInteger) controlId successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
+-(void) getMessageDataForUsername:(NSString *)username andMessageId:(NSInteger)messageId andControlId:(NSInteger) controlId successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"messagedataopt/%@/%ld/%ld", username, (long)messageId, (long)controlId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [self GET: path parameters:nil progress:nil success:successBlock failure:failureBlock];
@@ -350,7 +365,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self POST:path parameters:nil progress:nil success:successBlock failure:failureBlock];
 }
 
--(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
+-(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSMutableDictionary *params = nil;
     if ([spotIds count] > 0) {
@@ -383,16 +398,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     // }
 }
 
--(void) deleteCookies {
-    //blow cookies away
-    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:_baseUrl]];
-    for (NSHTTPCookie *cookie in cookies)
-    {
-        [[NSHTTPCookieStorage sharedHTTPCookieStorage]  deleteCookie:cookie];
-    }
-    
-}
-
 
 -(void) deleteFriend:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     NSString * path = [[NSString stringWithFormat:@"friends/%@", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -403,7 +408,22 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) deleteMessageName:(NSString *) name serverId: (NSInteger) serverid successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"messages/%@/%ld", name, (long)serverid] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self DELETE:path parameters:nil success:successBlock failure:failureBlock];
+    [self DELETE:path parameters:nil success:successBlock failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        //if it's 401, relogin and try again
+        if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject, NSHTTPCookie *cookie) {
+                //relogin success, call original method
+                
+                [self deleteMessageName:name serverId:serverid successBlock:successBlock failureBlock:failureBlock];
+            } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
+                //relogin failed, call fail block  with original task and error
+                failureBlock(task, error);
+            }];
+        }
+        else {
+            failureBlock(task, error);
+        }
+    }];
 }
 
 -(void) deleteMessagesUTAI:(NSInteger) utaiId name: (NSString *) name successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
@@ -417,7 +437,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self GET:path parameters:nil progress:nil success:successBlock failure:failureBlock];
 }
 
--(void) getEarlierMessagesForUsername: (NSString *) username messageId: (NSInteger) messageId successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock {
+-(void) getEarlierMessagesForUsername: (NSString *) username messageId: (NSInteger) messageId successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
     NSString * path = [[NSString stringWithFormat:@"messagesopt/%@/before/%ld", username, (long)messageId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [self GET:path parameters:nil progress:nil success:successBlock failure:failureBlock];
@@ -501,7 +521,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) getKeyTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
-                  successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock
+                  successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock
 {
     
     
@@ -689,7 +709,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [task resume];
 }
 
--(void) sendMessages:(NSArray *)messages successBlock:(JSONSuccessBlock)successBlock failureBlock:(JSONFailureBlock)failureBlock {
+-(void) sendMessages:(NSArray *)messages successBlock:(HTTPSuccessBlock)successBlock failureBlock:(HTTPFailureBlock)failureBlock {
     NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:messages, @"messages", nil];
     [self POST:@"messages" parameters:params progress:nil success:successBlock failure:failureBlock];
     

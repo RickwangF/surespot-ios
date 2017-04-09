@@ -133,7 +133,7 @@ static const int MAX_RETRY_DELAY = 30;
             }
             
             //login again then try reconnecting
-            reAuthing = [[[NetworkManager sharedInstance] getNetworkController:_username] reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
+            reAuthing = [[[NetworkManager sharedInstance] getNetworkController:_username] reloginSuccessBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
                 DDLogInfo(@"relogin success");
                 _reauthing = YES;
                 [self reconnect];

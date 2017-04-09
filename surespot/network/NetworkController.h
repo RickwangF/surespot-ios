@@ -11,35 +11,30 @@
 #import "AFHTTPSessionManager.h"
 #import "SurespotConstants.h"
 
-typedef void (^JSONResponseBlock) (NSDictionary* json);
-typedef void (^JSONSuccessBlock) (NSURLSessionTask* task, id JSON);
-typedef void (^JSONCookieSuccessBlock) (NSURLSessionTask* task, id JSON, NSHTTPCookie * cookie);
-typedef void (^JSONFailureBlock) (NSURLSessionTask* task, NSError *Error);
-typedef void (^HTTPSuccessBlock) (NSURLSessionTask* task, id responseObject);
 typedef void (^HTTPCookieSuccessBlock) (NSURLSessionTask* task, id responseObject, NSHTTPCookie * cookie);
+typedef void (^HTTPSuccessBlock) (NSURLSessionTask* task, id responseObject);
 typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
-
 
 @interface NetworkController : AFHTTPSessionManager
 
 -(NetworkController*)init: (NSString*) username;
 
--(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock;
+-(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature successBlock:(HTTPCookieSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) createUser3WithUsername: (NSString *) username derivedPassword: (NSString *)derivedPassword dhKey: (NSString *)encodedDHKey dsaKey: (NSString *)encodedDSAKey authSig: (NSString *)authSig clientSig: (NSString *) clientSig successBlock:(HTTPCookieSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
--(void) getFriendsSuccessBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;
+-(void) getFriendsSuccessBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) inviteFriend: (NSString *) friendname successBlock: (HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock ;
 -(void) getKeyVersionForUsername:(NSString *)username successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
--(void) getPublicKeys2ForUsername:(NSString *)username andVersion:(NSString *)version successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;
--(void) getMessageDataForUsername:(NSString *)username andMessageId:(NSInteger)messageId andControlId:(NSInteger) controlId successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;
+-(void) getPublicKeys2ForUsername:(NSString *)username andVersion:(NSString *)version successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
+-(void) getMessageDataForUsername:(NSString *)username andMessageId:(NSInteger)messageId andControlId:(NSInteger) controlId successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) respondToInviteName:(NSString *) friendname action: (NSString *) action successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
--(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;
+-(void) getLatestDataSinceUserControlId: (NSInteger) latestUserControlId spotIds: (NSArray *) spotIds successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) logout;
 -(void) deleteFriend:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) deleteMessageName:(NSString *) name serverId: (NSInteger) serverid successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) deleteMessagesUTAI:(NSInteger) utaiId name: (NSString *) name successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) userExists: (NSString *) username successBlock: (HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) setUnauthorized;
--(void) getEarlierMessagesForUsername: (NSString *) username messageId: (NSInteger) messageId successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;
+-(void) getEarlierMessagesForUsername: (NSString *) username messageId: (NSInteger) messageId successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) validateUsername: (NSString *) username password: (NSString *) password signature: (NSString *) signature successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) postFileStreamData: (NSData *) data
                 ourVersion: (NSString *) ourVersion
@@ -64,7 +59,7 @@ typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
                 failureBlock: ( void (^)(NSURLResponse * response, NSError * error)) failureBlock;
 
 -(void) getKeyTokenForUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
-                  successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;
+                  successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 
 -(void) updateKeys3ForUsername:(NSString *) username
                      password:(NSString *) password
@@ -110,12 +105,12 @@ typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
 //         failureBlock: (HTTPFailureBlock) failureBlock;
 
 -(void) setCookie: (NSHTTPCookie *) cookie;
--(BOOL) reloginWithUsername:(NSString*) username successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock;
+-(BOOL) reloginSuccessBlock:(HTTPCookieSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 
 -(void) assignFriendAlias:(NSString *) cipherAlias friendname: (NSString *) friendname version: (NSString *) version iv: (NSString *) iv successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) deleteFriendAlias:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) deleteFriendImage:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) updateSigs: (NSDictionary *) sigs;
--(void) sendMessages: (NSArray *) messages successBlock:(JSONSuccessBlock)successBlock failureBlock: (JSONFailureBlock) failureBlock;
+-(void) sendMessages: (NSArray *) messages successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 
 @end
