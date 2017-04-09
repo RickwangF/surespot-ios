@@ -644,11 +644,33 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSMutableURLRequest *request  = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    
+    if (_cookie) {
+        [request setValue:[NSString stringWithFormat:@"%@=%@",_cookie.name,_cookie.value] forHTTPHeaderField:@"Cookie"];
+    }
     
     NSURLSessionUploadTask * task = [self uploadTaskWithRequest:request fromData:data progress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         if (error) {
-            failureBlock(response, error);
+            //reauth on 401
+            long statusCode = [(NSHTTPURLResponse *) response statusCode];
+            if (statusCode == 401) {
+                [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
+                    [self postFriendStreamData:data
+                                    ourVersion:ourVersion
+                                 theirUsername:theirUsername
+                                            iv:iv
+                                  successBlock:successBlock
+                                  failureBlock:failureBlock];
+                }
+                             failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
+                                 failureBlock(response, error);
+                                 if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                                     [self setUnauthorized];
+                                 }
+                             }];
+            }
+            else {
+                failureBlock(response, error);
+            }
         }
         else {
             successBlock(responseObject);
