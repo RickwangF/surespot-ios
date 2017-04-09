@@ -197,7 +197,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
        }];
 }
 
--(BOOL) reloginSuccessBlock:(HTTPCookieSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock
+-(BOOL) reloginSuccessBlock:(HTTPSuccessBlock) successBlock failureBlock: (HTTPFailureBlock) failureBlock
 {
     DDLogInfo(@"%@: relogin", _username);
     //if we have password login again
@@ -242,7 +242,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                                                  
                                                                                  [self setCookie:cookie];
                                                                                  [[IdentityController sharedInstance] userLoggedInWithIdentity:identity password: password cookie: cookie relogin:YES];
-                                                                                 successBlock(task, JSON, cookie);
+                                                                                 successBlock(task, JSON);
                                                                              }
                                                                              failureBlock: failureBlock];
         });
@@ -287,7 +287,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self POST:@"users3" parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSHTTPCookie * cookie = [self extractConnectCookie];
         if (cookie) {
-            //     [self setCookie:cookie];
+            //set cookie in network controller for the user we just created
+            [[[NetworkManager sharedInstance] getNetworkController:username] setCookie:cookie];
             successBlock(task, responseObject, cookie);
         }
         else {
@@ -301,11 +302,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) logout {
     //send logout
     DDLogInfo(@"logout");
-    [self POST:@"logout" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        
-    }];
+    [self POST:@"logout" parameters:nil progress:nil success:nil failure:nil];
+    [self clearCookie];
 }
 
 
@@ -335,7 +333,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     NSString * path = [[NSString stringWithFormat:@"messagedataopt/%@/%ld/%ld", username, (long)messageId, (long)controlId]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [self reauthGET: path parameters:nil success:successBlock failure:failureBlock];
-    
 }
 
 -(void) respondToInviteName:(NSString *) friendname action: (NSString *) action successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
@@ -503,7 +500,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                    nil];
     
     [self reauthPOST:@"/passwordtoken" parameters:params success:successBlock failure:failureBlock];
-    
 }
 
 -(void) changePasswordForUsername:(NSString *) username
@@ -525,9 +521,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                    nil];
     
     [self reauthPUT:@"/users/password" parameters:params success:successBlock failure:failureBlock];
-    
 }
-
 
 -(void) assignFriendAlias:(NSString *) data friendname: (NSString *) friendname version: (NSString *) version iv: (NSString *) iv successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock {
     
@@ -538,7 +532,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                    nil];
     
     NSString * path = [[NSString stringWithFormat:@"users/%@/alias2", friendname] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
     [self reauthPUT:path parameters:params success:successBlock failure:failureBlock];
 }
 
@@ -563,10 +556,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) updateSigs: (NSDictionary *) sigs {
     NSString * path = [NSString stringWithFormat:@"%@/sigs2",_baseUrl];
     NSDictionary * params = [NSDictionary dictionaryWithObjectsAndKeys:sigs, @"sigs2", nil];
-    //NSMutableURLRequest * req = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:path parameters:params error:nil];
-    //NSURLSessionDataTask * task = [self dataTaskWithRequest:req completionHandler:nil];
-    //[task resume];
-    
     [self reauthPOST:path parameters:params success:nil failure:nil];
 }
 
@@ -703,6 +692,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) setUnauthorized {
     //TODO send username in notification
+    [self clearCookie];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"unauthorized" object: nil];
 }
 
@@ -718,14 +708,18 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
     
     return nil;
-    
+}
+
+-(void) clearCookie {
+    _cookie = nil;
+    [[self requestSerializer] setValue:nil forKey:@"Cookie"];
 }
 
 -(void) setCookie: (NSHTTPCookie *) cookie {
-    DDLogDebug(@"%@: setCookie: %@",_username, cookie);
-    _cookie = cookie;
     if (cookie && _username) {
-        [self.requestSerializer setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
+        DDLogDebug(@"%@: setCookie: %@",_username, cookie);
+        _cookie = cookie;
+        [[self requestSerializer] setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
     }
 }
 
