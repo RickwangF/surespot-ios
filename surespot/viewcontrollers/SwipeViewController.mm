@@ -365,7 +365,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 -(void) resume: (NSNotification *) notification {
     DDLogVerbose(@"resume");
-   [[ChatManager sharedInstance] resume: _username];
+    [[ChatManager sharedInstance] resume: _username];
 }
 
 
@@ -557,7 +557,7 @@ const Float32 voiceRecordDelay = 0.3;
     //save scroll indices
     
     @synchronized (_chats) {
-        for (NSString * key in [_chats allKeys]) {                          
+        for (NSString * key in [_chats allKeys]) {
             id tableView = [_chats objectForKey:key];
             
             if ([tableView respondsToSelector:@selector(indexPathsForVisibleRows)]) {
@@ -647,7 +647,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 - (void) swipeViewDidScroll:(SwipeView *)scrollView {
-   // DDLogVerbose(@"swipeViewDidScroll");
+    // DDLogVerbose(@"swipeViewDidScroll");
     [_viewPager scrollViewDidScroll: scrollView.scrollView];
     
 }
@@ -675,7 +675,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(NSString * ) titleForLabelForPage:(NSInteger)page {
-   // DDLogVerbose(@"titleForLabelForPage %ld", (long)page);
+    // DDLogVerbose(@"titleForLabelForPage %ld", (long)page);
     if (page == 0) {
         return @"home";
     }
@@ -1256,7 +1256,9 @@ const Float32 voiceRecordDelay = 0.3;
                 }
             }
             
-            if ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
+            if ([message.mimeType isEqualToString:MIME_TYPE_TEXT] ||
+                [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK] ||
+                [message.mimeType isEqualToString:MIME_TYPE_FILE]) {
                 cell.messageLabel.hidden = NO;
                 cell.uiImageView.hidden = YES;
                 cell.shareableView.hidden = YES;
@@ -1377,6 +1379,24 @@ const Float32 voiceRecordDelay = 0.3;
                         
                         [self ensureVoiceDelegate];
                         [_voiceDelegate attachCell:cell];
+                    }
+                    
+                    else {
+                        cell.messageLabel.hidden = NO;
+                        cell.uiImageView.hidden = YES;
+                        cell.shareableView.hidden = YES;
+                        cell.audioIcon.hidden = YES;
+                        cell.audioSlider.hidden = YES;
+                        cell.messageSize.hidden = YES;
+                        CGRect messageStatusFrame = cell.messageStatusLabel.frame;
+                        if (ours) {
+                            messageStatusFrame.origin.x = 13;
+                        }
+                        else {
+                            messageStatusFrame.origin.x = 63;
+                        }
+                        cell.messageStatusLabel.frame = messageStatusFrame;
+                        
                     }
                 }
             }
@@ -2458,12 +2478,12 @@ const Float32 voiceRecordDelay = 0.3;
     [[[NetworkManager sharedInstance] getNetworkController:_username] logout];
     [[[ChatManager sharedInstance] getChatController: _username] logout];
     [[IdentityController sharedInstance] logout];
-
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     [_swipeView removeFromSuperview];
     _swipeView = nil;
- 
+    
     //could be logging out as a result of deleting the logged in identity, which could be the only identity
     //if this is the case we want to go to the signup screen not the login screen
     //make it like a pop by inserting view controller into stack and popping
@@ -2484,7 +2504,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void) ensureVoiceDelegate {
-
+    
     if (!_voiceDelegate) {
         _voiceDelegate = [[VoiceDelegate alloc] initWithUsername:_username ourVersion:[[IdentityController sharedInstance] getOurLatestVersion ]];
     }

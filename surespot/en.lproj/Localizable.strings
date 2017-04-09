@@ -365,6 +365,7 @@ If you elect to backup your identity on Google Drive you will be storing a copy 
 "could_not_remove_friend_image"="could not remove friend image";
 "could_not_remove_friend_alias"="could not remove friend alias";
 "remove"="remove";
-
+"file_transfer_not_yet_supported"="File transfer not yet supported.";
+"unsupported_message_type"="Message type not supported.";
 
 

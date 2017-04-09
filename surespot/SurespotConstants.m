@@ -11,7 +11,7 @@
 @implementation SurespotConstants
 
 #ifdef DEBUG
-    NSString * const baseUrl = @"http://192.168.10.106:8080";
+    NSString * const baseUrl = @"http://192.168.10.105:8081";
     NSString * const serverPublicKeyString =  @"-----BEGIN PUBLIC KEY-----\nMIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQA93Acih23m8Jy65gLo8A9t0/snVXe\nRm+6ucIp56cXPgYvBwKDxT30z/HU84HPm2T8lnKQjFGMTUKHnIW+vqKFZicAokkW\nJ/GoFMDGz5tEDGEQrHk/tswEysri5V++kzwlORA+kAxAasdx7Hezl0QfvkPScr3N\n5ifR7m1J+RFNqK0bulQ=\n-----END PUBLIC KEY-----"; //local
     BOOL const socketLog = YES;
 #else
@@ -25,6 +25,7 @@ NSString * const MIME_TYPE_IMAGE = @"image/";
 NSString * const MIME_TYPE_TEXT = @"text/plain";
 NSString * const MIME_TYPE_GIF_LINK = @"gif/https";
 NSString * const MIME_TYPE_M4A = @"audio/mp4";
+NSString * const MIME_TYPE_FILE = @"application/octet-stream";
 NSInteger const MAX_IDENTITIES = 30;
 
 NSString *const GOOGLE_CLIENT_ID = @"428168563991-kjkqs31gov2lmgh05ajbhcpi7bkpuop7.apps.googleusercontent.com";
