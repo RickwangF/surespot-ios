@@ -20,7 +20,7 @@
 - ( SurespotIdentity *) getIdentityWithUsername:(NSString *) username andPassword:(NSString *) password;
 - (void) createIdentityWithUsername: (NSString *) username andPassword: (NSString *) password andSalt: (NSString *) salt andKeys: (IdentityKeys *) keys cookie: (NSHTTPCookie *) cookie;
 -(NSArray *) getIdentityNames;
-- (void) userLoggedInWithIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie:(NSHTTPCookie *) cookie reglogin: (BOOL) relogin;
+- (void) userLoggedInWithIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie:(NSHTTPCookie *) cookie relogin: (BOOL) relogin;
 - (NSString *) getLoggedInUser;
 - (NSString *) getOurLatestVersion;
 - (void) getTheirLatestVersionForOurUsername: (NSString *) ourUsername theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback;

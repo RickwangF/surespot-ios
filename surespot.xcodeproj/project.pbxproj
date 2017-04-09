@@ -189,7 +189,6 @@
 		6604A2C217626B9E0072216A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6604A2C617626B9E0072216A /* surespot-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "surespot-Info.plist"; sourceTree = "<group>"; };
 		6604A2CA17626B9E0072216A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		6604A2CC17626B9E0072216A /* surespot-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "surespot-Prefix.pch"; sourceTree = "<group>"; };
 		6604A2CD17626B9E0072216A /* SurespotAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SurespotAppDelegate.h; sourceTree = "<group>"; };
 		6604A2CE17626B9E0072216A /* SurespotAppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = SurespotAppDelegate.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		660F0A9518D7888300FD8C4D /* RestoreIdentityDriveView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RestoreIdentityDriveView.xib; path = surespot/identity/RestoreIdentityDriveView.xib; sourceTree = SOURCE_ROOT; };
@@ -751,7 +750,6 @@
 				6621BB861762704D00BC2850 /* Localizable.strings */,
 				6604A2C617626B9E0072216A /* surespot-Info.plist */,
 				6604A2CA17626B9E0072216A /* main.m */,
-				6604A2CC17626B9E0072216A /* surespot-Prefix.pch */,
 				66E21DFF1847E1220005D91E /* InAppSettings.bundle */,
 			);
 			name = "Supporting Files";

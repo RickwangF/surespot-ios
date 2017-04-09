@@ -109,7 +109,6 @@ typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
 //         successBlock:(HTTPSuccessBlock) successBlock
 //         failureBlock: (HTTPFailureBlock) failureBlock;
 
--(void) clearCookies;
 -(void) setCookie: (NSHTTPCookie *) cookie;
 -(BOOL) reloginWithUsername:(NSString*) username successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock;
 

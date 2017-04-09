@@ -71,9 +71,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
 }
 
--(void) loginIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie: (NSHTTPCookie *) cookie{
-    self.loggedInUsername = identity.username;
-    
+-(void) loginIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie: (NSHTTPCookie *) cookie isActive:(BOOL) isActive {
+    if (isActive) {
+        self.activeUsername = identity.username;
+    }
     //load encrypted shared secrets from disk if we have a password
     if (password) {
         [self loadSharedSecretsForUsername:identity.username password:password];
@@ -120,13 +121,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 -(void) logout {
-    if (_loggedInUsername) {
+    if (_activeUsername) {
         [self saveSharedSecrets];
         //only remove objects for the logging out user
         NSMutableArray * keysToRemove = [[NSMutableArray alloc] init];
         
         for (NSString * key in [_sharedSecretsDict keyEnumerator]) {
-            if ([key hasPrefix:_loggedInUsername]) {
+            if ([key hasPrefix:_activeUsername]) {
                 DDLogVerbose(@"removing shared secret key: %@", key);
                 [keysToRemove addObject:key];
             }
@@ -134,25 +135,25 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         [_sharedSecretsDict removeObjectsForKeys:keysToRemove];
         
-        [_identitiesDict removeObjectForKey:_loggedInUsername];
-        _loggedInUsername = nil;
+        [_identitiesDict removeObjectForKey:_activeUsername];
+        _activeUsername = nil;
     }
 }
 
 -(void) saveSharedSecrets {
     //save encrypted shared secrets to disk if we have a password in the keychain for this user
-    NSString * password = [[IdentityController sharedInstance] getStoredPasswordForIdentity:_loggedInUsername];
+    NSString * password = [[IdentityController sharedInstance] getStoredPasswordForIdentity:_activeUsername];
     if (password) {
         NSMutableDictionary * ourSecrets = [[NSMutableDictionary alloc] init];
         for (NSString * key in [_sharedSecretsDict keyEnumerator]) {
-            if ([key hasPrefix:_loggedInUsername]) {
+            if ([key hasPrefix:_activeUsername]) {
                 DDLogVerbose(@"saving shared secret key: %@", key);
                 [ourSecrets setObject:[_sharedSecretsDict objectForKey:key] forKey:key];
             }
         }
         
         
-        [FileController saveSharedSecrets: ourSecrets forUsername: _loggedInUsername withPassword:password];
+        [FileController saveSharedSecrets: ourSecrets forUsername: _activeUsername withPassword:password];
         DDLogVerbose(@"saved %lu encrypted secrets to disk", (unsigned long)[ourSecrets count]);
     }
     
@@ -160,7 +161,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) saveLatestVersions {
     
-    [FileController saveLatestVersions: _latestVersionsDict forUsername: _loggedInUsername];
+    [FileController saveLatestVersions: _latestVersionsDict forUsername: _activeUsername];
     DDLogVerbose(@"saved %lu latest versions to disk", (unsigned long)[_latestVersionsDict count]);
     
     
@@ -204,7 +205,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 -(void) clearIdentityData:(NSString *) username {
-    if ([username isEqualToString:_loggedInUsername]) {
+    if ([username isEqualToString:_activeUsername]) {
         DDLogVerbose(@"purging cached identity data from RAM for: %@",  username);
         [_sharedSecretsDict removeAllObjects];
         [_publicKeysDict removeAllObjects];
@@ -241,7 +242,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(SurespotIdentity *) getLoggedInIdentity {
-    return [self getIdentityForUsername:_loggedInUsername password:nil];
+    return [self getIdentityForUsername:_activeUsername password:nil];
 }
 
 -(SurespotIdentity *) getIdentityForUsername: (NSString *) username password: (NSString *) password {
@@ -296,7 +297,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     BOOL sessionSet = identity && (password || hasCookie);
     if (sessionSet) {
-        _loggedInUsername = username;
+        _activeUsername = username;
         
         if (password) {
             [self loadSharedSecretsForUsername:username password:password];

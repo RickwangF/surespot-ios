@@ -14,6 +14,7 @@
 #import "NSData+SRB64Additions.h"
 #import "EncryptionController.h"
 #import "CredentialCachingController.h"
+#import "NetworkManager.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -23,7 +24,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @interface NetworkController()
 @property (nonatomic, strong) NSString * baseUrl;
-@property (atomic, assign) BOOL loggedOut;
 @property (nonatomic, strong) NSString * username;
 
 @end
@@ -55,28 +55,60 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                                                                             [AFHTTPResponseSerializer serializer]]];
         self.requestSerializer = [AFJSONRequestSerializer serializer];
         
+        
+//        AFSecurityPolicy* securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
+//        [securityPolicy setValidatesDomainName:NO];
+//        [securityPolicy setAllowInvalidCertificates:YES];
+//        [self setSecurityPolicy:securityPolicy];
     }
     
     return self;
 }
 
-
-- (void)URLSession:(NSURLSession *)session
-didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
- completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler{
-    
-    if (_username) {
-        [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
-            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-        } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
-            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-        }];
-    }
-    else {
-        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-    }
-    
-}
+//
+//- (void)URLSession:(NSURLSession *)session
+//didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+// completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler{
+//    
+//    if ([challenge previousFailureCount] > 0) {
+//        //this will cause an authentication failure
+//        NSLog(@"Bad Username Or Password");
+//        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+//    }
+//    
+//    //this is checking the server certificate
+//    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+//        SecTrustResultType result;
+//        //This takes the serverTrust object and checkes it against your keychain
+//        SecTrustEvaluate(challenge.protectionSpace.serverTrust, &result);
+//        
+//        //if we want to ignore invalid server for certificates, we just accept the server
+//      //  if (kAllowsInvalidSSLCertificate) {
+//            id credential = [NSURLCredential credentialForTrust: challenge.protectionSpace.serverTrust];
+//        completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
+//        
+////        } else if(result == kSecTrustResultProceed || result == kSecTrustResultUnspecified) {
+////            //When testing this against a trusted server I got kSecTrustResultUnspecified every time. But the other two match the description of a trusted server
+////            *credential = [NSURLCredential credentialForTrust: challenge.protectionSpace.serverTrust];
+////            return NSURLSessionAuthChallengeUseCredential;
+////        }
+//        return;
+//    }
+//    
+//    if (_username) {
+//        [self reloginWithUsername:_username successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie *cookie) {
+//           // [session s]
+//            [self setCookie:cookie];
+//            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+//        } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
+//            completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+//        }];
+//    }
+//    else {
+//        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+//    }
+//    
+//}
 
 
 //inject cookie for current user
@@ -105,29 +137,20 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
 }
 
 -(void) setUnauthorized {
-    _loggedOut = YES;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"unauthorized" object: nil];
 }
 
--(void) clearCookies {
-    //clear the cookie store
-    for (NSHTTPCookie * cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]) {
-        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
-    }
-}
 
 -(void) setCookie: (NSHTTPCookie *) cookie {
     DDLogDebug(@"setCookie: %@", cookie);
-    if (cookie) {
-        [self.requestSerializer setValue:cookie.value forHTTPHeaderField:cookie.name];
+    if (cookie && _username) {
+        [self.requestSerializer setValue:[NSString stringWithFormat:@"%@=%@",cookie.name,cookie.value] forHTTPHeaderField:@"Cookie"];
     }
 }
 
 -(void) loginWithUsername:(NSString*) username andPassword:(NSString *)password andSignature: (NSString *) signature
              successBlock:(JSONCookieSuccessBlock) successBlock failureBlock: (JSONFailureBlock) failureBlock
 {
-    //   [self clearCookies];
-    
     NSString *appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     NSString *appBuildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
     NSString *versionString = [NSString stringWithFormat:@"%@:%@", appVersionString, appBuildString];
@@ -201,13 +224,15 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
             NSString * signatureString = [signature SR_stringByBase64Encoding];
             
             DDLogInfo(@"logging in to server");
-            [self loginWithUsername:identity.username
+            //use nil controller otherwise the request seems to block if we use the same network controller that is trying to auth the request to auth the request
+            [[[NetworkManager sharedInstance] getNetworkController:nil] loginWithUsername:identity.username
                         andPassword:passwordString
                        andSignature: signatureString
                        successBlock:^(NSURLSessionTask *task, id JSON, NSHTTPCookie * cookie) {
                            DDLogVerbose(@"login response");
                            
-                           [[IdentityController sharedInstance] userLoggedInWithIdentity:identity password: password cookie: cookie reglogin:YES];
+                           
+                           [[IdentityController sharedInstance] userLoggedInWithIdentity:identity password: password cookie: cookie relogin:YES];
                            successBlock(task, JSON, cookie);
                        }
                        failureBlock: failureBlock];
@@ -218,13 +243,15 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
         
     }
     else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            failureBlock(nil,nil);
+        });
+
         return NO;
     }
 }
 
 -(void) createUser3WithUsername:(NSString *)username derivedPassword:(NSString *)derivedPassword dhKey:(NSString *)encodedDHKey dsaKey:(NSString *)encodedDSAKey authSig:(NSString *)authSig clientSig:(NSString *)clientSig successBlock:(HTTPCookieSuccessBlock)successBlock failureBlock:(HTTPFailureBlock)failureBlock {
-    
-    [self clearCookies];
     
     NSString *appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     NSString *appBuildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
@@ -270,7 +297,6 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
     for (NSHTTPCookie *cookie in cookies)
     {
         if ([cookie.name isEqualToString:@"connect.sid"]) {
-            _loggedOut = NO;
             return cookie;
         }
     }

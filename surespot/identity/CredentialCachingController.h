@@ -22,11 +22,11 @@
 
 @property (nonatomic, strong) NSOperationQueue * genSecretQueue;
 @property (nonatomic, strong) NSOperationQueue * publicKeyQueue;
-@property (atomic, strong) NSString * loggedInUsername;
+@property (atomic, strong) NSString * activeUsername;
 
 
 -(void) getSharedSecretForOurUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion hashed: (BOOL) hashed callback: (CallbackBlock) callback;
--(void) loginIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie: (NSHTTPCookie *) cookie;
+-(void) loginIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie: (NSHTTPCookie *) cookie isActive: (BOOL) isActive;
 -(void) clearUserData: (NSString *) theirUsername;
 
 -(void) getLatestVersionForOurUsername: (NSString *) ourUsername  theirUsername: (NSString *) theirUsername callback:(CallbackStringBlock) callback;

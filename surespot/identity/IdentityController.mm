@@ -147,7 +147,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
 
 -(void) setLoggedInUserIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie: (NSHTTPCookie *) cookie relogin: (BOOL) relogin {
     @synchronized (self) {
-        [[CredentialCachingController sharedInstance] loginIdentity:identity password: password cookie: cookie];
+        [[CredentialCachingController sharedInstance] loginIdentity:identity password: password cookie: cookie isActive: !relogin];
         //set last logged in user pref
         [[NSUserDefaults standardUserDefaults] setObject:identity.username forKey:@"last_user"];
         
@@ -225,13 +225,13 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     return nil;
 }
 
-- (void) userLoggedInWithIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie:(NSHTTPCookie *) cookie reglogin: (BOOL) relogin {
+- (void) userLoggedInWithIdentity: (SurespotIdentity *) identity password: (NSString *) password cookie:(NSHTTPCookie *) cookie relogin: (BOOL) relogin {
     [self setLoggedInUserIdentity:identity password: password cookie: cookie relogin:relogin];
 }
 
 
 - (NSString *) getLoggedInUser {
-    return [[CredentialCachingController sharedInstance] loggedInUsername];
+    return [[CredentialCachingController sharedInstance] activeUsername];
 }
 
 -(NSString *) getLastLoggedInUser {
