@@ -22,6 +22,7 @@
 #import "NSString+Sensitivize.h"
 #import "BackupHelpViewController.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "SurespotConfiguration.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -173,8 +174,8 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 
 -(void) setAccountFromKeychain {
     self.driveService.authorizer = [GTMOAuth2ViewControllerTouch authForGoogleFromKeychainForName:kKeychainItemName
-                                clientID:GOOGLE_CLIENT_ID
-                            clientSecret:GOOGLE_CLIENT_SECRET];
+                                clientID:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_ID]
+                            clientSecret:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_SECRET]];
     [self updateUI];
 }
 
@@ -207,8 +208,8 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     //http://stackoverflow.com/questions/13693617/error-500-when-performing-a-query-with-drive-file-scope
     authController = [[GTMOAuth2ViewControllerTouch alloc] initWithScope:[[kGTLRAuthScopeDriveFile stringByAppendingString:@" "] stringByAppendingString: kGTLRAuthScopeDriveMetadataReadonly]
                       
-                                                                clientID:GOOGLE_CLIENT_ID
-                                                            clientSecret:GOOGLE_CLIENT_SECRET
+                                                                clientID:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_ID]
+                                                            clientSecret:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_SECRET]
                                                         keychainItemName:kKeychainItemName
                                                                 delegate:self
                                                         finishedSelector:@selector(viewController:finishedWithAuth:error:)];

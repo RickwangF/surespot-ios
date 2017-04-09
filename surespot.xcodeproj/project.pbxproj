@@ -65,6 +65,8 @@
 		665CA9A61E9098210045EEDD /* REMenuItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9A11E9098210045EEDD /* REMenuItemView.m */; };
 		665CA9A91E9186E10045EEDD /* ChatManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9A81E9186E10045EEDD /* ChatManager.mm */; };
 		665CA9AB1E918E4C0045EEDD /* NetworkManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9AA1E918E4C0045EEDD /* NetworkManager.mm */; };
+		665CA9B01E9ABFF20045EEDD /* configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 665CA9AF1E9ABFF20045EEDD /* configuration.plist */; };
+		665CA9B21E9AC04C0045EEDD /* SurespotConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 665CA9B11E9AC04C0045EEDD /* SurespotConfiguration.m */; };
 		665F4E0F183325C50083BCE7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 665F4E0E183325C50083BCE7 /* AdSupport.framework */; };
 		666659A31DD338CF0099B284 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2CA17626B9E0072216A /* main.m */; };
 		666D3364187F69AD00B73F69 /* invite-accept.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D335E187F69AD00B73F69 /* invite-accept.caf */; };
@@ -276,6 +278,9 @@
 		665CA9AC1E918E590045EEDD /* NetworkManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkManager.h; sourceTree = "<group>"; };
 		665CA9AD1E92EA1D0045EEDD /* surespot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = surespot.entitlements; sourceTree = "<group>"; };
 		665CA9AE1E99CF090045EEDD /* surespot-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "surespot-Prefix.pch"; sourceTree = "<group>"; };
+		665CA9AF1E9ABFF20045EEDD /* configuration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = configuration.plist; sourceTree = "<group>"; };
+		665CA9B11E9AC04C0045EEDD /* SurespotConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotConfiguration.m; sourceTree = "<group>"; };
+		665CA9B31E9AC0630045EEDD /* SurespotConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SurespotConfiguration.h; sourceTree = "<group>"; };
 		665F4E0E183325C50083BCE7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		666D335E187F69AD00B73F69 /* invite-accept.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "invite-accept.caf"; sourceTree = "<group>"; };
 		666D3362187F69AD00B73F69 /* message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = message.caf; sourceTree = "<group>"; };
@@ -734,6 +739,8 @@
 				6604A2CE17626B9E0072216A /* SurespotAppDelegate.mm */,
 				66A2D917183A7A7F00785270 /* SurespotConstants.h */,
 				66A2D918183A7A7F00785270 /* SurespotConstants.m */,
+				665CA9B11E9AC04C0045EEDD /* SurespotConfiguration.m */,
+				665CA9B31E9AC0630045EEDD /* SurespotConfiguration.h */,
 				662CA58F1871BB7300684790 /* SurespotNavigationController.h */,
 				662CA5901871BB7300684790 /* SurespotNavigationController.m */,
 				6604A2D617626B9E0072216A /* MainStoryboard.storyboard */,
@@ -747,6 +754,7 @@
 		6604A2C517626B9E0072216A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				665CA9AF1E9ABFF20045EEDD /* configuration.plist */,
 				665CA9AE1E99CF090045EEDD /* surespot-Prefix.pch */,
 				66DAB629186D0461006C262F /* SurespotSHKSharers.plist */,
 				6621BB861762704D00BC2850 /* Localizable.strings */,
@@ -1406,6 +1414,7 @@
 				66EBE0C71855C97100F2452D /* TheirMessageCell.xib in Resources */,
 				661F3B8818689DDF003C7AE3 /* KeyFingerprintCell.xib in Resources */,
 				661F46A41865E063004A71B0 /* DeleteIdentityView.xib in Resources */,
+				665CA9B01E9ABFF20045EEDD /* configuration.plist in Resources */,
 				66AC20AB18690CBD004E58E1 /* KeyFingerprintLoadingView.xib in Resources */,
 				661F469A1864C0B2004A71B0 /* GenerateKeysView.xib in Resources */,
 				661F46A81865EDC3004A71B0 /* ChangePasswordView.xib in Resources */,
@@ -1484,6 +1493,7 @@
 				665CA9A61E9098210045EEDD /* REMenuItemView.m in Sources */,
 				661F469F1864C0BE004A71B0 /* BackupIdentityViewController.mm in Sources */,
 				66EBE0D91855C97100F2452D /* EncryptionController.mm in Sources */,
+				665CA9B21E9AC04C0045EEDD /* SurespotConfiguration.m in Sources */,
 				66866269185B6A2E001491B1 /* SDWebImageManager.m in Sources */,
 				6604A2CF17626B9E0072216A /* SurespotAppDelegate.mm in Sources */,
 				66EBE0C31855C97100F2452D /* SurespotButton.m in Sources */,

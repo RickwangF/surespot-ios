@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bitly_token</key>
+	<string>bitly_token</string>
+	<key>base_url</key>
+	<string>base_url</string>
+	<key>google_client_id</key>
+	<string>google_client_id</string>
+	<key>google_client_secret</key>
+	<string>google_client_secret</string>
+</dict>
+</plist>

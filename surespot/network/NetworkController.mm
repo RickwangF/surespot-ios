@@ -15,6 +15,7 @@
 #import "EncryptionController.h"
 #import "CredentialCachingController.h"
 #import "NetworkManager.h"
+#import "SurespotConfiguration.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -33,10 +34,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(NetworkController*)init: (NSString *) username
 {
     NSURLSessionConfiguration * sessionConfiguration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    self = [super initWithBaseURL:[NSURL URLWithString: baseUrl] sessionConfiguration:sessionConfiguration];
+    self = [super initWithBaseURL:[NSURL URLWithString: [[SurespotConfiguration sharedInstance] baseUrl]] sessionConfiguration:sessionConfiguration];
     
     if (self != nil) {
-        _baseUrl = baseUrl;
+        _baseUrl = [[SurespotConfiguration sharedInstance] baseUrl];
         _username = username;
         
         [self.requestSerializer setValue:[NSString stringWithFormat:@"%@/%@ (%@; CPU iPhone OS 7_0_4; Scale/%0.2f)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey], (__bridge id)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleVersionKey) ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey], [[UIDevice currentDevice] model], ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] ? [[UIScreen mainScreen] scale] : 1.0f)] forHTTPHeaderField:@"User-Agent"];
@@ -673,7 +674,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) getShortUrl:(NSString*) longUrl callback: (CallbackBlock) callback
 {
-    NSString * path = [[NSString stringWithFormat:@"https://api-ssl.bitly.com/v3/shorten?access_token=%@&longUrl=%@", BITLY_TOKEN, longUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString * path = [[NSString stringWithFormat:@"https://api-ssl.bitly.com/v3/shorten?access_token=%@&longUrl=%@", [[SurespotConfiguration sharedInstance] BITLY_TOKEN], longUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:@"GET" URLString:path parameters:nil error:nil];
     NSURLSessionDataTask * task = [self dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {

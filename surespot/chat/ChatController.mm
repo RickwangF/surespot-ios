@@ -24,6 +24,7 @@
 #import "SoundController.h"
 #import "NSBundle+FallbackLanguage.h"
 #import "SocketIO-swift.h"
+#import "SurespotConfiguration.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -248,7 +249,7 @@ static const int MAX_RETRY_DELAY = 30;
         }
         
         DDLogDebug(@"initing new socket");
-        self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:baseUrl] config: opts];
+        self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:[[SurespotConfiguration sharedInstance] baseUrl]] config: opts];
         [self addHandlers];
         [self.socket connect];
   //  }
