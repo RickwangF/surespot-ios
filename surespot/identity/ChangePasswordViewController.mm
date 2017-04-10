@@ -162,9 +162,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 // Called when the UIKeyboardWillHideNotification is sent
-- (void)keyboardWillBeHidden:(NSDictionary *) info
+- (void)keyboardWillBeHidden:(NSNotification *) aNotification
 {
     DDLogInfo(@"keyboard hide");
+    NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
     UIViewAnimationOptions curve;
     [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];

@@ -54,7 +54,7 @@ NSString* const IDZGunzipErrorDomain = @"com.iosdeveloperzone.IDZGunzip";
         if (strm.total_out >= [decompressed length])
             [decompressed increaseLengthBy: half_length];
         strm.next_out = [decompressed mutableBytes] + strm.total_out;
-        strm.avail_out = (unsigned int)[decompressed length] - strm.total_out;
+        strm.avail_out = (unsigned int)([decompressed length] - strm.total_out);
         
         // Inflate another chunk.
         status = inflate (&strm, Z_SYNC_FLUSH);
@@ -83,7 +83,7 @@ NSString* const IDZGunzipErrorDomain = @"com.iosdeveloperzone.IDZGunzip";
     strm.opaque = Z_NULL;
     strm.total_out = 0;
     strm.next_in=(Bytef *)[self bytes];
-    strm.avail_in = [self length];
+    strm.avail_in = (unsigned int)[self length];
     
     // Compresssion Levels:
     //   Z_NO_COMPRESSION
@@ -101,7 +101,7 @@ NSString* const IDZGunzipErrorDomain = @"com.iosdeveloperzone.IDZGunzip";
             [compressed increaseLengthBy: 16384];
         
         strm.next_out = [compressed mutableBytes] + strm.total_out;
-        strm.avail_out = [compressed length] - strm.total_out;
+        strm.avail_out = (unsigned int)([compressed length] - strm.total_out);
         
         deflate(&strm, Z_FINISH);
         
@@ -185,17 +185,17 @@ NSString* const IDZGunzipErrorDomain = @"com.iosdeveloperzone.IDZGunzip";
      */
     //UInt32 nUncompressedBytes = *(UInt32*)([self bytes] + self.length - 4);
     
-    unsigned full_length = [self length];
-	unsigned half_length = [self length] / 2;
+    unsigned long full_length = [self length];
+	unsigned long half_length = [self length] / 2;
 	
 	NSMutableData *gunzippedData = [NSMutableData dataWithLength: full_length + half_length];
 	
    // NSMutableData* gunzippedData = [NSMutableData dataWithLength:nUncompressedBytes];
     
     zStream.next_in = (Bytef*)self.bytes;
-    zStream.avail_in = self.length;
+    zStream.avail_in = (unsigned int)self.length;
     zStream.next_out = (Bytef*)gunzippedData.bytes;
-    zStream.avail_out = gunzippedData.length;
+    zStream.avail_out = (unsigned int)gunzippedData.length;
     
     iResult = inflate(&zStream, Z_FINISH);
     if(iResult != Z_STREAM_END)

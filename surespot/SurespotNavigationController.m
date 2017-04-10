@@ -10,7 +10,7 @@
 
 @implementation SurespotNavigationController
 
--(NSUInteger)supportedInterfaceOrientations {
+-(UIInterfaceOrientationMask)supportedInterfaceOrientations {
     UIViewController *top = self.topViewController;
     return top.supportedInterfaceOrientations;
 }

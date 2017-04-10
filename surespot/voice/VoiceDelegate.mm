@@ -361,7 +361,7 @@ const NSInteger SEND_THRESHOLD = 25;
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
-    DDLogInfo(@"finished playing, successfully?: %hhd", flag);
+    DDLogInfo(@"finished playing, successfully?: %@", flag ? @"YES" : @"NO");
     [self stopPlayingDeactivateSession:YES];
 }
 
@@ -474,7 +474,7 @@ const NSInteger SEND_THRESHOLD = 25;
                                                                                                                                       NSInteger size = [[JSON objectForKey:@"size"] integerValue];
                                                                                                                                       NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
                                                                                                                                       
-                                                                                                                                      DDLogInfo(@"uploaded voice data %@ to server successfully, server id: %d, url: %@, date: %@, size: %d", message.iv, serverid, url, date, size);
+                                                                                                                                      DDLogInfo(@"uploaded voice data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, size);
                                                                                                                                       
                                                                                                                                       SurespotMessage * updatedMessage = [message copyWithZone:nil];
                                                                                                                                       

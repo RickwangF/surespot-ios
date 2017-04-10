@@ -277,7 +277,7 @@ int const PBKDF_ROUNDS = 20000;
     CryptoPP::PKCS5_PBKDF2_HMAC<SHA256> kdf;
     NSData * passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
     
-    kdf.DeriveKey(keyBytes, AES_KEY_LENGTH, 0, (byte *)[passwordData bytes], [passwordData length], saltBytes,  SALT_LENGTH, rounds, 0);
+    kdf.DeriveKey(keyBytes, AES_KEY_LENGTH, 0, (byte *)[passwordData bytes], [passwordData length], saltBytes,  SALT_LENGTH, (unsigned int) rounds, 0);
     
     [derived setObject:[NSData dataWithBytes:keyBytes length:AES_KEY_LENGTH] forKey:@"key"];
     return derived;

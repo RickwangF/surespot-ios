@@ -156,7 +156,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             } else {
                 
                 // Failed - no source
-                @throw [NSException exceptionWithName:nil reason:nil userInfo:nil];
+                @throw [NSException exceptionWithName:@"no source image" reason:nil userInfo:nil];
                 
             }
         }
