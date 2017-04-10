@@ -110,50 +110,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return !(aString && aString.length);
 }
 
-+(CGFloat) keyboardHeightAdjustedForOrientation: (CGSize) size {
-    UIInterfaceOrientation  orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-        return size.width;
-    }
-    else {
-        return size.height;
-    }
-}
-
-+(CGSize) screenSizeAdjustedForOrientation {
-    CGSize size = [UIScreen mainScreen].bounds.size;
-    if ([UIUtils isIOS8Plus]) {
-        return CGSizeMake(size.width, size.height);
-    }
-    
-    UIInterfaceOrientation  orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    
-    if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-        return CGSizeMake(size.height, size.width);
-    }
-    else {
-        return CGSizeMake(size.width, size.height);
-        
-    }
-}
-
-
-+(CGSize) sizeAdjustedForOrientation: (CGSize) size {
-    if ([UIUtils isIOS8Plus]) {
-        return CGSizeMake(size.width, size.height);
-    }
-    
-    UIInterfaceOrientation  orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    
-    if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-        return CGSizeMake(size.height, size.width);
-    }
-    else {
-        return CGSizeMake(size.width, size.height);
-        
-    }
-}
-
 +(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername {
     NSString * plaintext = message.plainData;
     
@@ -412,11 +368,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 + (NSString *) buildAliasStringForUsername: (NSString *) username alias: (NSString *) alias {
     return (alias ? [NSString stringWithFormat:@"%@ (%@)", alias, username] : username);
 }
-
-+ (BOOL) isIOS8Plus {
-    return [[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0;
-}
-
 
 + (NSString *)localizedStringForKey:(NSString *)key replaceValue:(NSString *)replaceValue bundle: (NSBundle *) bundle table: (NSString *) table {
     

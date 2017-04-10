@@ -373,25 +373,14 @@ const Float32 voiceRecordDelay = 0.3;
 {
     //use old positioning pre ios 8
     
-    if ([UIUtils isIOS8Plus]) {
+   
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeShown8:)
+                                                 selector:@selector(keyboardWillBeShown:)
                                                      name:UIKeyboardWillShowNotification object:nil];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeHidden8:)
+                                                 selector:@selector(keyboardWillBeHidden:)
                                                      name:UIKeyboardWillHideNotification object:nil];
-    }
-    else {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeShown7:)
-                                                     name:UIKeyboardWillShowNotification object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeHidden7:)
-                                                     name:UIKeyboardWillHideNotification object:nil];
-        
-    }
 }
 
 -(void) unregisterKeyboardNotifications
@@ -400,44 +389,16 @@ const Float32 voiceRecordDelay = 0.3;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
-
 // Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeShown8:(NSNotification*)aNotification {
-    NSDictionary* info = [aNotification userInfo];
-    [self keyboardWillBeShown:info isIos8Plus: YES];
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeShown7:(NSNotification*)aNotification {
-    NSDictionary* info = [aNotification userInfo];
-    [self keyboardWillBeShown:info isIos8Plus: NO];
-    
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeHidden8:(NSNotification*)aNotification {
-    NSDictionary* info = [aNotification userInfo];
-    [self keyboardWillBeHidden:info isIos8Plus: YES];
-    
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeHidden7:(NSNotification*)aNotification {
-    NSDictionary* info = [aNotification userInfo];
-    [self keyboardWillBeHidden:info isIos8Plus: NO];
-    
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeShown:(NSDictionary*)info isIos8Plus: (BOOL) isIos8Plus {
+- (void)keyboardWillBeShown:(NSNotification*)aNotification {
     DDLogInfo(@"keyboard shown");
-    
+    NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
     UIViewAnimationOptions curve;
     [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
     [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
     CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat keyboardHeight = isIos8Plus ? keyboardRect.size.height : [UIUtils keyboardHeightAdjustedForOrientation:keyboardRect.size];
+    CGFloat keyboardHeight = keyboardRect.size.height;
     CGFloat deltaHeight = keyboardHeight - _keyboardState.keyboardHeight;
     _keyboardState.keyboardHeight = keyboardHeight;
     
@@ -484,15 +445,16 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 // Called when the UIKeyboardWillHideNotification is sent
-- (void)keyboardWillBeHidden:(NSDictionary *) info isIos8Plus: (BOOL) isIos8Plus
+- (void)keyboardWillBeHidden:(NSNotification *) aNotification
 {
     DDLogInfo(@"keyboard hide");
+    NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
     UIViewAnimationOptions curve;
     [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
     [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
     CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat keyboardHeight = isIos8Plus ? keyboardRect.size.height : [UIUtils keyboardHeightAdjustedForOrientation:keyboardRect.size];
+    CGFloat keyboardHeight = keyboardRect.size.height;
     
     //height is reported as 0 sometimes WTF apple
     DDLogInfo(@"keyboard reported height: %f, my height: %f", keyboardHeight, _keyboardState.keyboardHeight);
@@ -1698,9 +1660,6 @@ const Float32 voiceRecordDelay = 0.3;
     }
     else {
         if ([_inviteTextView isFirstResponder]) {
-            if (![UIUtils isIOS8Plus]) {
-                [_inviteTextView resignFirstResponder];
-            }
             [_messageTextView becomeFirstResponder];
         }
     }

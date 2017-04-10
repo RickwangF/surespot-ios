@@ -322,7 +322,6 @@ const NSInteger SEND_THRESHOLD = 25;
         
         AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
         CGRect frame = overlayView.frame;
-        frame.size =  [UIUtils sizeAdjustedForOrientation:frame.size];
         
         _backgroundView = [[UIView alloc] initWithFrame:frame];
         _backgroundView.backgroundColor = [UIUtils surespotTransparentGrey];
@@ -343,7 +342,7 @@ const NSInteger SEND_THRESHOLD = 25;
 }
 
 -(CGRect) getScopeRect {
-    CGSize screenSize = [UIUtils sizeAdjustedForOrientation:[[UIScreen mainScreen] bounds].size];
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
     //if (screenSize.height > )
     int halfHeight = screenSize.height / 2;
     return CGRectMake(0, (screenSize.height-halfHeight)/2, screenSize.width, halfHeight);

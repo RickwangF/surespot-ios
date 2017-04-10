@@ -21,7 +21,6 @@
 +(UIColor *) surespotTransparentBlue;
 + (void)setAppAppearances;
 + (BOOL)stringIsNilOrEmpty:(NSString*)aString;
-+(CGFloat) keyboardHeightAdjustedForOrientation: (CGSize) size;
 +(UIColor *) surespotGrey;
 +(UIColor *) surespotTransparentGrey;
 +(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername;
@@ -34,8 +33,6 @@
 +(void) showToastMessage: (NSString *) message duration: (CGFloat) duration;
 +(NSString *) getMessageErrorText: (NSInteger) errorStatus mimeType: (NSString *) mimeType;
 +(REMenu *) createMenu: (NSArray *) menuItems closeCompletionHandler: (void (^)(void))completionHandler;
-+(CGSize) screenSizeAdjustedForOrientation;
-+(CGSize) sizeAdjustedForOrientation: (CGSize) size;
 +(void) setLinkLabel:(TTTAttributedLabel *) label
             delegate: (id) delegate
            labelText: (NSString *) labelText
@@ -47,7 +44,6 @@
 +(NSInteger) getDefaultImageMessageHeight;
 +(CGSize)imageSizeAfterAspectFit:(UIImageView*)imgview;
 + (NSString *) buildAliasStringForUsername: (NSString *) username alias: (NSString *) alias;
-+ (BOOL) isIOS8Plus;
 + (NSString *)localizedStringForKey:(NSString *)key replaceValue:(NSString *)comment bundle: (NSBundle *) bundle table: (NSString *) table;
 +(BOOL) isBlackTheme: (NSString *) ourUsername;
 @end

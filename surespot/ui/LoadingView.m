@@ -60,8 +60,8 @@
     UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[aSuperview addSubviewAndFillBounds:backgroundView];
     
-	const CGFloat DEFAULT_LABEL_WIDTH = [UIUtils screenSizeAdjustedForOrientation].width;
-	const CGFloat sheight = [UIUtils screenSizeAdjustedForOrientation].height;
+	const CGFloat DEFAULT_LABEL_WIDTH = [UIScreen mainScreen].bounds.size.width;
+	const CGFloat sheight = [UIScreen mainScreen].bounds.size.height;
     
     UIView * labelView = [[UIView alloc] initWithFrame:CGRectZero];
     labelView.backgroundColor = [UIColor whiteColor];

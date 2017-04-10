@@ -106,27 +106,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (void)registerForKeyboardNotifications
 {
-    //use old positioning pre ios 8
-    
-    if ([UIUtils isIOS8Plus]) {
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeShown8:)
+                                                 selector:@selector(keyboardWillBeShown:)
                                                      name:UIKeyboardWillShowNotification object:nil];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeHidden8:)
+                                                 selector:@selector(keyboardWillBeHidden:)
                                                      name:UIKeyboardWillHideNotification object:nil];
-    }
-    else {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeShown7:)
-                                                     name:UIKeyboardWillShowNotification object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillBeHidden7:)
-                                                     name:UIKeyboardWillHideNotification object:nil];
-        
-    }
 }
 
 -(void) unregisterKeyboardNotifications
@@ -135,45 +121,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
-
 // Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeShown8:(NSNotification*)aNotification {
-    NSDictionary* info = [aNotification userInfo];
-    [self keyboardWillBeShown:info isIos8Plus: YES];
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeShown7:(NSNotification*)aNotification {
-    NSDictionary* info = [aNotification userInfo];
-    [self keyboardWillBeShown:info isIos8Plus: NO];
-    
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeHidden8:(NSNotification*)aNotification {
-    NSDictionary* info = [aNotification userInfo];
-    [self keyboardWillBeHidden:info isIos8Plus: YES];
-    
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeHidden7:(NSNotification*)aNotification {
-    NSDictionary* info = [aNotification userInfo];
-    [self keyboardWillBeHidden:info isIos8Plus: NO];
-    
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeShown:(NSDictionary*)info isIos8Plus: (BOOL) isIos8Plus {
+- (void)keyboardWillBeShown:(NSNotification*)aNotification {
     DDLogInfo(@"keyboard shown");
-    
-    
+    NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
     UIViewAnimationOptions curve;
     [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
     [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
     CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat keyboardHeight = isIos8Plus ? keyboardRect.size.height : [UIUtils keyboardHeightAdjustedForOrientation:keyboardRect.size];
+    CGFloat keyboardHeight = keyboardRect.size.height;
     CGFloat totalHeight = self.view.frame.size.height;
     CGFloat keyboardTop = totalHeight - keyboardHeight;
     
@@ -201,11 +158,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     } completion:^(BOOL completion) {
         
     }];
-    
+
 }
 
 // Called when the UIKeyboardWillHideNotification is sent
-- (void)keyboardWillBeHidden:(NSDictionary *) info isIos8Plus: (BOOL) isIos8Plus
+- (void)keyboardWillBeHidden:(NSDictionary *) info
 {
     DDLogInfo(@"keyboard hide");
     NSTimeInterval animationDuration;
