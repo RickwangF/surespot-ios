@@ -72,6 +72,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             
         }];
         
+        [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     }
     
     return self;
