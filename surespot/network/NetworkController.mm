@@ -713,7 +713,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) clearCookie {
     _cookie = nil;
-    [[self requestSerializer] setValue:nil forKey:@"Cookie"];
+    [[self requestSerializer] setValue:nil forHTTPHeaderField:@"Cookie"];
 }
 
 -(void) setCookie: (NSHTTPCookie *) cookie {
