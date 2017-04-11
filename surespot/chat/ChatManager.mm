@@ -23,9 +23,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface ChatManager() {}
 @property (strong, atomic) NSMutableDictionary * chatControllers;
 @property (strong, atomic) NSString * activeUser;
-
+@property (assign, atomic) AFNetworkReachabilityStatus networkReachabilityStatus;
 @end
-
 
 @implementation ChatManager
 
@@ -52,16 +51,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             if (![controller paused]) {
                 BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
                 
-                
-                //   [self setReachabilityStatus:status];
-         //       _connectionRetries = 0;
-                
                 if(isReachable)
                 {
                     
                     DDLogInfo(@"wifi: %d, wwan, %d",status == AFNetworkReachabilityStatusReachableViaWiFi, status == AFNetworkReachabilityStatusReachableViaWWAN);
                     //reachibility changed, disconnect and reconnect
-                    [controller disconnect];
+                    if (_networkReachabilityStatus > -1 && status != _networkReachabilityStatus) {
+                        DDLogInfo(@"network status changed from %ld to: %ld, disconnecting", (long)_networkReachabilityStatus, (long) status);
+                        [controller disconnect];
+                    }                    
+
                     [controller reconnect];
                 }
                 else
@@ -70,31 +69,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }
             }
             
+            DDLogInfo(@"setting network status from %ld to: %ld", (long)_networkReachabilityStatus, (long) status);
+            _networkReachabilityStatus = status;
         }];
         
         [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+        _networkReachabilityStatus = [[AFNetworkReachabilityManager sharedManager] networkReachabilityStatus];
+        DDLogInfo(@"initial network status: %ld", (long)_networkReachabilityStatus);
+        
     }
     
     return self;
-}
-
--(void)setReachabilityStatus:(AFNetworkReachabilityStatus) status {
-    switch (status)
-    {
-        case AFNetworkReachabilityStatusReachableViaWWAN:
-        case AFNetworkReachabilityStatusReachableViaWiFi:
-        {
-          //  self.hasInet = YES;
-            break;
-        }
-            
-        case AFNetworkReachabilityStatusNotReachable:
-        default:
-        {
-          //  self.hasInet = NO;
-            break;
-        }
-    }
 }
 
 -(ChatController *) getChatControllerIfPresent: (NSString *) username {
@@ -104,7 +89,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(ChatController *) getChatController: (NSString *) username {
     ChatController * chatController = [_chatControllers objectForKey:username];
     if (!chatController) {
-        chatController = [[ChatController alloc] init: username];        
+        chatController = [[ChatController alloc] init: username];
         [_chatControllers setObject:chatController forKey:username];
     }
     return chatController;
