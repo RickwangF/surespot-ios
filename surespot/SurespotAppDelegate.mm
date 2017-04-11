@@ -260,12 +260,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString * currentUser = [[IdentityController sharedInstance] getLoggedInUser];
     ChatController * cc = [[ChatManager sharedInstance] getChatControllerIfPresent: currentUser];
     NSString * currentChat = [cc getCurrentChat];
-    if (currentChat) {
+    if (currentChat && currentUser) {
         [_lastUsers setObject:currentChat forKey:currentUser];
         DDLogDebug(@"userSwitch saving last chat: %@ for user: %@", currentChat, currentUser);
     }
     else {
-        [_lastUsers removeObjectForKey:currentUser];
+        if (currentUser) {
+            [_lastUsers removeObjectForKey:currentUser];
+        }
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userSwitch" object:nil];
