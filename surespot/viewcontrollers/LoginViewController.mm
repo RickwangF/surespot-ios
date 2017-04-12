@@ -20,6 +20,7 @@
 #import "SwipeViewController.h"
 #import "HelpViewController.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "ChatManager.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -94,6 +95,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [self.textPassword.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
         [self.textPassword.layer setBorderWidth:1.0f];
     }
+    
+    [ChatManager sharedInstance];
     
 }
 
@@ -194,6 +197,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString * password = self.textPassword.text;
     
     if ([UIUtils stringIsNilOrEmpty:password]) {
+        return;
+    }
+    
+    if ([[ChatManager sharedInstance] networkReachabilityStatus] == AFNetworkReachabilityStatusNotReachable) {
+        [UIUtils showToastKey: @"no_network_connection"];
         return;
     }
     
@@ -368,9 +376,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-//    UILabel *labelSelected = (UILabel*)[pickerView viewForRow:row forComponent:component];
+    //    UILabel *labelSelected = (UILabel*)[pickerView viewForRow:row forComponent:component];
     //        [labelSelected setTextColor:[UIUtils isBlackTheme] ? [UIUtils surespotBlue] : [UIColor blackColor]];
-  //  [labelSelected setTextColor: [UIUtils surespotBlue] ];
+    //  [labelSelected setTextColor: [UIUtils surespotBlue] ];
     NSString * selectedUser = [_identityNames objectAtIndex:row];
     [self updatePassword:selectedUser];
 }
