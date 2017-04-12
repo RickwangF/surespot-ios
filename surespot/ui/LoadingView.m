@@ -64,7 +64,7 @@
 	const CGFloat sheight = [UIScreen mainScreen].bounds.size.height;
     
     UIView * labelView = [[UIView alloc] initWithFrame:CGRectZero];
-    labelView.backgroundColor = [UIColor whiteColor];
+    labelView.backgroundColor = [UIUtils isBlackTheme] ? [UIColor blackColor]: [UIColor whiteColor];
     [backgroundView addSubview:labelView];
     
     
@@ -91,7 +91,7 @@
 	loadingLabel.text = NSLocalizedString(textKey, nil);
     loadingLabel.numberOfLines = 0;
     loadingLabel.lineBreakMode = NSLineBreakByWordWrapping;
-	loadingLabel.textColor = [UIColor blackColor];
+	loadingLabel.textColor = [UIUtils isBlackTheme] ? [UIUtils surespotForegroundGrey]: [UIColor blackColor];
 	loadingLabel.backgroundColor = [UIColor clearColor];
 	loadingLabel.textAlignment = NSTextAlignmentLeft;
 	loadingLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
