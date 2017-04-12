@@ -22,6 +22,7 @@
 #import "BackupIdentityViewController.h"
 #import "AboutViewController.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "ChatManager.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -56,16 +57,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                             NSLocalizedString(@"aware_username_password", nil),
                             pwWarning];
     
-    
-    
-    //    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
-    //        self.navigationController.navigationBar.tintColor = [UIUtils surespotBlue];
-    //    }
-    
     NSRange rr1 = [labelText rangeOfString:usernamesCaseSensitive];
     NSRange rr2 = [labelText rangeOfString:pwWarning];
     
     NSMutableAttributedString * helpString = [[NSMutableAttributedString alloc] initWithString:labelText];
+    if ([UIUtils isBlackTheme]) {
+        [helpString addAttribute:NSForegroundColorAttributeName value:[UIUtils surespotForegroundGrey] range:[labelText rangeOfString:labelText]];
+    }
     [helpString addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range: rr1];
     [helpString addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range: rr2];
 	   
@@ -96,6 +94,27 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     
     [_scrollView setContentSize: CGSizeMake(self.view.frame.size.width, _bCreateIdentity.frame.origin.y + _bCreateIdentity.frame.size.height)];
+    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.scrollView setBackgroundColor:[UIColor blackColor]];
+        
+        [self.tbUsername setTextColor: [UIUtils surespotForegroundGrey]];
+        [self.tbUsername setAttributedPlaceholder: [[NSAttributedString alloc] initWithString:NSLocalizedString(@"username", nil) attributes:@{NSForegroundColorAttributeName:[UIUtils surespotForegroundGrey]}]];
+        [self.tbUsername.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
+        [self.tbUsername.layer setBorderWidth:1.0f];
+        
+        [self.tbPassword setTextColor: [UIUtils surespotForegroundGrey]];
+        [self.tbPassword setAttributedPlaceholder: [[NSAttributedString alloc] initWithString:NSLocalizedString(@"password", nil) attributes:@{NSForegroundColorAttributeName:[UIUtils surespotForegroundGrey]}]];
+        [self.tbPassword.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
+        [self.tbPassword.layer setBorderWidth:1.0f];
+
+        [self.tbPasswordConfirm setTextColor: [UIUtils surespotForegroundGrey]];
+        [self.tbPasswordConfirm setAttributedPlaceholder: [[NSAttributedString alloc] initWithString:NSLocalizedString(@"confirm_password", nil) attributes:@{NSForegroundColorAttributeName:[UIUtils surespotForegroundGrey]}]];
+        [self.tbPasswordConfirm.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
+        [self.tbPasswordConfirm.layer setBorderWidth:1.0f];
+
+    }
 }
 
 - (void)viewDidUnload {

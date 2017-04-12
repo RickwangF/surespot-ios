@@ -48,7 +48,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    [_textPassword setPlaceholder:NSLocalizedString(@"password", nil)];
     [self.navigationItem setTitle:NSLocalizedString(@"login", nil)];
     [self loadIdentityNames];
     _delta = 0.0f;
@@ -95,9 +95,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [self.textPassword.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
         [self.textPassword.layer setBorderWidth:1.0f];
     }
-    
-    [ChatManager sharedInstance];
-    
 }
 
 - (void)registerForKeyboardNotifications

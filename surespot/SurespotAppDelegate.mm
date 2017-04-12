@@ -108,6 +108,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     //clean up old file locations
     [FileController deleteOldSecrets];
     
+    //get reachability started
+    [ChatManager sharedInstance];
+
+    
     //if we were launched from a notification use that logic to set the view controller
     NSDictionary* userInfo = [launchOptions valueForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
     if (![self handleNotificationApplication:application userInfo:userInfo local:YES]) {
