@@ -59,7 +59,7 @@
     NSData *qrCodeData = [inviteUrl dataUsingEncoding:NSUTF8StringEncoding]; // recommended encoding
     CIFilter *qrCodeFilter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
     [qrCodeFilter setValue:qrCodeData forKey:@"inputMessage"];
-    [qrCodeFilter setValue:@"Q" forKey:@"inputCorrectionLevel"]; //default of L,M,Q & H modes
+    [qrCodeFilter setValue:@"L" forKey:@"inputCorrectionLevel"]; //default of L,M,Q & H modes
     
     CIImage *qrCodeImage = qrCodeFilter.outputImage;
     
