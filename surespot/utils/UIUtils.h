@@ -22,6 +22,7 @@
 + (void)setAppAppearances;
 + (BOOL)stringIsNilOrEmpty:(NSString*)aString;
 +(UIColor *) surespotGrey;
++(UIColor *) surespotForegroundGrey;
 +(UIColor *) surespotTransparentGrey;
 +(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername;
 +(void) setImageMessageHeights: (SurespotMessage *)  message size: (CGSize) size;

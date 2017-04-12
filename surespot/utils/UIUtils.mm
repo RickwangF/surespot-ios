@@ -43,6 +43,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return [UIColor colorWithRed:22/255.0f green:22/255.0f blue:22/255.0f alpha:1.0f];
 }
 
++(UIColor *) surespotForegroundGrey {
+    return [UIColor colorWithRed:187/255.0f green:187/255.0f blue:187/255.0f alpha:1.0f];
+}
+
+
 +(UIColor *) surespotTransparentGrey {
     return [UIColor colorWithRed:22/255.0f green:22/255.0f blue:22/255.0f alpha:0.5f];
 }
@@ -295,7 +300,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     menu.backgroundColor = [UIUtils surespotGrey];
     menu.imageOffset = CGSizeMake(10, 0);
     menu.textAlignment = NSTextAlignmentLeft;
-    menu.textColor = [UIColor whiteColor];
+    menu.textColor = [UIUtils surespotForegroundGrey];
     menu.highlightedTextColor = [UIColor whiteColor];
     menu.highlightedBackgroundColor = [UIUtils surespotTransparentBlue];
     menu.textShadowOffset = CGSizeZero;
