@@ -47,7 +47,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [_textPassword setPlaceholder:NSLocalizedString(@"password", nil)];
+    
     [self.navigationItem setTitle:NSLocalizedString(@"login", nil)];
     [self loadIdentityNames];
     _delta = 0.0f;
@@ -83,6 +83,18 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification) name:@"openedFromNotification" object:nil];
     
     [_scrollView setContentSize: CGSizeMake(self.view.frame.size.width, _bLogin.frame.origin.y + _bLogin.frame.size.height)];
+    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.scrollView setBackgroundColor:[UIColor blackColor]];
+        [self.storeKeychainLabel setTextColor:[UIUtils surespotForegroundGrey]];
+        
+        [self.textPassword setTextColor: [UIUtils surespotForegroundGrey]];
+        [self.textPassword setAttributedPlaceholder: [[NSAttributedString alloc] initWithString:NSLocalizedString(@"password", nil) attributes:@{NSForegroundColorAttributeName:[UIUtils surespotForegroundGrey]}]];
+        [self.textPassword.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
+        [self.textPassword.layer setBorderWidth:1.0f];
+    }
+    
 }
 
 - (void)registerForKeyboardNotifications
@@ -301,6 +313,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 37)];
     label.text =  [_identityNames objectAtIndex:row];
     [label setFont:[UIFont systemFontOfSize:22]];
+    if ([UIUtils isBlackTheme]) {
+        [label setTextColor:[UIUtils surespotForegroundGrey]];
+    }
     label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
     return label;
@@ -353,9 +368,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+//    UILabel *labelSelected = (UILabel*)[pickerView viewForRow:row forComponent:component];
+    //        [labelSelected setTextColor:[UIUtils isBlackTheme] ? [UIUtils surespotBlue] : [UIColor blackColor]];
+  //  [labelSelected setTextColor: [UIUtils surespotBlue] ];
     NSString * selectedUser = [_identityNames objectAtIndex:row];
     [self updatePassword:selectedUser];
-    
 }
 
 -(void) updatePassword: (NSString *) username {
