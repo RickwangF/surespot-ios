@@ -56,7 +56,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (nonatomic, strong) UIViewPager * viewPager;
 @property (nonatomic, strong) NSMutableDictionary * tabLoading;
 @property (strong, readwrite, nonatomic) REMenu *menu;
-@property (atomic, assign) NSInteger progressCount;
+//@property (atomic, assign) NSInteger progressCount;
 @property (nonatomic, weak) UIView * backImageView;
 @property (atomic, assign) NSInteger scrollingTo;
 @property (nonatomic, strong) NSMutableDictionary * bottomIndexPaths;
@@ -82,6 +82,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (atomic, strong) LoadingView * progressView;
 @property (atomic, strong) NSMutableArray *sideMenuGestures;
 @property (atomic, strong) NSString * username;
+@property (nonatomic, strong) NSMutableDictionary * progress;
 @end
 @implementation SwipeViewController
 
@@ -2559,19 +2560,22 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 - (void) startProgress: (NSNotification *) notification {
-    
-    if (_progressCount++ == 0) {
-        [UIUtils startSpinAnimation: _backImageView];
-    }
-    
-    DDLogVerbose(@"progress count:%ld", (long)_progressCount);
+    DDLogInfo(@"startProgress");
+    NSDictionary * userInfo = [notification userInfo];
+    [_progress setObject: @""  forKey:[userInfo objectForKey:@"key"]];
+    [UIUtils startSpinAnimation: _backImageView];    
+    DDLogInfo(@"progress count:%ld", [_progress count]);
 }
 
 -(void) stopProgress: (NSNotification *) notification {
-    if (--_progressCount == 0) {
+    DDLogInfo(@"stopProgress");
+    NSDictionary * userInfo = [notification userInfo];
+    [_progress removeObjectForKey:[userInfo objectForKey:@"key"]];
+
+    if ([_progress count] == 0) {
         [UIUtils stopSpinAnimation:_backImageView];
     }
-    DDLogVerbose(@"progress count:%ld", (long)_progressCount);
+    DDLogInfo(@"progress count:%ld", (long)[_progress count]);
 }
 
 

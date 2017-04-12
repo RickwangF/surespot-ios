@@ -67,7 +67,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 dispatch_group_enter(group2);
                 dispatch_group_notify(group2, dispatch_get_main_queue(), ^{
                     DDLogInfo(@"stopProgress username: %@", _theirUsername);
-                    [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
+                    NSDictionary* userInfo = @{@"key": theirUsername};
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:self userInfo:userInfo];
                     initCallback(nil);
                 });
                 
@@ -75,7 +76,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 //   DDLogDebug(@"getting messageData latestMessageId: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
                 //load message data
                 //   DDLogInfo(@"startProgress: %@", username);
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
+
+                NSDictionary* userInfo = @{@"key": theirUsername};
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:self userInfo:userInfo];
                 [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getMessageDataForUsername:_theirUsername andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
                     //    DDLogInfo(@"get messageData response");
                     

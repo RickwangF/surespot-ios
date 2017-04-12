@@ -59,7 +59,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) loadFriendsCallback: (void(^)(BOOL success)) callback{
     DDLogInfo(@"loadFriends");
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:nil];
+    NSDictionary* userInfo = @{@"key": @"loadFriends"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:self userInfo:userInfo];
     
     [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getFriendsSuccessBlock:^(NSURLSessionTask *task, id JSON) {
         //DDLogInfo(@"get friends response: %ld",  (long)[task.response statusCode]);
@@ -74,14 +75,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [self postRefresh];
         callback(YES);
         DDLogInfo(@"loadFriends success");
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
+        NSDictionary* userInfo = @{@"key": @"loadFriends"};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:self userInfo:userInfo];
+
         
     } failureBlock:^(NSURLSessionTask *operation,  NSError *Error) {
         DDLogInfo(@"response failure: %@",  Error);
         [self postRefresh];
         callback(NO);
         DDLogInfo(@"loadFriends failure");
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:nil];
+        NSDictionary* userInfo = @{@"key": @"loadFriends"};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:self userInfo:userInfo];
         
     }];
     

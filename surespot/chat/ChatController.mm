@@ -77,7 +77,7 @@ static const int MAX_RETRY_DELAY = 30;
         _sendBuffer = [NSMutableArray new];
         _resendBuffer = [NSMutableArray new];
         
-            
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAutoinvitesNotification:) name:@"autoinvites" object:nil];
         
         
@@ -222,37 +222,39 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) connect {
- //   NSString * loggedInUser = _username;//_username;
+    //   NSString * loggedInUser = _username;//_username;
     
     //if (loggedInUser) {
-        DDLogDebug(@"connecting socket");
-        
-        NSHTTPCookie * cookie = [[CredentialCachingController sharedInstance] getCookieForUsername: _username];
-        NSMutableDictionary * opts = [[NSMutableDictionary alloc] init];
-        
-        if (cookie) {
-            [opts setObject:@[cookie] forKey:@"cookies"];
-        }
-        
-        [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
-        [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
-        
+    DDLogDebug(@"connecting socket");
+    
+    
+    [self startProgress: @"socket"];
+    NSHTTPCookie * cookie = [[CredentialCachingController sharedInstance] getCookieForUsername: _username];
+    NSMutableDictionary * opts = [[NSMutableDictionary alloc] init];
+    
+    if (cookie) {
+        [opts setObject:@[cookie] forKey:@"cookies"];
+    }
+    
+    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
+    [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
+    
 #ifdef DEBUG
-        //    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
+    //    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
 #endif
+    
+    if (self.socket) {
+        DDLogDebug(@"removing all handlers");
         
-        if (self.socket) {
-            DDLogDebug(@"removing all handlers");
-            
-            [self.socket removeAllHandlers];
-            [self.socket disconnect];
-        }
-        
-        DDLogDebug(@"initing new socket");
-        self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:[[SurespotConfiguration sharedInstance] baseUrl]] config: opts];
-        [self addHandlers];
-        [self.socket connect];
-  //  }
+        [self.socket removeAllHandlers];
+        [self.socket disconnect];
+    }
+    
+    DDLogDebug(@"initing new socket");
+    self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:[[SurespotConfiguration sharedInstance] baseUrl]] config: opts];
+    [self addHandlers];
+    [self.socket connect];
+    //  }
 }
 
 -(BOOL) isConnected {
@@ -337,7 +339,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 
 -(void) getData {
-    [self startProgress];
+    //  [self startProgress];
     
     //if we have no friends and have never received a user control message
     //load friends and latest ids
@@ -352,11 +354,11 @@ static const int MAX_RETRY_DELAY = 30;
                 }
                 else {
                     [self handleAutoinvites];
-                    [self stopProgress];
+                    [self stopProgress: @"socket"];
                 }
             }
             else {
-                [self stopProgress];
+                [self stopProgress: @"socket"];
             }
             
         }];
@@ -412,7 +414,7 @@ static const int MAX_RETRY_DELAY = 30;
     [[[NetworkManager sharedInstance] getNetworkController:_username] getLatestDataSinceUserControlId: _homeDataSource.latestUserControlId spotIds:messageIds successBlock:^(NSURLSessionTask *task, id JSON) {
         
         DDLogVerbose(@"network call complete");
-
+        
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             if ([JSON objectForKey:@"sigs2"]) {
                 NSDictionary * sigs = [[IdentityController sharedInstance] updateSignatures: _username];
@@ -477,11 +479,11 @@ static const int MAX_RETRY_DELAY = 30;
         //handle autoinvites
         [self handleAutoinvites];
         
-        [self stopProgress];
+        [self stopProgress:@"socket"];
         [_homeDataSource postRefresh];
     } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
         DDLogWarn(@"getLatestData failed: %@", Error.localizedDescription);
-        [self stopProgress];
+        [self stopProgress:@"socket"];
         [UIUtils showToastKey:@"loading_latest_messages_failed"];
     }];
 }
@@ -505,7 +507,7 @@ static const int MAX_RETRY_DELAY = 30;
     DDLogVerbose(@"message: %@", message);
     
     NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion: _username];
-   // NSString * loggedInUser = _username;
+    // NSString * loggedInUser = _username;
     NSData * iv = [EncryptionController getIv];
     
     NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
@@ -964,42 +966,42 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) inviteAction:(NSString *) action forUsername:(NSString *)username{
     DDLogVerbose(@"Invite action: %@, for username: %@", action, username);
-    [self startProgress];
+    [self startProgress: @"inviteAction"];
     [[[NetworkManager sharedInstance] getNetworkController:_username]  respondToInviteName:username action:action
      
      
-                                                successBlock:^(NSURLSessionTask * task, id responseObject) {
-                                                    
-                                                    Friend * afriend = [_homeDataSource getFriendByName:username];
-                                                    [afriend setInviter:NO];
-                                                    
-                                                    if ([action isEqualToString:@"accept"]) {
-                                                        [_homeDataSource setFriend: username] ;
-                                                    }
-                                                    else {
-                                                        if ([action isEqualToString:@"block"]||[action isEqualToString:@"ignore"]) {
-                                                            if (![afriend isDeleted]) {
-                                                                [_homeDataSource removeFriend:afriend withRefresh:YES];
-                                                            }
-                                                            else {
-                                                                [_homeDataSource postRefresh];
-                                                            }
-                                                        }
-                                                    }
-                                                    [self stopProgress];
-                                                }
+                                                                              successBlock:^(NSURLSessionTask * task, id responseObject) {
+                                                                                  
+                                                                                  Friend * afriend = [_homeDataSource getFriendByName:username];
+                                                                                  [afriend setInviter:NO];
+                                                                                  
+                                                                                  if ([action isEqualToString:@"accept"]) {
+                                                                                      [_homeDataSource setFriend: username] ;
+                                                                                  }
+                                                                                  else {
+                                                                                      if ([action isEqualToString:@"block"]||[action isEqualToString:@"ignore"]) {
+                                                                                          if (![afriend isDeleted]) {
+                                                                                              [_homeDataSource removeFriend:afriend withRefresh:YES];
+                                                                                          }
+                                                                                          else {
+                                                                                              [_homeDataSource postRefresh];
+                                                                                          }
+                                                                                      }
+                                                                                  }
+                                                                                  [self stopProgress: @"inviteAction"];
+                                                                              }
      
-                                                failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
-                                                    DDLogError(@"error responding to invite: %@", Error);
-                                                    if ([(NSHTTPURLResponse*) operation.response statusCode] != 404) {
-                                                        
-                                                        [UIUtils showToastKey:@"could_not_respond_to_invite"];
-                                                    }
-                                                    else {
-                                                        [_homeDataSource postRefresh];
-                                                    }
-                                                    [self stopProgress];
-                                                }];
+                                                                              failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
+                                                                                  DDLogError(@"error responding to invite: %@", Error);
+                                                                                  if ([(NSHTTPURLResponse*) operation.response statusCode] != 404) {
+                                                                                      
+                                                                                      [UIUtils showToastKey:@"could_not_respond_to_invite"];
+                                                                                  }
+                                                                                  else {
+                                                                                      [_homeDataSource postRefresh];
+                                                                                  }
+                                                                                  [self stopProgress: @"inviteAction"];
+                                                                              }];
     
 }
 
@@ -1010,14 +1012,14 @@ static const int MAX_RETRY_DELAY = 30;
         return;
     }
     
-    [self startProgress];
+    [self startProgress: @"inviteUser"];
     [[[NetworkManager sharedInstance] getNetworkController:_username]
      inviteFriend:username
      successBlock:^(NSURLSessionTask *operation, id responseObject) {
          DDLogVerbose(@"invite friend response: %ld",  (long)[(NSHTTPURLResponse*) operation.response statusCode]);
          
          [_homeDataSource addFriendInvited:username];
-         [self stopProgress];
+         [self stopProgress: @"inviteUser"];
      }
      failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
          
@@ -1037,7 +1039,7 @@ static const int MAX_RETRY_DELAY = 30;
                  [UIUtils showToastKey:@"could_not_invite"];
          }
          
-         [self stopProgress];
+         [self stopProgress: @"inviteUser"];
      }];
     
 }
@@ -1111,7 +1113,7 @@ static const int MAX_RETRY_DELAY = 30;
     Friend * theFriend = [_homeDataSource getFriendByName:deleted];
     
     if (theFriend) {
-
+        
         BOOL iDeleted = [deleter isEqualToString:_username];
         NSArray * data = [NSArray arrayWithObjects:theFriend.name, [NSNumber numberWithBool: iDeleted], nil];
         
@@ -1203,14 +1205,14 @@ static const int MAX_RETRY_DELAY = 30;
         NSString * username = _username;
         NSString * friendname = thefriend.name;
         
-        [self startProgress];
+        [self startProgress: @"deleteFriend"];
         
         [[[NetworkManager sharedInstance] getNetworkController:_username] deleteFriend:friendname successBlock:^(NSURLSessionTask *operation, id responseObject) {
             [self handleDeleteUser:friendname deleter:username];
-            [self stopProgress];
+            [self stopProgress: @"deleteFriend"];
         } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
             [UIUtils showToastKey:@"could_not_delete_friend"];
-            [self stopProgress];
+            [self stopProgress: @"deleteFriend"];
         }];
     }
 }
@@ -1221,10 +1223,10 @@ static const int MAX_RETRY_DELAY = 30;
         if (cds) {
             if (message.serverid > 0) {
                 
-                [self startProgress];
+                [self startProgress: @"deleteMessage"];
                 [[[NetworkManager sharedInstance] getNetworkController:_username] deleteMessageName:[message getOtherUser: _username] serverId:[message serverid] successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds deleteMessage: message initiatedByMe: YES];
-                    [self stopProgress];
+                    [self stopProgress: @"deleteMessage"];
                 } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                     
                     
@@ -1235,7 +1237,7 @@ static const int MAX_RETRY_DELAY = 30;
                     else {
                         [UIUtils showToastKey:@"could_not_delete_message"];
                     }
-                    [self stopProgress];
+                    [self stopProgress: @"deleteMessage"];
                 }];
                 
             }
@@ -1258,15 +1260,15 @@ static const int MAX_RETRY_DELAY = 30;
     else {
         lastMessageId = [afriend lastReceivedMessageId];
     }
-    [self startProgress];
+    [self startProgress: @"deleteMessagesForFriend"];
     [[[NetworkManager sharedInstance] getNetworkController:_username] deleteMessagesUTAI:lastMessageId name:afriend.name successBlock:^(NSURLSessionTask *operation, id responseObject) {
         
         [cds deleteAllMessagesUTAI:lastMessageId];
-        [self stopProgress];
+        [self stopProgress: @"deleteMessagesForFriend"];
         
     } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
         [UIUtils showToastKey:@"could_not_delete_messages"];
-        [self stopProgress];
+        [self stopProgress: @"deleteMessagesForFriend"];
     }];
     
     
@@ -1279,12 +1281,16 @@ static const int MAX_RETRY_DELAY = 30;
     
 }
 
--(void) startProgress {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object: nil];
+-(void) startProgress: (NSString *) key {
+    DDLogInfo(@"startProgress");
+    NSDictionary* userInfo = @{@"key": key};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object: self userInfo:userInfo];
 }
 
--(void) stopProgress {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object: nil];
+-(void) stopProgress: (NSString *) key {
+    DDLogInfo(@"stopProgress");
+    NSDictionary* userInfo = @{@"key": key};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object: self userInfo:userInfo];
 }
 
 -(void) toggleMessageShareable: (SurespotMessage *) message {
@@ -1293,13 +1299,13 @@ static const int MAX_RETRY_DELAY = 30;
         if (cds) {
             if (message.serverid > 0) {
                 
-                [self startProgress];
+                [self startProgress: @"toggleMessageShareable"];
                 [[[NetworkManager sharedInstance] getNetworkController:_username] setMessageShareable:[message getOtherUser: _username] serverId:[message serverid] shareable:!message.shareable successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds setMessageId: message.serverid shareable: [[[NSString alloc] initWithData: responseObject encoding:NSUTF8StringEncoding] isEqualToString:@"shareable"] ? YES : NO];
-                    [self stopProgress];
+                    [self stopProgress: @"toggleMessageShareable"];
                 } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                     [UIUtils showToastKey:@"could_not_set_message_lock_state"];
-                    [self stopProgress];
+                    [self stopProgress: @"toggleMessageShareable"];
                 }];
                 
             }
@@ -1320,44 +1326,44 @@ static const int MAX_RETRY_DELAY = 30;
             resendMessage.errorStatus = 0;
             ChatDataSource * cds = [self getDataSourceForFriendname:[message getOtherUser: _username]];
             [cds postRefresh];
-            [self startProgress];
+            [self startProgress: @"resendFileMessage"];
             [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData: data
-                                                        ourVersion:[message getOurVersion: _username]
-                                                     theirUsername:[message getOtherUser: _username]
-                                                      theirVersion:[message getTheirVersion: _username]
-                                                            fileid:message.iv
-                                                          mimeType:message.mimeType
-                                                      successBlock:^(id JSON) {
-                                                          
-                                                          NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
-                                                          NSString * url = [JSON objectForKey:@"url"];
-                                                          NSInteger size = [[JSON objectForKey:@"size"] integerValue];
-                                                          NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
-                                                          
-                                                          DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, (long)size);
-                                                          
-                                                          message.serverid = serverid;
-                                                          message.data = url;
-                                                          message.dateTime = date;
-                                                          message.dataSize = size;
-                                                          
-                                                          [cds addMessage:message refresh:YES];
-                                                          
-                                                          [self stopProgress];
-                                                          
-                                                      } failureBlock:^(NSURLResponse *operation, NSError *Error) {
-                                                          long statusCode = [(NSHTTPURLResponse*) operation statusCode];
-                                                          DDLogInfo(@"resend data %@ to server failed, statuscode: %ld", message.data, statusCode);
-                                                          if (statusCode == 402) {
-                                                              resendMessage.errorStatus = 402;
-                                                          }
-                                                          else {
-                                                              resendMessage.errorStatus = 500;
-                                                          }
-                                                          
-                                                          [self stopProgress];
-                                                          [cds postRefresh];
-                                                      }];
+                                                                                      ourVersion:[message getOurVersion: _username]
+                                                                                   theirUsername:[message getOtherUser: _username]
+                                                                                    theirVersion:[message getTheirVersion: _username]
+                                                                                          fileid:message.iv
+                                                                                        mimeType:message.mimeType
+                                                                                    successBlock:^(id JSON) {
+                                                                                        
+                                                                                        NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
+                                                                                        NSString * url = [JSON objectForKey:@"url"];
+                                                                                        NSInteger size = [[JSON objectForKey:@"size"] integerValue];
+                                                                                        NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
+                                                                                        
+                                                                                        DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, (long)size);
+                                                                                        
+                                                                                        message.serverid = serverid;
+                                                                                        message.data = url;
+                                                                                        message.dateTime = date;
+                                                                                        message.dataSize = size;
+                                                                                        
+                                                                                        [cds addMessage:message refresh:YES];
+                                                                                        
+                                                                                        [self stopProgress: @"resendFileMessage"];
+                                                                                        
+                                                                                    } failureBlock:^(NSURLResponse *operation, NSError *Error) {
+                                                                                        long statusCode = [(NSHTTPURLResponse*) operation statusCode];
+                                                                                        DDLogInfo(@"resend data %@ to server failed, statuscode: %ld", message.data, statusCode);
+                                                                                        if (statusCode == 402) {
+                                                                                            resendMessage.errorStatus = 402;
+                                                                                        }
+                                                                                        else {
+                                                                                            resendMessage.errorStatus = 500;
+                                                                                        }
+                                                                                        
+                                                                                        [self stopProgress: @"resendFileMessage"];
+                                                                                        [cds postRefresh];
+                                                                                    }];
         }
     }
 }
@@ -1393,7 +1399,7 @@ static const int MAX_RETRY_DELAY = 30;
 }
 
 -(void) assignFriendAlias: (NSString *) alias toFriendName: (NSString *) friendname  callbackBlock: (CallbackBlock) callbackBlock {
-    [self startProgress];
+    [self startProgress: @"assignFriendAlias"];
     NSString * version = [[IdentityController sharedInstance] getOurLatestVersion: _username];
     NSString * username = _username;
     NSData * iv = [EncryptionController getIv];
@@ -1418,15 +1424,15 @@ static const int MAX_RETRY_DELAY = 30;
                                                successBlock:^(NSURLSessionTask *operation, id responseObject) {
                                                    [self setFriendAlias: alias  data: b64data friendname: friendname version: version iv: b64iv hashed:YES];
                                                    callbackBlock([NSNumber numberWithBool:YES]);
-                                                   [self stopProgress];
+                                                   [self stopProgress: @"assignFriendAlias"];
                                                } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                                                    callbackBlock([NSNumber numberWithBool:NO]);
-                                                   [self stopProgress];
+                                                   [self stopProgress: @"assignFriendAlias"];
                                                }];
                                           }
                                           else {
                                               callbackBlock([NSNumber numberWithBool:NO]);
-                                              [self stopProgress];
+                                              [self stopProgress: @"assignFriendAlias"];
                                           }
                                       }];
     
@@ -1456,29 +1462,29 @@ static const int MAX_RETRY_DELAY = 30;
 }
 
 -(void) removeFriendAlias: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock {
-    [self startProgress];
+    [self startProgress: @"removeFriendAlias"];
     [[[NetworkManager sharedInstance] getNetworkController:_username]
      deleteFriendAlias:friendname
      successBlock:^(NSURLSessionTask *operation, id responseObject) {
          [_homeDataSource removeFriendAlias: friendname];
          callbackBlock([NSNumber numberWithBool:YES]);
-         [self stopProgress];
+         [self stopProgress: @"removeFriendAlias"];
      } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
          callbackBlock([NSNumber numberWithBool:NO]);
-         [self stopProgress];
+         [self stopProgress: @"removeFriendAlias"];
      }];
 }
 -(void) removeFriendImage: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock {
-    [self startProgress];
+    [self startProgress: @"removeFriendImage"];
     [[[NetworkManager sharedInstance] getNetworkController:_username]
      deleteFriendImage:friendname
      successBlock:^(NSURLSessionTask *operation, id responseObject) {
          [_homeDataSource removeFriendImage: friendname];
          callbackBlock([NSNumber numberWithBool:YES]);
-         [self stopProgress];
+         [self stopProgress: @"removeFriendImage"];
      } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
          callbackBlock([NSNumber numberWithBool:NO]);
-         [self stopProgress];
+         [self stopProgress: @"removeFriendImage"];
      }];
 }
 

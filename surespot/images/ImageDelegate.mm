@@ -519,11 +519,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) startProgress {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object: nil];
+    NSDictionary* userInfo = @{@"key": @"imageDelegate"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object: self userInfo:userInfo];
 }
 
 -(void) stopProgress {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object: nil];
+    NSDictionary* userInfo = @{@"key": @"imageDelegate"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object: self userInfo: userInfo];
     
 }
 
