@@ -129,6 +129,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString * password = self.tbPassword.text;
     NSString * confirmPassword = self.tbPasswordConfirm.text;
     
+    if ([[ChatManager sharedInstance] networkReachabilityStatus] == AFNetworkReachabilityStatusNotReachable) {
+        [UIUtils showToastKey: @"no_network_connection"];
+        return;
+    }
+    
     
     if ([UIUtils stringIsNilOrEmpty:username] || [UIUtils stringIsNilOrEmpty:password] || [UIUtils stringIsNilOrEmpty:confirmPassword]) {
         return;
@@ -301,6 +306,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if ([_lastCheckedUsername isEqualToString: username]) {
         return;
     }
+    
+    if ([[ChatManager sharedInstance] networkReachabilityStatus] == AFNetworkReachabilityStatusNotReachable) {
+        [UIUtils showToastKey: @"no_network_connection"];
+        return;
+    }    
     
     _lastCheckedUsername = username;
     _progressView = [LoadingView showViewKey:@"user_exists_progress"];
