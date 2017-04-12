@@ -11,14 +11,13 @@
                 <key>Type</key>
                 <string>PSGroupSpecifier</string>
             </dict>
-
             <dict>
                 <key>Type</key>
                 <string>PSToggleSwitchSpecifier</string>
                 <key>Title</key>
-                <string>pref_clear_notifications</string>
+                <string>pref_title_black_theme</string>
                 <key>Key</key>
-                <string>pref_clear_notifications</string>
+                <string>pref_black_theme</string>
                 <key>DefaultValue</key>
                 <false/>
             </dict>

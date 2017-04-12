@@ -29,6 +29,14 @@
             <string>user_options</string>
         </dict>
         <dict>
+            <key>Type</key>
+            <string>PSChildPaneSpecifier</string>
+            <key>Title</key>
+            <string>pref_title_global_options</string>
+            <key>File</key>
+            <string>global_options</string>
+        </dict>
+        <dict>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>					</dict>
         <dict>
