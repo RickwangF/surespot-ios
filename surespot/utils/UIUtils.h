@@ -46,6 +46,6 @@
 +(CGSize)imageSizeAfterAspectFit:(UIImageView*)imgview;
 + (NSString *) buildAliasStringForUsername: (NSString *) username alias: (NSString *) alias;
 + (NSString *)localizedStringForKey:(NSString *)key replaceValue:(NSString *)comment bundle: (NSBundle *) bundle table: (NSString *) table;
-+(BOOL) isBlackTheme: (NSString *) ourUsername;
++(BOOL) isBlackTheme;
 @end
 

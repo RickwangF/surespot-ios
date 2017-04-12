@@ -962,7 +962,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(UIColor *) getTextColor {
-    return _hasBackgroundImage ? [UIUtils surespotGrey] : ([UIUtils isBlackTheme: _username] ? [UIUtils surespotForegroundGrey] : [UIColor blackColor]);
+    return _hasBackgroundImage ? [UIUtils surespotGrey] : ([UIUtils isBlackTheme] ? [UIUtils surespotForegroundGrey] : [UIColor blackColor]);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -2748,7 +2748,7 @@ const Float32 voiceRecordDelay = 0.3;
         _hasBackgroundImage = NO;
         _bgImageView.image = nil;
         
-        [_bgImageView setBackgroundColor: [UIUtils isBlackTheme: _username] ? [UIColor blackColor] : [UIColor whiteColor]];
+        [_bgImageView setBackgroundColor: [UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor]];
         
     }
     

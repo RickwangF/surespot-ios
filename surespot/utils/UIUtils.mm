@@ -440,7 +440,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
 }
 
-+(BOOL) isBlackTheme: (NSString *) username {
++(BOOL) isBlackTheme {
     NSNumber * value = [[NSUserDefaults standardUserDefaults] objectForKey:@"pref_black_theme"];
     if (!value) return NO;
     return [value boolValue];
