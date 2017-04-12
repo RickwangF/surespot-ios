@@ -10,6 +10,7 @@
 #define ChatManager_h
 
 #import "ChatController.h"
+#import "AFNetworkReachabilityManager.h"
 
 @interface ChatManager : NSObject
 +(ChatManager *) sharedInstance;
@@ -17,6 +18,7 @@
 -(ChatController *) getChatControllerIfPresent: (NSString *) username;
 -(void) pause: (NSString *) username;
 -(void) resume: (NSString *) username;
+@property (assign, atomic) AFNetworkReachabilityStatus networkReachabilityStatus;
 @end
 
 #endif /* ChatManager_h */

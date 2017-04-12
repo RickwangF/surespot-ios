@@ -11,7 +11,6 @@
 #import "ChatManager.h"
 #import "CocoaLumberjack.h"
 #import "SurespotConstants.h"
-#import "AFNetworkReachabilityManager.h"
 #import "IdentityController.h"
 
 #ifdef DEBUG
@@ -23,7 +22,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface ChatManager() {}
 @property (strong, atomic) NSMutableDictionary * chatControllers;
 @property (strong, atomic) NSString * activeUser;
-@property (assign, atomic) AFNetworkReachabilityStatus networkReachabilityStatus;
+
 @end
 
 @implementation ChatManager
@@ -46,26 +45,29 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         //listen for network changes so we can reconnect
         [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-            ChatController * controller = [self getChatController:[[IdentityController sharedInstance] getLoggedInUser]];
-            //if we're foregrounded
-            if (![controller paused]) {
-                BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
-                
-                if(isReachable)
-                {
+            NSString * activeUser = [[IdentityController sharedInstance] getLoggedInUser];
+            if (activeUser) {
+                ChatController * controller = [self getChatController: activeUser];;
+                //if we're foregrounded
+                if (![controller paused]) {
+                    BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
                     
-                    DDLogInfo(@"wifi: %d, wwan, %d",status == AFNetworkReachabilityStatusReachableViaWiFi, status == AFNetworkReachabilityStatusReachableViaWWAN);
-                    //reachibility changed, disconnect and reconnect
-                    if (_networkReachabilityStatus > -1 && status != _networkReachabilityStatus) {
-                        DDLogInfo(@"network status changed from %ld to: %ld, disconnecting", (long)_networkReachabilityStatus, (long) status);
-                        [controller disconnect];
-                    }                    
-
-                    [controller reconnect];
-                }
-                else
-                {
-                    DDLogInfo(@"Notification Says Unreachable");
+                    if(isReachable)
+                    {
+                        
+                        DDLogInfo(@"wifi: %d, wwan, %d",status == AFNetworkReachabilityStatusReachableViaWiFi, status == AFNetworkReachabilityStatusReachableViaWWAN);
+                        //reachibility changed, disconnect and reconnect
+                        if (_networkReachabilityStatus > -1 && status != _networkReachabilityStatus) {
+                            DDLogInfo(@"network status changed from %ld to: %ld, disconnecting", (long)_networkReachabilityStatus, (long) status);
+                            [controller disconnect];
+                        }
+                        
+                        [controller reconnect];
+                    }
+                    else
+                    {
+                        DDLogInfo(@"Notification Says Unreachable");
+                    }
                 }
             }
             
