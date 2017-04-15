@@ -41,6 +41,7 @@
 #import "NSBundle+FallbackLanguage.h"
 #import "FastUserSwitchController.h"
 #import "SideMenu-Swift.h"
+#import "SurespotSettingsViewController.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -165,7 +166,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     
     _viewPager = [[UIViewPager alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 30)];
-    _viewPager.autoresizingMask =UIViewAutoresizingFlexibleWidth;
+    _viewPager.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     [self.view addSubview:_viewPager];
     _viewPager.delegate = self;
     
@@ -195,10 +196,9 @@ const Float32 voiceRecordDelay = 0.3;
     _scrollingTo = -1;
     
     //app settings
-    _appSettingsViewController = [IASKAppSettingsViewController new];
+    _appSettingsViewController = [SurespotSettingsViewController new];
     _appSettingsViewController.settingsStore = [[SurespotSettingsStore alloc] initWithUsername:_username];
     _appSettingsViewController.delegate = self;
-    
     
     _messageTextView.enablesReturnKeyAutomatically = NO;
     [_messageTextView setFont:[UIFont systemFontOfSize:14]];

@@ -82,6 +82,7 @@
 		666FE55F1E8CB69300F16569 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666FE55E1E8CB69300F16569 /* CoreImage.framework */; };
 		666FE5601E8CB6DE00F16569 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FF0FF5182AE6960038ECA6 /* QuartzCore.framework */; };
 		666FE5661E8D7F8100F16569 /* Toast+UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 666FE5641E8D7F8100F16569 /* Toast+UIView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		6674480C1EA1ACB500DF292A /* SurespotSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6674480B1EA1ACB500DF292A /* SurespotSettingsViewController.m */; };
 		6674FF71186CB91300B8E77B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF70186CB91300B8E77B /* CoreMedia.framework */; };
 		6674FF73186CB92200B8E77B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF72186CB92200B8E77B /* AVFoundation.framework */; };
 		6674FF75186CB94500B8E77B /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6674FF74186CB94500B8E77B /* Accounts.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -118,7 +119,6 @@
 		66D3B04F182EAB4200B37A6C /* surespot.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D3B04E182EAB4200B37A6C /* surespot.xcassets */; };
 		66DAB60D186CBE91006C262F /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66DAB60C186CBE91006C262F /* Twitter.framework */; };
 		66DAB618186CBF59006C262F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66DAB617186CBF59006C262F /* CoreLocation.framework */; };
-		66DAB62A186D0461006C262F /* SurespotSHKSharers.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66DAB629186D0461006C262F /* SurespotSHKSharers.plist */; };
 		66DAB62E186DEEFC006C262F /* VoiceDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66DAB62D186DEEFC006C262F /* VoiceDelegate.mm */; };
 		66DAB647186F289A006C262F /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66DAB646186F289A006C262F /* Accelerate.framework */; };
 		66DAB649186F2911006C262F /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66DAB648186F2911006C262F /* CoreAudio.framework */; };
@@ -304,6 +304,8 @@
 		666FE55E1E8CB69300F16569 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		666FE5641E8D7F8100F16569 /* Toast+UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Toast+UIView.m"; path = "Toast/Toast+UIView.m"; sourceTree = "<group>"; };
 		666FE5651E8D7F8100F16569 /* Toast+UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Toast+UIView.h"; path = "Toast/Toast+UIView.h"; sourceTree = "<group>"; };
+		6674480B1EA1ACB500DF292A /* SurespotSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurespotSettingsViewController.m; path = settings/SurespotSettingsViewController.m; sourceTree = "<group>"; };
+		6674480D1EA1ACE500DF292A /* SurespotSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SurespotSettingsViewController.h; path = settings/SurespotSettingsViewController.h; sourceTree = "<group>"; };
 		6674FF70186CB91300B8E77B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		6674FF72186CB92200B8E77B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6674FF74186CB94500B8E77B /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -367,7 +369,6 @@
 		66D3B04E182EAB4200B37A6C /* surespot.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = surespot.xcassets; sourceTree = "<group>"; };
 		66DAB60C186CBE91006C262F /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		66DAB617186CBF59006C262F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		66DAB629186D0461006C262F /* SurespotSHKSharers.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = SurespotSHKSharers.plist; sourceTree = "<group>"; };
 		66DAB62C186DEEFC006C262F /* VoiceDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoiceDelegate.h; path = voice/VoiceDelegate.h; sourceTree = "<group>"; };
 		66DAB62D186DEEFC006C262F /* VoiceDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = VoiceDelegate.mm; path = voice/VoiceDelegate.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		66DAB646186F289A006C262F /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -719,11 +720,8 @@
 		6604A2C417626B9E0072216A /* surespot */ = {
 			isa = PBXGroup;
 			children = (
-				665CA9AD1E92EA1D0045EEDD /* surespot.entitlements */,
-				662CA5A01873494E00684790 /* purchases */,
-				66DAB62B186DEEDC006C262F /* voice */,
-				66EBDF2F1855C96F00F2452D /* backup */,
 				66EBDF401855C96F00F2452D /* Base.lproj */,
+				66EBDF2F1855C96F00F2452D /* backup */,
 				66EBDF081855C96F00F2452D /* chat */,
 				66EBDF481855C96F00F2452D /* encryption */,
 				66EBE0A21855C97100F2452D /* home */,
@@ -731,10 +729,13 @@
 				66EBDF381855C96F00F2452D /* images */,
 				66EBDF3D1855C96F00F2452D /* network */,
 				668D24F9186A36250096D155 /* qr */,
+				667448061EA1A6FD00DF292A /* settings */,
 				666D335D187F69AD00B73F69 /* sounds */,
 				66EBDF281855C96F00F2452D /* ui */,
 				66EBE0951855C97100F2452D /* utils */,
 				66EBDF211855C96F00F2452D /* viewcontrollers */,
+				66DAB62B186DEEDC006C262F /* voice */,
+				665CA9AD1E92EA1D0045EEDD /* surespot.entitlements */,
 				6604A2CD17626B9E0072216A /* SurespotAppDelegate.h */,
 				6604A2CE17626B9E0072216A /* SurespotAppDelegate.mm */,
 				66A2D917183A7A7F00785270 /* SurespotConstants.h */,
@@ -756,7 +757,6 @@
 			children = (
 				665CA9AF1E9ABFF20045EEDD /* configuration.plist */,
 				665CA9AE1E99CF090045EEDD /* surespot-Prefix.pch */,
-				66DAB629186D0461006C262F /* SurespotSHKSharers.plist */,
 				6621BB861762704D00BC2850 /* Localizable.strings */,
 				6604A2C617626B9E0072216A /* surespot-Info.plist */,
 				6604A2CA17626B9E0072216A /* main.m */,
@@ -775,6 +775,7 @@
 				6652F2A91875F16D00E023A7 /* PwylViewController.m */,
 			);
 			name = purchases;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		6654441017F37A3F00F62F7F /* SwipeView */ = {
@@ -831,6 +832,15 @@
 				666FE5651E8D7F8100F16569 /* Toast+UIView.h */,
 			);
 			name = Toast;
+			sourceTree = "<group>";
+		};
+		667448061EA1A6FD00DF292A /* settings */ = {
+			isa = PBXGroup;
+			children = (
+				6674480D1EA1ACE500DF292A /* SurespotSettingsViewController.h */,
+				6674480B1EA1ACB500DF292A /* SurespotSettingsViewController.m */,
+			);
+			name = settings;
 			sourceTree = "<group>";
 		};
 		66866244185B6A2E001491B1 /* SDWebImage */ = {
@@ -1234,6 +1244,7 @@
 		66EBDF3D1855C96F00F2452D /* network */ = {
 			isa = PBXGroup;
 			children = (
+				662CA5A01873494E00684790 /* purchases */,
 				665CA9AC1E918E590045EEDD /* NetworkManager.h */,
 				665CA9AA1E918E4C0045EEDD /* NetworkManager.mm */,
 				66EBDF3E1855C96F00F2452D /* NetworkController.h */,
@@ -1350,6 +1361,9 @@
 							com.apple.GameCenter = {
 								enabled = 0;
 							};
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -1397,7 +1411,6 @@
 				668D24FF186A36520096D155 /* QRInviteView.xib in Resources */,
 				666D3368187F69AD00B73F69 /* message.caf in Resources */,
 				666D338118847B5000B73F69 /* surespot-invite.caf in Resources */,
-				66DAB62A186D0461006C262F /* SurespotSHKSharers.plist in Resources */,
 				66EBE13E1855C97100F2452D /* HomeCell.xib in Resources */,
 				6604A2D817626B9E0072216A /* MainStoryboard.storyboard in Resources */,
 				66D3B04F182EAB4200B37A6C /* surespot.xcassets in Resources */,
@@ -1465,7 +1478,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1523,6 +1536,7 @@
 				666D337A188476B100B73F69 /* CADebugPrintf.cpp in Sources */,
 				666D337B188476B100B73F69 /* CAStreamBasicDescription.cpp in Sources */,
 				661F3B8118689A19003C7AE3 /* KeyFingerprintViewController.mm in Sources */,
+				6674480C1EA1ACB500DF292A /* SurespotSettingsViewController.m in Sources */,
 				66EBE0C51855C97100F2452D /* SurespotErrorMessage.m in Sources */,
 				661F4695186375F0004A71B0 /* MessageView+WebImageCache.m in Sources */,
 				66A2D919183A7A7F00785270 /* SurespotConstants.m in Sources */,
@@ -1655,7 +1669,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "6e5bb600-5127-4102-a2af-271488a64cb1";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6e5bb600-5127-4102-a2af-271488a64cb1";
@@ -1696,7 +1710,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PROVISIONING_PROFILE = "800826bc-64c7-49d5-8900-281390fc7ca4";

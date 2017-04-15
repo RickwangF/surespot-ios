@@ -446,5 +446,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return [value boolValue];
 }
 
++(void) setUISwitchColors: (UISwitch *) theSwitch {
+    if ([self isBlackTheme]) {
+//        [theSwitch setTintColor:[UIUtils surespotForegroundGrey]];
+//        [theSwitch setOnTintColor:[UIUtils surespotForegroundGrey]];
+     //   [theSwitch setThumbTintColor:[UIColor blackColor]];
+    }
+//    else {
+        [theSwitch setTintColor:[UIUtils surespotBlue]];
+        [theSwitch setOnTintColor:[UIUtils surespotBlue]];
+   // }
+
+}
 
 @end

@@ -67,8 +67,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [_userPicker selectRow:index inComponent:0 animated:YES];
     
     [self updatePassword:[_identityNames objectAtIndex:index]];
-    [self.storePassword setTintColor:[UIUtils surespotBlue]];
-    [self.storePassword setOnTintColor:[UIUtils surespotBlue]];
+  
     [self.bLogin setTintColor:[UIUtils surespotBlue]];
     [self.bLogin setTitle:NSLocalizedString(@"login", nil) forState:UIControlStateNormal];
     //  _textPassword.returnKeyType = UIReturnKeyGo;
@@ -95,6 +94,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [self.textPassword.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
         [self.textPassword.layer setBorderWidth:1.0f];
     }
+    
+    [UIUtils setUISwitchColors:self.storePassword];
 }
 
 - (void)registerForKeyboardNotifications
