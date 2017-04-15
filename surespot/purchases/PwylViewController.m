@@ -22,6 +22,13 @@
 @implementation PwylViewController
 
 -(void) viewDidLoad {
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.scrollView setBackgroundColor:[UIColor blackColor]];
+        [self.l1 setTextColor:[UIUtils surespotForegroundGrey]];
+        [_priceLabel setTextColor:[UIUtils surespotForegroundGrey]];
+    }
+
     [UIUtils setLinkLabel:_l1 delegate:self
                 labelText:NSLocalizedString(@"pwyl_text", nil)
            linkMatchTexts:@[NSLocalizedString(@"eff_match", nil)]
@@ -42,6 +49,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(productsLoaded:) name:@"productsLoaded" object:nil];
     
     self.navigationController.navigationBar.translucent = NO;
+    
+    
 }
 
 -(void) productsLoaded: (NSNotification *) notification {

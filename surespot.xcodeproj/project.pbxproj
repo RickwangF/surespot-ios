@@ -728,6 +728,7 @@
 				66EBDEF31855C96F00F2452D /* identity */,
 				66EBDF381855C96F00F2452D /* images */,
 				66EBDF3D1855C96F00F2452D /* network */,
+				662CA5A01873494E00684790 /* purchases */,
 				668D24F9186A36250096D155 /* qr */,
 				667448061EA1A6FD00DF292A /* settings */,
 				666D335D187F69AD00B73F69 /* sounds */,
@@ -775,7 +776,6 @@
 				6652F2A91875F16D00E023A7 /* PwylViewController.m */,
 			);
 			name = purchases;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		6654441017F37A3F00F62F7F /* SwipeView */ = {
@@ -1244,7 +1244,6 @@
 		66EBDF3D1855C96F00F2452D /* network */ = {
 			isa = PBXGroup;
 			children = (
-				662CA5A01873494E00684790 /* purchases */,
 				665CA9AC1E918E590045EEDD /* NetworkManager.h */,
 				665CA9AA1E918E4C0045EEDD /* NetworkManager.mm */,
 				66EBDF3E1855C96F00F2452D /* NetworkController.h */,
