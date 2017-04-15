@@ -9,6 +9,7 @@
 #import "QRInviteViewController.h"
 #import "SurespotConstants.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "UIUtils.h"
 
 @interface QRInviteViewController ()
 @property (strong, nonatomic) IBOutlet UITextView *inviteBlurb;
@@ -38,9 +39,19 @@
     NSString * preString = NSLocalizedString(@"qr_pre_username_help", nil);
     NSString * inviteText = [NSString stringWithFormat:@"%@ %@ %@", preString, _username, NSLocalizedString(@"qr_post_username_help", nil)];
     
-    NSMutableAttributedString * inviteString = [[NSMutableAttributedString alloc] initWithString:inviteText];
-    [inviteString addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(preString.length+1, _username.length)];
+    NSMutableAttributedString * inviteString = [[NSMutableAttributedString alloc] initWithString:inviteText ];
     
+   
+    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.scrollView setBackgroundColor:[UIColor blackColor]];
+         [inviteString addAttribute:NSForegroundColorAttributeName value:[UIUtils surespotForegroundGrey] range:NSMakeRange(0,inviteString.length)];
+    }
+    
+    [inviteString addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(preString.length+1, _username.length)];
+
+
     _inviteBlurb.attributedText = inviteString;
     [_inviteBlurb setFont:[UIFont systemFontOfSize:17]];
     [_inviteBlurb setTextAlignment:NSTextAlignmentCenter];
