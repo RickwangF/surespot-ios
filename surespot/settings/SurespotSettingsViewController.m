@@ -11,6 +11,7 @@
 #import "SurespotSettingsViewController.h"
 #import "CocoaLumberjack.h"
 #import "UIUtils.h"
+#import "IASKSettingsReader.h" 
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -30,12 +31,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             [self.view setBackgroundColor:[UIColor blackColor]];
             [self.tableView setBackgroundColor:[UIColor blackColor]];
             [self.tableView setSeparatorColor: [UIUtils surespotSeparatorGrey]];
-            [self.tableView setSeparatorInset:UIEdgeInsetsZero];
         }
     }
     
     return self;
 }
+
+
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell * cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
@@ -62,4 +66,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     view.layoutMargins = UIEdgeInsetsMake(0, 10, 0, 0);
     return view;
 }
+
+
 @end

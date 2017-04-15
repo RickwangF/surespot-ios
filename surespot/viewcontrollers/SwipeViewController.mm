@@ -2623,7 +2623,23 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 #pragma mark -
-#pragma mark IASKAppSettingsViewControllerDelegate protocol
+#pragma mark IASKAppSettingsViewControllerDelegate ish protocol
+-(void) settingsChanged: (NSNotification *) notification {
+    NSDictionary * userInfo = [notification userInfo];
+    if ([userInfo objectForKey:@"pref_black_theme"]) {
+        _appSettingsViewController = [SurespotSettingsViewController new];
+        _appSettingsViewController.settingsStore = [[SurespotSettingsStore alloc] initWithUsername:_username];
+        _appSettingsViewController.delegate = self;
+        
+        [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popToViewController: self animated:FALSE];
+        [self.navigationController pushViewController:_appSettingsViewController animated:FALSE];
+    }
+
+    [self updateTabChangeUI];
+}
+
+
 - (void)settingsViewControllerDidEnd:(IASKAppSettingsViewController*)sender {
     //[self dismissModalViewControllerAnimated:YES];
     
@@ -2661,8 +2677,6 @@ const Float32 voiceRecordDelay = 0.3;
         return;
     }
 }
-
-
 
 -(void) showSettings {
     self.appSettingsViewController.showDoneButton = NO;
@@ -2725,9 +2739,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 
--(void) settingsChanged: (NSNotification *) notification {
-    [self updateTabChangeUI];
-}
+
 
 -(void) backgroundImageChanged: (NSNotification *) notification {
     IASKAppSettingsViewController * controller = notification.object;

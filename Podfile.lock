@@ -69,7 +69,7 @@ DEPENDENCIES:
   - InAppSettingsKit
   - MWPhotoBrowser (from `git@github.com:surespot/MWPhotoBrowser.git`)
   - SideMenu (from `git@github.com:surespot/SideMenu.git`)
-  - Socket.IO-Client-Swift (~> 8.3.0)
+  - Socket.IO-Client-Swift
   - SVPullToRefresh
   - TTTAttributedLabel
   - UIImageViewAligned
@@ -109,6 +109,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: 42bca3dfe395098b129e28bdc9886d95289413bf
+PODFILE CHECKSUM: eb2595a73552398e2041144d83fe6c7f1610aacc
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.2.1
