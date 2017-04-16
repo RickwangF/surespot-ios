@@ -111,7 +111,7 @@
         self.navigationItem.hidesBackButton = NO;
     }
     
-    CGSize size = CGSizeMake(self.view.frame.size.width, bottom + 20);
+    CGSize size = CGSizeMake(0, bottom + 20);
     _scrollView.contentSize = size;
     
     [self.navigationItem setTitle:NSLocalizedString(@"help", nil)];
