@@ -45,7 +45,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [super viewDidLoad];
     self.navigationController.navigationBar.translucent = NO;
     self.navigationController.tabBarController.tabBar.translucent = NO;
-
+    
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
     {
         self.edgesForExtendedLayout = UIRectEdgeNone;
@@ -62,6 +62,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [_dateFormatter setTimeStyle:NSDateFormatterShortStyle];
     
     _labelDocumentsRestore.text = NSLocalizedString(@"restore_from_documents", nil);
+    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.tvDocuments setBackgroundColor:[UIColor blackColor]];
+        [self.tvDocuments setSeparatorColor:[UIUtils surespotSeparatorGrey]];
+        [self.tvDocuments setSeparatorInset:UIEdgeInsetsZero];
+        [self.labelDocumentsRestore setTextColor:[UIUtils surespotForegroundGrey]];
+        [self.labelDocumentsRestore setBackgroundColor:[UIUtils surespotGrey]];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -91,7 +100,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSArray * dirfiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:identityDir error:NULL];
     
     NSMutableArray * identityFiles = [NSMutableArray new];
-
+    
     
     NSString * file;
     for (file in dirfiles) {
@@ -107,7 +116,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             [identityFile setObject:[filePathsArray1 objectForKey:NSFileModificationDate] forKey:@"date"];
             [identityFile setObject:path forKey:@"filename"];
             [identityFiles addObject:identityFile];
-        }        
+        }
     }
     
     return identityFiles;
@@ -138,6 +147,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     bgColorView.backgroundColor = [UIUtils surespotSelectionBlue];
     bgColorView.layer.masksToBounds = YES;
     cell.selectedBackgroundView = bgColorView;
+    cell.backgroundColor = [UIColor clearColor];
+    if ([UIUtils isBlackTheme]) {
+        cell.nameLabel.textColor = [UIUtils surespotForegroundGrey];
+        cell.dateLabel.textColor = [UIUtils surespotForegroundGrey];
+    }
     return cell;
 }
 
@@ -194,7 +208,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
             [self.navigationController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
         }
-
+        
     }
     else {
         [UIUtils showToastKey:@"could_not_import_identity" duration:2];

@@ -1506,9 +1506,7 @@ const Float32 voiceRecordDelay = 0.3;
                 [chatView setScrollsToTop:NO];
                 [chatView setDirectionalLockEnabled:YES];
                 [chatView setSeparatorColor: [UIUtils surespotSeparatorGrey]];
-                if ([chatView respondsToSelector:@selector(setSeparatorInset:)]) {
-                    [chatView setSeparatorInset:UIEdgeInsetsZero];
-                }
+                [chatView setSeparatorInset:UIEdgeInsetsZero];
                 [self addLongPressGestureRecognizer:chatView];
                 
                 // setup pull-to-refresh
