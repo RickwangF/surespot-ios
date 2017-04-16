@@ -61,6 +61,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     } else {
         [_userPicker selectRow:(_selectUsername ? [_identityNames indexOfObject:_selectUsername] : 0) inComponent:0 animated:YES];
     }
+    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.view setBackgroundColor:[UIColor blackColor]];
+        [self.label1 setTextColor:[UIUtils surespotForegroundGrey]];
+    }
+
 }
 
 -(void) loadIdentityNames {
@@ -86,6 +93,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         label.text =  [_identityNames objectAtIndex:row];
     }
     [label setFont:[UIFont systemFontOfSize:22]];
+    if ([UIUtils isBlackTheme]) {
+        [label setTextColor:[UIUtils surespotForegroundGrey]];
+    }
+
     label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
     return label;

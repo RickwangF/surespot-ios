@@ -21,11 +21,14 @@
     [super viewDidLoad];
     
     NSArray * matches = @[NSLocalizedString(@"file_sharing_match", nil)];
-    
     NSArray * links = @[NSLocalizedString(@"file_sharing_link", nil)];
-    
-    
     NSString * label2Text = [NSString stringWithFormat:@"%@", NSLocalizedString(@"after_identity_backup_what", nil)];
+    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.scrollView setBackgroundColor:[UIUtils surespotGrey]];
+        [self.helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
+    }
     
     [UIUtils setLinkLabel:_helpLabel delegate:self labelText:label2Text linkMatchTexts:matches urlStrings:links];
     

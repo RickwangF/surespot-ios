@@ -60,6 +60,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     _scrollView.contentSize = self.view.frame.size;
     [_userPicker selectRow:[_identityNames indexOfObject:[[IdentityController sharedInstance] getLoggedInUser]] inComponent:0 animated:YES];
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.view setBackgroundColor:[UIColor blackColor]];
+        [self.label1 setTextColor:[UIUtils surespotForegroundGrey]];
+    }
+
 }
 
 -(void) loadIdentityNames {
@@ -83,6 +89,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 37)];
     label.text =  [_identityNames objectAtIndex:row];
     [label setFont:[UIFont systemFontOfSize:22]];
+    if ([UIUtils isBlackTheme]) {
+        [label setTextColor:[UIUtils surespotForegroundGrey]];
+    }
     label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
     return label;
