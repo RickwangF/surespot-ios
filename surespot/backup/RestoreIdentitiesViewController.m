@@ -10,6 +10,7 @@
 #import "RestoreIdentityDriveViewController.h"
 #import "RestoreIdentityDocumentsViewController.h"
 #import "NSBundle+FallbackLanguage.h"
+#import "UIUtils.h"
 
 @interface RestoreIdentitiesViewController ()
 
@@ -31,6 +32,7 @@
         
         [self setViewControllers: @[documentscontroller,drivecontroller]];
         [self.navigationItem setTitle:NSLocalizedString(@"restore", nil)];
+
         
     }
     return self;
@@ -39,7 +41,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    if ([UIUtils isBlackTheme]) {
+        [self.tabBar setBarTintColor:[UIUtils surespotGrey]];
+    }
 }
 
 - (void)didReceiveMemoryWarning
