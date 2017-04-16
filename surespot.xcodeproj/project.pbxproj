@@ -352,10 +352,10 @@
 		66974AF1187F1692007BB80F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		66974AF2187F169F007BB80F /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		66974AF3187F16AA007BB80F /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
-		669BC186187DAACD00C3C752 /* HelpView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HelpView.xib; sourceTree = "<group>"; };
-		669BC194187DBF3500C3C752 /* AboutView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutView.xib; sourceTree = "<group>"; };
-		669BC196187DC1CB00C3C752 /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
-		669BC197187DC1CB00C3C752 /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
+		669BC186187DAACD00C3C752 /* HelpView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = HelpView.xib; path = viewcontrollers/HelpView.xib; sourceTree = "<group>"; };
+		669BC194187DBF3500C3C752 /* AboutView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AboutView.xib; path = viewcontrollers/AboutView.xib; sourceTree = "<group>"; };
+		669BC196187DC1CB00C3C752 /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AboutViewController.h; path = viewcontrollers/AboutViewController.h; sourceTree = "<group>"; };
+		669BC197187DC1CB00C3C752 /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AboutViewController.m; path = viewcontrollers/AboutViewController.m; sourceTree = "<group>"; };
 		66A2D917183A7A7F00785270 /* SurespotConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotConstants.h; sourceTree = "<group>"; };
 		66A2D918183A7A7F00785270 /* SurespotConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotConstants.m; sourceTree = "<group>"; };
 		66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeyFingerprintLoadingView.xib; sourceTree = "<group>"; };
@@ -363,8 +363,8 @@
 		66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+FallbackLanguage.m"; sourceTree = "<group>"; };
 		66BB5A38187B7EE9007B5C47 /* SurespotSettingsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotSettingsStore.h; sourceTree = "<group>"; };
 		66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotSettingsStore.m; sourceTree = "<group>"; };
-		66BB5A47187C7672007B5C47 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
-		66BB5A48187C7672007B5C47 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewController.m; sourceTree = "<group>"; };
+		66BB5A47187C7672007B5C47 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HelpViewController.h; path = viewcontrollers/HelpViewController.h; sourceTree = "<group>"; };
+		66BB5A48187C7672007B5C47 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HelpViewController.m; path = viewcontrollers/HelpViewController.m; sourceTree = "<group>"; };
 		66BFDF091A3F7A9F00498240 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		66D3B04E182EAB4200B37A6C /* surespot.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = surespot.xcassets; sourceTree = "<group>"; };
 		66DAB60C186CBE91006C262F /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
@@ -837,6 +837,12 @@
 		667448061EA1A6FD00DF292A /* settings */ = {
 			isa = PBXGroup;
 			children = (
+				669BC194187DBF3500C3C752 /* AboutView.xib */,
+				669BC196187DC1CB00C3C752 /* AboutViewController.h */,
+				669BC197187DC1CB00C3C752 /* AboutViewController.m */,
+				66BB5A47187C7672007B5C47 /* HelpViewController.h */,
+				66BB5A48187C7672007B5C47 /* HelpViewController.m */,
+				669BC186187DAACD00C3C752 /* HelpView.xib */,
 				6674480D1EA1ACE500DF292A /* SurespotSettingsViewController.h */,
 				6674480B1EA1ACB500DF292A /* SurespotSettingsViewController.m */,
 			);
@@ -1173,12 +1179,6 @@
 				6686623A18565AD5001491B1 /* SignupViewController.mm */,
 				6686623B18565AD5001491B1 /* SwipeViewController.h */,
 				6686623C18565AD5001491B1 /* SwipeViewController.mm */,
-				66BB5A47187C7672007B5C47 /* HelpViewController.h */,
-				66BB5A48187C7672007B5C47 /* HelpViewController.m */,
-				669BC186187DAACD00C3C752 /* HelpView.xib */,
-				669BC194187DBF3500C3C752 /* AboutView.xib */,
-				669BC196187DC1CB00C3C752 /* AboutViewController.h */,
-				669BC197187DC1CB00C3C752 /* AboutViewController.m */,
 				66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */,
 				66536BEF1E79BF0F00520131 /* FastUserSwitchController.h */,
 				66536BED1E79BEF400520131 /* FastUserSwitchController.mm */,
