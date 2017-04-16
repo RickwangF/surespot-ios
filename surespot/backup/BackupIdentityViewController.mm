@@ -89,7 +89,19 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     [_lSelect setText:NSLocalizedString(@"select_identity", nil)];
     [_lBackup setText:NSLocalizedString(@"help_backupIdentities1", nil)];
     
-    _scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 765);
+    _scrollView.contentSize = CGSizeMake(0, 765);
+    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.scrollView setBackgroundColor:[UIColor blackColor]];
+        [self.accountLabel setTextColor:[UIUtils surespotForegroundGrey]];
+        [self.lSelect setTextColor:[UIUtils surespotForegroundGrey]];
+        [self.lSelect setBackgroundColor:[UIUtils surespotGrey]];
+        [self.lDocuments setTextColor:[UIUtils surespotForegroundGrey]];
+        [self.lDocuments setBackgroundColor:[UIUtils surespotGrey]];
+        [self.labelGoogleDriveBackup setTextColor:[UIUtils surespotForegroundGrey]];
+        [self.labelGoogleDriveBackup setBackgroundColor:[UIUtils surespotGrey]];
+    }
 }
 
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
@@ -159,6 +171,9 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 37)];
     label.text =  [_identityNames objectAtIndex:row];
+    if ([UIUtils isBlackTheme]) {
+        [label setTextColor:[UIUtils surespotForegroundGrey]];
+    }
     [label setFont:[UIFont systemFontOfSize:22]];
     label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
@@ -174,8 +189,8 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 
 -(void) setAccountFromKeychain {
     self.driveService.authorizer = [GTMOAuth2ViewControllerTouch authForGoogleFromKeychainForName:kKeychainItemName
-                                clientID:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_ID]
-                            clientSecret:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_SECRET]];
+                                                                                         clientID:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_ID]
+                                                                                     clientSecret:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_SECRET]];
     [self updateUI];
 }
 
@@ -459,16 +474,16 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                     if (idFile) {
                         
                         GTLRDrive_File *driveFile = [GTLRDrive_File object] ;
-                       
+                        
                         
                         //    GTLRDriveParentReference *parentRef = [GTLDriveParentReference object];
                         //  parentRef.identifier = identityDirId;
-                      //  driveFile.parents = @[identityDirId];
+                        //  driveFile.parents = @[identityDirId];
                         
                         
-                     //   driveFile.mimeType = @"application/octet-stream";
-                      //  NSString * caseInsensiveUsername = [name caseInsensitivize];
-                       // NSString * filename = [caseInsensiveUsername stringByAppendingPathExtension: IDENTITY_EXTENSION];
+                        //   driveFile.mimeType = @"application/octet-stream";
+                        //  NSString * caseInsensiveUsername = [name caseInsensitivize];
+                        // NSString * filename = [caseInsensiveUsername stringByAppendingPathExtension: IDENTITY_EXTENSION];
                         //driveFile.originalFilename = filename;
                         //driveFile.name = filename;
                         

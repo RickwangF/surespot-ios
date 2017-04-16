@@ -11,10 +11,10 @@
 #import "SurespotSettingsViewController.h"
 #import "CocoaLumberjack.h"
 #import "UIUtils.h"
-#import "IASKSettingsReader.h" 
+#import "IASKSettingsReader.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+//static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -56,16 +56,18 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         bgColorView.backgroundColor = [UIUtils surespotSelectionBlue];
         bgColorView.layer.masksToBounds = YES;
         cell.selectedBackgroundView = bgColorView;
-
+        
     }
     return cell;
 }
 
-- (UIView *)tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView * view = [super tableView:tableView viewForHeaderInSection:section];
-    view.layoutMargins = UIEdgeInsetsMake(0, 10, 0, 0);
-    return view;
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger) section {
+    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+    [header.textLabel setTextAlignment:NSTextAlignmentCenter];
+    if ([UIUtils isBlackTheme]) {
+        [view setTintColor:[UIUtils surespotGrey]];
+        [header.textLabel setTextColor:[UIUtils surespotForegroundGrey]];
+    }
 }
-
 
 @end
