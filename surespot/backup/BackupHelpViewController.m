@@ -40,6 +40,10 @@
                              NSLocalizedString(@"help_backup_what",nil),
                              NSLocalizedString(@"help_backup_drive2", nil)];
     
+    if ([UIUtils isBlackTheme]) {
+        [_helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
+        [_scrollView setBackgroundColor:[UIUtils surespotGrey]];
+    }
     
     [UIUtils setLinkLabel:_helpLabel delegate:self labelText:label2Text linkMatchTexts:matches urlStrings:links];
     
@@ -55,9 +59,6 @@
     
     [self.navigationItem setTitle:NSLocalizedString(@"help", nil)];
     self.navigationController.navigationBar.translucent = NO;
-    
-    
-    
 }
 
 
