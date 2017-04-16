@@ -55,9 +55,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
     {
         self.edgesForExtendedLayout = UIRectEdgeNone;
-    }
-    
-
+    }        
     
     self.driveService = [[GTLRDriveService alloc] init];
     
@@ -77,6 +75,18 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     _labelGoogleDriveBackup.text = NSLocalizedString(@"restore_drive", nil);
     
     [_bSelect.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.view setBackgroundColor:[UIColor blackColor]];
+        [self.tvDrive setBackgroundColor:[UIColor blackColor]];
+        [self.tvDrive setSeparatorColor:[UIUtils surespotSeparatorGrey]];
+        [self.tvDrive setSeparatorInset:UIEdgeInsetsZero];
+        [self.labelGoogleDriveBackup setTextColor:[UIUtils surespotForegroundGrey]];
+        [self.labelGoogleDriveBackup setBackgroundColor:[UIUtils surespotGrey]];
+        [self.accountLabel setTextColor:[UIUtils surespotForegroundGrey]];
+//        [self.accountLabel setBackgroundColor:[UIUtils surespotGrey]];
+    }
 }
 
 -(void) setAccountFromKeychain {
@@ -217,9 +227,9 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                           // of the parent:
                           // _resourceId is the identifier from the parent folder
                           
-//                          GTLDriveParentReference *parentRef = [GTLDriveParentReference object];
-//                          parentRef.identifier = @"root";
-//                          folderObj.parents = [NSArray arrayWithObject:parentRef];
+                          //                          GTLDriveParentReference *parentRef = [GTLDriveParentReference object];
+                          //                          parentRef.identifier = @"root";
+                          //                          folderObj.parents = [NSArray arrayWithObject:parentRef];
                           
                           
                           GTLRDriveQuery_FilesCreate *query = [GTLRDriveQuery_FilesCreate   queryWithObject:folderObj uploadParameters:nil];
@@ -270,9 +280,9 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
             
         }
         GTLRDriveQuery_FilesList *queryFilesList = [GTLRDriveQuery_FilesList query];
-    
+        
         queryFilesList.q = [NSString stringWithFormat: @"trashed = false and \'%@\' in parents", identityDirId];
-      //  queryFilesList.additionalURLQueryParameters = [NSDictionary dictionaryWithObjectsAndKeys:@"alt", @"media", nil];
+        //  queryFilesList.additionalURLQueryParameters = [NSDictionary dictionaryWithObjectsAndKeys:@"alt", @"media", nil];
         queryFilesList.fields = @"files(id, modifiedTime,originalFilename)";
         
         [_driveService executeQuery:queryFilesList
@@ -304,40 +314,40 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                       __block NSInteger completed = 0;
                       
                       for (GTLRDrive_File *file in result.files) {
-                     //     GTLQuery *query = [GTLQueryDrive queryForFilesGetWithFileId:child.identifier];
+                          //     GTLQuery *query = [GTLQueryDrive queryForFilesGetWithFileId:child.identifier];
                           
-//                          // queryTicket can be used to track the status of the request.
-//                          [self.driveService executeQuery:query
-//                                        completionHandler:^(GTLServiceTicket *ticket,
-//                                                            GTLDriveFile *file,
-//                                                            NSError *error) {
-//                                          
-//                                            if (!error) {
-                                                DDLogInfo(@"\nfile name = %@", file.originalFilename);
-                                                NSMutableDictionary * identityFile = [NSMutableDictionary new];
-                                                [identityFile  setObject: [[IdentityController sharedInstance] identityNameFromFile: file.originalFilename] forKey:@"name"];
-                                                [identityFile setObject:[file.modifiedTime date] forKey:@"date"];
-                                                [identityFile setObject:file.identifier forKey:@"identifier"];
-                                                [identityFiles addObject:identityFile];
-//                                            }
-//                                            else {
-//                                                DDLogError(@"An error occurred: %@", error);
-//                                            }
+                          //                          // queryTicket can be used to track the status of the request.
+                          //                          [self.driveService executeQuery:query
+                          //                                        completionHandler:^(GTLServiceTicket *ticket,
+                          //                                                            GTLDriveFile *file,
+                          //                                                            NSError *error) {
+                          //
+                          //                                            if (!error) {
+                          DDLogInfo(@"\nfile name = %@", file.originalFilename);
+                          NSMutableDictionary * identityFile = [NSMutableDictionary new];
+                          [identityFile  setObject: [[IdentityController sharedInstance] identityNameFromFile: file.originalFilename] forKey:@"name"];
+                          [identityFile setObject:[file.modifiedTime date] forKey:@"date"];
+                          [identityFile setObject:file.identifier forKey:@"identifier"];
+                          [identityFiles addObject:identityFile];
+                          //                                            }
+                          //                                            else {
+                          //                                                DDLogError(@"An error occurred: %@", error);
+                          //                                            }
                           
-                                            @synchronized (completionLock) {
-                                                completed++;
-                                                
-                                                if (completed == dlCount) {
-                                                    DDLogInfo(@"file data download complete, files: %@", identityFiles);
-                                                    
-                                                    [_progressView removeView];
-                                                    _progressView = nil;
-                                                    callback(identityFiles);
-                                                }
-                                            }
-                                            
-                                            
-                                    //    }];
+                          @synchronized (completionLock) {
+                              completed++;
+                              
+                              if (completed == dlCount) {
+                                  DDLogInfo(@"file data download complete, files: %@", identityFiles);
+                                  
+                                  [_progressView removeView];
+                                  _progressView = nil;
+                                  callback(identityFiles);
+                              }
+                          }
+                          
+                          
+                          //    }];
                       }
                       
                   }];
@@ -369,6 +379,12 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     bgColorView.backgroundColor = [UIUtils surespotSelectionBlue];
     bgColorView.layer.masksToBounds = YES;
     cell.selectedBackgroundView = bgColorView;
+    cell.backgroundColor = [UIColor clearColor];
+    if ([UIUtils isBlackTheme]) {
+        cell.nameLabel.textColor = [UIUtils surespotForegroundGrey];
+        cell.dateLabel.textColor = [UIUtils surespotForegroundGrey];
+    }
+    
     return cell;
 }
 
@@ -377,7 +393,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
         [UIUtils showToastMessage:[NSString stringWithFormat: NSLocalizedString(@"login_max_identities_reached",nil), MAX_IDENTITIES] duration:2];
         return;
     }
-
+    
     NSDictionary * rowData = [_driveIdentities objectAtIndex:indexPath.row];
     NSString * name = [rowData objectForKey:@"name"];
     NSString * identifier = [rowData objectForKey:@"identifier"];
@@ -420,8 +436,8 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     
     GTLRQuery *query = [GTLRDriveQuery_FilesGet queryForMediaWithFileId:identifier];
     [self.driveService executeQuery:query completionHandler:^(GTLRServiceTicket * ticket, GTLRDataObject *file, NSError * _Nullable error) {
-    
-     if (error == nil) {
+        
+        if (error == nil) {
             NSData * identityData = [FileController gunzipIfNecessary:file.data];
             [[IdentityController sharedInstance] importIdentityData:identityData username:name password:password callback:^(id result) {
                 [_progressView removeView];
