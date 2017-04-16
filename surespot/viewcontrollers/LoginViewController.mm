@@ -88,13 +88,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if ([UIUtils isBlackTheme]) {
         [self.scrollView setBackgroundColor:[UIColor blackColor]];
         [self.storeKeychainLabel setTextColor:[UIUtils surespotForegroundGrey]];
-        
-        [self.textPassword setTextColor: [UIUtils surespotForegroundGrey]];
-        [self.textPassword setAttributedPlaceholder: [[NSAttributedString alloc] initWithString:NSLocalizedString(@"password", nil) attributes:@{NSForegroundColorAttributeName:[UIUtils surespotForegroundGrey]}]];
-        [self.textPassword.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
-        [self.textPassword.layer setBorderWidth:1.0f];
     }
     
+    [UIUtils setTextFieldColors:self.textPassword localizedStringKey:@"password"];
     [UIUtils setUISwitchColors:self.storePassword];
 }
 

@@ -61,8 +61,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 +(void) showToastMessage: (NSString *) message duration: (CGFloat) duration {
     AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
     [overlayView  makeToast:message
-                                                                                         duration: duration
-                                                                                         position:@"center"
+                   duration: duration
+                   position:@"center"
      ];
 }
 
@@ -72,8 +72,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 +(void) showToastKey: (NSString *) key duration: (CGFloat) duration {
     AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
     [overlayView  makeToast:NSLocalizedString(key, nil)
-                                                                                         duration: duration
-                                                                                         position:@"center"
+                   duration: duration
+                   position:@"center"
      ];
 }
 
@@ -104,7 +104,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [[UIBarButtonItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [self surespotBlue],  NSForegroundColorAttributeName,nil] forState:UIControlStateNormal];
     
     [[UIButton appearance] setTitleColor:[self surespotBlue] forState:UIControlStateNormal];
-        
+    
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [UIColor lightGrayColor],  NSForegroundColorAttributeName,nil]];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     
@@ -137,7 +137,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         CGSize labelSize = [self threadSafeSizeString:plaintext WithFont:cellFont constrainedToSize:constraintSize];
         
-      //  DDLogVerbose(@"computed portrait width %f, height: %f", labelSize.width, labelSize.height);
+        //  DDLogVerbose(@"computed portrait width %f, height: %f", labelSize.width, labelSize.height);
         
         [message setRowPortraitHeight:(int) (labelSize.height + heightAdj > 44 ? labelSize.height + heightAdj : 44) ];
         
@@ -257,28 +257,28 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 +(NSString *) getMessageErrorText: (NSInteger) errorStatus mimeType: (NSString *) mimeType {
     NSString * statusText = nil;
     switch (errorStatus) {
-		case 400:
-			statusText = NSLocalizedString(@"error_message_generic",nil);
-			break;
+        case 400:
+            statusText = NSLocalizedString(@"error_message_generic",nil);
+            break;
         case 401:
-		case 402:
-			// if it's voice message they need to have upgraded, otherwise fall through to 403
-			if ([mimeType isEqualToString: MIME_TYPE_M4A]) {
-				statusText = NSLocalizedString(@"billing_payment_required_voice",nil);
-				break;
-			}
-		case 403:
-			statusText =  NSLocalizedString(@"message_error_unauthorized",nil);
-			break;
-		case 404:
-			statusText =  NSLocalizedString(@"message_error_unauthorized",nil);
-			break;
-		case 429:
-			statusText =  NSLocalizedString(@"error_message_throttled",nil);
-			break;
-		case 500:
+        case 402:
+            // if it's voice message they need to have upgraded, otherwise fall through to 403
+            if ([mimeType isEqualToString: MIME_TYPE_M4A]) {
+                statusText = NSLocalizedString(@"billing_payment_required_voice",nil);
+                break;
+            }
+        case 403:
+            statusText =  NSLocalizedString(@"message_error_unauthorized",nil);
+            break;
+        case 404:
+            statusText =  NSLocalizedString(@"message_error_unauthorized",nil);
+            break;
+        case 429:
+            statusText =  NSLocalizedString(@"error_message_throttled",nil);
+            break;
+        case 500:
         default:
-			if ([mimeType isEqualToString:MIME_TYPE_TEXT] || [mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
+            if ([mimeType isEqualToString:MIME_TYPE_TEXT] || [mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
                 statusText =  NSLocalizedString(@"error_message_generic",nil);
             }
             else {
@@ -287,7 +287,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }
             }
             
-			break;
+            break;
     }
     
     return statusText;
@@ -335,7 +335,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         label.linkAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:[UIUtils surespotBlue], kCTForegroundColorAttributeName, [NSNumber numberWithInt:kCTUnderlineStyleSingle], kCTUnderlineStyleAttributeName, nil];
         
-    
         [label addLinkToURL:[NSURL URLWithString:urlString] withRange:range];
     }
     
@@ -382,12 +381,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSString * preferredLanguage = [preferredLanguagesIncDefault objectAtIndex:0];
     NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:preferredLanguage];
     NSString *languageCode = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
-  //
-  //  DDLogInfo(@"localizedStringForKey: %@, preferred language: %@", key, languageCode);
+    //
+    //  DDLogInfo(@"localizedStringForKey: %@, preferred language: %@", key, languageCode);
     
     //if we found it or default language is english return it
     if ([languageCode isEqualToString:@"en"] || ![localizedString isEqualToString:key]) {
-    //    DDLogInfo(@"localizedStringForKey: %@ found", key);
+        //    DDLogInfo(@"localizedStringForKey: %@ found", key);
         return localizedString;
     }
     
@@ -411,7 +410,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         //if we don't support the language don't bother looking
         if (![supportedLanguages containsObject:languageCode]) {
-    //        DDLogInfo(@"localizedStringForKey: %@ no fallback translation for languageCode: %@",key, languageCode);
+            //        DDLogInfo(@"localizedStringForKey: %@ no fallback translation for languageCode: %@",key, languageCode);
             continue;
         }
         
@@ -448,15 +447,24 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 +(void) setUISwitchColors: (UISwitch *) theSwitch {
     if ([self isBlackTheme]) {
-//        [theSwitch setTintColor:[UIUtils surespotForegroundGrey]];
-//        [theSwitch setOnTintColor:[UIUtils surespotForegroundGrey]];
-     //   [theSwitch setThumbTintColor:[UIColor blackColor]];
+        //        [theSwitch setTintColor:[UIUtils surespotForegroundGrey]];
+        //        [theSwitch setOnTintColor:[UIUtils surespotForegroundGrey]];
+        //   [theSwitch setThumbTintColor:[UIColor blackColor]];
     }
-//    else {
-        [theSwitch setTintColor:[UIUtils surespotBlue]];
-        [theSwitch setOnTintColor:[UIUtils surespotBlue]];
-   // }
-
+    //    else {
+    [theSwitch setTintColor:[UIUtils surespotBlue]];
+    [theSwitch setOnTintColor:[UIUtils surespotBlue]];
+    // }
+    
 }
-
++(void) setTextFieldColors: (UITextField *) textField localizedStringKey: (NSString *) key {
+    if ([self isBlackTheme]) {
+        [textField setTextColor: [UIUtils surespotForegroundGrey]];
+        [textField setAttributedPlaceholder: [[NSAttributedString alloc]
+                                              initWithString:NSLocalizedString(key, nil)
+                                              attributes:@{NSForegroundColorAttributeName:[UIUtils surespotForegroundGrey]}]];
+        [textField.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
+        [textField.layer setBorderWidth:1.0f];
+    }
+}
 @end

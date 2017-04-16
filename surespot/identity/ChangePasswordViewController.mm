@@ -62,15 +62,19 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     _label2.text = NSLocalizedString(@"backup_identities_again_password",nil);
     _label2.textColor = [UIColor redColor];
     
-    [_currentPassword setPlaceholder: NSLocalizedString(@"current_password",nil)];
-    [_shinyNewPassword setPlaceholder: NSLocalizedString(@"new_password",nil)];
-    [_confirmPassword setPlaceholder: NSLocalizedString(@"confirm_password",nil)];
-    
     [_scrollView setContentSize: CGSizeMake(self.view.frame.size.width, _bExecute.frame.origin.y + _bExecute.frame.size.height)];
     _delta = 0;
 
     [_userPicker selectRow:[_identityNames indexOfObject:[[IdentityController sharedInstance] getLoggedInUser]] inComponent:0 animated:YES];
     
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.scrollView setBackgroundColor:[UIColor blackColor]];
+    }
+    
+    [UIUtils setTextFieldColors:_currentPassword localizedStringKey:@"current_password"];
+    [UIUtils setTextFieldColors:_shinyNewPassword localizedStringKey:@"new_password"];
+    [UIUtils setTextFieldColors:_confirmPassword localizedStringKey:@"confirm_password"];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
@@ -224,6 +228,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 37)];
     label.text =  [_identityNames objectAtIndex:row];
     [label setFont:[UIFont systemFontOfSize:22]];
+    if ([UIUtils isBlackTheme]) {
+        [label setTextColor:[UIUtils surespotForegroundGrey]];
+    }
     label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
     return label;
