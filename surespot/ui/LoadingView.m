@@ -64,7 +64,7 @@
 	const CGFloat sheight = [UIScreen mainScreen].bounds.size.height;
     
     UIView * labelView = [[UIView alloc] initWithFrame:CGRectZero];
-    labelView.backgroundColor = [UIUtils isBlackTheme] ? [UIColor blackColor]: [UIColor whiteColor];
+    labelView.backgroundColor = [UIUtils isBlackTheme] ? [UIUtils surespotGrey]: [UIColor whiteColor];
     [backgroundView addSubview:labelView];
     
     
