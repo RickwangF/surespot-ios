@@ -37,12 +37,14 @@
     
     
     NSString * labelText = NSLocalizedString(@"welcome_to_surespot",nil);
+            
+    if ([UIUtils isBlackTheme]) {[_helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
+        [_helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
+    }
     
-    
-	
     [UIUtils setLinkLabel:_helpLabel delegate:self labelText:labelText linkMatchTexts:matches urlStrings:links];
-    NSString * helpBackupIdsString1 = NSLocalizedString(@"help_backupIdentities1", nil);
     
+    NSString * helpBackupIdsString1 = NSLocalizedString(@"help_backupIdentities1", nil);
     NSString * label2Text = [NSString stringWithFormat:@"%@\n\n%@\n\n%@\n\n%@\n\n%@\n\n%@\n\n%@\n\n%@\n\n%@\n\n%@\n\n%@\n\n%@\n\n%@",
                              
                              NSLocalizedString(@"help_invite", nil),
@@ -62,6 +64,10 @@
     
     
     NSMutableAttributedString * label2String = [[NSMutableAttributedString alloc] initWithString:label2Text];
+    if ([UIUtils isBlackTheme]) {
+        [self.scrollView setBackgroundColor:[UIColor blackColor]];
+        [label2String addAttribute:NSForegroundColorAttributeName value:[UIUtils surespotForegroundGrey] range:[label2Text rangeOfString:label2Text]];
+    }
     [label2String addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:[label2Text rangeOfString: helpBackupIdsString1]];
     
     
