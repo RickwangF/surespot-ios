@@ -57,7 +57,7 @@
     [_inviteBlurb setFont:[UIFont systemFontOfSize:17]];
     [_inviteBlurb setTextAlignment:NSTextAlignmentCenter];
     [_inviteImage setImage:[self generateQRInviteImage:_username]];
-    _scrollView.contentSize = self.view.frame.size;
+    _scrollView.contentSize = CGSizeMake(0, self.view.frame.size.height);
     
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
