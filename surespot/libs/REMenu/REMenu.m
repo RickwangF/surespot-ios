@@ -80,10 +80,10 @@
         
         self.subtitleTextColor = [UIUtils surespotBlue];//[UIColor colorWithWhite:0.425 alpha:1.000];
         self.subtitleTextShadowColor = [UIColor blackColor];
-//        self.subtitleTextShadowOffset = CGSizeMake(0, -1.0);
+        //        self.subtitleTextShadowOffset = CGSizeMake(0, -1.0);
         self.subtitleHighlightedTextColor =  [UIUtils surespotBlue];
-  //      self.subtitleHighlightedTextShadowColor = [UIColor blackColor];
-//        self.subtitleHighlightedTextShadowOffset = CGSizeMake(0, -1.0);
+        //      self.subtitleHighlightedTextShadowColor = [UIColor blackColor];
+        //        self.subtitleHighlightedTextShadowOffset = CGSizeMake(0, -1.0);
         self.subtitleTextAlignment = NSTextAlignmentCenter;
         
         self.borderWidth = 1.0;
@@ -106,7 +106,7 @@
 }
 
 -(void) showSensiblyInView:(UIView *)view {
-
+    
     CGFloat fwidth = view.frame.size.width;
     //todo dynamically based on width
     NSInteger width = 260;//fwidth < 400 ? 260 : fwidth /2;
@@ -114,7 +114,7 @@
     [self showFromRect:rect inView:view];
 }
 
-- (void)showFromRect:(CGRect)rect inView:(UIView *)view
+- (void)showFromRect:(CGRect)rect inView:(UIView *) parentView
 {
     self.isOpen = YES;
     
@@ -123,11 +123,11 @@
     self.containerView = ({
         REMenuContainerView *view = [[REMenuContainerView alloc] init];
         view.clipsToBounds = YES;
-    view.autoresizingMask =UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+        view.autoresizingMask =UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         
         if (self.backgroundView) {
             self.backgroundView.alpha = 0;
-            [view addSubview:self.backgroundView];
+            [parentView addSubview:self.backgroundView];
         }
         view;
     });
@@ -236,12 +236,12 @@
     [self.menuWrapperView addSubview:self.menuView];
     [self.containerView addSubview:self.backgroundButton];
     [self.containerView addSubview:self.menuWrapperView];
-    [view addSubview:self.containerView];
+    [parentView addSubview:self.containerView];
     
     // Animate appearance
     //
     [UIView animateWithDuration:self.animationDuration animations:^{
-        self.backgroundView.alpha = 1.0;
+        self.backgroundView.alpha = 0.8;
         CGRect frame = self.menuView.frame;
         frame.origin.y = -40.0 - self.separatorHeight;
         self.menuWrapperView.frame = frame;
