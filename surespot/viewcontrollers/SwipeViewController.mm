@@ -88,6 +88,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (nonatomic, strong) NSArray<UIBarButtonItem *>* homeBackButtons;
 @property (nonatomic, strong) NSArray<UIBarButtonItem *>* chatBackButtons;
 @property (nonatomic, strong) UIBarButtonItem * backButtonItem;
+@property (nonatomic, strong) UIView * menuAlphaView;
 @end
 @implementation SwipeViewController
 
@@ -583,6 +584,7 @@ const Float32 voiceRecordDelay = 0.3;
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
         
         //if we're in landscape on iphone hide the menu
+        [_menuAlphaView removeFromSuperview];
         [_menu close];
     }
     else {
@@ -1962,6 +1964,7 @@ const Float32 voiceRecordDelay = 0.3;
         }
         _swipeView.userInteractionEnabled = YES;
         [self updateTabChangeUI];
+        [self.menuAlphaView removeFromSuperview];
     }];
 }
 
@@ -2335,16 +2338,26 @@ const Float32 voiceRecordDelay = 0.3;
     }
 }
 
+-(void) menuAlpha {
+    [_menuAlphaView removeFromSuperview];
+    _menuAlphaView = [[UIView alloc] initWithFrame:self.bgImageView.frame];
+    [_menuAlphaView setBackgroundColor:[UIColor blackColor]];
+    [_menuAlphaView setAlpha:0.8f];
+    [self.view addSubview:_menuAlphaView];
+}
+
 -(void) showMenuMenu {
     if (!_menu) {
         _menu = [self createMenuMenu];
         if (_menu) {
             [self resignAllResponders];
-            [_menu showSensiblyInView:self.view];
             _swipeView.userInteractionEnabled = NO;
+            [self menuAlpha];
+            [_menu showSensiblyInView:self.view];
         }
     }
     else {
+        [_menuAlphaView removeFromSuperview];
         [_menu close];
     }
 }
@@ -2372,13 +2385,14 @@ const Float32 voiceRecordDelay = 0.3;
         if (_menu) {
             [self resignAllResponders];
             _swipeView.userInteractionEnabled = NO;
+            [self menuAlpha];
             [_menu showSensiblyInView:self.view];
         }
     }
     else {
+        [_menuAlphaView removeFromSuperview];
         [_menu close];
-    }
-    
+    }    
 }
 
 - (void)deleteFriend:(NSNotification *)notification
