@@ -1921,7 +1921,27 @@ const Float32 voiceRecordDelay = 0.3;
     [menuItems addObject:settingsItem];
     
     REMenuItem * logoutItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"logout", nil) image:[UIImage imageNamed:@"ic_lock_power_off"] highlightedImage:nil action:^(REMenuItem * item){
-        [self logout];
+        //confirm if necessary
+        if ([UIUtils confirmLogout]) {
+            NSString * okString = NSLocalizedString(@"ok", nil);
+            [UIAlertView showWithTitle:NSLocalizedString(@"confirm_logout_title", nil)
+                               message:NSLocalizedString(@"confirm_logout_message", nil)
+                     cancelButtonTitle:NSLocalizedString(@"cancel", nil)
+                     otherButtonTitles:@[okString]
+                              tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                                  if (buttonIndex == [alertView cancelButtonIndex]) {
+                                      DDLogVerbose(@"logout cancelled");
+                                  } else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:okString]) {
+                                      [self logout];
+                                  };
+                                  
+                              }];
+            
+            
+        }
+        else {
+            [self logout];
+        }
         
     }];
     [menuItems addObject:logoutItem];

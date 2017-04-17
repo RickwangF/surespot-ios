@@ -21,7 +21,16 @@
                 <key>DefaultValue</key>
                 <false/>
             </dict>
-            
+            <dict>
+                <key>Type</key>
+                <string>PSToggleSwitchSpecifier</string>
+                <key>Title</key>
+                <string>pref_title_confirm_logout</string>
+                <key>Key</key>
+                <string>pref_confirm_logout</string>
+                <key>DefaultValue</key>
+                <true/>
+            </dict>
             
         </array>
         <key>StringsTable</key>

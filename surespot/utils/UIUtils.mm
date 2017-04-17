@@ -445,6 +445,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return [value boolValue];
 }
 
++(BOOL) confirmLogout {
+    NSNumber * value = [[NSUserDefaults standardUserDefaults] objectForKey:@"pref_confirm_logout"];
+    if (!value) return YES;
+    return [value boolValue];
+}
+
 +(void) setUISwitchColors: (UISwitch *) theSwitch {
     if ([self isBlackTheme]) {
         //        [theSwitch setTintColor:[UIUtils surespotForegroundGrey]];

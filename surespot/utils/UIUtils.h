@@ -49,5 +49,6 @@
 +(BOOL) isBlackTheme;
 +(void) setUISwitchColors: (UISwitch *) theSwitch;
 +(void) setTextFieldColors: (UITextField *) textField localizedStringKey: (NSString *) key;
++(BOOL) confirmLogout;
 @end
 

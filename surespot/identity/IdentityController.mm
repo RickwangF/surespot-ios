@@ -240,8 +240,8 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
 
 -(void) logout {
     @synchronized (self) {
+        [self clearStoredPasswordForIdentity: [self getLoggedInUser]];
         [[CredentialCachingController sharedInstance] logout];
-        //  [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"last_user"];
     }
 }
 

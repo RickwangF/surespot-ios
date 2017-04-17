@@ -368,5 +368,6 @@ If you elect to backup your identity on Google Drive you will be storing a copy 
 "file_transfer_not_yet_supported"="File transfer not yet supported.";
 "unsupported_message_type"="Message type not supported.";
 "no_network_connection"="No network connection available.";
-
+"confirm_logout_message"="Logging out will also clear the password if it is stored. Are you sure?";
+"confirm_logout_title"="Logout?";
 
