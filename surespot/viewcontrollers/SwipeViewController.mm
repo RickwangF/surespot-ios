@@ -2677,6 +2677,7 @@ const Float32 voiceRecordDelay = 0.3;
             //delete image file from disk
             [[NSFileManager defaultManager] removeItemAtURL:bgImageUrl error:nil];
             [sender.tableView reloadData];
+            [self setBackgroundImageController:nil];
         }
         else {
             //select and assign image
@@ -2772,13 +2773,15 @@ const Float32 voiceRecordDelay = 0.3;
     else {
         _hasBackgroundImage = NO;
         _bgImageView.image = nil;
-        
+        [_bgImageView setAlpha: 1];
         [_bgImageView setBackgroundColor: [UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor]];
         
     }
     
+    //reload the settings table view
     [controller.tableView reloadData];
-    
+
+    //reload the table view cells
     @synchronized (_chats) {
         for (NSString * key in [_chats allKeys]) {
             id tableView = [_chats objectForKey:key];
@@ -2792,6 +2795,9 @@ const Float32 voiceRecordDelay = 0.3;
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self setBackgroundImageController: nil];
+    [self updateTabChangeUI];
+    [self setBackButtonIcon];
+    [self setThemeStuff];
 }
 
 
