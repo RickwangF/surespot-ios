@@ -119,7 +119,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     _theirFingerprints = [NSMutableDictionary new];
     [self addAllPublicKeysForUsername:[_usernameMap username] toDictionary:_theirFingerprints];
     
-    
+    //theme
+    if ([UIUtils isBlackTheme]) {
+        [self.tableView setBackgroundColor:[UIColor blackColor]];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -138,6 +141,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             return 0;
     }
 }
+
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger) section {
+    if ([UIUtils isBlackTheme]) {
+        UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+        [view setTintColor:[UIUtils surespotGrey]];
+        [header.textLabel setTextColor:[UIUtils surespotForegroundGrey]];
+    }
+}
+
 
 - (NSInteger) theirCount {
     return ( _theirFingerprints.count < _theirLatestVersion ? _theirLatestVersion :_theirFingerprints.count);
@@ -169,8 +181,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [fl setMinimumInteritemSpacing:0];
         [fl setItemSize:CGSizeMake(20, 18)];
         UICollectionView * collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, 160, 140) collectionViewLayout:fl];
-        [collectionView setBackgroundColor:[UIColor whiteColor]];
-        [collectionView setOpaque:YES];
+        [collectionView setBackgroundColor:[UIColor clearColor]];
         collectionView.dataSource = [cellData objectForKey:@"dh"];
         [collectionView registerClass:[KeyFingerprintCollectionCell class] forCellWithReuseIdentifier:@"KeyFingerprintCollectionCell"];
         //
@@ -184,19 +195,34 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         [[cell.dsaView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
         collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0,0, 160, 140) collectionViewLayout:fl];
-        [collectionView setBackgroundColor:[UIColor whiteColor]];
-        [collectionView setOpaque:YES];
+        [collectionView setBackgroundColor:[UIColor clearColor]];
         collectionView.dataSource = [cellData objectForKey:@"dsa"];
         [collectionView registerClass:[KeyFingerprintCollectionCell class] forCellWithReuseIdentifier:@"KeyFingerprintCollectionCell"];
         [cell.dsaView addSubview:collectionView];
         
         [cell setOpaque:YES];
         [cell setUserInteractionEnabled:NO];
+        
+        cell.backgroundColor = [UIColor clearColor];
+        if ([UIUtils isBlackTheme]) {
+            cell.timeLabel.textColor = [UIUtils surespotForegroundGrey];
+            cell.timeValue.textColor = [UIUtils surespotForegroundGrey];
+            
+            cell.versionLabel.textColor = [UIUtils surespotForegroundGrey];
+            cell.versionValue.textColor = [UIUtils surespotForegroundGrey];
+            
+            cell.dhLabel.textColor = [UIUtils surespotForegroundGrey];
+            cell.dsaLabel.textColor = [UIUtils surespotForegroundGrey];
+        }
         return cell;
     }
     else {
         KeyFingerprintLoadingCell * cell = [_tableView dequeueReusableCellWithIdentifier:@"KeyFingerprintLoadingCell"];
-        cell.keyFingerprintLoadingLabel.text= NSLocalizedString(@"loading", nil);
+        cell.fingerprintLoadingLabel.text= NSLocalizedString(@"loading", nil);
+        if ([UIUtils isBlackTheme]) {
+            [cell.fingerprintLoadingLabel setTextColor: [UIUtils surespotForegroundGrey]];
+        }
+        
         return cell;
     }
     
@@ -205,55 +231,55 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) addAllPublicKeysForUsername: (NSString *) username toDictionary: (NSMutableDictionary *) dictionary {
     [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getKeyVersionForUsername:username
-                                                    successBlock:^(NSURLSessionTask *operation, id responseObject) {
-                                                        NSString * latestVersion = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-                                                        if ([latestVersion length] > 0) {
-                                                            _theirLatestVersion = [latestVersion integerValue];
-                                                            [_tableView reloadData];
-                                                            
-                                                            for (long ver=_theirLatestVersion;ver>0;ver--) {
-                                                                NSString * version = [@(ver) stringValue];
-                                                                
-                                                                //get public keys out of dictionary
-                                                                NSString * publicKeysKey = [NSString stringWithFormat:@"%@:%@", username, version];
-                                                                PublicKeys * publicKeys = [[[CredentialCachingController sharedInstance] publicKeysDict] objectForKey:publicKeysKey];
-                                                                
-                                                                if (!publicKeys) {
-                                                                    DDLogVerbose(@"public keys not cached for %@", publicKeysKey );
-                                                                    
-                                                                    //get the public keys we need
-                                                                    GetPublicKeysOperation * pkOp = [[GetPublicKeysOperation alloc] initWithUsername:username ourUsername: _ourUsername version:version completionCallback:
-                                                                                                     ^(PublicKeys * keys) {
-                                                                                                         if (keys) {
-                                                                                                             //reverse the order
-                                                                                                             [dictionary setObject:[self createDictionaryForPublicKeys:keys] forKey:[@(_theirLatestVersion-ver) stringValue]];
-                                                                                                             dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                                                 [_tableView reloadData];
-                                                                                                             });
-                                                                                                         }
-                                                                                                         else {
-                                                                                                             //failed to get keys
-                                                                                                             DDLogVerbose(@"could not get public key for %@", publicKeysKey );
-                                                                                                             
-                                                                                                         }
-                                                                                                         
-                                                                                                         
-                                                                                                     }];
-                                                                    
-                                                                    [_queue addOperation:pkOp];
-                                                                    
-                                                                    
-                                                                }
-                                                                else {
-                                                                    [dictionary setObject:[self createDictionaryForPublicKeys:publicKeys] forKey:[@(_theirLatestVersion-ver) stringValue]];
-                                                                    [_tableView reloadData];
-                                                                }
-                                                            }
-                                                        }
-                                                        
-                                                    } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
-                                                        [UIUtils showToastKey:@"could_not_load_public_keys"];
-                                                    }
+                                                                                     successBlock:^(NSURLSessionTask *operation, id responseObject) {
+                                                                                         NSString * latestVersion = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+                                                                                         if ([latestVersion length] > 0) {
+                                                                                             _theirLatestVersion = [latestVersion integerValue];
+                                                                                             [_tableView reloadData];
+                                                                                             
+                                                                                             for (long ver=_theirLatestVersion;ver>0;ver--) {
+                                                                                                 NSString * version = [@(ver) stringValue];
+                                                                                                 
+                                                                                                 //get public keys out of dictionary
+                                                                                                 NSString * publicKeysKey = [NSString stringWithFormat:@"%@:%@", username, version];
+                                                                                                 PublicKeys * publicKeys = [[[CredentialCachingController sharedInstance] publicKeysDict] objectForKey:publicKeysKey];
+                                                                                                 
+                                                                                                 if (!publicKeys) {
+                                                                                                     DDLogVerbose(@"public keys not cached for %@", publicKeysKey );
+                                                                                                     
+                                                                                                     //get the public keys we need
+                                                                                                     GetPublicKeysOperation * pkOp = [[GetPublicKeysOperation alloc] initWithUsername:username ourUsername: _ourUsername version:version completionCallback:
+                                                                                                                                      ^(PublicKeys * keys) {
+                                                                                                                                          if (keys) {
+                                                                                                                                              //reverse the order
+                                                                                                                                              [dictionary setObject:[self createDictionaryForPublicKeys:keys] forKey:[@(_theirLatestVersion-ver) stringValue]];
+                                                                                                                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                                                                                  [_tableView reloadData];
+                                                                                                                                              });
+                                                                                                                                          }
+                                                                                                                                          else {
+                                                                                                                                              //failed to get keys
+                                                                                                                                              DDLogVerbose(@"could not get public key for %@", publicKeysKey );
+                                                                                                                                              
+                                                                                                                                          }
+                                                                                                                                          
+                                                                                                                                          
+                                                                                                                                      }];
+                                                                                                     
+                                                                                                     [_queue addOperation:pkOp];
+                                                                                                     
+                                                                                                     
+                                                                                                 }
+                                                                                                 else {
+                                                                                                     [dictionary setObject:[self createDictionaryForPublicKeys:publicKeys] forKey:[@(_theirLatestVersion-ver) stringValue]];
+                                                                                                     [_tableView reloadData];
+                                                                                                 }
+                                                                                             }
+                                                                                         }
+                                                                                         
+                                                                                     } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
+                                                                                         [UIUtils showToastKey:@"could_not_load_public_keys"];
+                                                                                     }
      ];
 }
 
@@ -281,8 +307,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     BOOL useMyData = (_meFirst && section == 0) || (!_meFirst && section == 1);
     return useMyData ?
-        _ourUsername :
-        [UIUtils buildAliasStringForUsername:[_usernameMap username] alias:[_usernameMap alias]];
+    _ourUsername :
+    [UIUtils buildAliasStringForUsername:[_usernameMap username] alias:[_usernameMap alias]];
 }
 
 

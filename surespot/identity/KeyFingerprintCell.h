@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @interface KeyFingerprintCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *dhLabel;
+@property (strong, nonatomic) IBOutlet UILabel *dsaLabel;
 @property (strong, nonatomic) IBOutlet UILabel *versionLabel;
 @property (strong, nonatomic) IBOutlet UILabel *versionValue;
 @property (strong, nonatomic) IBOutlet UILabel *timeLabel;

@@ -7,6 +7,7 @@
 //
 
 #import "KeyFingerprintCollectionCell.h"
+#import "UIUtils.h"
 
 @implementation KeyFingerprintCollectionCell
 - (id)initWithFrame:(CGRect)frame
@@ -18,9 +19,12 @@
     self.label.textAlignment = NSTextAlignmentCenter;
     [self.label setFont:[UIFont systemFontOfSize:13]];
     [self.contentView addSubview:self.label];
+
+
+    if ([UIUtils isBlackTheme]) {
+        [self.label setTextColor:[UIUtils surespotForegroundGrey]];
+    }
     
-    self.backgroundColor = [UIColor whiteColor];
-    self.opaque = YES;
     self.userInteractionEnabled = NO;
     
     return self;
