@@ -3,6 +3,7 @@
 #import <objc/runtime.h>
 #import "CocoaLumberjack.h"
 #import "AGWindowView.h"
+#import "UIUtils.h"
 
 static const int ddLogLevel = DDLogLevelOff;
 
@@ -16,7 +17,7 @@ static const CGFloat CSToastMaxWidth            = 0.8;      // 80% of parent vie
 static const CGFloat CSToastMaxHeight           = 0.8;      // 80% of parent view height
 static const CGFloat CSToastHorizontalPadding   = 10.0;
 static const CGFloat CSToastVerticalPadding     = 10.0;
-static const CGFloat CSToastCornerRadius        = 10.0;
+static const CGFloat CSToastCornerRadius        = 5.0;
 static const CGFloat CSToastOpacity             = 0.8;
 static const CGFloat CSToastFontSize            = 16.0;
 static const CGFloat CSToastMaxTitleLines       = 0;
@@ -120,7 +121,7 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
     
     UIView *activityView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, CSToastActivityWidth, CSToastActivityHeight)] autorelease];
     activityView.center = [self centerPointForPosition:position withToast:activityView];
-    activityView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:CSToastOpacity];
+    activityView.backgroundColor = [([UIUtils isBlackTheme] ? [UIUtils surespotGrey] : [UIColor blackColor]) colorWithAlphaComponent:CSToastOpacity];
     activityView.alpha = 0.0;
     activityView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
     activityView.layer.cornerRadius = CSToastCornerRadius;
@@ -206,7 +207,7 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
         wrapperView.layer.shadowOffset = CSToastShadowOffset;
     }
 
-    wrapperView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:CSToastOpacity];
+    wrapperView.backgroundColor = [([UIUtils isBlackTheme] ? [UIUtils surespotGrey] : [UIColor blackColor]) colorWithAlphaComponent:CSToastOpacity];
     
     if(image != nil) {
         imageView = [[[UIImageView alloc] initWithImage:image] autorelease];
