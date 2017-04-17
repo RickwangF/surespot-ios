@@ -15,7 +15,6 @@
 @property (strong, nonatomic) IBOutlet UITextView *inviteBlurb;
 @property (strong, nonatomic) IBOutlet UIImageView *inviteImage;
 @property (strong, nonatomic) NSString * username;
-@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @end
 
 @implementation QRInviteViewController
@@ -41,23 +40,22 @@
     
     NSMutableAttributedString * inviteString = [[NSMutableAttributedString alloc] initWithString:inviteText ];
     
-   
+    
     
     //theme
     if ([UIUtils isBlackTheme]) {
         [self.view setBackgroundColor:[UIColor blackColor]];
-        [self.scrollView setBackgroundColor:[UIColor blackColor]];
-         [inviteString addAttribute:NSForegroundColorAttributeName value:[UIUtils surespotForegroundGrey] range:NSMakeRange(0,inviteString.length)];
+        [inviteString addAttribute:NSForegroundColorAttributeName value:[UIUtils surespotForegroundGrey] range:NSMakeRange(0,inviteString.length)];
     }
     
     [inviteString addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(preString.length+1, _username.length)];
-
-
+    
+    
     _inviteBlurb.attributedText = inviteString;
     [_inviteBlurb setFont:[UIFont systemFontOfSize:17]];
     [_inviteBlurb setTextAlignment:NSTextAlignmentCenter];
     [_inviteImage setImage:[self generateQRInviteImage:_username]];
-    _scrollView.contentSize = CGSizeMake(0, self.view.frame.size.height);
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
@@ -65,7 +63,7 @@
 -(UIImage *) generateQRInviteImage: (NSString *) username {
     int qrcodeImageDimension = 250;
     NSString * inviteUrl = [NSString stringWithFormat:@"%@%@%@", @"https://server.surespot.me/autoinvite/", [username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/qr_ios"];
-
+    
     
     // Generation of QR code image
     NSData *qrCodeData = [inviteUrl dataUsingEncoding:NSUTF8StringEncoding]; // recommended encoding
