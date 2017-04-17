@@ -60,6 +60,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 +(void) showToastMessage: (NSString *) message duration: (CGFloat) duration {
     AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
+    [overlayView setUserInteractionEnabled:NO];
     [overlayView  makeToast:message
                    duration: duration
                    position:@"center"
@@ -71,6 +72,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 +(void) showToastKey: (NSString *) key duration: (CGFloat) duration {
     AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
+    [overlayView setUserInteractionEnabled:NO];
     [overlayView  makeToast:NSLocalizedString(key, nil)
                    duration: duration
                    position:@"center"
