@@ -45,6 +45,7 @@
     
     //theme
     if ([UIUtils isBlackTheme]) {
+        [self.view setBackgroundColor:[UIColor blackColor]];
         [self.scrollView setBackgroundColor:[UIColor blackColor]];
          [inviteString addAttribute:NSForegroundColorAttributeName value:[UIUtils surespotForegroundGrey] range:NSMakeRange(0,inviteString.length)];
     }
