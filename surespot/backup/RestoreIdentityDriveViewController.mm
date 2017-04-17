@@ -52,10 +52,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     [super viewDidLoad];
     self.navigationController.navigationBar.translucent = NO;
     self.navigationController.tabBarController.tabBar.translucent = NO;
-    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
-    {
-        self.edgesForExtendedLayout = UIRectEdgeNone;
-    }        
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     
     self.driveService = [[GTLRDriveService alloc] init];
     

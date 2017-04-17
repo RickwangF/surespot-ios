@@ -45,13 +45,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [super viewDidLoad];
     self.navigationController.navigationBar.translucent = NO;
     self.navigationController.tabBarController.tabBar.translucent = NO;
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     
-    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
-    {
-        self.edgesForExtendedLayout = UIRectEdgeNone;
-    }
-    _documentsIdentities = [NSMutableArray new];
-    
+    _documentsIdentities = [NSMutableArray new];    
     
     [self loadIdentities];
     
