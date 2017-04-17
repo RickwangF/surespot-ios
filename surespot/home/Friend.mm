@@ -24,28 +24,14 @@
 @end
 
 @implementation Friend
-//- (id) initWithJSONString: (NSString *) jsonString ourUsername: (NSString *) ourUsername {
-//    
-//    // Call superclass's initializer
-//    self = [super init];
-//    if( !self ) return nil;
-//    
-//    NSDictionary * friendData = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
-//    
-//    [self parseDictionary:friendData];
-//    [self decryptAlias];
-//    self.ourUsername = ourUsername;
-//    return self;
-//}
-
 - (id) initWithDictionary:(NSDictionary *) dictionary ourUsername: (NSString *) ourUsername {
     
     // Call superclass's initializer
     self = [super init];
     if( !self ) return nil;
     [self parseDictionary:dictionary];
-    [self decryptAlias];
     self.ourUsername = ourUsername;
+    [self decryptAlias];
     return self;
 }
 
@@ -74,7 +60,6 @@
 
 
 -(void) parseDictionary:(NSDictionary *) dictionary {
-  //  _ourUsername = [dictionary objectForKey:@"ourUsername"];
     _name = [dictionary objectForKey:@"name"];
     _flags = [[dictionary  objectForKey:@"flags"] integerValue];
     _imageVersion = [dictionary objectForKey:@"imageVersion"];
