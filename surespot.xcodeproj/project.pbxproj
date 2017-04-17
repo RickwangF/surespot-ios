@@ -51,6 +51,7 @@
 		6648B1E8186CB9D9007037B1 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E6186CB9D9007037B1 /* CoreMotion.framework */; };
 		6648B1E9186CB9D9007037B1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E7186CB9D9007037B1 /* CoreText.framework */; };
 		6648B1EB186CB9EB007037B1 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1EA186CB9EB007037B1 /* AddressBook.framework */; };
+		664DFA781EA534A100565D8D /* SurespotLeftNavButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 664DFA771EA534A100565D8D /* SurespotLeftNavButton.m */; };
 		6652F2AA1875F16D00E023A7 /* PwylViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6652F2A91875F16D00E023A7 /* PwylViewController.m */; };
 		66536BEC1E79BA5D00520131 /* FastUserSwitchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */; };
 		66536BEE1E79BEF400520131 /* FastUserSwitchController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66536BED1E79BEF400520131 /* FastUserSwitchController.mm */; };
@@ -250,6 +251,8 @@
 		6648B1E6186CB9D9007037B1 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		6648B1E7186CB9D9007037B1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		6648B1EA186CB9EB007037B1 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		664DFA761EA534A100565D8D /* SurespotLeftNavButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotLeftNavButton.h; sourceTree = "<group>"; };
+		664DFA771EA534A100565D8D /* SurespotLeftNavButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotLeftNavButton.m; sourceTree = "<group>"; };
 		6652F2A81875F16D00E023A7 /* PwylViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PwylViewController.h; path = purchases/PwylViewController.h; sourceTree = "<group>"; };
 		6652F2A91875F16D00E023A7 /* PwylViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PwylViewController.m; path = purchases/PwylViewController.m; sourceTree = "<group>"; };
 		66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FastUserSwitchView.xib; sourceTree = "<group>"; };
@@ -1195,6 +1198,8 @@
 				66EBDF2C1855C96F00F2452D /* LoadingView.m */,
 				66EBDF2D1855C96F00F2452D /* UIViewPager.h */,
 				66EBDF2E1855C96F00F2452D /* UIViewPager.m */,
+				664DFA761EA534A100565D8D /* SurespotLeftNavButton.h */,
+				664DFA771EA534A100565D8D /* SurespotLeftNavButton.m */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -1500,6 +1505,7 @@
 				66EBE13C1855C97100F2452D /* Friend.mm in Sources */,
 				665CA9A21E9098210045EEDD /* RECommonFunctions.m in Sources */,
 				6686623E18565AD5001491B1 /* SignupViewController.mm in Sources */,
+				664DFA781EA534A100565D8D /* SurespotLeftNavButton.m in Sources */,
 				66EBE13B1855C97100F2452D /* UIUtils.mm in Sources */,
 				661F46A91865EDC3004A71B0 /* ChangePasswordViewController.mm in Sources */,
 				665CA9A61E9098210045EEDD /* REMenuItemView.m in Sources */,

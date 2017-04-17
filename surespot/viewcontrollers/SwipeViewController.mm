@@ -42,6 +42,7 @@
 #import "FastUserSwitchController.h"
 #import "SideMenu-Swift.h"
 #import "SurespotSettingsViewController.h"
+#import "SurespotLeftNavButton.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -84,6 +85,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (atomic, strong) NSMutableArray *sideMenuGestures;
 @property (atomic, strong) NSString * username;
 @property (nonatomic, strong) NSMutableDictionary * progress;
+@property (nonatomic, strong) NSArray<UIBarButtonItem *>* homeBackButtons;
+@property (nonatomic, strong) NSArray<UIBarButtonItem *>* chatBackButtons;
+@property (nonatomic, strong) UIBarButtonItem * backButtonItem;
 @end
 @implementation SwipeViewController
 
@@ -119,18 +123,6 @@ const Float32 voiceRecordDelay = 0.3;
     // [self registerForKeyboardNotifications];
     self.keyboardState = [[KeyboardState alloc] init];
     
-    
-    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 36.0f, 36.0f)];
-    
-    
-    UIImage * backImage = [UIImage imageNamed:@"surespot_logo"];
-    [backButton setBackgroundImage:backImage  forState:UIControlStateNormal];
-    [backButton setContentMode:UIViewContentModeScaleAspectFit];
-    _backImageView = backButton;
-    
-    [backButton addTarget:self action:@selector(backPressed) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
-    self.navigationItem.leftBarButtonItem = backButtonItem;
     
     UIBarButtonItem *anotherButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"menu",nil) style:UIBarButtonItemStylePlain target:self action:@selector(showMenuMenu)];
     self.navigationItem.rightBarButtonItem = anotherButton;
@@ -180,6 +172,7 @@ const Float32 voiceRecordDelay = 0.3;
     _theButton.opaque = YES;
     
     [self updateTabChangeUI];
+    [self setBackButtonIcon];
     
     [[[ChatManager sharedInstance] getChatController: _username] resume];
     
@@ -789,6 +782,8 @@ const Float32 voiceRecordDelay = 0.3;
             }
         }
     }
+    
+    [self setBackButtonIcon];
 }
 
 - (void)swipeView:(SwipeView *)swipeView didSelectItemAtIndex:(NSInteger)index
@@ -2892,7 +2887,50 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     return [aliasMap username];
 }
 
-
+-(void) setBackButtonIcon {
+    
+    if (!_backImageView) {
+        SurespotLeftNavButton *backButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0, 36.0f, 36.0f) inset:10];
+        [backButton addTarget:self action:@selector(backPressed) forControlEvents:UIControlEventTouchUpInside];
+        _backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+        
+        UIImage * backImage = [UIImage imageNamed:@"surespot_logo"];
+        [backButton setBackgroundImage:backImage  forState:UIControlStateNormal];
+        [backButton setContentMode:UIViewContentModeScaleAspectFit];
+        _backImageView = backButton;
+        
+        self.navigationItem.leftItemsSupplementBackButton = NO;
+        self.navigationItem.hidesBackButton = YES;
+        
+    }
+    
+    if (_swipeView.currentPage == 0) {
+        
+        if (!_homeBackButtons) {
+            //hamburgler
+            UIImage * hamburgerImage = [UIImage imageNamed:@"drawer"];
+            SurespotLeftNavButton * hamButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0.0f, 16.0f, 16.0f) inset:16];
+            [hamButton setBackgroundImage:hamburgerImage forState:UIControlStateNormal];
+            [hamButton setContentMode:UIViewContentModeCenter];
+            UIBarButtonItem * hamItem = [[UIBarButtonItem alloc] initWithCustomView:hamButton];
+            _homeBackButtons = @[hamItem, _backButtonItem];
+        }
+        
+        self.navigationItem.leftBarButtonItems = _homeBackButtons;
+    }
+    else {
+        if (!_chatBackButtons) {
+            //hamburgler
+            UIImage * backImage = [UIImage imageNamed:@"back"];
+            SurespotLeftNavButton * backButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0, 16.0f, 16.0f) inset:16];
+            [backButton setBackgroundImage:backImage forState:UIControlStateNormal];
+            [backButton setContentMode:UIViewContentModeCenter];
+            UIBarButtonItem * backItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+            _chatBackButtons = @[backItem, _backButtonItem];
+        }
+        self.navigationItem.leftBarButtonItems = _chatBackButtons;
+    }
+}
 
 
 
