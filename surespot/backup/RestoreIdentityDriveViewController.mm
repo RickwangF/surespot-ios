@@ -306,46 +306,18 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                       }
                       
                       NSMutableArray * identityFiles = [NSMutableArray new];
-                      //todo do this in a queue
-                      NSObject * completionLock = [NSObject new];
-                      __block NSInteger completed = 0;
-                      
+    
                       for (GTLRDrive_File *file in result.files) {
-                          //     GTLQuery *query = [GTLQueryDrive queryForFilesGetWithFileId:child.identifier];
-                          
-                          //                          // queryTicket can be used to track the status of the request.
-                          //                          [self.driveService executeQuery:query
-                          //                                        completionHandler:^(GTLServiceTicket *ticket,
-                          //                                                            GTLDriveFile *file,
-                          //                                                            NSError *error) {
-                          //
-                          //                                            if (!error) {
                           DDLogInfo(@"\nfile name = %@", file.originalFilename);
                           NSMutableDictionary * identityFile = [NSMutableDictionary new];
                           [identityFile  setObject: [[IdentityController sharedInstance] identityNameFromFile: file.originalFilename] forKey:@"name"];
                           [identityFile setObject:[file.modifiedTime date] forKey:@"date"];
                           [identityFile setObject:file.identifier forKey:@"identifier"];
                           [identityFiles addObject:identityFile];
-                          //                                            }
-                          //                                            else {
-                          //                                                DDLogError(@"An error occurred: %@", error);
-                          //                                            }
-                          
-                          @synchronized (completionLock) {
-                              completed++;
-                              
-                              if (completed == dlCount) {
-                                  DDLogInfo(@"file data download complete, files: %@", identityFiles);
-                                  
-                                  [_progressView removeView];
-                                  _progressView = nil;
-                                  callback(identityFiles);
-                              }
-                          }
-                          
-                          
-                          //    }];
                       }
+                      [_progressView removeView];
+                      _progressView = nil;
+                      callback(identityFiles);
                       
                   }];
         
