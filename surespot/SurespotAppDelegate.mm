@@ -290,19 +290,20 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
         
         DDLogDebug(@"userSwitch restoring last chat: %@ for user: %@", from, to);
-    }
-    
-    
+    }        
     
     //set the session
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
     [cc pause];
-   // [[[NetworkManager sharedInstance] getNetworkController:_username] logout];
-//    [[[ChatManager sharedInstance] getChatController: currentUser] logout];
     if ([[CredentialCachingController sharedInstance] setSessionForUsername:username]) {
-   //     [[[NetworkManager sharedInstance] getNetworkController:_username] setCookie: [[CredentialCachingController sharedInstance] getCookieForUsername:username]];
-   //     [[[ChatManager sharedInstance] getChatController: username] login];
-        [(UINavigationController *) self.window.rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"]]];
+        UINavigationController * navController = (UINavigationController *) self.window.rootViewController;
+        CATransition* transition = [CATransition animation];
+        transition.duration = 0.5;
+        transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+        transition.type = kCATransitionFade;
+        [navController.view.layer addAnimation:transition forKey:nil];
+        UIViewController * c =[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"];
+        [navController setViewControllers:@[c] animated:NO];
     }
     else {
         //show login
