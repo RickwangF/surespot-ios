@@ -419,31 +419,28 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) handleEarlierMessages: (NSArray *) messages  callback: (CallbackBlock) callback{
-    if ([messages count] == 0) {
+    __block NSInteger count = [messages count];
+    if (count == 0) {
         callback([NSNumber numberWithLong:0]);
         _noEarlierMessages = YES;
         return;
     }
     __weak ChatDataSource* weakSelf =self;
+    
     SurespotMessage * lastMessage;
     for (id jsonMessage in messages) {
         lastMessage = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
         DDLogInfo(@"adding earlier message, id: %ld", (long)lastMessage.serverid);
         [self addMessage:lastMessage refresh:NO callback:^(id result) {
-            if ([weakSelf.decryptionQueue operationCount] == 0) {
+            if (--count == 0) {
                 [weakSelf sort];
                 DDLogInfo(@"all messages added, calling back");
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
                     callback([NSNumber numberWithLong:[messages count]]);
                 });
             }
-            
         }];
-    }
-    
-    
-    
+    }    
 }
 
 
