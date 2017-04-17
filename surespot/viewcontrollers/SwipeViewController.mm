@@ -2531,6 +2531,9 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (void) backPressed {
     [self scrollHome];
+    if (_swipeView.currentPage == 0) {
+        [self presentViewController:[SideMenuManager menuLeftNavigationController] animated:YES completion:nil];
+    }
 }
 
 -(void) scrollHome {
