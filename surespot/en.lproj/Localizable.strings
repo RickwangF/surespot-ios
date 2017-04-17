@@ -191,7 +191,7 @@
 "generate_new_keypairs"="Generate new private key pairs for the selected identity and revoke the current pair. Any other devices (ie. lost or stolen phones) will no longer be able to access surespot using the selected identity.";
 "username"="username";
 "create_identity"="create identity";
-"clear_local_cache"="resync with server";
+"clear_local_cache"="clear local cache";
 "delete_all_messages"="delete all messages";
 "pay_what_you_like"="pay what you like";
 "delete_identity"="delete identity";
