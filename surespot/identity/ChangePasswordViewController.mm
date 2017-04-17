@@ -69,6 +69,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     //theme
     if ([UIUtils isBlackTheme]) {
+        [self.view setBackgroundColor:[UIColor blackColor]];
         [self.scrollView setBackgroundColor:[UIColor blackColor]];
     }
     

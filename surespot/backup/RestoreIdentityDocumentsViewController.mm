@@ -61,6 +61,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     //theme
     if ([UIUtils isBlackTheme]) {
+        [self.view setBackgroundColor:[UIColor blackColor]];
         [self.tvDocuments setBackgroundColor:[UIColor blackColor]];
         [self.tvDocuments setSeparatorColor:[UIUtils surespotSeparatorGrey]];
         [self.tvDocuments setSeparatorInset:UIEdgeInsetsZero];

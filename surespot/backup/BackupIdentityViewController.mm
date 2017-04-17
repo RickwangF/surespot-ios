@@ -93,6 +93,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     
     //theme
     if ([UIUtils isBlackTheme]) {
+        [self.view setBackgroundColor:[UIColor blackColor]];
         [self.scrollView setBackgroundColor:[UIColor blackColor]];
         [self.accountLabel setTextColor:[UIUtils surespotForegroundGrey]];
         [self.lSelect setTextColor:[UIUtils surespotForegroundGrey]];

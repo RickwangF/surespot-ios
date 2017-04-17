@@ -171,8 +171,6 @@ const Float32 voiceRecordDelay = 0.3;
     _theButton.backgroundColor = [UIColor whiteColor];
     _theButton.opaque = YES;
     
-    [self updateTabChangeUI];
-    [self setBackButtonIcon];
     
     [[[ChatManager sharedInstance] getChatController: _username] resume];
     
@@ -195,7 +193,6 @@ const Float32 voiceRecordDelay = 0.3;
     [_messageTextView.layer setBorderWidth:0.5];
     [_messageTextView setBackgroundColor:[UIColor clearColor]];
     _messageTextView.layer.cornerRadius = 5;
-    [_messageTextView setTextColor:[self getTextColor]];
     
     _inviteTextView.enablesReturnKeyAutomatically = NO;
     [_inviteTextView setFont:[UIFont systemFontOfSize:14]];
@@ -209,10 +206,12 @@ const Float32 voiceRecordDelay = 0.3;
     [_inviteTextView.internalTextView setAutocorrectionType:UITextAutocorrectionTypeNo];
     [_inviteTextView.internalTextView setAutocapitalizationType:UITextAutocapitalizationTypeNone];
     [_inviteTextView.internalTextView setSpellCheckingType:UITextSpellCheckingTypeNo];
-    [_inviteTextView setTextColor:[self getTextColor]];
     
+    [self updateTabChangeUI];
+    [self setBackButtonIcon];
     [self setTextBoxHints];
     [self setupSideView];
+    [self setThemeStuff];
 }
 
 - (void) setupSideView {
@@ -2646,6 +2645,7 @@ const Float32 voiceRecordDelay = 0.3;
         [self.navigationController popViewControllerAnimated:YES];
         [self.navigationController popToViewController: self animated:FALSE];
         [self.navigationController pushViewController:_appSettingsViewController animated:FALSE];
+        [self setThemeStuff];
     }
     
     [self updateTabChangeUI];
@@ -2657,6 +2657,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     // your code here to reconfigure the app for changed settings
     [self setBackgroundImageController:sender];
+    [self setThemeStuff];
 }
 
 - (void)settingsViewController:(IASKAppSettingsViewController*)sender buttonTappedForSpecifier:(IASKSpecifier*)specifier {
@@ -2963,6 +2964,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     }
 }
 
-
+-(void) setThemeStuff {
+    [_messageTextView setTextColor:[self getTextColor]];
+    [_inviteTextView setTextColor:[self getTextColor]];
+}
 
 @end
