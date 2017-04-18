@@ -33,4 +33,5 @@
 -(void) setFriendAlias: (NSString *) alias data: (NSString *) data  friendname: (NSString *) friendname version: (NSString *) version iv: (NSString *) iv hashed:(BOOL) hashed;
 -(void) removeFriendAlias: (NSString *) friendname;
 -(void) removeFriendImage: (NSString *) friendname;
+-(void) closeAllChats;
 @end

@@ -1197,6 +1197,7 @@ static const int MAX_RETRY_DELAY = 30;
 
 -(void) logout {
     DDLogInfo(@"logout");
+    [_homeDataSource closeAllChats];
     [self pause];
 }
 

@@ -77,7 +77,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         DDLogInfo(@"loadFriends success");
         NSDictionary* userInfo = @{@"key": @"loadFriends"};
         [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:self userInfo:userInfo];
-
+        
         
     } failureBlock:^(NSURLSessionTask *operation,  NSError *Error) {
         DDLogInfo(@"response failure: %@",  Error);
@@ -329,6 +329,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         [self writeToDisk];
         [self postRefresh];
+    }
+}
+
+-(void) closeAllChats {
+    @synchronized(_friends) {
+        for (Friend * f : _friends) {
+            [f setChatActive:NO];
+        }
     }
 }
 
