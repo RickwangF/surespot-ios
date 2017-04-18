@@ -1105,7 +1105,7 @@ const Float32 voiceRecordDelay = 0.3;
         
         
         if (messages.count > 0 && indexPath.row < messages.count) {
-            DDLogInfo(@"we have chat messages for: %@", [aliasMap username]);
+            DDLogVerbose(@"we have chat messages for: %@", [aliasMap username]);
             
             SurespotMessage * message = [messages objectAtIndex:indexPath.row];
             NSString * plainData = [message plainData];
@@ -1517,14 +1517,12 @@ const Float32 voiceRecordDelay = 0.3;
         //create the data source
         [[[ChatManager sharedInstance] getChatController: _username] createDataSourceForFriendname:username availableId: availableId availableControlId:availableControlId callback:^(id result) {
             DDLogDebug(@"data source created for user: %@", username);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                DDLogDebug(@"removing tab loading for username: %@", username);
-                [_tabLoading removeObjectForKey:username];
-                //   [_swipeView loadViewAtIndex:index];
-                [chatView reloadData];
-                [self scrollTableViewToBottom:chatView animated:NO];
-            });
+            
+            DDLogDebug(@"removing tab loading for username: %@", username);
+            [_tabLoading removeObjectForKey:username];
+            //   [_swipeView loadViewAtIndex:index];
+            [chatView reloadData];
+            [self scrollTableViewToBottom:chatView animated:NO];
             
         }];
     }
@@ -1544,8 +1542,9 @@ const Float32 voiceRecordDelay = 0.3;
                 }
             }
             
-            DDLogVerbose(@"scrolling to index: %ld", (long)index);
+            DDLogDebug(@"scrolling to index: %ld", (long)index);
             _scrollingTo = index;
+            
             [_swipeView scrollToPage:index duration:0.5];
         }
     }
@@ -2780,7 +2779,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     //reload the settings table view
     [controller.tableView reloadData];
-
+    
     //reload the table view cells
     @synchronized (_chats) {
         for (NSString * key in [_chats allKeys]) {
