@@ -10,6 +10,7 @@
 #import "UIUtils.h"
 #import "EncryptionController.h"
 #import "IdentityController.h"
+#import "CocoaLumberjack.h"
 
 #define INVITER 32
 #define MESSAGE_ACTIVITY 16
@@ -18,9 +19,15 @@
 #define INVITED 2
 #define DELETED 1
 
+#ifdef DEBUG
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+#else
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
+#endif
+
 @interface  Friend()
 @property (nonatomic, assign) BOOL newMessages;
-@property (nonatomic, assign) NSString * ourUsername;
+@property (nonatomic, strong) NSString * ourUsername;
 @end
 
 @implementation Friend
