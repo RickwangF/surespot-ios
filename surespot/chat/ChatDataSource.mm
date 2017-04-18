@@ -14,13 +14,12 @@
 #import "FileController.h"
 #import "CocoaLumberjack.h"
 #import "UIUtils.h"
-//#import "ChatManager.h"
 #import "SurespotConstants.h"
 #import "SDWebImageManager.h"
 #import "ChatManager.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -112,7 +111,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }];
             }
             else {
-                initCallback(nil);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    initCallback(nil);
+                });
             }
             
         });
