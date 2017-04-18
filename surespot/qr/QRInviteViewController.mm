@@ -10,6 +10,7 @@
 #import "SurespotConstants.h"
 #import "NSBundle+FallbackLanguage.h"
 #import "UIUtils.h"
+#import "SurespotConfiguration.h"
 
 @interface QRInviteViewController ()
 @property (strong, nonatomic) IBOutlet UITextView *inviteBlurb;
@@ -62,7 +63,7 @@
 
 -(UIImage *) generateQRInviteImage: (NSString *) username {
     int qrcodeImageDimension = 250;
-    NSString * inviteUrl = [NSString stringWithFormat:@"%@%@%@", @"https://server.surespot.me/autoinvite/", [username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/qr_ios"];
+    NSString * inviteUrl = [NSString stringWithFormat:@"%@/%@%@", [[SurespotConfiguration sharedInstance] baseUrl], [username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/qr_ios"];
     
     
     // Generation of QR code image

@@ -43,6 +43,7 @@
 #import "SideMenu-Swift.h"
 #import "SurespotSettingsViewController.h"
 #import "SurespotLeftNavButton.h"
+#import "SurespotConfiguration.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -1885,7 +1886,8 @@ const Float32 voiceRecordDelay = 0.3;
     REMenuItem * shareItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"share_invite_link", nil) image:[UIImage imageNamed:@"blue_heart"] highlightedImage:nil action:^(REMenuItem * menuitem){
         
         _progressView = [LoadingView showViewKey:@"invite_progress_text"];
-        NSString * inviteUrl = [NSString stringWithFormat:@"%@%@%@", @"https://server.surespot.me/autoinvite/", [_username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/ios"];
+        NSString * inviteUrl = [NSString stringWithFormat:@"%@%@%@%@",
+                                [[SurespotConfiguration sharedInstance] baseUrl] ,@"/autoinvite/", [_username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/ios"];
         
         
         [[[NetworkManager sharedInstance] getNetworkController:nil] getShortUrl:inviteUrl callback:^(id shortUrl) {
