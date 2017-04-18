@@ -118,7 +118,11 @@ const Float32 voiceRecordDelay = 0.3;
     _swipeView.truncateFinalPage =NO ;
     _swipeView.delaysContentTouches = YES;
     _swipeView.bounces = NO;
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+    
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
+    {
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    }
     
     // [self registerForKeyboardNotifications];
     self.keyboardState = [[KeyboardState alloc] init];
@@ -129,8 +133,11 @@ const Float32 voiceRecordDelay = 0.3;
     
     self.navigationItem.title = _username;
     
+    
     //don't swipe to back stack
-    self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+    }
     
     
     //listen for  notifications
@@ -499,6 +506,7 @@ const Float32 voiceRecordDelay = 0.3;
         id indexPath =[visibleCells objectAtIndex:[visibleCells count]-1];
         DDLogVerbose(@"saving index path %@ for home", indexPath );
         [_bottomIndexPaths setObject: indexPath forKey: @"" ];
+        
     }
     
     //save scroll indices
@@ -507,12 +515,14 @@ const Float32 voiceRecordDelay = 0.3;
         for (NSString * key in [_chats allKeys]) {
             id tableView = [_chats objectForKey:key];
             
-            NSArray * visibleCells = [tableView indexPathsForVisibleRows];
-            
-            if ([visibleCells count ] > 0) {
-                id indexPath =[visibleCells objectAtIndex:[visibleCells count]-1];
-                DDLogVerbose(@"saving index path %@ for key %@", indexPath , key);
-                [_bottomIndexPaths setObject: indexPath forKey: key ];
+            if ([tableView respondsToSelector:@selector(indexPathsForVisibleRows)]) {
+                NSArray * visibleCells = [tableView indexPathsForVisibleRows];
+                
+                if ([visibleCells count ] > 0) {
+                    id indexPath =[visibleCells objectAtIndex:[visibleCells count]-1];
+                    DDLogVerbose(@"saving index path %@ for key %@", indexPath , key);
+                    [_bottomIndexPaths setObject: indexPath forKey: key ];
+                }
             }
         }
     }
@@ -571,6 +581,7 @@ const Float32 voiceRecordDelay = 0.3;
             }
         }
     }
+    
 }
 
 -(void) showHeader {
@@ -681,7 +692,9 @@ const Float32 voiceRecordDelay = 0.3;
             [_friendView registerNib:[UINib nibWithNibName:@"HomeCell" bundle:nil] forCellReuseIdentifier:@"HomeCell"];
             _friendView.delegate = self;
             _friendView.dataSource = self;
-            [_friendView setSeparatorInset:UIEdgeInsetsZero];
+            if ([_friendView respondsToSelector:@selector(setSeparatorInset:)]) {
+                [_friendView setSeparatorInset:UIEdgeInsetsZero];
+            }
             
             [self addLongPressGestureRecognizer:_friendView];
         }
@@ -1105,9 +1118,8 @@ const Float32 voiceRecordDelay = 0.3;
         
         
         if (messages.count > 0 && indexPath.row < messages.count) {
-            DDLogVerbose(@"we have chat messages for: %@", [aliasMap username]);
             
-            SurespotMessage * message = [messages objectAtIndex:indexPath.row];
+            SurespotMessage * message =[messages objectAtIndex:indexPath.row];
             NSString * plainData = [message plainData];
             static NSString *OurCellIdentifier = @"OurMessageView";
             static NSString *TheirCellIdentifier = @"TheirMessageView";
@@ -1448,44 +1460,20 @@ const Float32 voiceRecordDelay = 0.3;
         
         
         __block NSInteger index = 0;
-        
-        UITableView * chatView = [[UITableView alloc] initWithFrame:_swipeView.frame];
-        [chatView setDelegate:self];
-        [chatView setDataSource: self];
-        [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
-        [chatView registerNib:[UINib nibWithNibName:@"TheirMessageCell" bundle:nil] forCellReuseIdentifier:@"TheirMessageView"];
-        [chatView setBackgroundColor:[UIColor clearColor]];
-        [chatView setScrollsToTop:NO];
-        [chatView setDirectionalLockEnabled:YES];
-        [chatView setSeparatorColor: [UIUtils surespotSeparatorGrey]];
-        [chatView setSeparatorInset:UIEdgeInsetsZero];
-        [self addLongPressGestureRecognizer:chatView];
-        // setup pull-to-refresh
-        __weak UITableView *weakView = chatView;
-        [chatView addPullToRefreshWithActionHandler:^{
-            
-            [[[ChatManager sharedInstance] getChatController: _username] loadEarlierMessagesForUsername: username callback:^(id result) {
-                if (result) {
-                    NSInteger resultValue = [result integerValue];
-                    if (resultValue == 0 || resultValue == NSIntegerMax) {
-                        [UIUtils showToastKey:@"all_messages_loaded"];
-                    }
-                    else {
-                        DDLogVerbose(@"loaded %@ earlier messages for user: %@", result, username);
-                        [self updateTableView:weakView withNewRowCount:[result intValue]];
-                    }
-                }
-                else {
-                    [UIUtils showToastKey:@"loading_earlier_messages_failed"];
-                }
-                
-                [weakView.pullToRefreshView stopAnimating];
-                
-            }];
-        }];
-        
         @synchronized (_chats) {
-            [_chats setObject: chatView forKey:username];
+            UITableView * emptyView = [[UITableView alloc] initWithFrame:_swipeView.frame];
+            [emptyView setDelegate:self];
+            [emptyView setDataSource: self];
+            [emptyView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
+            [emptyView registerNib:[UINib nibWithNibName:@"TheirMessageCell" bundle:nil] forCellReuseIdentifier:@"TheirMessageView"];
+            
+            [emptyView setBackgroundColor:[UIColor clearColor]];
+            [emptyView setScrollsToTop:NO];
+            [emptyView setDirectionalLockEnabled:YES];
+            [emptyView setSeparatorColor: [UIUtils surespotSeparatorGrey]];
+            [emptyView setSeparatorInset:UIEdgeInsetsZero];
+            DDLogDebug(@"loadChat created empty view %@ for username %@", emptyView, username);
+            [_chats setObject: emptyView forKey:username];
             
             NSArray * sortedChats = [self sortedAliasedChats];
             for (int i=0;i<[sortedChats count];i++) {
@@ -1500,7 +1488,6 @@ const Float32 voiceRecordDelay = 0.3;
         [_swipeView loadViewAtIndex:index];
         [_swipeView updateItemSizeAndCount];
         [_swipeView updateScrollViewDimensions];
-        [chatView reloadData];
         
         
         if (show) {
@@ -1517,12 +1504,50 @@ const Float32 voiceRecordDelay = 0.3;
         //create the data source
         [[[ChatManager sharedInstance] getChatController: _username] createDataSourceForFriendname:username availableId: availableId availableControlId:availableControlId callback:^(id result) {
             DDLogDebug(@"data source created for user: %@", username);
+            UITableView * chatView = [[UITableView alloc] initWithFrame:_swipeView.frame];
+            [chatView setDelegate:self];
+            [chatView setDataSource: self];
+            [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
+            [chatView registerNib:[UINib nibWithNibName:@"TheirMessageCell" bundle:nil] forCellReuseIdentifier:@"TheirMessageView"];
+            [chatView setBackgroundColor:[UIColor clearColor]];
+            [chatView setScrollsToTop:NO];
+            [chatView setDirectionalLockEnabled:YES];
+            [chatView setSeparatorColor: [UIUtils surespotSeparatorGrey]];
+            [chatView setSeparatorInset:UIEdgeInsetsZero];
+            [self addLongPressGestureRecognizer:chatView];
+            
+            // setup pull-to-refresh
+            __weak UITableView *weakView = chatView;
+            [chatView addPullToRefreshWithActionHandler:^{
+                
+                [[[ChatManager sharedInstance] getChatController: _username] loadEarlierMessagesForUsername: username callback:^(id result) {
+                    if (result) {
+                        NSInteger resultValue = [result integerValue];
+                        if (resultValue == 0 || resultValue == NSIntegerMax) {
+                            [UIUtils showToastKey:@"all_messages_loaded"];
+                        }
+                        else {
+                            DDLogVerbose(@"loaded %@ earlier messages for user: %@", result, username);
+                            [self updateTableView:weakView withNewRowCount:[result intValue]];
+                        }
+                    }
+                    else {
+                        [UIUtils showToastKey:@"loading_earlier_messages_failed"];
+                    }
+                    
+                    [weakView.pullToRefreshView stopAnimating];
+                    
+                }];
+            }];
             
             DDLogDebug(@"removing tab loading for username: %@", username);
+            [_chats setObject:chatView forKey:username];
             [_tabLoading removeObjectForKey:username];
-            //   [_swipeView loadViewAtIndex:index];
-            [chatView reloadData];
-            [self scrollTableViewToBottom:chatView animated:NO];
+            [_swipeView loadViewAtIndex:index];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW,50*NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+                [self scrollTableViewToBottom:chatView animated:NO];
+            });
             
         }];
     }
@@ -1546,6 +1571,9 @@ const Float32 voiceRecordDelay = 0.3;
             _scrollingTo = index;
             
             [_swipeView scrollToPage:index duration:0.5];
+            //            dispatch_after(dispatch_time(DISPATCH_TIME_NOW,50*NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            //                [self scrollTableViewToBottom:cView animated:NO];
+            //            });
         }
     }
 }
@@ -1953,7 +1981,9 @@ const Float32 voiceRecordDelay = 0.3;
         NSString * getCurrentChat = [self getCurrentTabName];
         if (getCurrentChat) {
             id currentTableView =[_chats objectForKey:getCurrentChat];
-            [currentTableView deselectRowAtIndexPath:[currentTableView indexPathForSelectedRow] animated:YES];
+            if ([currentTableView respondsToSelector:@selector(deselectRowAtIndexPath:animated:)]) {
+                [currentTableView deselectRowAtIndexPath:[currentTableView indexPathForSelectedRow] animated:YES];
+            }
         }
         else {
             [_friendView deselectRowAtIndexPath:[_friendView indexPathForSelectedRow] animated:YES];
@@ -2784,7 +2814,9 @@ const Float32 voiceRecordDelay = 0.3;
     @synchronized (_chats) {
         for (NSString * key in [_chats allKeys]) {
             id tableView = [_chats objectForKey:key];
-            [tableView reloadData];
+            if ([tableView respondsToSelector:@selector(reloadData)]) {
+                [tableView reloadData];
+            }
         }
     }
     
