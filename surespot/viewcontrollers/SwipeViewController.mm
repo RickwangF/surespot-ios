@@ -119,10 +119,7 @@ const Float32 voiceRecordDelay = 0.3;
     _swipeView.delaysContentTouches = YES;
     _swipeView.bounces = NO;
     
-    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
-    {
-        self.edgesForExtendedLayout = UIRectEdgeNone;
-    }
+    self.edgesForExtendedLayout = UIRectEdgeNone;    
     
     // [self registerForKeyboardNotifications];
     self.keyboardState = [[KeyboardState alloc] init];
@@ -133,12 +130,8 @@ const Float32 voiceRecordDelay = 0.3;
     
     self.navigationItem.title = _username;
     
-    
     //don't swipe to back stack
-    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
-        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
-    }
-    
+    self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     
     //listen for  notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessages:) name:@"refreshMessages" object:nil];
@@ -515,15 +508,14 @@ const Float32 voiceRecordDelay = 0.3;
         for (NSString * key in [_chats allKeys]) {
             id tableView = [_chats objectForKey:key];
             
-            if ([tableView respondsToSelector:@selector(indexPathsForVisibleRows)]) {
-                NSArray * visibleCells = [tableView indexPathsForVisibleRows];
-                
-                if ([visibleCells count ] > 0) {
-                    id indexPath =[visibleCells objectAtIndex:[visibleCells count]-1];
-                    DDLogVerbose(@"saving index path %@ for key %@", indexPath , key);
-                    [_bottomIndexPaths setObject: indexPath forKey: key ];
-                }
+            NSArray * visibleCells = [tableView indexPathsForVisibleRows];
+            
+            if ([visibleCells count ] > 0) {
+                id indexPath =[visibleCells objectAtIndex:[visibleCells count]-1];
+                DDLogVerbose(@"saving index path %@ for key %@", indexPath , key);
+                [_bottomIndexPaths setObject: indexPath forKey: key ];
             }
+            
         }
     }
 }
@@ -692,9 +684,9 @@ const Float32 voiceRecordDelay = 0.3;
             [_friendView registerNib:[UINib nibWithNibName:@"HomeCell" bundle:nil] forCellReuseIdentifier:@"HomeCell"];
             _friendView.delegate = self;
             _friendView.dataSource = self;
-            if ([_friendView respondsToSelector:@selector(setSeparatorInset:)]) {
-                [_friendView setSeparatorInset:UIEdgeInsetsZero];
-            }
+            
+            [_friendView setSeparatorInset:UIEdgeInsetsZero];
+            
             
             [self addLongPressGestureRecognizer:_friendView];
         }
@@ -1981,9 +1973,8 @@ const Float32 voiceRecordDelay = 0.3;
         NSString * getCurrentChat = [self getCurrentTabName];
         if (getCurrentChat) {
             id currentTableView =[_chats objectForKey:getCurrentChat];
-            if ([currentTableView respondsToSelector:@selector(deselectRowAtIndexPath:animated:)]) {
-                [currentTableView deselectRowAtIndexPath:[currentTableView indexPathForSelectedRow] animated:YES];
-            }
+            [currentTableView deselectRowAtIndexPath:[currentTableView indexPathForSelectedRow] animated:YES];
+            
         }
         else {
             [_friendView deselectRowAtIndexPath:[_friendView indexPathForSelectedRow] animated:YES];
@@ -2814,9 +2805,8 @@ const Float32 voiceRecordDelay = 0.3;
     @synchronized (_chats) {
         for (NSString * key in [_chats allKeys]) {
             id tableView = [_chats objectForKey:key];
-            if ([tableView respondsToSelector:@selector(reloadData)]) {
-                [tableView reloadData];
-            }
+            [tableView reloadData];
+            
         }
     }
     
