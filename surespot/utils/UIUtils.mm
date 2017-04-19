@@ -126,10 +126,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         NSInteger heightAdj = 35;
         BOOL ours = [ChatUtils isOurMessage:message ourUsername:ourUsername];
         if (ours) {
-            offset = 50;
+            offset = 60;
         }
         else {
-            offset = 100;
+            offset = 110;
         }
         //http://stackoverflow.com/questions/12744558/uistringdrawing-methods-dont-seem-to-be-thread-safe-in-ios-6
         
