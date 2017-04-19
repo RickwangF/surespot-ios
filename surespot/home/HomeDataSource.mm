@@ -35,18 +35,22 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         //otherwise load from network
         NSString * path =[FileController getHomeFilename: ourUsername];
         DDLogVerbose(@"looking for home data at: %@", path);
-        id homeData = nil;
-        @try {
-            homeData = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
-        }
-        @catch (NSException * e) {
-            
-        }
-        if (homeData) {
-            DDLogVerbose(@"loading home data from: %@", path);
-            _latestUserControlId = [[homeData objectForKey:@"userControlId"] integerValue];
-            _friends = [homeData objectForKey:@"friends"];
-        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            id homeData = nil;
+            @try {
+                homeData = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
+            }
+            @catch (NSException * e) {
+                
+            }
+            if (homeData) {
+                
+                DDLogVerbose(@"loading home data from: %@", path);
+                _latestUserControlId = [[homeData objectForKey:@"userControlId"] integerValue];
+                _friends = [homeData objectForKey:@"friends"];
+                
+            }
+        });
         
         if (!_friends) {
             _friends = [NSMutableArray new];
@@ -71,7 +75,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         for (NSDictionary * friendDict in friendDicts) {
             [_friends addObject:[[Friend alloc] initWithDictionary: friendDict ourUsername:_ourUsername]];
         };
-        [self writeToDisk];
         [self postRefresh];
         callback(YES);
         DDLogInfo(@"loadFriends success");
@@ -150,12 +153,18 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
 }
 
--(void) postRefresh {
+-(void) postRefreshSave: (BOOL) save {
     [self sort];
-    [self writeToDisk];
+    if (save) {
+        [self writeToDisk];
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshHome" object:nil];
     });
+}
+
+-(void) postRefresh {
+    [self postRefreshSave:YES];
 }
 
 -(Friend *) getFriendByName: (NSString *) name {
@@ -273,7 +282,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [afriend setImageIv:iv];
         [afriend setImageHashed:hashed];
         
-        [self writeToDisk];
         [self postRefresh];
     }
 }
@@ -294,7 +302,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             [afriend decryptAlias];
         }
         
-        [self writeToDisk];
         [self postRefresh];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"reloadSwipeView" object: nil];
     }
@@ -309,7 +316,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         [afriend setAliasPlain: nil];
         
-        [self writeToDisk];
         [self postRefresh];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"reloadSwipeView" object: nil];
     }
@@ -327,7 +333,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [afriend setImageVersion:nil];
         [afriend setImageIv:nil];
         
-        [self writeToDisk];
         [self postRefresh];
     }
 }

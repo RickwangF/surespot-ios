@@ -2880,7 +2880,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 -(void) userSwitch {
     DDLogDebug(@"userSwitch");
-    [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: YES completion:nil];
     
     @synchronized (_chats) {
         [_chats removeAllObjects];

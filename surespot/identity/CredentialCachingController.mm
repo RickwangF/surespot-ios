@@ -102,7 +102,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) updateIdentity: (SurespotIdentity *) identity onlyIfExists: (BOOL) onlyIfExists {
     
-    if ([_identitiesDict objectForKey:identity.username] || !onlyIfExists) {
+    SurespotIdentity * cachedIdentity = [_identitiesDict objectForKey:identity.username];
+    
+    if (cachedIdentity || !onlyIfExists) {
         [_identitiesDict setObject:identity forKey:identity.username];
         
         //add all the public keys for this identity to the cache

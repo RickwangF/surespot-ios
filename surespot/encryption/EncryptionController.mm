@@ -646,21 +646,26 @@ int const PBKDF_ROUNDS = 20000;
         return [self decryptData:cipherData usingKey:key usingIv:ivData];
     }
     
-    return nil;
-    
+    return nil;    
 }
 
 
 +(ECDHPublicKey *) createPublicDHFromPrivKey: (ECDHPrivateKey *) privateKey {
-    ECDHPublicKey * dhPubKey = new ECDHPublicKey();
-    privateKey->MakePublicKey(*dhPubKey);
-    return dhPubKey;
+//    if (privateKey) {
+        ECDHPublicKey * dhPubKey = new ECDHPublicKey();
+        privateKey->MakePublicKey(*dhPubKey);
+        return dhPubKey;
+  //  }
+    return nil;
 }
 
 +(ECDSAPublicKey *) createPublicDSAFromPrivKey: (ECDSAPrivateKey *) privateKey {
-    CryptoPP::ECDSA<ECP, CryptoPP::SHA256>::PublicKey * dsaPubKey = new ECDSAPublicKey();
-    privateKey->MakePublicKey(*dsaPubKey);
-    return dsaPubKey;
+  if (privateKey) {
+        CryptoPP::ECDSA<ECP, CryptoPP::SHA256>::PublicKey * dsaPubKey = new ECDSAPublicKey();
+        privateKey->MakePublicKey(*dsaPubKey);
+        return dsaPubKey;
+    }
+    return nil;
 }
 
 

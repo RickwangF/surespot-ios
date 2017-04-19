@@ -22,6 +22,7 @@
 #import "FileController.h"
 #import "NSBundle+FallbackLanguage.h"
 #import "NetworkManager.h"
+#import "SideMenu-swift.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -298,10 +299,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if ([[CredentialCachingController sharedInstance] setSessionForUsername:username]) {
         UINavigationController * navController = (UINavigationController *) self.window.rootViewController;
         CATransition* transition = [CATransition animation];
-        transition.duration = 0.5;
+        transition.duration = 0.3;
         transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
         transition.type = kCATransitionFade;
         [navController.view.layer addAnimation:transition forKey:nil];
+            [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: NO completion:nil];
         UIViewController * c =[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"];
         [navController setViewControllers:@[c] animated:NO];
     }
