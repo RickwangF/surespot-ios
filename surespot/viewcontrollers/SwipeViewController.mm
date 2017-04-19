@@ -120,7 +120,7 @@ const Float32 voiceRecordDelay = 0.3;
     _swipeView.delaysContentTouches = YES;
     _swipeView.bounces = NO;
     
-    self.edgesForExtendedLayout = UIRectEdgeNone;    
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     
     // [self registerForKeyboardNotifications];
     self.keyboardState = [[KeyboardState alloc] init];
@@ -727,7 +727,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void)swipeViewCurrentItemIndexDidChange:(SwipeView *)swipeView
 {
     NSInteger currPage = swipeView.currentPage;
-    //    DDLogInfo(@"swipeview index changed to %ld scrolling to: %ld", (long)currPage, (long)_scrollingTo);
+    DDLogInfo(@"swipeview index changed to %ld scrolling to: %ld", (long)currPage, (long)_scrollingTo);
     
     UITableView * tableview;
     if (currPage == 0) {
@@ -1451,7 +1451,6 @@ const Float32 voiceRecordDelay = 0.3;
         
         [_tabLoading setObject:@"yourmama" forKey:username];
         
-        
         __block NSInteger index = 0;
         @synchronized (_chats) {
             UITableView * emptyView = [[UITableView alloc] initWithFrame:_swipeView.frame];
@@ -1560,13 +1559,15 @@ const Float32 voiceRecordDelay = 0.3;
                 }
             }
             
-            DDLogDebug(@"scrolling to index: %ld", (long)index);
-            _scrollingTo = index;
+            NSInteger currentIndex = [_swipeView currentItemIndex];
+            DDLogDebug(@"loadChat, currentIndex: %ld", (long)index);
             
-            [_swipeView scrollToPage:index duration:0.5];
-            //            dispatch_after(dispatch_time(DISPATCH_TIME_NOW,50*NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
-            //                [self scrollTableViewToBottom:cView animated:NO];
-            //            });
+            if (currentIndex != index) {
+                DDLogDebug(@"scrolling to index: %ld", (long)index);
+                _scrollingTo = index;
+                
+                [_swipeView scrollToPage:index duration:0.5];
+            }
         }
     }
 }
