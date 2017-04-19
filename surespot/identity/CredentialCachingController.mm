@@ -40,7 +40,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         sharedInstance.latestVersionsDict = [[NSMutableDictionary alloc] init];
         sharedInstance.cookiesDict = [[NSMutableDictionary alloc] init];
         sharedInstance.identitiesDict = [[NSMutableDictionary alloc] init];
-
+        
         sharedInstance.genSecretQueue = [[NSOperationQueue alloc] init];
         [sharedInstance.genSecretQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         
@@ -298,7 +298,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     BOOL sessionSet = identity && (password || hasCookie);
     if (sessionSet) {
         _activeUsername = username;
-        
+        [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"last_user"];
         if (password) {
             [self loadSharedSecretsForUsername:username password:password];
         }
