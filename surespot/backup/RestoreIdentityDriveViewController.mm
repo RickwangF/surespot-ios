@@ -20,7 +20,7 @@
 #import "SurespotConfiguration.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelInfo;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -82,7 +82,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
         [self.labelGoogleDriveBackup setTextColor:[UIUtils surespotForegroundGrey]];
         [self.labelGoogleDriveBackup setBackgroundColor:[UIUtils surespotGrey]];
         [self.accountLabel setTextColor:[UIUtils surespotForegroundGrey]];
-//        [self.accountLabel setBackgroundColor:[UIUtils surespotGrey]];
+        //        [self.accountLabel setBackgroundColor:[UIUtils surespotGrey]];
     }
 }
 
@@ -269,6 +269,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
         DDLogInfo(@"got identity folder id %@", identityDirId);
         
         if (!identityDirId) {
+            DDLogDebug(@"Tearing progress down");
             [_progressView removeView];
             _progressView = nil;
             [UIUtils showToastKey:@"could_not_list_identities_from_google_drive" duration:2];
@@ -288,6 +289,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                       
                       if (error) {
                           DDLogError(@"An error occurred: %@", error);
+                          DDLogDebug(@"Tearing progress down");
                           [_progressView removeView];
                           _progressView = nil;
                           [UIUtils showToastKey:@"could_not_list_identities_from_google_drive" duration:2];
@@ -299,6 +301,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                       NSInteger dlCount = result.files.count;
                       if (dlCount == 0) {
                           //no identities to download
+                          DDLogDebug(@"Tearing progress down");
                           [_progressView removeView];
                           _progressView = nil;
                           callback(nil);
@@ -306,15 +309,16 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                       }
                       
                       NSMutableArray * identityFiles = [NSMutableArray new];
-    
+                      
                       for (GTLRDrive_File *file in result.files) {
-                          DDLogInfo(@"\nfile name = %@", file.originalFilename);
+                          DDLogInfo(@"file name = %@", file.originalFilename);
                           NSMutableDictionary * identityFile = [NSMutableDictionary new];
                           [identityFile  setObject: [[IdentityController sharedInstance] identityNameFromFile: file.originalFilename] forKey:@"name"];
                           [identityFile setObject:[file.modifiedTime date] forKey:@"date"];
                           [identityFile setObject:file.identifier forKey:@"identifier"];
                           [identityFiles addObject:identityFile];
                       }
+                      DDLogDebug(@"Tearing progress down");
                       [_progressView removeView];
                       _progressView = nil;
                       callback(identityFiles);
@@ -407,33 +411,39 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     [self.driveService executeQuery:query completionHandler:^(GTLRServiceTicket * ticket, GTLRDataObject *file, NSError * _Nullable error) {
         
         if (error == nil) {
-            NSData * identityData = [FileController gunzipIfNecessary:file.data];
-            [[IdentityController sharedInstance] importIdentityData:identityData username:name password:password callback:^(id result) {
-                [_progressView removeView];
-                _progressView = nil;
-                
-                if (result) {
-                    [UIUtils showToastMessage:result duration:2];
-                }
-                else {
-                    [UIUtils showToastKey:@"identity_imported_successfully" duration:2];
-                }
-                
-                //update stored password
-                if (![UIUtils stringIsNilOrEmpty:_storedPassword] && ![_storedPassword isEqualToString:password]) {
-                    [[IdentityController sharedInstance] storePasswordForIdentity:name password:password];
-                }
-                
-                _storedPassword = nil;
-                
-                //if we now only have 1 identity, go to login view controller
-                if ([[[IdentityController sharedInstance] getIdentityNames] count] == 1) {
-                    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-                    [self.navigationController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
-                }
-            }];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+                NSData * identityData = [FileController gunzipIfNecessary:file.data];
+                [[IdentityController sharedInstance] importIdentityData:identityData username:name password:password callback:^(id result) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        DDLogDebug(@"Tearing progress down");
+                        [_progressView removeView];
+                        _progressView = nil;
+                        
+                        if (result) {
+                            [UIUtils showToastMessage:result duration:2];
+                        }
+                        else {
+                            [UIUtils showToastKey:@"identity_imported_successfully" duration:2];
+                        }
+                        
+                        //update stored password
+                        if (![UIUtils stringIsNilOrEmpty:_storedPassword] && ![_storedPassword isEqualToString:password]) {
+                            [[IdentityController sharedInstance] storePasswordForIdentity:name password:password];
+                        }
+                        
+                        _storedPassword = nil;
+                        
+                        //if we now only have 1 identity, go to login view controller
+                        if ([[[IdentityController sharedInstance] getIdentityNames] count] == 1) {
+                            UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+                            [self.navigationController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
+                        }
+                    });
+                }];
+            });
         } else {
             DDLogError(@"An error occurred: %@", error);
+            DDLogDebug(@"Tearing progress down");
             [_progressView removeView];
             _progressView = nil;
             [UIUtils showToastKey:@"could_not_list_identities_from_google_drive" duration:2];

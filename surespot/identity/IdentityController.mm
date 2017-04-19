@@ -151,9 +151,9 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         //set last logged in user pref
         [[NSUserDefaults standardUserDefaults] setObject:identity.username forKey:@"last_user"];
         
-//        if (!relogin) {
-//            [[[ChatManager sharedInstance] getChatController: identity.username] login];
-//        }
+        //        if (!relogin) {
+        //            [[[ChatManager sharedInstance] getChatController: identity.username] login];
+        //        }
     }
 }
 
@@ -401,35 +401,38 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
     NSString * passwordString = [derivedPassword SR_stringByBase64Encoding];
     NSString * signatureString = [signature SR_stringByBase64Encoding];
     
-    
-    
-    [[[NetworkManager sharedInstance] getNetworkController:identity.username] validateUsername:identity.username
-                                                password:passwordString
-                                               signature:signatureString
-                                            successBlock:^(NSURLSessionTask *operation, id responseObject) {
-                                                //regenerate the identity with full validation for saving
-                                                SurespotIdentity * validatedIdentity = [self decodeIdentityData:decryptedIdentity password:password validate:YES];
-                                                if ([self saveIdentity:validatedIdentity withPassword:[password stringByAppendingString:CACHE_IDENTITY_ID]]) {
-                                                    [[CredentialCachingController sharedInstance] updateIdentity: identity onlyIfExists: YES];
-                                                    callback(nil);
-                                                }
-                                                else {
-                                                    callback([NSString stringWithFormat:NSLocalizedString(@"could_not_restore_identity_name", nil), username]);
-                                                }
-                                                
-                                            } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
-                                                switch ([(NSHTTPURLResponse*)operation.response statusCode]) {
-                                                    case 403:
-                                                        callback(NSLocalizedString(@"incorrect_password_or_key", nil));
-                                                        break;
-                                                    case 404:
-                                                        callback(NSLocalizedString(@"no_such_user", nil));
-                                                        break;
-                                                    default:
-                                                        callback([NSString stringWithFormat:NSLocalizedString(@"could_not_restore_identity_name", nil), username]);
-                                                        break;
-                                                }
-                                            }];
+    [[[NetworkManager sharedInstance] getNetworkController:identity.username]
+     validateUsername:identity.username
+     password:passwordString
+     signature:signatureString
+     successBlock:^(NSURLSessionTask *operation, id responseObject) {
+         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+             DDLogDebug(@"validated user");
+             //regenerate the identity with full validation for saving
+             SurespotIdentity * validatedIdentity = [self decodeIdentityData:decryptedIdentity password:password validate:YES];
+             if ([self saveIdentity:validatedIdentity withPassword:[password stringByAppendingString:CACHE_IDENTITY_ID]]) {
+                 [[CredentialCachingController sharedInstance] updateIdentity: identity onlyIfExists: YES];
+                 callback(nil);
+             }
+             else {
+                 callback([NSString stringWithFormat:NSLocalizedString(@"could_not_restore_identity_name", nil), username]);
+             }
+             
+         });
+         
+     } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
+         switch ([(NSHTTPURLResponse*)operation.response statusCode]) {
+             case 403:
+                 callback(NSLocalizedString(@"incorrect_password_or_key", nil));
+                 break;
+             case 404:
+                 callback(NSLocalizedString(@"no_such_user", nil));
+                 break;
+             default:
+                 callback([NSString stringWithFormat:NSLocalizedString(@"could_not_restore_identity_name", nil), username]);
+                 break;
+         }
+     }];
 }
 
 -(BOOL) importIdentityFilename: (NSString *) filePath username: (NSString * ) username password: (NSString *) password {
@@ -570,7 +573,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         NSString * sDsaPub = [[EncryptionController encodeDSAPublicKeyData:[EncryptionController createPublicDSAFromPrivKey:dsaPriv]] SR_stringByBase64Encoding];
         
         DDLogInfo(@"signed dh: %@, dsa: %@", sDhPub, sDsaPub);
-
+        
         
         [signatures setObject:[[EncryptionController signUsername:[identity username] andVersion:i andDhPubKey:sDhPub andDsaPubKey:sDsaPub withPrivateKey:privateDsaKey] SR_stringByBase64Encoding] forKey:currentVersion];
         if (i>1) {
