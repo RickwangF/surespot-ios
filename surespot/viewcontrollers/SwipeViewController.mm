@@ -1557,6 +1557,10 @@ const Float32 voiceRecordDelay = 0.3;
                 _scrollingTo = index;
                 
                 [_swipeView scrollToPage:index duration:0.5];
+                HomeDataSource * hds = [[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource];
+                if ([hds hasAnyNewMessages]) {
+                    [self scrollTableViewToBottom:cView];
+                }
             }
         }
     }
