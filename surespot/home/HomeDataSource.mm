@@ -35,22 +35,19 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         //otherwise load from network
         NSString * path =[FileController getHomeFilename: ourUsername];
         DDLogVerbose(@"looking for home data at: %@", path);
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            id homeData = nil;
-            @try {
-                homeData = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
-            }
-            @catch (NSException * e) {
-                
-            }
-            if (homeData) {
-                
-                DDLogVerbose(@"loading home data from: %@", path);
-                _latestUserControlId = [[homeData objectForKey:@"userControlId"] integerValue];
-                _friends = [homeData objectForKey:@"friends"];
-                
-            }
-        });
+        id homeData = nil;
+        @try {
+            homeData = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
+        }
+        @catch (NSException * e) {
+            DDLogError(@"error loading home data: %@", e);
+        }
+        if (homeData) {            
+            DDLogVerbose(@"loading home data from: %@", path);
+            _latestUserControlId = [[homeData objectForKey:@"userControlId"] integerValue];
+            _friends = [homeData objectForKey:@"friends"];
+        }
+        
         
         if (!_friends) {
             _friends = [NSMutableArray new];
