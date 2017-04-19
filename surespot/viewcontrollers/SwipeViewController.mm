@@ -950,7 +950,7 @@ const Float32 voiceRecordDelay = 0.3;
     
 }
 
--(UIColor *) getTextColor {
+-(UIColor *) getThemeForegroundColor {
     return _hasBackgroundImage ? [UIUtils surespotGrey] : ([UIUtils isBlackTheme] ? [UIUtils surespotForegroundGrey] : [UIColor blackColor]);
 }
 
@@ -986,7 +986,7 @@ const Float32 voiceRecordDelay = 0.3;
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
             cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
             cell.textLabel.numberOfLines = 0;
-            cell.textLabel.textColor = [self getTextColor];
+            cell.textLabel.textColor = [self getThemeForegroundColor];
             cell.backgroundColor = [UIColor clearColor];
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
             cell.userInteractionEnabled = NO;
@@ -1001,7 +1001,7 @@ const Float32 voiceRecordDelay = 0.3;
         // Configure the cell...
         Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource].friends objectAtIndex:indexPath.row];
         cell.friendLabel.text = afriend.nameOrAlias;
-        cell.friendLabel.textColor = [self getTextColor];
+        cell.friendLabel.textColor = [self getThemeForegroundColor];
         cell.backgroundColor = [UIColor clearColor];
         cell.friendName = afriend.name;
         cell.friendDelegate = [[ChatManager sharedInstance] getChatController: _username];
@@ -1099,7 +1099,7 @@ const Float32 voiceRecordDelay = 0.3;
             static NSString *CellIdentifier = @"Cell";
             UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             cell.textLabel.text = NSLocalizedString(@"no_messages", nil);
-            cell.textLabel.textColor = [self getTextColor];
+            cell.textLabel.textColor = [self getThemeForegroundColor];
             cell.backgroundColor = [UIColor clearColor];
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
             cell.userInteractionEnabled = NO;
@@ -1132,7 +1132,7 @@ const Float32 voiceRecordDelay = 0.3;
             cell.backgroundColor = [UIColor clearColor];
             
             
-            cell.messageLabel.textColor = [self getTextColor];
+            cell.messageLabel.textColor = [self getThemeForegroundColor];
             
             NSDictionary * linkAttributes = [NSMutableDictionary dictionary];
             [linkAttributes setValue:[NSNumber numberWithBool:YES] forKey:(NSString *)kCTUnderlineStyleAttributeName];
@@ -1145,8 +1145,8 @@ const Float32 voiceRecordDelay = 0.3;
             cell.messageLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink//phone number seems flaky..we have copy so not the end of teh world
             | NSTextCheckingTypePhoneNumber;
             
-            cell.messageSize.textColor = [self getTextColor];
-            cell.messageStatusLabel.textColor = [self getTextColor];
+            cell.messageSize.textColor = [self getThemeForegroundColor];
+            cell.messageStatusLabel.textColor = [self getThemeForegroundColor];
             
             cell.messageLabel.lineBreakMode = NSLineBreakByWordWrapping;
             
@@ -1449,11 +1449,12 @@ const Float32 voiceRecordDelay = 0.3;
         
         __block NSInteger index = 0;
         @synchronized (_chats) {
-            
-            UIView * emptyView = [[UIView alloc] initWithFrame:_swipeView.frame];
-            
-            DDLogDebug(@"loadChat created empty view %@ for username %@", emptyView, username);
-            [_chats setObject: emptyView forKey:username];
+            UIActivityIndicatorView * activityView = [[UIActivityIndicatorView alloc] initWithFrame:_swipeView.frame];
+            [activityView startAnimating];
+            [activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
+            [activityView setColor:[self getThemeForegroundColor]];
+            DDLogDebug(@"loadChat created activity view for username %@", username);
+            [_chats setObject: activityView forKey:username];
             
             NSArray * sortedChats = [self sortedAliasedChats];
             for (int i=0;i<[sortedChats count];i++) {
@@ -2985,8 +2986,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(void) setThemeStuff {
-    [_messageTextView setTextColor:[self getTextColor]];
-    [_inviteTextView setTextColor:[self getTextColor]];
+    [_messageTextView setTextColor:[self getThemeForegroundColor]];
+    [_inviteTextView setTextColor:[self getThemeForegroundColor]];
 }
 
 @end
