@@ -263,8 +263,10 @@ const Float32 voiceRecordDelay = 0.3;
     _swipeView.frame = frame;
     
     UITableView * tableView = [_chats objectForKey: [self getCurrentTabName]];
-    CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y + height);
-    [tableView setContentOffset:newOffset animated:NO];
+    if ([tableView respondsToSelector:@selector(contentOffset)]) {
+        CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y + height);
+        [tableView setContentOffset:newOffset animated:NO];
+    }
 }
 
 -(void)growingTextViewDidChange:(HPGrowingTextView *)growingTextView {
@@ -414,8 +416,10 @@ const Float32 voiceRecordDelay = 0.3;
                 //    CGRect aRect = self.view.frame;
                 //    aRect.size.height -= deltaHeight;
                 //   if (!CGRectContainsPoint(aRect, bottomCell.frame.origin) ) {
-                CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y + deltaHeight);
-                [tableView setContentOffset:newOffset animated:NO];
+                if ([tableView respondsToSelector:@selector(contentOffset)]) {
+                    CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y + deltaHeight);
+                    [tableView setContentOffset:newOffset animated:NO];
+                }
                 //  }
                 //            }
             }
@@ -447,8 +451,10 @@ const Float32 voiceRecordDelay = 0.3;
         @synchronized (_chats) {
             for (NSString * key in [_chats allKeys]) {
                 UITableView * tableView = [_chats objectForKey:key];
-                CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - keyboardHeight);
-                [tableView setContentOffset:newOffset animated:NO];
+                if ([tableView respondsToSelector:@selector(contentOffset)]) {
+                    CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - keyboardHeight);
+                    [tableView setContentOffset:newOffset animated:NO];
+                }
             }
         }
         
@@ -1554,7 +1560,7 @@ const Float32 voiceRecordDelay = 0.3;
             }
             HomeDataSource * hds = [[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource];
             if ([hds hasAnyNewMessages]) {
-             //   [self scrollTableViewToBottom:cView animated:NO];
+                //   [self scrollTableViewToBottom:cView animated:NO];
             }
             
         }
@@ -1695,20 +1701,22 @@ const Float32 voiceRecordDelay = 0.3;
 
 -(void) updateTableView: (UITableView *) tableView withNewRowCount : (int) rowCount
 {
-    //Save the tableview content offset
-    CGPoint tableViewOffset = [tableView contentOffset];
-    
-    //compute the height change
-    int heightForNewRows = 0;
-    
-    for (NSInteger i = 0; i < rowCount; i++) {
-        NSIndexPath *tempIndexPath = [NSIndexPath indexPathForRow:i inSection:0];
-        heightForNewRows += [self tableView:tableView heightForRowAtIndexPath: tempIndexPath];
+    if ([tableView respondsToSelector:@selector(contentOffset)]) {
+        //Save the tableview content offset
+        CGPoint tableViewOffset = [tableView contentOffset];
+        
+        //compute the height change
+        int heightForNewRows = 0;
+        
+        for (NSInteger i = 0; i < rowCount; i++) {
+            NSIndexPath *tempIndexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            heightForNewRows += [self tableView:tableView heightForRowAtIndexPath: tempIndexPath];
+        }
+        
+        tableViewOffset.y += heightForNewRows;
+        [tableView reloadData];
+        [tableView setContentOffset:tableViewOffset animated:NO];
     }
-    
-    tableViewOffset.y += heightForNewRows;
-    [tableView reloadData];
-    [tableView setContentOffset:tableViewOffset animated:NO];
 }
 
 
