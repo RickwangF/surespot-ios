@@ -1973,6 +1973,7 @@ const Float32 voiceRecordDelay = 0.3;
             [_friendView deselectRowAtIndexPath:[_friendView indexPathForSelectedRow] animated:YES];
         }
         _swipeView.userInteractionEnabled = YES;
+        [self setBackButtonEnabled:YES];
         [self updateTabChangeUI];
     }];
     
@@ -2362,6 +2363,7 @@ const Float32 voiceRecordDelay = 0.3;
         if (_menu) {
             [self resignAllResponders];
             _swipeView.userInteractionEnabled = NO;
+            [self setBackButtonEnabled:NO];
             [_menu showSensiblyInView:self.view];
         }
     }
@@ -2393,6 +2395,7 @@ const Float32 voiceRecordDelay = 0.3;
         if (_menu) {
             [self resignAllResponders];
             _swipeView.userInteractionEnabled = NO;
+            [self setBackButtonEnabled:NO];
             [_menu showSensiblyInView:self.view];
         }
     }
@@ -2989,6 +2992,10 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         }
         self.navigationItem.leftBarButtonItems = _chatBackButtons;
     }
+}
+
+-(void) setBackButtonEnabled: (BOOL) enabled {
+    [_backButtonItem setEnabled:enabled];
 }
 
 -(void) setThemeStuff {
