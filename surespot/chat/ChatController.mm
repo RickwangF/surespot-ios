@@ -239,9 +239,9 @@ static const int MAX_RETRY_DELAY = 30;
     [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
     [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
     
-#ifdef DEBUG
-    //    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
-#endif
+//#ifdef DEBUG
+//       [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
+//#endif
     
     if (self.socket) {
         DDLogDebug(@"removing all handlers");

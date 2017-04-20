@@ -45,6 +45,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         self.responseSerializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[[AFJSONResponseSerializer serializer],
                                                                                                             [AFHTTPResponseSerializer serializer]]];
         self.requestSerializer = [AFJSONRequestSerializer serializer];
+        
+//#ifdef DEBUG
+//        //allow invalid certs for dev
+//        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+//        securityPolicy.allowInvalidCertificates = YES;
+//        securityPolicy.validatesDomainName = NO;
+//        self.securityPolicy = securityPolicy;
+//#endif
     }
     
     return self;
@@ -179,6 +187,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if (apnToken) {
         [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
     }
+   
+    [self clearCookie];
     
     [self POST:@"login"
     parameters:params
@@ -279,6 +289,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                    @"ios", @"platform", nil];
     
     [self addPurchaseReceiptToParams:params];
+    
+    [self clearCookie];
     
     //add apnToken if we have one
     NSData *  apnToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"apnToken"];
