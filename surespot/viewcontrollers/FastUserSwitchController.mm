@@ -48,6 +48,16 @@
     
 }
 
+-(void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self refresh];
+}
+
+-(void) refresh {
+    [self loadIdentityNames];
+    [_userTableView reloadData];
+}
+
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
