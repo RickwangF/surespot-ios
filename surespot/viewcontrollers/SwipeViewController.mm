@@ -338,12 +338,6 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 
--(void) dealloc {
-    DDLogVerbose(@"dealloc");
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-
 -(void) pause: (NSNotification *)  notification{
     DDLogVerbose(@"pause");
     [[ChatManager sharedInstance] pause: _username];
@@ -2459,6 +2453,16 @@ const Float32 voiceRecordDelay = 0.3;
 -(void) logout {
     DDLogVerbose(@"logout");
     
+    //remove gestures
+    for (id gesture in _sideMenuGestures) {
+        [self.view removeGestureRecognizer:gesture];
+        [self.navigationController.view removeGestureRecognizer:gesture];
+        [self.swipeView.scrollView removeGestureRecognizer:gesture];
+    }
+    
+    [_sideMenuGestures removeAllObjects];
+    _sideMenuGestures = nil;
+    
     //blow the views away
     _friendView = nil;
     
@@ -2882,14 +2886,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     return nil;
 }
 
-
-
 -(void) userSwitch {
     DDLogDebug(@"userSwitch");
     
     @synchronized (_chats) {
         [_chats removeAllObjects];
-        // [_swipeView reloadData];
     }
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
