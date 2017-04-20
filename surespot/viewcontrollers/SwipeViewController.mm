@@ -2725,7 +2725,7 @@ const Float32 voiceRecordDelay = 0.3;
     if (index == 0 && _imageMessage)
         return [[SurespotPhoto alloc] initWithURL:[NSURL URLWithString:_imageMessage.data]
                                  encryptionParams:[[EncryptionParams alloc]
-                                                   initWithOurUsername:nil
+                                                   initWithOurUsername:_username
                                                    ourVersion:[_imageMessage getOurVersion: _username]
                                                    theirUsername: [_imageMessage getOtherUser: _username]
                                                    theirVersion:[_imageMessage getTheirVersion: _username]
