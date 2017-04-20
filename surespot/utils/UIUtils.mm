@@ -107,10 +107,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     [[UIButton appearance] setTitleColor:[self surespotBlue] forState:UIControlStateNormal];
     
-    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [UIColor lightGrayColor],  NSForegroundColorAttributeName,nil]];
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [UIUtils surespotForegroundGrey],  NSForegroundColorAttributeName,nil]];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     
-    
+    [[UIScrollView appearance] setIndicatorStyle: ([self isBlackTheme] ? UIScrollViewIndicatorStyleWhite : UIScrollViewIndicatorStyleBlack) ];
+
+    [[UISwitch appearance] setTintColor:[UIUtils surespotBlue]];
+    [[UISwitch appearance] setOnTintColor:[UIUtils surespotBlue]];
 }
 
 +(BOOL)stringIsNilOrEmpty:(NSString*)aString {
@@ -453,18 +456,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return [value boolValue];
 }
 
-+(void) setUISwitchColors: (UISwitch *) theSwitch {
-    if ([self isBlackTheme]) {
-        //        [theSwitch setTintColor:[UIUtils surespotForegroundGrey]];
-        //        [theSwitch setOnTintColor:[UIUtils surespotForegroundGrey]];
-        //   [theSwitch setThumbTintColor:[UIColor blackColor]];
-    }
-    //    else {
-    [theSwitch setTintColor:[UIUtils surespotBlue]];
-    [theSwitch setOnTintColor:[UIUtils surespotBlue]];
-    // }
-    
-}
 +(void) setTextFieldColors: (UITextField *) textField localizedStringKey: (NSString *) key {
     if ([self isBlackTheme]) {
         [textField setTextColor: [UIUtils surespotForegroundGrey]];
@@ -475,4 +466,5 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [textField.layer setBorderWidth:1.0f];
     }
 }
+
 @end

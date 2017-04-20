@@ -47,7 +47,6 @@
 + (NSString *) buildAliasStringForUsername: (NSString *) username alias: (NSString *) alias;
 + (NSString *)localizedStringForKey:(NSString *)key replaceValue:(NSString *)comment bundle: (NSBundle *) bundle table: (NSString *) table;
 +(BOOL) isBlackTheme;
-+(void) setUISwitchColors: (UISwitch *) theSwitch;
 +(void) setTextFieldColors: (UITextField *) textField localizedStringKey: (NSString *) key;
 +(BOOL) confirmLogout;
 @end

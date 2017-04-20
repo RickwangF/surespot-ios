@@ -91,7 +91,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
     
     [UIUtils setTextFieldColors:self.textPassword localizedStringKey:@"password"];
-    [UIUtils setUISwitchColors:self.storePassword];
 }
 
 - (void)registerForKeyboardNotifications

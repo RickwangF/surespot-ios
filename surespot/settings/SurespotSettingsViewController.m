@@ -22,8 +22,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface SurespotSettingsViewController ()
 @end
 
-
-
 @implementation SurespotSettingsViewController
 -(SurespotSettingsViewController *) init {
     if (self) {
@@ -37,17 +35,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return self;
 }
 
-
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell * cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
-    
-    if ([cell.accessoryView isKindOfClass:[UISwitch class]]) {
-        UISwitch * uiSwitch = (UISwitch *) cell.accessoryView;
-        [UIUtils setUISwitchColors:uiSwitch];
-    }
     
     if ([UIUtils isBlackTheme]) {
         [cell setBackgroundColor:[UIColor blackColor]];
