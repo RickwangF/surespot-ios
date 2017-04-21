@@ -91,7 +91,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
          NSFontAttributeName: font
          }];
         CGRect rect = [attributedText boundingRectWithSize:size
-                                                   options:NSStringDrawingUsesLineFragmentOrigin
+                                                   options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
                                                    context:nil];
         return rect.size;
     }
@@ -126,23 +126,23 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     //figure out message height for both orientations
     if (plaintext){
         NSInteger offset = 0;
-        NSInteger heightAdj = 35;
+        NSInteger heightAdj = 30;
         BOOL ours = [ChatUtils isOurMessage:message ourUsername:ourUsername];
         if (ours) {
-            offset = 60;
+            offset = 40;
         }
         else {
-            offset = 110;
+            offset = 80;
         }
         //http://stackoverflow.com/questions/12744558/uistringdrawing-methods-dont-seem-to-be-thread-safe-in-ios-6
         
-        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size:17.0];
+        UIFont *cellFont = [UIFont systemFontOfSize:17.0];
         CGSize constraintSize = CGSizeMake(size.width - offset, MAXFLOAT);
         DDLogVerbose(@"computing size for message: %@", message.iv);
         
         CGSize labelSize = [self threadSafeSizeString:plaintext WithFont:cellFont constrainedToSize:constraintSize];
         
-        //  DDLogVerbose(@"computed portrait width %f, height: %f", labelSize.width, labelSize.height);
+        //DDLogVerbose(@"computed portrait width %f, height: %f", labelSize.width, labelSize.height);
         
         [message setRowPortraitHeight:(int) (labelSize.height + heightAdj > 44 ? labelSize.height + heightAdj : 44) ];
         
