@@ -123,10 +123,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 +(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername {
     NSString * plaintext = message.plainData;
     
+    if (message.rowPortraitHeight > 0 && message.rowLandscapeHeight > 0) {
+        return;
+    }
+    
     //figure out message height for both orientations
     if (plaintext){
         NSInteger offset = 0;
-        NSInteger heightAdj = 30;
+        NSInteger heightAdj = 35;
         BOOL ours = [ChatUtils isOurMessage:message ourUsername:ourUsername];
         if (ours) {
             offset = 40;
@@ -137,23 +141,25 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         //http://stackoverflow.com/questions/12744558/uistringdrawing-methods-dont-seem-to-be-thread-safe-in-ios-6
         
         UIFont *cellFont = [UIFont systemFontOfSize:17.0];
+
+             //   DDLogVerbose(@"computing size for message: %@", message.iv);
+        
+        //portrait
         CGSize constraintSize = CGSizeMake(size.width - offset, MAXFLOAT);
-        DDLogVerbose(@"computing size for message: %@", message.iv);
-        
         CGSize labelSize = [self threadSafeSizeString:plaintext WithFont:cellFont constrainedToSize:constraintSize];
+        CGFloat height = ceilf(labelSize.height);
+        DDLogVerbose(@"computed portrait width %f, height: %f", labelSize.width, height);
+        [message setRowPortraitHeight:(int) (height + heightAdj > 44 ? height + heightAdj : 44) ];
         
-        //DDLogVerbose(@"computed portrait width %f, height: %f", labelSize.width, labelSize.height);
-        
-        [message setRowPortraitHeight:(int) (labelSize.height + heightAdj > 44 ? labelSize.height + heightAdj : 44) ];
-        
-        constraintSize = CGSizeMake( size.height - offset , MAXFLOAT);
-        
+        //landscape        
+        constraintSize = CGSizeMake(size.height-offset, MAXFLOAT);
         labelSize = [UIUtils threadSafeSizeString:plaintext WithFont:cellFont constrainedToSize:constraintSize];
+        height = ceilf(labelSize.height);
         
-        DDLogVerbose(@"computed landscape width %f, height: %f", labelSize.width, labelSize.height);
-        [message setRowLandscapeHeight:(int) (labelSize.height + heightAdj > 44 ? labelSize.height + heightAdj: 44) ];
+        DDLogVerbose(@"computed landscape width %f, height: %f", labelSize.width, height);
+        [message setRowLandscapeHeight:(int) (height + heightAdj > 44 ? height + heightAdj: 44) ];
         
-        DDLogVerbose(@"computed row height portrait %ld landscape %ld for iv: %@", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight, message.iv);
+        DDLogVerbose(@"computed row height - portrait: %ld, landscape: %ld, for iv: %@", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight, message.iv);
     }
     else {
         DDLogVerbose(@"No plaintext yet for message iv: %@", message.iv);
