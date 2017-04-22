@@ -140,12 +140,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 if ([message readyToSend] && message.errorStatus == 0 && !([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
                     message.errorStatus = 500;
                 }
-                else {
-                    //if the message doesn't have a server id and it's a text message, add it to the resend buffer
-                    if (message.serverid <= 0 && ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
-                        [[[ChatManager sharedInstance] getChatController: _ourUsername] enqueueResendMessage: message];
-                    }
-                }
+//                else {
+//                    //if the message doesn't have a server id and it's a text message, add it to the resend buffer
+//                    if (message.serverid <= 0 && ([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK])) {
+//                        [[[ChatManager sharedInstance] getChatController: _ourUsername] enqueueResendMessage: message];
+//                    }
+//                }
             }
             
             dispatch_group_leave(group);

@@ -595,11 +595,12 @@ int const PBKDF_ROUNDS = 20000;
     
 }
 
-+(void) symmetricEncryptString: (NSString *) plaintext ourUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSData *) iv callback: (CallbackBlock) callback {
++(void) symmetricEncryptString: (NSString *) plaintext ourUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSString *) iv callback: (CallbackBlock) callback {
     
     [[CredentialCachingController sharedInstance] getSharedSecretForOurUsername: ourUsername ourVersion:ourVersion theirUsername:theirUsername theirVersion:theirVersion hashed: YES callback: ^(NSData * secret) {
         if (secret) {
-            NSData * cipherText = [EncryptionController encryptPlain:plaintext usingKey:secret usingIv:iv];
+            NSData * ivData = [NSData dataFromBase64String:iv];
+            NSData * cipherText = [EncryptionController encryptPlain:plaintext usingKey:secret usingIv:ivData];
             callback([cipherText SR_stringByBase64Encoding]);
         }
         else {

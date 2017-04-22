@@ -159,16 +159,6 @@
     return dict;
 }
 
-
-- (NSString * ) toJsonString {
-    
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[self toNSDictionary] options:0 error:&error];
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    return jsonString;
-    
-}
-
 -(BOOL) readyToSend {
     return self.from && self.to && self.fromVersion && self.iv && self.toVersion && self.data && self.mimeType && self.serverid == 0;
 }

@@ -46,13 +46,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                                                                             [AFHTTPResponseSerializer serializer]]];
         self.requestSerializer = [AFJSONRequestSerializer serializer];
         
-//#ifdef DEBUG
-//        //allow invalid certs for dev
-//        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
-//        securityPolicy.allowInvalidCertificates = YES;
-//        securityPolicy.validatesDomainName = NO;
-//        self.securityPolicy = securityPolicy;
-//#endif
+        //#ifdef DEBUG
+        //        //allow invalid certs for dev
+        //        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        //        securityPolicy.allowInvalidCertificates = YES;
+        //        securityPolicy.validatesDomainName = NO;
+        //        self.securityPolicy = securityPolicy;
+        //#endif
     }
     
     return self;
@@ -68,15 +68,18 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return [self GET:URLString
           parameters:parameters
             progress:nil
-             success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+             success:success
+             failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                  if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
                      [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
                          //relogin success, call original method
+                         DDLogDebug(@"reauth Success");
                          [self reauthGET:URLString parameters:parameters success:success failure:failure];
                      } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
                          //relogin failed, call fail block  with original task and error
                          failure(task, error);
                          if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                             DDLogDebug(@"reuuth failure");
                              [self setUnauthorized];
                          }
                          
@@ -187,7 +190,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if (apnToken) {
         [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
     }
-   
+    
     [self clearCookie];
     
     [self POST:@"login"

@@ -49,5 +49,6 @@
 +(BOOL) isBlackTheme;
 +(void) setTextFieldColors: (UITextField *) textField localizedStringKey: (NSString *) key;
 +(BOOL) confirmLogout;
++(double) generateIntervalK: (NSInteger) k maxInterval: (NSInteger) maxInterval;
 @end
 

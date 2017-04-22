@@ -175,6 +175,7 @@
 		66EBE13F1855C97100F2452D /* HomeDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AA1855C97100F2452D /* HomeDataSource.mm */; };
 		66EBE1401855C97100F2452D /* MessageIndicatorNewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBE0AC1855C97100F2452D /* MessageIndicatorNewView.m */; };
 		66F831FF185B9EB500ADD2F1 /* OurMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBDF171855C96F00F2452D /* OurMessageCell.xib */; };
+		66FC1F821EAAFDCA00D1DC11 /* SendTextMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66FC1F811EAAFDCA00D1DC11 /* SendTextMessageOperation.mm */; };
 		6761F09264FD201A9C63491D /* Pods_surespot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */; };
 /* End PBXBuildFile section */
 
@@ -603,6 +604,8 @@
 		66EBE0AA1855C97100F2452D /* HomeDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = HomeDataSource.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		66EBE0AB1855C97100F2452D /* MessageIndicatorNewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageIndicatorNewView.h; sourceTree = "<group>"; };
 		66EBE0AC1855C97100F2452D /* MessageIndicatorNewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageIndicatorNewView.m; sourceTree = "<group>"; };
+		66FC1F801EAAFDB400D1DC11 /* SendTextMessageOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendTextMessageOperation.h; sourceTree = "<group>"; };
+		66FC1F811EAAFDCA00D1DC11 /* SendTextMessageOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SendTextMessageOperation.mm; sourceTree = "<group>"; };
 		66FF0FF5182AE6960038ECA6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		7B53B5F6E4E57EE43909DCFB /* Pods-surespot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-surespot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-surespot/Pods-surespot.debug.xcconfig"; sourceTree = "<group>"; };
 		ECFAFC1095B845ABD0054564 /* Pods-surespot.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-surespot.release.xcconfig"; path = "Pods/Target Support Files/Pods-surespot/Pods-surespot.release.xcconfig"; sourceTree = "<group>"; };
@@ -1169,6 +1172,8 @@
 				66EBDF1E1855C96F00F2452D /* SurespotMessage.h */,
 				66EBDF1F1855C96F00F2452D /* SurespotMessage.m */,
 				66EBDF201855C96F00F2452D /* TheirMessageCell.xib */,
+				66FC1F801EAAFDB400D1DC11 /* SendTextMessageOperation.h */,
+				66FC1F811EAAFDCA00D1DC11 /* SendTextMessageOperation.mm */,
 			);
 			path = chat;
 			sourceTree = "<group>";
@@ -1526,6 +1531,7 @@
 				665CA9A91E9186E10045EEDD /* ChatManager.mm in Sources */,
 				66EBE1381855C97100F2452D /* NSString+Sensitivize.m in Sources */,
 				66EBE1361855C97100F2452D /* FileController.mm in Sources */,
+				66FC1F821EAAFDCA00D1DC11 /* SendTextMessageOperation.mm in Sources */,
 				66EBE0D01855C97100F2452D /* IdentityCell.m in Sources */,
 				6686626C185B6A2E001491B1 /* UIImage+GIF.m in Sources */,
 				66EBE13A1855C97100F2452D /* SurespotLogFormatter.m in Sources */,

@@ -33,7 +33,6 @@
 -(void) pause;
 -(void) resume;
 -(void) deleteMessagesForFriend: (Friend *) afriend;
--(void) enqueueResendMessage: (SurespotMessage * ) message;
 -(void) loadEarlierMessagesForUsername: username callback: (CallbackBlock) callback;
 -(void) toggleMessageShareable: (SurespotMessage *) message;
 -(void) resendFileMessage: (SurespotMessage *) message;
@@ -44,7 +43,7 @@
 -(void) removeFriendImage: (NSString *) friendname callbackBlock: (CallbackBlock) callbackBlock;
 @property (nonatomic, assign) BOOL hasInet;
 @property (assign, atomic) BOOL paused;
+-(void) connect;
 -(void) disconnect;
--(void) reconnect;
 
 @end

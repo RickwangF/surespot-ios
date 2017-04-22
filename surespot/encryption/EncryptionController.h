@@ -109,7 +109,7 @@ extern int const PBKDF_ROUNDS;
 + (NSString *) encodeDSAPublicKey: (ECDSAPublicKey *) dsaPubKey;
 + (ECDHPublicKey *) recreateDhPublicKey: (NSString *) encodedKey;
 +  (ECDSAPublicKey *) recreateDsaPublicKey: (NSString *) encodedKey;
-+(void) symmetricEncryptString: (NSString *) plaintext ourUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *)  theirVersion iv: (NSData *) iv callback: (CallbackBlock) callback;
++(void) symmetricEncryptString: (NSString *) plaintext ourUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *)  theirVersion iv: (NSString *) iv callback: (CallbackBlock) callback;
 +(void) symmetricDecryptString: (NSString *) cipherData ourUsername: (NSString *) ourUsername ourVersion: (NSString *) ourVersion theirUsername: (NSString *) theirUsername theirVersion: (NSString *) theirVersion iv: (NSString *) iv hashed: (BOOL) hashed callback: (CallbackBlock) callback;
 
 +(BOOL) verifyPublicKeySignature: (NSData *) signature data: (NSData *) data;

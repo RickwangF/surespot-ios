@@ -47,7 +47,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
             NSString * activeUser = [[IdentityController sharedInstance] getLoggedInUser];
             if (activeUser) {
-                ChatController * controller = [self getChatController: activeUser];;
+                ChatController * controller = [self getChatController: activeUser];
                 //if we're foregrounded
                 if (![controller paused]) {
                     BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
@@ -62,7 +62,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                             [controller disconnect];
                         }
                         
-                        [controller reconnect];
+                        [controller connect];
                     }
                     else
                     {

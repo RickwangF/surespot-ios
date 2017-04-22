@@ -23,7 +23,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
-
+#define ARC4RANDOM_MAX      0x100000000
 
 @implementation UIUtils
 
@@ -173,11 +173,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     UIInterfaceOrientation  orientation = [[UIApplication sharedApplication] statusBarOrientation];
     
     if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
-        DDLogDebug(@"sizeAdjustedForOrientation adjusting size for landscape");
+        DDLogVerbose(@"sizeAdjustedForOrientation adjusting size for landscape");
         return CGSizeMake(size.height, size.width);
     }
     else {
-        DDLogDebug(@"sizeAdjustedForOrientation using size for portrait");
+        DDLogVerbose(@"sizeAdjustedForOrientation using size for portrait");
         return CGSizeMake(size.width, size.height);
     }
 }
@@ -488,6 +488,18 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [textField.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
         [textField.layer setBorderWidth:1.0f];
     }
+}
+
++(double) generateIntervalK: (NSInteger) k maxInterval: (NSInteger) maxInterval {
+    NSInteger timerInterval = pow(2,k);
+    
+    if (timerInterval > maxInterval) {
+        timerInterval = maxInterval;
+    }
+    
+    double mult = ((double)arc4random() / ARC4RANDOM_MAX);
+    double reconnectTime = mult * timerInterval;
+    return reconnectTime;
 }
 
 @end

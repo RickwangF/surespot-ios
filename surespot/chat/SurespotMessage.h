@@ -40,7 +40,6 @@
 - (NSString *) getOtherUser: (NSString *) ourUsername;
 - (NSString *) getTheirVersion: (NSString *) ourUsername;
 - (NSString *) getOurVersion: (NSString *) ourUsername;
-- (NSString * ) toJsonString;
 - (NSMutableDictionary * ) toNSDictionary;
 - (BOOL) readyToSend;
 + (BOOL) areMessagesEqual:(SurespotMessage *)lastMessage message:(SurespotMessage *)message;
