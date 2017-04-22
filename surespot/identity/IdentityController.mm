@@ -435,7 +435,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
      }];
 }
 
--(BOOL) importIdentityFilename: (NSString *) filePath username: (NSString * ) username password: (NSString *) password {
+-(void) importIdentityFilename: (NSString *) filePath username: (NSString * ) username password: (NSString *) password callback: (CallbackBlock) callback {
     
     NSData *myData = [NSData dataWithContentsOfFile:filePath];
     
@@ -445,13 +445,9 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         NSData* unzipped = [myData gzipInflate];
         NSData * identity = [EncryptionController decryptIdentity: unzipped withPassword:[password stringByAppendingString:EXPORT_IDENTITY_ID]];
         if (identity) {
-            SurespotIdentity * si = [self decodeIdentityData:identity password:password validate: NO];
-            [[CredentialCachingController sharedInstance] updateIdentity: si onlyIfExists: YES];
-            return [self saveIdentity:si withPassword: [password stringByAppendingString:CACHE_IDENTITY_ID]] != nil;
+            [self importIdentityData:identity username:username password:password callback:callback];
         }
-    }
-    
-    return NO;
+    }    
 }
 
 -(void) exportIdentityToDocumentsForUsername: (NSString *) username password: (NSString *) password callback: (CallbackErrorBlock) callback {

@@ -405,6 +405,7 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 }
 
 -(void) importIdentity: (NSString *) name identifier: (NSString *) identifier password: (NSString *) password {
+    DDLogDebug(@"importIdentity");
     _progressView = [LoadingView showViewKey:@"progress_restoring_identity"];
     
     GTLRQuery *query = [GTLRDriveQuery_FilesGet queryForMediaWithFileId:identifier];

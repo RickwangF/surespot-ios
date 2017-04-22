@@ -45,7 +45,7 @@
 -(void) updatePasswordForUsername: (NSString *) username currentPassword: (NSString *) currentPassword newPassword: (NSString *) newPassword newSalt: (NSString *) newSalt;
 -(NSInteger) getIdentityCount;
 -(void) exportIdentityToDocumentsForUsername: (NSString *) username password: (NSString *) password callback: (CallbackErrorBlock) callback;
--(BOOL) importIdentityFilename: (NSString *) filePath username: (NSString * ) username password: (NSString *) password;
+-(void) importIdentityFilename: (NSString *) filePath username: (NSString * ) username password: (NSString *) password callback: (CallbackBlock) callback;
 -(SurespotIdentity *) loadIdentityUsername: (NSString * ) username password: (NSString *) password;
 -(NSString *) getLastLoggedInUser;
 -(NSDictionary *) updateSignatures: (NSString *) username;
