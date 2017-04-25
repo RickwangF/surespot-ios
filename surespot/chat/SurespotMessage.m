@@ -194,4 +194,30 @@
     return lastMessage.iv != NULL && [lastMessage.iv isEqualToString:message.iv];
 }
 
+-(NSString *) description {
+    NSMutableString * d = [[NSMutableString alloc] init];
+    [d appendFormat:@"\nmessage serverid: %ld", (long)self.serverid ];
+    [d appendFormat:@"\nmessage from: %@", self.from];
+    [d appendFormat:@"\nmessage to: %@", self.to];
+    [d appendFormat:@"\nmessage iv: %@", self.iv];
+    [d appendFormat:@"\nmessage data: %@", self.data];
+    [d appendFormat:@"\nmessage toVersion: %@", self.toVersion];
+    [d appendFormat:@"\nmessage fromVersion: %@", self.fromVersion];
+    [d appendFormat:@"\nmessage mimeType: %@", self.mimeType];
+    [d appendFormat:@"\nmessage plainData: %@", self.plainData];
+    [d appendFormat:@"\nmessage dateTime: %@", self.dateTime];
+    [d appendFormat:@"\nmessage errorStatus: %ld", (long)self.errorStatus];
+    [d appendFormat:@"\nmessage formattedDate: %@", self.formattedDate];
+    [d appendFormat:@"\nmessage dataSize: %ld", (long)self.dataSize];
+    [d appendFormat:@"\nmessage resendId: %ld", (long)self.resendId];
+    [d appendFormat:@"\nmessage loading: %@", [NSNumber numberWithBool: self.loading]];
+    [d appendFormat:@"\nmessage loaded: %@", [NSNumber numberWithBool: self.loaded]];
+    [d appendFormat:@"\nmessage rowPortraitHeight: %ld", (long)self.rowPortraitHeight];
+    [d appendFormat:@"\nmessage rowLandscapeHeight: %ld", (long)self.rowLandscapeHeight];
+    [d appendFormat:@"\nmessage shareable: %@", [NSNumber numberWithBool: self.shareable]];
+    [d appendFormat:@"\nmessage voicePlayed: %@",[NSNumber numberWithBool:  self.voicePlayed]];
+    [d appendFormat:@"\nmessage playVoice: %@\n", [NSNumber numberWithBool: self.playVoice]];
+    return d;
+}
+
 @end

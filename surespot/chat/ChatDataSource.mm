@@ -19,7 +19,7 @@
 #import "ChatManager.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelDebug;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -129,7 +129,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             
             //convert messages to SurespotMessage
             for (SurespotMessage * message in messages) {
-                //   DDLogVerbose(@"adding message %@, iv: %@", _theirUsername, message.iv);
+                DDLogVerbose(@"adding message %@, iv: %@", message, message.iv);
                 dispatch_group_enter(group);
                 [self addMessage:message refresh:NO callback:^(id result) {
                     //     DDLogInfo(@"message decrypted %@, iv: %@", weakSelf.username, message.iv);
@@ -198,7 +198,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 refresh = false;
                 CGSize size = [UIScreen mainScreen ].bounds.size;
                 
-                DDLogVerbose(@"added %@,  now decrypting message iv: %@, width: %f, height: %f",_theirUsername, message.iv, size.width, size.height);
+                DDLogVerbose(@"added %@,  now decrypting message iv: %@, width: %f, height: %f",message, message.iv, size.width, size.height);
                 
                 MessageDecryptionOperation * op = [[MessageDecryptionOperation alloc]
                                                    initWithMessage:message
@@ -237,7 +237,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             if (callback) {
                 callback(nil);
             }
-            DDLogInfo(@"updating message iv: %@", message.iv);
+            DDLogInfo(@"updating message: %@", message);
             SurespotMessage * existingMessage = [self.messages objectAtIndex:index];
             if (message.serverid > 0) {
                 existingMessage.serverid = message.serverid;
@@ -248,6 +248,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 if (message.dataSize > 0) {
                     existingMessage.dataSize = message.dataSize;
                 }
+                
+                
                 
                 if (![existingMessage.data isEqualToString:message.data]) {
                     //update cache to avoid downloading image we just sent and save on web traffic
@@ -271,6 +273,32 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     existingMessage.data = message.data;
                 }
             }
+            
+            if (message.plainData && !existingMessage.plainData) {
+                  DDLogInfo(@"updating message iv: %@, plainData: %@", message.iv, message.plainData);
+                existingMessage.plainData = message.plainData;
+            }
+            
+            
+            if (message.data && !existingMessage.data) {
+                existingMessage.data = message.data;
+            }
+
+            
+            if (message.toVersion && !existingMessage.toVersion) {
+                existingMessage.toVersion = message.toVersion;
+            }
+
+            
+            if (message.fromVersion && !existingMessage.fromVersion) {
+                existingMessage.fromVersion = message.fromVersion;
+            }
+
+            
+            if (message.errorStatus && !existingMessage.errorStatus) {
+                existingMessage.errorStatus = message.errorStatus;
+            }
+
         }
         
         if (applicableControlMessages && [applicableControlMessages count] > 0) {

@@ -22,6 +22,7 @@ using CryptoPP::SecByteBlock;
 
 NSString * const STATE_DIR = @"state";
 NSString * const HOME_FILENAME = @"home";
+NSString * const MESSAGE_QUEUE_FILENAME = @"messageQueue";
 NSString * const STATE_EXTENSION = @"sss";
 NSString * const CHAT_DATA_PREFIX = @"chatdata-";
 NSString * const PUBLIC_KEYS_DIR = @"publickeys";
@@ -108,6 +109,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
     
     return cacheDir;
+}
+
++(NSString *) getMessageQueueFilename: (NSString *) ourUsername {
+    return [self getFilename:MESSAGE_QUEUE_FILENAME forUser:ourUsername];
 }
 
 +(NSString *) getHomeFilename: (NSString *) ourUsername {

@@ -26,6 +26,7 @@
 #import "SocketIO-Swift.h"
 #import "SurespotConfiguration.h"
 #import "SendTextMessageOperation.h"
+#import "SurespotQueueMessage.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -246,6 +247,7 @@ static const int MAX_REAUTH_RETRIES = 5;
 -(void) resume {
     DDLogVerbose(@"chatcontroller resume");
     _paused = NO;
+    [self loadMessageQueue];
     [self connect];
 }
 
@@ -344,6 +346,9 @@ static const int MAX_REAUTH_RETRIES = 5;
         [_homeDataSource writeToDisk];
     }
     
+    //save message queue
+    [self saveMessageQueue];
+    
     if (_chatDataSources) {
         @synchronized (_chatDataSources) {
             for (id key in _chatDataSources) {
@@ -355,6 +360,62 @@ static const int MAX_REAUTH_RETRIES = 5;
     //move messages from send queue to resend queue
     //l [_resendBuffer addObjectsFromArray:_sendBuffer];
     // [_sendBuffer removeAllObjects];
+}
+
+-(void) saveMessageQueue {
+    NSString * pw = [[IdentityController sharedInstance] getStoredPasswordForIdentity:_username];
+    if (pw) {
+        NSString * filePath = [FileController getMessageQueueFilename: _username];
+        DDLogDebug(@"saving message queue at: %@", filePath);
+        
+        NSMutableArray * saveBuffer = [[NSMutableArray alloc] init];
+        
+        [_messageBuffer enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            {
+                SurespotQueueMessage * qm = [[SurespotQueueMessage alloc] initFromMessage:obj];
+                DDLogDebug(@"Saving message: %@", qm);
+                [saveBuffer addObject:qm];
+            }
+        }];
+        
+        
+        NSData * queueData = [NSKeyedArchiver archivedDataWithRootObject:saveBuffer];
+        
+        //save unsent messages encrypted as the plain text may not have been encrypted for sending yet
+        NSData * encryptedQueue = [EncryptionController encryptData:queueData withPassword: pw];
+        [encryptedQueue writeToFile:filePath atomically:TRUE];
+    }
+}
+
+-(void) loadMessageQueue {
+    NSString * filePath = [FileController getMessageQueueFilename: _username];
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    
+    if (data) {
+        
+        //NSError* error = nil;
+        NSData * queuedMessageData = [EncryptionController decryptData: data withPassword:[[IdentityController sharedInstance] getStoredPasswordForIdentity:_username]];
+        if (queuedMessageData) {
+            NSArray * queuedMessages = [NSKeyedUnarchiver unarchiveObjectWithData:queuedMessageData];
+            @synchronized(_messageBuffer) {
+                [queuedMessages enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    {
+                        SurespotQueueMessage * qm = [[SurespotQueueMessage alloc] initFromMessage:obj];
+                        SurespotMessage * sm = [qm copyWithZone:nil];
+                        
+                        DDLogDebug(@"loadMessageQueue adding message: %@", sm);
+                        
+                        NSString * friendname = [sm getOtherUser:_username];
+                        ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
+                        [dataSource addMessage: sm refresh:NO];
+                        [dataSource postRefresh];
+                        
+                        [self enqueueMessage:sm];
+                    }
+                }];
+            }
+        }
+    }
 }
 
 -(void) getLatestData: (BOOL) suppressNew {
@@ -497,7 +558,6 @@ static const int MAX_REAUTH_RETRIES = 5;
     [dataSource postRefresh];
     
     [self enqueueMessage:sm];
-    [self processNextMessage];
 }
 
 -(void) processNextMessage {
@@ -518,12 +578,22 @@ static const int MAX_REAUTH_RETRIES = 5;
     if([_messageBuffer count] > 0) {
         SurespotMessage * qm = [_messageBuffer objectAtIndex:0];
         
-        //  [self sendMessages];
-        SendTextMessageOperation * stmo = [[SendTextMessageOperation alloc] initWithMessage:qm username:_username callback:^(SurespotMessage * message) {
-            [self removeMessageFromBuffer:message];
-            [self processNextMessage];
-        }];
-        [_messageSendQueue addOperation:stmo];
+        //see if we have an operation for this message, and if not create one
+        BOOL hasOperation = NO;
+        for (SendTextMessageOperation * stmo in [_messageSendQueue operations]) {
+            if ([SurespotMessage areMessagesEqual:qm message:[stmo message]]) {
+                hasOperation = YES;
+            }
+        }
+        
+        if (!hasOperation) {
+            DDLogVerbose(@"Creating send text message operation for %@", qm.iv);
+            [_messageSendQueue addOperation: [[SendTextMessageOperation alloc] initWithMessage:qm username:_username callback:^(SurespotMessage * message) {
+                
+                [self removeMessageFromBuffer:message];
+                [self processNextMessage];
+            }]];
+        }
     }
 }
 
@@ -531,7 +601,12 @@ static const int MAX_REAUTH_RETRIES = 5;
 -(void) enqueueMessage: (SurespotMessage * ) message {
     // check that the message isn't a duplicate
     DDLogInfo(@"enqueing message %@", message);
-    [_messageBuffer addObject:message];
+    @synchronized (_messageBuffer) {
+        if (![_messageBuffer containsObject:message]) {
+            [_messageBuffer addObject:message];
+        }
+    }
+    [self processNextMessage];
 }
 //
 //-(void) sendMessageOnSocket: (SurespotMessage *) message {

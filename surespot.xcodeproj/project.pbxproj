@@ -45,6 +45,7 @@
 		662CA5A31873496F00684790 /* PurchaseDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 662CA5A21873496F00684790 /* PurchaseDelegate.m */; };
 		662CA5AA18734E9500684790 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 662CA5A918734E9500684790 /* StoreKit.framework */; };
 		6637012D187A33A6006D17CA /* PWYLView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6637012C187A33A6006D17CA /* PWYLView.xib */; };
+		664135741EAFBC4F005A4957 /* SurespotQueueMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 664135731EAFBC4F005A4957 /* SurespotQueueMessage.m */; };
 		6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2B185CB08200CBACDE /* SurespotPhoto.m */; };
 		6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2E185CB2EF00CBACDE /* EncryptionParams.m */; };
 		6648B1E5186CB9BF007037B1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E4186CB9BF007037B1 /* MediaPlayer.framework */; };
@@ -244,6 +245,8 @@
 		662CA5A21873496F00684790 /* PurchaseDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = PurchaseDelegate.m; path = purchases/PurchaseDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		662CA5A918734E9500684790 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		6637012C187A33A6006D17CA /* PWYLView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PWYLView.xib; path = purchases/PWYLView.xib; sourceTree = "<group>"; };
+		664135731EAFBC4F005A4957 /* SurespotQueueMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotQueueMessage.m; sourceTree = "<group>"; };
+		664135751EAFBC60005A4957 /* SurespotQueueMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotQueueMessage.h; sourceTree = "<group>"; };
 		6646AE2A185CB08200CBACDE /* SurespotPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotPhoto.h; sourceTree = "<group>"; };
 		6646AE2B185CB08200CBACDE /* SurespotPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SurespotPhoto.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		6646AE2D185CB2EF00CBACDE /* EncryptionParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncryptionParams.h; sourceTree = "<group>"; };
@@ -1171,6 +1174,8 @@
 				66EBDF1D1855C96F00F2452D /* SurespotErrorMessage.m */,
 				66EBDF1E1855C96F00F2452D /* SurespotMessage.h */,
 				66EBDF1F1855C96F00F2452D /* SurespotMessage.m */,
+				664135751EAFBC60005A4957 /* SurespotQueueMessage.h */,
+				664135731EAFBC4F005A4957 /* SurespotQueueMessage.m */,
 				66EBDF201855C96F00F2452D /* TheirMessageCell.xib */,
 				66FC1F801EAAFDB400D1DC11 /* SendTextMessageOperation.h */,
 				66FC1F811EAAFDCA00D1DC11 /* SendTextMessageOperation.mm */,
@@ -1552,6 +1557,7 @@
 				661F4695186375F0004A71B0 /* MessageView+WebImageCache.m in Sources */,
 				66A2D919183A7A7F00785270 /* SurespotConstants.m in Sources */,
 				6611BE991BC84F530035C86B /* NSData+SRB64Additions.m in Sources */,
+				664135741EAFBC4F005A4957 /* SurespotQueueMessage.m in Sources */,
 				665CA9A31E9098210045EEDD /* REMenu.m in Sources */,
 				66866265185B6A2E001491B1 /* SDWebImageCompat.m in Sources */,
 				66EBE0C41855C97100F2452D /* SurespotControlMessage.m in Sources */,

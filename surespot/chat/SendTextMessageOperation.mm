@@ -34,7 +34,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @interface SendTextMessageOperation()
 @property (nonatomic) NSString * username;
-@property (nonatomic) SurespotMessage * message;
 @property (nonatomic, strong) CallbackBlock callback;
 @property (strong, atomic) NSTimer * bgSendTimer;
 @property (assign, atomic) NSInteger bgSendRetries;

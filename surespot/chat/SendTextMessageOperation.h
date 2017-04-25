@@ -16,6 +16,7 @@
 -(id) initWithMessage: (SurespotMessage *) message
              username: (NSString *) ourUsername
              callback: (CallbackBlock) callback;
+@property (nonatomic) SurespotMessage * message;
 @end
 
 

@@ -34,4 +34,5 @@ extern NSString *const IDENTITY_EXTENSION;
 +(void)         saveCookie:(NSHTTPCookie *) cookie forUsername: (NSString *) username withPassword: (NSString *) password;
 +(NSHTTPCookie *) loadCookieForUsername: (NSString *) username password: password;
 +(void)         deleteOldSecrets;
++(NSString *) getMessageQueueFilename: (NSString *) ourUsername;
 @end
