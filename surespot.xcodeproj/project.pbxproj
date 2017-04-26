@@ -48,6 +48,7 @@
 		664135741EAFBC4F005A4957 /* SurespotQueueMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 664135731EAFBC4F005A4957 /* SurespotQueueMessage.m */; };
 		664135781EB0EFC5005A4957 /* SendMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 664135771EB0EFC5005A4957 /* SendMessageOperation.mm */; };
 		6641357C1EB0FE55005A4957 /* SendImageMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6641357B1EB0FE55005A4957 /* SendImageMessageOperation.mm */; };
+		6641357F1EB158A0005A4957 /* SendVoiceMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6641357E1EB158A0005A4957 /* SendVoiceMessageOperation.mm */; };
 		6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2B185CB08200CBACDE /* SurespotPhoto.m */; };
 		6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2E185CB2EF00CBACDE /* EncryptionParams.m */; };
 		6648B1E5186CB9BF007037B1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E4186CB9BF007037B1 /* MediaPlayer.framework */; };
@@ -253,6 +254,8 @@
 		664135771EB0EFC5005A4957 /* SendMessageOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SendMessageOperation.mm; sourceTree = "<group>"; };
 		6641357A1EB0FE46005A4957 /* SendImageMessageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SendImageMessageOperation.h; path = ../chat/SendImageMessageOperation.h; sourceTree = "<group>"; };
 		6641357B1EB0FE55005A4957 /* SendImageMessageOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SendImageMessageOperation.mm; path = ../chat/SendImageMessageOperation.mm; sourceTree = "<group>"; };
+		6641357D1EB15892005A4957 /* SendVoiceMessageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SendVoiceMessageOperation.h; path = images/SendVoiceMessageOperation.h; sourceTree = "<group>"; };
+		6641357E1EB158A0005A4957 /* SendVoiceMessageOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SendVoiceMessageOperation.mm; path = surespot/chat/SendVoiceMessageOperation.mm; sourceTree = SOURCE_ROOT; };
 		6646AE2A185CB08200CBACDE /* SurespotPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotPhoto.h; sourceTree = "<group>"; };
 		6646AE2B185CB08200CBACDE /* SurespotPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SurespotPhoto.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		6646AE2D185CB2EF00CBACDE /* EncryptionParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncryptionParams.h; sourceTree = "<group>"; };
@@ -925,6 +928,8 @@
 				666D3377188476B100B73F69 /* EAGLView.m */,
 				66DAB62C186DEEFC006C262F /* VoiceDelegate.h */,
 				66DAB62D186DEEFC006C262F /* VoiceDelegate.mm */,
+				6641357D1EB15892005A4957 /* SendVoiceMessageOperation.h */,
+				6641357E1EB158A0005A4957 /* SendVoiceMessageOperation.mm */,
 			);
 			name = voice;
 			sourceTree = "<group>";
@@ -1618,6 +1623,7 @@
 				66EBE0BD1855C97100F2452D /* ChatUtils.mm in Sources */,
 				66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */,
 				66EBE0D41855C97100F2452D /* UIImage+Scale.m in Sources */,
+				6641357F1EB158A0005A4957 /* SendVoiceMessageOperation.mm in Sources */,
 				661F3B8E1868C3C9003C7AE3 /* KeyFingerprint.m in Sources */,
 				66EBE0C61855C97100F2452D /* SurespotMessage.m in Sources */,
 				665953221886021300BA2CC7 /* UIAlertView+Blocks.m in Sources */,

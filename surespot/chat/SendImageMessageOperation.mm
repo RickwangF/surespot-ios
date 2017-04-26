@@ -17,10 +17,7 @@
 #import "UIUtils.h"
 #import "SDWebImageManager.h"
 #import "ChatDataSource.h"
-
 #import "ChatManager.h"
-#import "NSData+Base64.h"
-
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -57,7 +54,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                         ourVersion:ourLatestVersion
                                                      theirUsername:self.message.to
                                                       theirVersion:version
-                                                                iv: [NSData dataFromBase64String:self.message.iv]
+                                                                iv:self.message.iv
                                                           callback:^(NSData * encryptedImageData) {
                                                               if (encryptedImageData) {
                                                                   //create message

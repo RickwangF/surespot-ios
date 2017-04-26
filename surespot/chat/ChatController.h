@@ -47,5 +47,6 @@
 
 -(void) sendTextMessage: (NSString *) message toFriendname: (NSString *) friendname;
 -(void) sendImageMessage: (NSURL*) localUrl  to: (NSString *) to;
+-(void) sendVoiceMessage: (NSURL*) localUrl  to: (NSString *) friendname;
 
 @end

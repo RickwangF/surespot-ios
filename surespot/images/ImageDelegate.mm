@@ -195,6 +195,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         UIImage * scaledImage = [image imageScaledToMaxWidth:100 maxHeight:100];
         NSData * imageData = UIImageJPEGRepresentation(scaledImage, 0.5);
         NSData * iv = [EncryptionController getIv];
+        NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
         
         //encrypt
         [EncryptionController symmetricEncryptData:imageData
@@ -202,10 +203,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                         ourVersion:_ourVersion
                                      theirUsername:_username
                                       theirVersion:_ourVersion
-                                                iv:iv
+                                                iv:b64iv
                                           callback:^(NSData * encryptedImageData) {
                                               if (encryptedImageData) {
-                                                  NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
+                                                  
                                                   NSString * key = [@"friendImageKey_" stringByAppendingString: b64iv];
                                                   
                                                   

@@ -25,6 +25,7 @@
 #import "NSBundle+FallbackLanguage.h"
 #import "SocketIO-Swift.h"
 #import "SurespotConfiguration.h"
+#import "SendVoiceMessageOperation.h"
 #import "SendImageMessageOperation.h"
 #import "SendTextMessageOperation.h"
 #import "SurespotQueueMessage.h"
@@ -590,6 +591,44 @@ static const int MAX_REAUTH_RETRIES = 1;
     [self enqueueMessage:sm];
 }
 
+-(void) sendVoiceMessage: (NSURL*) localUrl  to: (NSString *) friendname {
+    //add message locally
+    NSData * iv = [EncryptionController getIv];
+    NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:friendname forKey:@"to"];
+    [dict setObject:_username forKey:@"from"];
+    [dict setObject:b64iv forKey:@"iv"];
+    [dict setObject:MIME_TYPE_M4A forKey:@"mimeType"];
+    [dict setObject:[NSNumber numberWithBool:YES] forKey:@"hashed"];
+    
+    SurespotMessage * sm = [[SurespotMessage alloc] initWithDictionary: dict];
+    
+    //cache the plain data locally
+    sm.plainData = [localUrl absoluteString];
+    
+    DDLogDebug(@"sendVoiceMessage adding local voice message, url: %@", sm.plainData);
+    
+    [UIUtils setVoiceMessageHeights: sm size:[UIScreen mainScreen].bounds.size];
+    
+    ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
+    [dataSource addMessage: sm refresh:NO];
+    [dataSource postRefresh];
+    
+    [self enqueueMessage:sm];
+}
+
+-(void) enqueueMessage: (SurespotMessage * ) message {
+    // check that the message isn't a duplicate
+    DDLogInfo(@"enqueing message %@", message);
+    @synchronized (_messageBuffer) {
+        if (![_messageBuffer containsObject:message]) {
+            [_messageBuffer addObject:message];
+        }
+    }
+    [self processNextMessage];
+}
+
 -(void) processNextMessage {
 
     if([_messageBuffer count] > 0) {
@@ -638,6 +677,25 @@ static const int MAX_REAUTH_RETRIES = 1;
                         }
                     }]];
                 }
+                else {
+                    if ([qm.mimeType isEqualToString:MIME_TYPE_M4A]) {
+                        DDLogVerbose(@"Creating send voice message operation for %@", qm.iv);
+                        [_messageSendQueue addOperation: [[SendVoiceMessageOperation alloc] initWithMessage:qm callback:^(SurespotMessage * message) {
+                            if (message) {
+                                [self removeMessageFromBuffer:message];
+                                [self processNextMessage];
+                            }
+                            
+                            else {
+                                //no message, error message queue
+                                //when queue loads again it will recreate the operations
+                                //todo show notification, can't do it till ios 10
+                                DDLogDebug(@"Message send voice operation finished with no message");
+                                [_messageSendQueue cancelAllOperations];
+                            }
+                        }]];
+                    }
+                }
             }
         }
         else {
@@ -653,16 +711,6 @@ static const int MAX_REAUTH_RETRIES = 1;
 }
 
 
--(void) enqueueMessage: (SurespotMessage * ) message {
-    // check that the message isn't a duplicate
-    DDLogInfo(@"enqueing message %@", message);
-    @synchronized (_messageBuffer) {
-        if (![_messageBuffer containsObject:message]) {
-            [_messageBuffer addObject:message];
-        }
-    }
-    [self processNextMessage];
-}
 
 
 //
@@ -1325,17 +1373,18 @@ static const int MAX_REAUTH_RETRIES = 1;
     NSString * version = [[IdentityController sharedInstance] getOurLatestVersion: _username];
     NSString * username = _username;
     NSData * iv = [EncryptionController getIv];
+    NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
     //encrypt
     [EncryptionController symmetricEncryptData:[alias dataUsingEncoding:NSUTF8StringEncoding]
                                    ourUsername:_username
                                     ourVersion:version
                                  theirUsername:username
                                   theirVersion:version
-                                            iv:iv
+                                            iv:b64iv
                                       callback:^(NSData * encryptedAliasData) {
                                           if (encryptedAliasData) {
                                               NSString * b64data = [encryptedAliasData base64EncodedStringWithSeparateLines:NO];
-                                              NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
+                                              
                                               //upload friend image to server
                                               DDLogInfo(@"assigning friend alias");
                                               [[[NetworkManager sharedInstance] getNetworkController:_username]
