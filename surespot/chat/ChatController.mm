@@ -38,9 +38,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 static const int MAX_REAUTH_RETRIES = 1;
 
 
-@interface ChatController() {
-    
-}
+@interface ChatController()
 @property (strong, atomic) NSString * username;
 @property (strong, atomic) NSMutableDictionary * chatDataSources;
 @property (strong, atomic) HomeDataSource * homeDataSource;
@@ -50,9 +48,7 @@ static const int MAX_REAUTH_RETRIES = 1;
 @property (strong, nonatomic) SocketIOClient * socket;
 @property (assign, atomic) BOOL reauthing;
 @property (strong, atomic) NSOperationQueue * messageSendQueue;
-@property (assign, atomic) UIBackgroundTaskIdentifier bgHttpTaskId;
-
-
+@property (assign, atomic) UIBackgroundTaskIdentifier bgSocketTaskId;
 @end
 
 @implementation ChatController
@@ -62,13 +58,9 @@ static const int MAX_REAUTH_RETRIES = 1;
 {
     //call super init
     self = [super init];
-    
-    
-    
     if (self != nil) {
         _username = username;
-        
-        _bgHttpTaskId = UIBackgroundTaskInvalid;
+        _bgSocketTaskId = UIBackgroundTaskInvalid;
         _chatDataSources = [NSMutableDictionary new];
         _messageBuffer = [NSMutableArray new];
         
@@ -78,8 +70,6 @@ static const int MAX_REAUTH_RETRIES = 1;
         [_messageSendQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAutoinvitesNotification:) name:@"autoinvites" object:nil];
-        
-        
     }
     
     return self;
@@ -199,6 +189,12 @@ static const int MAX_REAUTH_RETRIES = 1;
 
 -(void) shutdown {
     DDLogVerbose(@"chatcontroller shutdown");
+    
+    //give socket time to disconnect from server
+    _bgSocketTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        _bgSocketTaskId = UIBackgroundTaskInvalid;
+    }];
+    DDLogVerbose(@"chatcontroller begin bg socket task: %lu", (unsigned long)_bgSocketTaskId);
     
     [self disconnect];
     [self saveState];
@@ -595,20 +591,7 @@ static const int MAX_REAUTH_RETRIES = 1;
 }
 
 -(void) processNextMessage {
-    //give socket time to disconnect from server
-    if (_bgHttpTaskId == UIBackgroundTaskInvalid) {
-        _bgHttpTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            _bgHttpTaskId = UIBackgroundTaskInvalid;
-        }];
-    }
-    
-    if ([_messageBuffer count] == 0 && [_messageSendQueue operationCount] == 0) {
-        if (_bgHttpTaskId != UIBackgroundTaskInvalid) {
-            [[UIApplication sharedApplication] endBackgroundTask:_bgHttpTaskId];
-            return;
-        }
-    }
-    
+
     if([_messageBuffer count] > 0) {
         SurespotMessage * qm = [_messageBuffer objectAtIndex:0];
         //see if we have an operation for this message, and if not create one
@@ -645,8 +628,7 @@ static const int MAX_REAUTH_RETRIES = 1;
                             [self removeMessageFromBuffer:message];
                             [self processNextMessage];
                         }
-                        
-                        
+        
                         else {
                             //no message, error message queue
                             //when queue loads again it will recreate the operations
@@ -717,7 +699,7 @@ static const int MAX_REAUTH_RETRIES = 1;
         DDLogDebug(@"removed message from message buffer, iv: %@, count: %lu", foundMessage.iv, (unsigned long)_messageBuffer.count);
     }
     
-    for (SendTextMessageOperation * stmo in _messageSendQueue.operations) {
+    for (SendMessageOperation * stmo in _messageSendQueue.operations) {
         if ([stmo.message isEqual:removeMessage]) {
             [stmo cancel];
             DDLogDebug(@"cancelled message send operation for, iv: %@, count: %lu", removeMessage.iv, (unsigned long)_messageSendQueue.operations.count);

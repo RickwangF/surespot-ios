@@ -20,6 +20,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
+@interface SendMessageOperation()
+@property (assign, atomic) UIBackgroundTaskIdentifier bgTaskId;
+@end
 
 @implementation SendMessageOperation
 
@@ -43,6 +46,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self didChangeValueForKey:@"isExecuting"];
     
     DDLogVerbose(@"executing");
+    
+    _bgTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
+    
     
     [self prepAndSendMessage];
 }
@@ -80,10 +86,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     _isExecuting = NO;
     _isFinished = YES;
-
+    
     [self didChangeValueForKey:@"isExecuting"];
     [self didChangeValueForKey:@"isFinished"];
     
+    [[UIApplication sharedApplication] endBackgroundTask:_bgTaskId];
     
     [_bgSendTimer invalidate];
     if (_callback) {
