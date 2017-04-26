@@ -24,7 +24,7 @@ extern NSString * const MIME_TYPE_M4A;
 extern NSString * const MIME_TYPE_GIF_LINK;
 extern NSString * const MIME_TYPE_FILE;
 extern NSInteger const MAX_IDENTITIES;
-extern NSInteger const MAX_RETRY_DELAY;
-extern NSInteger const MAX_RETRY_ATTEMPTS;
+extern NSInteger const RETRY_DELAY;
+extern NSInteger const RETRY_ATTEMPTS;
 
 @end

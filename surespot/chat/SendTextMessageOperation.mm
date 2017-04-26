@@ -22,6 +22,7 @@
 #import "NetworkManager.h"
 #import "UIUtils.h"
 
+
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
@@ -156,11 +157,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) scheduleRetrySend {
     [_bgSendTimer invalidate];
     
-    if ([self isCancelled] || ++_bgSendRetries > MAX_RETRY_ATTEMPTS) {
+    if ([self isCancelled] || ++_bgSendRetries >= RETRY_ATTEMPTS) {
+        DDLogDebug(@"task cancelled: %@ or reached retry attempt limit: %ld", [NSNumber numberWithBool:[self isCancelled]], (long)_bgSendRetries);
         [self finish:nil];
         return;
     }
-    double timerInterval = [UIUtils generateIntervalK: _bgSendRetries++ maxInterval:MAX_RETRY_DELAY];
+    double timerInterval = [UIUtils generateIntervalK: _bgSendRetries maxInterval:RETRY_DELAY];
     DDLogDebug(@ "attempting to send messages via http in: %f" , timerInterval);
     _bgSendTimer = [NSTimer scheduledTimerWithTimeInterval:timerInterval target:self selector:@selector(bgSendTimerFired:) userInfo:nil repeats:NO];
     

@@ -34,7 +34,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
-static const int MAX_CONNECTION_RETRIES = 60;
 static const int MAX_REAUTH_RETRIES = 1;
 
 
@@ -225,6 +224,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
     [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
+    [opts setObject:[NSNumber numberWithBool:NO] forKey:@"reconnects"];
     
     //#ifdef DEBUG
     //       [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
@@ -256,18 +256,20 @@ static const int MAX_REAUTH_RETRIES = 1;
 
 -(void) reconnect {
     //start reconnect cycle
-    if (_connectionRetries < MAX_CONNECTION_RETRIES) {
-        if (_reconnectTimer) {
-            [_reconnectTimer invalidate];
-        }
+    if (_reconnectTimer) {
+        [_reconnectTimer invalidate];
+    }
+    
+    if (++_connectionRetries <= RETRY_ATTEMPTS) {
+       
         
         //exponential random backoff
-        double timerInterval = [UIUtils generateIntervalK: _connectionRetries++ maxInterval: MAX_RETRY_DELAY];
+        double timerInterval = [UIUtils generateIntervalK: _connectionRetries maxInterval: RETRY_DELAY];
         DDLogDebug(@ "attempting reconnect in: %f" , timerInterval);
         _reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:timerInterval target:self selector:@selector(reconnectTimerFired:) userInfo:nil repeats:NO];
     }
     else {
-        DDLogDebug(@"reconnect retries exhausted, giving up");
+        DDLogDebug(@"reconnect retries %ld exhausted, giving up", (long)_connectionRetries);
     }
 }
 
