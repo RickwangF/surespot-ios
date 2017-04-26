@@ -35,7 +35,7 @@ static const NSInteger retryAttempts = 5;
          completed:(SDWebImageCompletedBlock)completedBlock
       retryAttempt:(NSInteger) retryAttempt
 {
-    [self cancelCurrentImageLoad];
+ 
     __weak MessageView *wself = self;
     
     //see if we have unencrypted locally
@@ -60,8 +60,7 @@ static const NSInteger retryAttempts = 5;
                     }
                     
                     if ([message.mimeType isEqualToString:MIME_TYPE_IMAGE]) {
-                        if (wself.uiImageView.image != image) {
-                            DDLogInfo(@"Using image from local asset; %@", localUrl);
+                                                 DDLogInfo(@"Using image from local asset; %@", localUrl);
                             wself.uiImageView.image = image;
                             
                             if ([image size].height > [image size].width) {
@@ -70,8 +69,7 @@ static const NSInteger retryAttempts = 5;
                             else {
                                 [wself.uiImageView setContentMode:UIViewContentModeScaleAspectFill];
                             }
-                            return;
-                        }
+                        [wself setNeedsLayout];
                     }
                 }
                 
@@ -81,8 +79,10 @@ static const NSInteger retryAttempts = 5;
     
     NSURL * url = [NSURL URLWithString:message.data];
     
-    if (url)
-    { id<SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadWithURL: url
+    if (url) {
+        [self cancelCurrentImageLoad];
+        DDLogDebug(@"Using image from sdweb for %@", url);
+        id<SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadWithURL: url
                                                                                   mimeType: [message mimeType]
                                                                                ourUsername: ourUsername
                                                                                 ourVersion: [message getOurVersion: ourUsername]
