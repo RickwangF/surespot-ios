@@ -6,6 +6,9 @@
 //  Copyright (c) 2013 surespot. All rights reserved.
 //
 
+
+#import <AssetsLibrary/AssetsLibrary.h>
+
 #import "UIUtils.h"
 #import "Toast+UIView.h"
 #import "ChatUtils.h"
@@ -16,6 +19,7 @@
 #import "SDWebImageManager.h"
 #import "NSBundle+FallbackLanguage.h"
 #import "IdentityController.h"
+#import "UIImage+Scale.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -493,6 +497,27 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     double mult = ((double)arc4random() / ARC4RANDOM_MAX);
     double reconnectTime = mult * timerInterval;
     return reconnectTime;
+}
+
++(void) getLocalImageFromAssetUrl: (NSString *) url callback:(CallbackBlock) callback {
+    //compress encrypt and upload the image
+    ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+    [assetsLibrary assetForURL:[NSURL URLWithString: url] resultBlock:^(ALAsset *asset) {
+        ALAssetRepresentation *rep = [asset defaultRepresentation];
+        @autoreleasepool {
+            CGImageRef iref = [rep fullResolutionImage];
+            if (iref) {
+                UIImage *image = [UIImage imageWithCGImage:iref];
+                
+                iref = nil;
+                
+                UIImage * scaledImage = [image imageScaledToMaxWidth:400 maxHeight:400];
+                callback(scaledImage);
+                           }
+        }
+    } failureBlock:^(NSError *error) {
+        callback(nil);
+    }];
 }
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SurespotConstants.h"
 #import "SurespotMessage.h"
 #import "REMenu.h"
 #import "TTTAttributedLabel.h"
@@ -50,5 +51,6 @@
 +(void) setTextFieldColors: (UITextField *) textField localizedStringKey: (NSString *) key;
 +(BOOL) confirmLogout;
 +(double) generateIntervalK: (NSInteger) k maxInterval: (NSInteger) maxInterval;
++(void) getLocalImageFromAssetUrl: (NSString *) url callback:(CallbackBlock) callback;
 @end
 

@@ -17,7 +17,7 @@
 #import "UIUtils.h"
 #import "SDWebImageManager.h"
 #import "ChatDataSource.h"
-#import "UIImage+Scale.h"
+
 #import "ChatManager.h"
 #import "NSData+Base64.h"
 
@@ -43,70 +43,57 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     //    }
     //
     if (![self.message readyToSend]) {
-        NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion: self.message.from];
-        
-        [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername: self.message.from theirUsername: [self.message to] callback:^(NSString * version) {
-            if (version) {
-                //compress encrypt and upload the image
-                ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
-                [assetsLibrary assetForURL:[NSURL URLWithString: self.message.plainData] resultBlock:^(ALAsset *asset) {
-                    ALAssetRepresentation *rep = [asset defaultRepresentation];
-                    @autoreleasepool {
-                        CGImageRef iref = [rep fullResolutionImage];
-                        if (iref) {
-                            UIImage *image = [UIImage imageWithCGImage:iref];
-                            
-                            iref = nil;
-                            
-                            UIImage * scaledImage = [image imageScaledToMaxWidth:400 maxHeight:400];
-                            NSData * imageData = UIImageJPEGRepresentation(scaledImage, 0.5);
-                            
-                            //encrypt
-                            [EncryptionController symmetricEncryptData:imageData
-                                                           ourUsername:self.message.from
-                                                            ourVersion:ourLatestVersion
-                                                         theirUsername:self.message.to
-                                                          theirVersion:version
-                                                                    iv: [NSData dataFromBase64String:self.message.iv]
-                                                              callback:^(NSData * encryptedImageData) {
-                                                                  if (encryptedImageData) {
-                                                                      //create message
-                                                                      self.message.fromVersion = ourLatestVersion;
-                                                                      self.message.toVersion = version;
-                                                                      
-                                                                      NSString * key = [@"dataKey_" stringByAppendingString: self.message.iv];
-                                                                      _encryptedImageData = encryptedImageData;
-                                                                      
-                                                                      DDLogInfo(@"adding local image to cache %@", key);
-                                                                      [[[SDWebImageManager sharedManager] imageCache] storeImage:scaledImage imageData:encryptedImageData mimeType:MIME_TYPE_IMAGE forKey:key toDisk:YES async:NO];
-                                                                      
-                                                                      self.message.data = key;
-                                                                      //add message locally before we upload it
-                                                                      ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
-                                                                      [cds addMessage:self.message refresh:YES];
-                                                                      [self sendImageMessageViaHttp];
-                                                                  }
-                                                                  else {
-                                                                      [self scheduleRetrySend];
-                                                                  }
-                                                              }];
-                        }
+        [UIUtils getLocalImageFromAssetUrl:self.message.plainData callback:^(id scaledImage) {
+            if (scaledImage) {
+                NSData * imageData = UIImageJPEGRepresentation(scaledImage, 0.5);
+                NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion: self.message.from];
+                
+                [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername: self.message.from theirUsername: [self.message to] callback:^(NSString * version) {
+                    if (version) {
+                        
+                        //encrypt
+                        [EncryptionController symmetricEncryptData:imageData
+                                                       ourUsername:self.message.from
+                                                        ourVersion:ourLatestVersion
+                                                     theirUsername:self.message.to
+                                                      theirVersion:version
+                                                                iv: [NSData dataFromBase64String:self.message.iv]
+                                                          callback:^(NSData * encryptedImageData) {
+                                                              if (encryptedImageData) {
+                                                                  //create message
+                                                                  self.message.fromVersion = ourLatestVersion;
+                                                                  self.message.toVersion = version;
+                                                                  
+                                                                  NSString * key = [@"dataKey_" stringByAppendingString: self.message.iv];
+                                                                  _encryptedImageData = encryptedImageData;
+                                                                  
+                                                                  DDLogInfo(@"adding local image to cache %@", key);
+                                                                  [[[SDWebImageManager sharedManager] imageCache] storeImage:scaledImage imageData:encryptedImageData mimeType:MIME_TYPE_IMAGE forKey:key toDisk:YES async:NO];
+                                                                  
+                                                                  self.message.data = key;
+                                                                  //add message locally before we upload it
+                                                                  ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
+                                                                  [cds addMessage:self.message refresh:YES];
+                                                                  [self sendImageMessageViaHttp];
+                                                              }
+                                                              else {
+                                                                  [self scheduleRetrySend];
+                                                              }
+                                                          }];
                     }
-                    
-                } failureBlock:^(NSError *error) {
-                    [self finish:nil];
+                    else {
+                        [self scheduleRetrySend];
+                    }
                 }];
             }
             else {
-                [self scheduleRetrySend];
+                [self finish:nil];
             }
         }];
-        
     }
     else {
         [self sendImageMessageViaHttp];
     }
-    
 }
 
 -(void) sendImageMessageViaHttp {
