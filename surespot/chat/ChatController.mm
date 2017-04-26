@@ -25,6 +25,7 @@
 #import "NSBundle+FallbackLanguage.h"
 #import "SocketIO-Swift.h"
 #import "SurespotConfiguration.h"
+#import "SendImageMessageOperation.h"
 #import "SendTextMessageOperation.h"
 #import "SurespotQueueMessage.h"
 
@@ -566,7 +567,7 @@ static const int MAX_REAUTH_RETRIES = 1;
 }
 
 
--(void) sendImageMessage: (NSURL*) localUrl  toFriend: (NSString *) friendname {
+-(void) sendImageMessage: (NSURL*) localUrl  to: (NSString *) friendname {
     //add message locally
     NSData * iv = [EncryptionController getIv];
     NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
@@ -610,9 +611,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     if([_messageBuffer count] > 0) {
         SurespotMessage * qm = [_messageBuffer objectAtIndex:0];
-        
         //see if we have an operation for this message, and if not create one
-        
         SendMessageOperation * smo;
         for (SendMessageOperation * operation in [_messageSendQueue operations]) {
             if ([SurespotMessage areMessagesEqual:qm message:[operation message]]) {
@@ -620,13 +619,11 @@ static const int MAX_REAUTH_RETRIES = 1;
                 break;
             }
         }
-        
-        
-        
+
         if (!smo) {
             if ([qm.mimeType isEqualToString:MIME_TYPE_TEXT]) {
                 DDLogVerbose(@"Creating send text message operation for %@", qm.iv);
-                [_messageSendQueue addOperation: [[SendTextMessageOperation alloc] initWithMessage:qm username:_username callback:^(SurespotMessage * message) {
+                [_messageSendQueue addOperation: [[SendTextMessageOperation alloc] initWithMessage:qm callback:^(SurespotMessage * message) {
                     if (message) {
                         [self removeMessageFromBuffer:message];
                         [self processNextMessage];
@@ -634,17 +631,31 @@ static const int MAX_REAUTH_RETRIES = 1;
                     else {
                         //no message, error message queue
                         //when queue loads again it will recreate the operations
-                        //todo show notification, can't do it till ios 10
-                        DDLogDebug(@"Message send operation finished with no message, cancelling message send operations");
+                        //todo show notification - can't do it till ios 10
+                        DDLogDebug(@"Message text send operation finished with no message, cancelling message send operations");
                         [_messageSendQueue cancelAllOperations];
                     }
                 }]];
             }
             else {
                 if ([qm.mimeType isEqualToString:MIME_TYPE_IMAGE]) {
-                    
+                    DDLogVerbose(@"Creating send image message operation for %@", qm.iv);
+                    [_messageSendQueue addOperation: [[SendImageMessageOperation alloc] initWithMessage:qm callback:^(SurespotMessage * message) {
+                        if (message) {
+                            [self removeMessageFromBuffer:message];
+                            [self processNextMessage];
+                        }
+                        
+                        
+                        else {
+                            //no message, error message queue
+                            //when queue loads again it will recreate the operations
+                            //todo show notification, can't do it till ios 10
+                            DDLogDebug(@"Message send image operation finished with no message");
+                            [_messageSendQueue cancelAllOperations];
+                        }
+                    }]];
                 }
-                
             }
         }
         else {
@@ -671,111 +682,6 @@ static const int MAX_REAUTH_RETRIES = 1;
     [self processNextMessage];
 }
 
-
-
-
-
-
-
-
--(void) prepAndSendImageMessage: (SurespotMessage *) message {
-    
-    //
-    //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    //
-    //        [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername:_username theirUsername: friendname callback:^(NSString *version) {
-    //            if (version) {
-    //                //compress encrypt and upload the image
-    //
-    //
-    //                //encrypt
-    //                [EncryptionController symmetricEncryptData:imageData
-    //                                               ourUsername: _username
-    //                                                ourVersion:_ourVersion
-    //                                             theirUsername:_theirUsername
-    //                                              theirVersion:version
-    //                                                        iv:iv
-    //                                                  callback:^(NSData * encryptedImageData) {
-    //                                                      if (encryptedImageData) {
-    //                                                          //create message
-    //                                                          SurespotMessage * message = [SurespotMessage new];
-    //                                                          message.from = _username;
-    //                                                          message.fromVersion = _ourVersion;
-    //                                                          message.to = _theirUsername;
-    //                                                          message.toVersion = version;
-    //                                                          message.mimeType = MIME_TYPE_IMAGE;
-    //                                                          message.iv = [iv base64EncodedStringWithSeparateLines:NO];
-    //                                                          NSString * key = [@"dataKey_" stringByAppendingString: message.iv];
-    //                                                          message.data = key;
-    //                                                          message.hashed = YES;
-    //
-    //                                                          DDLogInfo(@"adding local image to cache %@", key);
-    //                                                          [[[SDWebImageManager sharedManager] imageCache] storeImage:scaledImage imageData:encryptedImageData mimeType:MIME_TYPE_IMAGE forKey:key toDisk:YES];
-    //
-    //                                                          //add message locally before we upload it
-    //                                                          ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname:_theirUsername];
-    //                                                          [cds addMessage:message refresh:YES];
-    //
-    //                                                          //upload image to server
-    //                                                          DDLogInfo(@"uploading image %@ to server", key);
-    //                                                          [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData:encryptedImageData
-    //                                                                                                                                    ourVersion:_ourVersion
-    //                                                                                                                                 theirUsername:_theirUsername
-    //                                                                                                                                  theirVersion:version
-    //                                                                                                                                        fileid:[iv SR_stringByBase64Encoding]
-    //                                                                                                                                      mimeType:MIME_TYPE_IMAGE
-    //                                                                                                                                  successBlock:^(id JSON) {
-    //
-    //                                                                                                                                      //update the message with the id and url
-    //                                                                                                                                      NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
-    //                                                                                                                                      NSString * url = [JSON objectForKey:@"url"];
-    //                                                                                                                                      NSInteger size = [[JSON objectForKey:@"size"] integerValue];
-    //                                                                                                                                      NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
-    //
-    //                                                                                                                                      DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, (long)size);
-    //
-    //                                                                                                                                      SurespotMessage * updatedMessage = [message copyWithZone:nil];
-    //
-    //                                                                                                                                      updatedMessage.serverid = serverid;
-    //                                                                                                                                      updatedMessage.data = url;
-    //                                                                                                                                      updatedMessage.dateTime = date;
-    //                                                                                                                                      updatedMessage.dataSize = size;
-    //
-    //                                                                                                                                      [cds addMessage:updatedMessage refresh:YES];
-    //
-    //                                                                                                                                      [self stopProgress];
-    //                                                                                                                                  } failureBlock:^(NSURLResponse *operation, NSError *Error) {
-    //                                                                                                                                      long statusCode = [(NSHTTPURLResponse *) operation statusCode];
-    //                                                                                                                                      DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", key, statusCode);
-    //                                                                                                                                      [self stopProgress];
-    //                                                                                                                                      if (statusCode == 401) {
-    //                                                                                                                                          message.errorStatus = 401;
-    //                                                                                                                                      }
-    //                                                                                                                                      else {
-    //                                                                                                                                          if (statusCode == 402) {
-    //                                                                                                                                              message.errorStatus = 402;
-    //                                                                                                                                          }                                                                                                   else {
-    //                                                                                                                                              message.errorStatus = 500;
-    //                                                                                                                                          }
-    //                                                                                                                                      }
-    //
-    //                                                                                                                                      [cds postRefresh];
-    //                                                                                                                                  }];
-    //                                                      }
-    //                                                      else {
-    //                                                          [self stopProgress];
-    //                                                          [UIUtils showToastKey:@"could_not_upload_image" duration:2];
-    //
-    //                                                      }
-    //                                                  }];
-    //            }
-    //            else {
-    //                [UIUtils showToastKey:@"could_not_upload_image" duration:2];
-    //            }
-    //        }];
-    //    });
-    
-}
 
 //
 //-(void) sendMessageOnSocket: (SurespotMessage *) message {
@@ -1398,61 +1304,6 @@ static const int MAX_REAUTH_RETRIES = 1;
                 }];
                 
             }
-        }
-    }
-}
-
--(void) resendFileMessage: (SurespotMessage *) resendMessage {
-    
-    //make a copy of the message
-    SurespotMessage * message = [resendMessage copyWithZone:nil];
-    
-    if ([[message data] hasPrefix:@"dataKey_"]) {
-        
-        DDLogInfo(@"resending data %@ to server", message.data);
-        NSData * data = [[[SDWebImageManager sharedManager] imageCache] diskImageDataBySearchingAllPathsForKey:message.data];
-        if (data) {
-            resendMessage.errorStatus = 0;
-            ChatDataSource * cds = [self getDataSourceForFriendname:[message getOtherUser: _username]];
-            [cds postRefresh];
-            [self startProgress: @"resendFileMessage"];
-            [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData: data
-                                                                                      ourVersion:[message getOurVersion: _username]
-                                                                                   theirUsername:[message getOtherUser: _username]
-                                                                                    theirVersion:[message getTheirVersion: _username]
-                                                                                          fileid:message.iv
-                                                                                        mimeType:message.mimeType
-                                                                                    successBlock:^(id JSON) {
-                                                                                        
-                                                                                        NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
-                                                                                        NSString * url = [JSON objectForKey:@"url"];
-                                                                                        NSInteger size = [[JSON objectForKey:@"size"] integerValue];
-                                                                                        NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
-                                                                                        
-                                                                                        DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, (long)size);
-                                                                                        
-                                                                                        message.serverid = serverid;
-                                                                                        message.data = url;
-                                                                                        message.dateTime = date;
-                                                                                        message.dataSize = size;
-                                                                                        
-                                                                                        [cds addMessage:message refresh:YES];
-                                                                                        
-                                                                                        [self stopProgress: @"resendFileMessage"];
-                                                                                        
-                                                                                    } failureBlock:^(NSURLResponse *operation, NSError *Error) {
-                                                                                        long statusCode = [(NSHTTPURLResponse*) operation statusCode];
-                                                                                        DDLogInfo(@"resend data %@ to server failed, statuscode: %ld", message.data, statusCode);
-                                                                                        if (statusCode == 402) {
-                                                                                            resendMessage.errorStatus = 402;
-                                                                                        }
-                                                                                        else {
-                                                                                            resendMessage.errorStatus = 500;
-                                                                                        }
-                                                                                        
-                                                                                        [self stopProgress: @"resendFileMessage"];
-                                                                                        [cds postRefresh];
-                                                                                    }];
         }
     }
 }

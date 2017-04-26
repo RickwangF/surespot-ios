@@ -50,6 +50,7 @@
         _errorStatus = [coder decodeIntegerForKey:@"errorStatus"];
         _dataSize = [coder decodeIntegerForKey:@"dataSize"];
         _voicePlayed = [coder decodeBoolForKey:@"voicePlayed"];
+        
     }
     return self;
 }

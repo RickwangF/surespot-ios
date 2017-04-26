@@ -1,19 +1,10 @@
 //
-//  GetPublicKeysOperation.m
+//  SendTextMessageOperation.mm
 //  surespot
 //
-//  Created by Adam on 10/20/13.
-//  Copyright (c) 2013 surespot. All rights reserved.
+//  Created by Adam on 4/26/17.
+//  Copyright © 2017 surespot. All rights reserved.
 //
-
-//
-//  GenerateSharedSecretOperation.m
-//  surespot
-//
-//  Created by Adam on 10/19/13.
-//  Copyright (c) 2013 surespot. All rights reserved.
-//
-
 
 #import "SendTextMessageOperation.h"
 #import "CocoaLumberjack.h"
@@ -22,62 +13,20 @@
 #import "NetworkManager.h"
 #import "UIUtils.h"
 
-
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
-
-
-
-
-@interface SendTextMessageOperation() 
-@property (nonatomic) NSString * username;
-@property (nonatomic, strong) CallbackBlock callback;
-@property (strong, atomic) NSTimer * bgSendTimer;
-@property (assign, atomic) NSInteger bgSendRetries;
-@property (nonatomic) BOOL isExecuting;
-@property (nonatomic) BOOL isFinished;
-@end
-
-
-
 @implementation SendTextMessageOperation
-
--(id) initWithMessage: (SurespotMessage *) message
-             username: (NSString *) ourUsername
-             callback: (CallbackBlock) callback {
-    
-    if (self = [super init]) {
-        self.message = message;
-        self.username = ourUsername;
-        self.callback = callback;
-        
-        _isExecuting = NO;
-        _isFinished = NO;
-        
-    }
-    return self;
-}
-
--(void) start {
-    [self willChangeValueForKey:@"isExecuting"];
-    _isExecuting = YES;
-    [self didChangeValueForKey:@"isExecuting"];
-    
-    DDLogVerbose(@"executing");
-    
-    [self prepAndSendMessage];
-}
 
 -(void) prepAndSendMessage {
     if (![self.message readyToSend]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion: _username];
+            NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion: self.message.from];
             
-            [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername: _username theirUsername: [self.message to] callback:^(NSString * version) {
+            [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername: self.message.from theirUsername: [self.message to] callback:^(NSString * version) {
                 if (version) {
                     [self encryptMessage:self.message ourVersion:ourLatestVersion theirVersion:version callback:^(NSString * cipherText) {
                         if (cipherText) {
@@ -108,7 +57,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
           theirVersion: (NSString *) theirVersion
               callback: (CallbackBlock) callback {
     [EncryptionController symmetricEncryptString: [message plainData]
-                                     ourUsername: _username
+                                     ourUsername: self.message.from
                                       ourVersion:ourVersion
                                    theirUsername:[message to]
                                     theirVersion:theirVersion
@@ -123,7 +72,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [messagesJson addObject:[self.message toNSDictionary]];
     
     
-    [[[NetworkManager sharedInstance] getNetworkController:_username]
+    [[[NetworkManager sharedInstance] getNetworkController:self.message.from]
      sendMessages:messagesJson
      
      successBlock:^(NSURLSessionTask *task, id JSON) {
@@ -153,51 +102,4 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
      }];
     
 }
-
--(void) scheduleRetrySend {
-    [_bgSendTimer invalidate];
-    
-    if ([self isCancelled] || ++_bgSendRetries >= RETRY_ATTEMPTS) {
-        DDLogDebug(@"task cancelled: %@ or reached retry attempt limit: %ld", [NSNumber numberWithBool:[self isCancelled]], (long)_bgSendRetries);
-        [self finish:nil];
-        return;
-    }
-    double timerInterval = [UIUtils generateIntervalK: _bgSendRetries maxInterval:RETRY_DELAY];
-    DDLogDebug(@ "attempting to send messages via http in: %f" , timerInterval);
-    _bgSendTimer = [NSTimer scheduledTimerWithTimeInterval:timerInterval target:self selector:@selector(bgSendTimerFired:) userInfo:nil repeats:NO];
-    
-}
-
-
--(void) bgSendTimerFired: (NSTimer *) timer {
-    [self prepAndSendMessage];
-}
-
-
-- (void)finish: (SurespotMessage *) message
-{
-    DDLogVerbose(@"finished");
-    [self willChangeValueForKey:@"isExecuting"];
-    [self willChangeValueForKey:@"isFinished"];
-    
-    _isExecuting = NO;
-    _isFinished = YES;
-
-    [self didChangeValueForKey:@"isExecuting"];
-    [self didChangeValueForKey:@"isFinished"];
-    
-    
-    [_bgSendTimer invalidate];
-    if (_callback) {
-        _callback(message);
-    }
-    _callback = nil;
-}
-
-
-- (BOOL)isConcurrent
-{
-    return YES;
-}
-
 @end

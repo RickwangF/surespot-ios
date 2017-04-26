@@ -13,11 +13,17 @@
 #import "SurespotConstants.h"
 
 @interface SendMessageOperation : NSOperation
+@property (nonatomic) BOOL isExecuting;
+@property (nonatomic) BOOL isFinished;
+@property (nonatomic, strong) CallbackBlock callback;
+@property (strong, atomic) NSTimer * bgSendTimer;
+@property (assign, atomic) NSInteger bgSendRetries;
 -(id) initWithMessage: (SurespotMessage *) message
-             username: (NSString *) ourUsername
              callback: (CallbackBlock) callback;
 @property (nonatomic) SurespotMessage * message;
 -(void) prepAndSendMessage;
+-(void) scheduleRetrySend;
+- (void)finish: (SurespotMessage *) message;
 @end
 
 

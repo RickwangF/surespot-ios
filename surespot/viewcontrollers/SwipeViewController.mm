@@ -2203,21 +2203,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     if ([message.mimeType isEqualToString:MIME_TYPE_IMAGE]) {
-        if (message.errorStatus > 0 && ours) {
-            UIImage * image = nil;
-            NSString * title = nil;
-            
-            title = NSLocalizedString(@"menu_resend_message", nil);
-            image = [UIImage imageNamed:@"ic_menu_send"];
-            
-            REMenuItem * resendItem = [[REMenuItem alloc] initWithTitle:title image:image highlightedImage:nil action:^(REMenuItem * item){
-                [[[ChatManager sharedInstance] getChatController: _username] resendFileMessage:message];
-            }];
-            
-            [menuItems addObject:resendItem];
-        }
-        
-        //if i'ts our message and ti's been sent we can change lock status
+        //if it's our message and it's been sent we can change lock status
         if (message.serverid > 0 && ours) {
             UIImage * image = nil;
             NSString * title = nil;
@@ -2275,26 +2261,6 @@ const Float32 voiceRecordDelay = 0.3;
             [menuItems addObject:saveItem];
         }
     }
-    
-    else {
-        if ([message.mimeType isEqualToString:MIME_TYPE_M4A]) {
-            if (message.errorStatus > 0 && ours) {
-                UIImage * image = nil;
-                NSString * title = nil;
-                
-                title = NSLocalizedString(@"menu_resend_message", nil);
-                image = [UIImage imageNamed:@"ic_menu_send"];
-                
-                REMenuItem * resendItem = [[REMenuItem alloc] initWithTitle:title image:image highlightedImage:nil action:^(REMenuItem * item){
-                    [[[ChatManager sharedInstance] getChatController: _username] resendFileMessage:message];
-                }];
-                
-                [menuItems addObject:resendItem];
-            }
-        }
-    }
-    
-    
     
     //can always delete
     REMenuItem * deleteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_delete_message", nil) image:[UIImage imageNamed:@"ic_menu_delete"] highlightedImage:nil action:^(REMenuItem * item){

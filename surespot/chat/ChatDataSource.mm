@@ -239,6 +239,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             }
             DDLogInfo(@"updating message: %@", message);
             SurespotMessage * existingMessage = [self.messages objectAtIndex:index];
+            DDLogInfo(@"updating existing message: %@", message);
             if (message.serverid > 0) {
                 existingMessage.serverid = message.serverid;
                 if (message.dateTime) {
@@ -275,7 +276,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             }
             
             if (message.plainData && !existingMessage.plainData) {
-                  DDLogInfo(@"updating message iv: %@, plainData: %@", message.iv, message.plainData);
+                
                 existingMessage.plainData = message.plainData;
             }
             
@@ -298,6 +299,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             if (message.errorStatus && !existingMessage.errorStatus) {
                 existingMessage.errorStatus = message.errorStatus;
             }
+            DDLogInfo(@"updating result message: %@", existingMessage);
 
         }
         

@@ -47,6 +47,7 @@
 		6637012D187A33A6006D17CA /* PWYLView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6637012C187A33A6006D17CA /* PWYLView.xib */; };
 		664135741EAFBC4F005A4957 /* SurespotQueueMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 664135731EAFBC4F005A4957 /* SurespotQueueMessage.m */; };
 		664135781EB0EFC5005A4957 /* SendMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 664135771EB0EFC5005A4957 /* SendMessageOperation.mm */; };
+		6641357C1EB0FE55005A4957 /* SendImageMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6641357B1EB0FE55005A4957 /* SendImageMessageOperation.mm */; };
 		6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2B185CB08200CBACDE /* SurespotPhoto.m */; };
 		6646AE2F185CB2EF00CBACDE /* EncryptionParams.m in Sources */ = {isa = PBXBuildFile; fileRef = 6646AE2E185CB2EF00CBACDE /* EncryptionParams.m */; };
 		6648B1E5186CB9BF007037B1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6648B1E4186CB9BF007037B1 /* MediaPlayer.framework */; };
@@ -250,6 +251,8 @@
 		664135751EAFBC60005A4957 /* SurespotQueueMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotQueueMessage.h; sourceTree = "<group>"; };
 		664135761EB0EFB8005A4957 /* SendMessageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SendMessageOperation.h; sourceTree = "<group>"; };
 		664135771EB0EFC5005A4957 /* SendMessageOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SendMessageOperation.mm; sourceTree = "<group>"; };
+		6641357A1EB0FE46005A4957 /* SendImageMessageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SendImageMessageOperation.h; path = ../chat/SendImageMessageOperation.h; sourceTree = "<group>"; };
+		6641357B1EB0FE55005A4957 /* SendImageMessageOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SendImageMessageOperation.mm; path = ../chat/SendImageMessageOperation.mm; sourceTree = "<group>"; };
 		6646AE2A185CB08200CBACDE /* SurespotPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotPhoto.h; sourceTree = "<group>"; };
 		6646AE2B185CB08200CBACDE /* SurespotPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SurespotPhoto.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		6646AE2D185CB2EF00CBACDE /* EncryptionParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncryptionParams.h; sourceTree = "<group>"; };
@@ -1257,6 +1260,8 @@
 				66EBDF3C1855C96F00F2452D /* UIImage+Scale.m */,
 				6646AE2A185CB08200CBACDE /* SurespotPhoto.h */,
 				6646AE2B185CB08200CBACDE /* SurespotPhoto.m */,
+				6641357A1EB0FE46005A4957 /* SendImageMessageOperation.h */,
+				6641357B1EB0FE55005A4957 /* SendImageMessageOperation.mm */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -1607,6 +1612,7 @@
 				66866267185B6A2E001491B1 /* SDWebImageDownloader.m in Sources */,
 				6654441317F37A3F00F62F7F /* SwipeView.m in Sources */,
 				6686626F185B6A2E001491B1 /* HomeCell+WebImageCache.m in Sources */,
+				6641357C1EB0FE55005A4957 /* SendImageMessageOperation.mm in Sources */,
 				665CA9A41E9098210045EEDD /* REMenuContainerView.m in Sources */,
 				666FE5661E8D7F8100F16569 /* Toast+UIView.m in Sources */,
 				66EBE0BD1855C97100F2452D /* ChatUtils.mm in Sources */,

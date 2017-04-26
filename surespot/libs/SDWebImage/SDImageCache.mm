@@ -16,7 +16,7 @@
 #import "CocoaLumberjack.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelInfo;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -168,8 +168,11 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
 }
 
 #pragma mark ImageCache
+- (void)storeImage:(id)image imageData:(NSData *)imageData mimeType: (NSString *) mimeType forKey:(NSString *)key toDisk:(BOOL)toDisk {
+    [self storeImage:image imageData:imageData mimeType:mimeType forKey:key toDisk:toDisk async:YES];
+}
 
-- (void)storeImage:(id)image imageData:(NSData *)imageData mimeType: (NSString *) mimeType forKey:(NSString *)key toDisk:(BOOL)toDisk
+- (void)storeImage:(id)image imageData:(NSData *)imageData mimeType: (NSString *) mimeType forKey:(NSString *)key toDisk:(BOOL)toDisk async: (BOOL) async
 {
     if (!image || !key)
     {
@@ -192,25 +195,35 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
     
     if (toDisk)
     {
+        if (async) {
         dispatch_async(self.ioQueue, ^
                        {
-                           if (imageData)
-                           {
-                               // Can't use defaultManager another thread
-                               NSFileManager *fileManager = [NSFileManager new];
-                               
-                               if (![fileManager fileExistsAtPath:_diskCachePath])
-                               {
-                                   [fileManager createDirectoryAtPath:_diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];
-                               }
-                               
-                               NSString * path = [self defaultCachePathForKey:key];
-                               [fileManager createFileAtPath:path contents:imageData attributes:nil];
-                               DDLogVerbose(@"storing encrypted image data to disk at %@ for key: %@", path,  key);
-                           }
+                           [self saveImageData:imageData key: key];
                        });
+        }
+        else {
+            [self saveImageData:imageData key: key];
+        }
     }
 }
+
+-(void) saveImageData: (NSData *) imageData key: (NSString *) key {
+    if (imageData)
+    {
+        // Can't use defaultManager another thread
+        NSFileManager *fileManager = [NSFileManager new];
+        
+        if (![fileManager fileExistsAtPath:_diskCachePath])
+        {
+            [fileManager createDirectoryAtPath:_diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];
+        }
+        
+        NSString * path = [self defaultCachePathForKey:key];
+        [fileManager createFileAtPath:path contents:imageData attributes:nil];
+        DDLogVerbose(@"storing encrypted image data to disk at %@ for key: %@", path,  key);
+    }
+}
+
 
 -(BOOL) isKeyCached: (NSString *) key {
     if ([self imageFromMemoryCacheForKey:key]) {
@@ -268,6 +281,10 @@ BOOL ImageDataHasPNGPreffix(NSData *data)
     }
     
     return diskImage;
+}
+
+-(NSData *) dataForKey: (NSString *) key {
+    return [self diskImageDataBySearchingAllPathsForKey:key];
 }
 
 - (NSData *)diskImageDataBySearchingAllPathsForKey:(NSString *)key

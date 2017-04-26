@@ -1,3 +1,10 @@
+//
+//  SendMessageOperation.mm
+//  surespot
+//
+//  Created by Adam on 4/26/17.
+//  Copyright © 2017 surespot. All rights reserved.
+//
 
 #import "SendMessageOperation.h"
 #import "CocoaLumberjack.h"
@@ -14,27 +21,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 
-
-@interface SendMessageOperation()
-@property (nonatomic) NSString * username;
-@property (nonatomic, strong) CallbackBlock callback;
-@property (strong, atomic) NSTimer * bgSendTimer;
-@property (assign, atomic) NSInteger bgSendRetries;
-@property (nonatomic) BOOL isExecuting;
-@property (nonatomic) BOOL isFinished;
-@end
-
-
-
 @implementation SendMessageOperation
 
 -(id) initWithMessage: (SurespotMessage *) message
-             username: (NSString *) ourUsername
              callback: (CallbackBlock) callback {
     
     if (self = [super init]) {
         self.message = message;
-        self.username = ourUsername;
         self.callback = callback;
         
         _isExecuting = NO;

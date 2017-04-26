@@ -288,13 +288,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         case 400:
             statusText = NSLocalizedString(@"error_message_generic",nil);
             break;
-        case 401:
-        case 402:
-            // if it's voice message they need to have upgraded, otherwise fall through to 403
-            if ([mimeType isEqualToString: MIME_TYPE_M4A]) {
-                statusText = NSLocalizedString(@"billing_payment_required_voice",nil);
-                break;
-            }
         case 403:
             statusText =  NSLocalizedString(@"message_error_unauthorized",nil);
             break;
