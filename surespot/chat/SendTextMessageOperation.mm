@@ -56,7 +56,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         _isExecuting = NO;
         _isFinished = NO;
-                         
+        
     }
     return self;
 }
@@ -67,6 +67,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self didChangeValueForKey:@"isExecuting"];
     
     DDLogVerbose(@"executing");
+    
     [self prepAndSendMessage];
 }
 
@@ -98,7 +99,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     else {
         [self sendTextMessageViaHttp];
     }
-
+    
 }
 
 -(void) encryptMessage: (SurespotMessage *) message
@@ -130,13 +131,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
          NSArray * responses = [JSON objectForKey:@"messageStatus"];
          [responses enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSDictionary * _Nonnull messageStatus, NSUInteger idx, BOOL * _Nonnull stop) {
              NSInteger status = [[messageStatus objectForKey:@"status"] integerValue];
-             if (status == 204) {
-                 SurespotMessage * message = [[SurespotMessage alloc] initWithDictionary:[messageStatus objectForKey:@"message"]];
-                 [self finish:message];
-             }
-             else {
-                 [self finish:_message];
-             }
+             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                 
+                 
+                 if (status == 204) {
+                     SurespotMessage * message = [[SurespotMessage alloc] initWithDictionary:[messageStatus objectForKey:@"message"]];
+                     [self finish:message];
+                 }
+                 else {
+                     [self finish:_message];
+                 }
+             });
          }];
      }
      
@@ -150,6 +155,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) scheduleRetrySend {
     [_bgSendTimer invalidate];
+    
+    if ([self isCancelled] || ++_bgSendRetries > MAX_RETRY_ATTEMPTS) {
+        [self finish:nil];
+        return;
+    }
     double timerInterval = [UIUtils generateIntervalK: _bgSendRetries++ maxInterval:MAX_RETRY_DELAY];
     DDLogDebug(@ "attempting to send messages via http in: %f" , timerInterval);
     _bgSendTimer = [NSTimer scheduledTimerWithTimeInterval:timerInterval target:self selector:@selector(bgSendTimerFired:) userInfo:nil repeats:NO];
@@ -170,13 +180,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     _isExecuting = NO;
     _isFinished = YES;
-    
+
     [self didChangeValueForKey:@"isExecuting"];
     [self didChangeValueForKey:@"isFinished"];
     
-
+    
     [_bgSendTimer invalidate];
-    _callback(message);
+    if (_callback) {
+        _callback(message);
+    }
     _callback = nil;
 }
 

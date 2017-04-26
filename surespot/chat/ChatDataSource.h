@@ -22,6 +22,7 @@
 -(void) postRefresh;
 -(void) deleteMessage: (SurespotMessage *) message initiatedByMe: (BOOL) initiatedByMe;
 -(SurespotMessage *) getMessageById: (NSInteger) serverId;
+-(SurespotMessage *) getMessageByIv: (NSString *) iv;
 -(void) deleteMessageByIv: (NSString *) iv;
 -(BOOL) handleMessages: (NSArray *) messages;
 

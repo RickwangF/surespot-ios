@@ -401,6 +401,19 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
 }
 
+-(SurespotMessage *) getMessageByIv: (NSString *) iv {
+    @synchronized (_messages) {
+        __block SurespotMessage * message;
+        [_messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            if([[obj iv]  isEqualToString: iv]) {
+                message = obj;
+                *stop = YES;
+            }
+        }];
+        return message;
+    }
+}
+
 -(void) deleteMessageById: (NSInteger) serverId {
     DDLogVerbose(@"serverID: %ld", (long)serverId);
     @synchronized (_messages) {

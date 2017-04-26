@@ -35,7 +35,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 static const int MAX_CONNECTION_RETRIES = 60;
-static const int MAX_REAUTH_RETRIES = 5;
+static const int MAX_REAUTH_RETRIES = 1;
 
 
 @interface ChatController() {
@@ -98,7 +98,7 @@ static const int MAX_REAUTH_RETRIES = 5;
         if (_reconnectTimer) {
             [_reconnectTimer invalidate];
         }
-        
+        [self processNextMessage];
         [self getData];
     }];
     
@@ -120,9 +120,11 @@ static const int MAX_REAUTH_RETRIES = 5;
             
             DDLogInfo(@"socket not authorized");
             
-            //if we're in reauth cycle and we've hit maximum, bail
-            if (_reauthing && _connectionRetries >= MAX_REAUTH_RETRIES) {
+            //if we're in reauth cycle and we've hit maximum reauth retries, bail
+            if (_reauthing && (_connectionRetries > MAX_REAUTH_RETRIES)) {
                 [[[NetworkManager sharedInstance] getNetworkController:_username] setUnauthorized];
+                _reauthing = NO;
+                _connectionRetries = 0;
                 return;
             }
             
@@ -146,6 +148,7 @@ static const int MAX_REAUTH_RETRIES = 5;
             return;
         }
         
+        if ([self paused]) return;
         if (reAuthing) return;
         [self reconnect];
         
@@ -579,20 +582,39 @@ static const int MAX_REAUTH_RETRIES = 5;
         SurespotMessage * qm = [_messageBuffer objectAtIndex:0];
         
         //see if we have an operation for this message, and if not create one
-        BOOL hasOperation = NO;
-        for (SendTextMessageOperation * stmo in [_messageSendQueue operations]) {
-            if ([SurespotMessage areMessagesEqual:qm message:[stmo message]]) {
-                hasOperation = YES;
+        
+        SendTextMessageOperation * stmo;
+        for (SendTextMessageOperation * operation in [_messageSendQueue operations]) {
+            if ([SurespotMessage areMessagesEqual:qm message:[operation message]]) {
+                stmo = operation;
+                break;
             }
         }
         
-        if (!hasOperation) {
+        if (!stmo) {
             DDLogVerbose(@"Creating send text message operation for %@", qm.iv);
             [_messageSendQueue addOperation: [[SendTextMessageOperation alloc] initWithMessage:qm username:_username callback:^(SurespotMessage * message) {
-                
-                [self removeMessageFromBuffer:message];
-                [self processNextMessage];
+                if (message) {
+                    [self removeMessageFromBuffer:message];
+                    [self processNextMessage];
+                }
+                else {
+                    //no message, error message queue
+                    //when queue loads again it will recreate the operations
+                    //todo show notification, can't do it till ios 10
+                    DDLogDebug(@"Message send operation finished with no message, cancelling message send operations");
+                    [_messageSendQueue cancelAllOperations];
+                }
             }]];
+        }
+        else {
+            //see if it's been sent
+            ChatDataSource * cds = [self getDataSourceForFriendname:[qm getOtherUser:_username]];
+            if ([[cds getMessageByIv: qm.iv] serverid] > 0) {
+                DDLogDebug(@"Message %@ already sent, cancelling send operation", qm);
+                [self removeMessageFromBuffer:qm];
+                [self processNextMessage];
+            }
         }
     }
 }
@@ -640,6 +662,13 @@ static const int MAX_REAUTH_RETRIES = 5;
     if (foundMessage ) {
         [_messageBuffer removeObject:foundMessage];
         DDLogDebug(@"removed message from message buffer, iv: %@, count: %lu", foundMessage.iv, (unsigned long)_messageBuffer.count);
+    }
+    
+    for (SendTextMessageOperation * stmo in _messageSendQueue.operations) {
+        if ([stmo.message isEqual:removeMessage]) {
+            [stmo cancel];
+            DDLogDebug(@"cancelled message send operation for, iv: %@, count: %lu", removeMessage.iv, (unsigned long)_messageSendQueue.operations.count);
+        }
     }
     
     return foundMessage;
@@ -1138,6 +1167,7 @@ static const int MAX_REAUTH_RETRIES = 5;
                 [self startProgress: @"deleteMessage"];
                 [[[NetworkManager sharedInstance] getNetworkController:_username] deleteMessageName:[message getOtherUser: _username] serverId:[message serverid] successBlock:^(NSURLSessionTask *operation, id responseObject) {
                     [cds deleteMessage: message initiatedByMe: YES];
+                    [self removeMessageFromBuffer:message];
                     [self stopProgress: @"deleteMessage"];
                 } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
                     
