@@ -1642,7 +1642,7 @@ const Float32 voiceRecordDelay = 0.3;
         return;
     }
     
-    [[[ChatManager sharedInstance] getChatController: _username] sendMessage: message toFriendname:friendname];
+    [[[ChatManager sharedInstance] getChatController: _username] sendTextMessage: message toFriendname:friendname];
     [_messageTextView setText:nil];
     
     [self updateTabChangeUI];

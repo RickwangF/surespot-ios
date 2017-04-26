@@ -33,7 +33,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 
-@interface SendTextMessageOperation()
+@interface SendTextMessageOperation() 
 @property (nonatomic) NSString * username;
 @property (nonatomic, strong) CallbackBlock callback;
 @property (strong, atomic) NSTimer * bgSendTimer;
@@ -73,17 +73,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) prepAndSendMessage {
-    if (![_message readyToSend]) {
+    if (![self.message readyToSend]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion: _username];
             
-            [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername: _username theirUsername: [_message to] callback:^(NSString * version) {
+            [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername: _username theirUsername: [self.message to] callback:^(NSString * version) {
                 if (version) {
-                    [self encryptMessage:_message ourVersion:ourLatestVersion theirVersion:version callback:^(NSString * cipherText) {
+                    [self encryptMessage:self.message ourVersion:ourLatestVersion theirVersion:version callback:^(NSString * cipherText) {
                         if (cipherText) {
-                            _message.fromVersion = ourLatestVersion;
-                            _message.toVersion = version;
-                            _message.data = cipherText;
+                            self.message.fromVersion = ourLatestVersion;
+                            self.message.toVersion = version;
+                            self.message.data = cipherText;
                             [self sendTextMessageViaHttp];
                         }
                         else {
@@ -120,7 +120,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSMutableArray * messagesJson = [[NSMutableArray alloc] init];
     
     
-    [messagesJson addObject:[_message toNSDictionary]];
+    [messagesJson addObject:[self.message toNSDictionary]];
     
     
     [[[NetworkManager sharedInstance] getNetworkController:_username]
@@ -140,7 +140,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                      [self finish:message];
                  }
                  else {
-                     [self finish:_message];
+                     [self finish:self.message];
                  }
              });
          }];

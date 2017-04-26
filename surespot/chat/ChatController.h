@@ -22,7 +22,7 @@
 -(ChatDataSource *) createDataSourceForFriendname: (NSString *) friendname availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId callback:(CallbackBlock) createCallback;
 -(ChatDataSource *) getDataSourceForFriendname: (NSString *) friendname;
 -(void) destroyDataSourceForFriendname: (NSString *) friendname;
--(void) sendMessage: (NSString *) message toFriendname: (NSString *) friendname;
+
 -(void) inviteUser: (NSString *) username;
 -(void) setCurrentChat: (NSString *) username;
 -(NSString *) getCurrentChat;
@@ -45,5 +45,8 @@
 @property (assign, atomic) BOOL paused;
 -(void) connect;
 -(void) disconnect;
+
+-(void) sendTextMessage: (NSString *) message toFriendname: (NSString *) friendname;
+-(void) sendImageMessage: (NSURL*) localUrl  to: (NSString *) to;
 
 @end

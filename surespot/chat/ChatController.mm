@@ -261,7 +261,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     }
     
     if (++_connectionRetries <= RETRY_ATTEMPTS) {
-       
+        
         
         //exponential random backoff
         double timerInterval = [UIUtils generateIntervalK: _connectionRetries maxInterval: RETRY_DELAY];
@@ -534,7 +534,7 @@ static const int MAX_REAUTH_RETRIES = 1;
 }
 
 
-- (void) sendMessage: (NSString *) message toFriendname: (NSString *) friendname
+- (void) sendTextMessage: (NSString *) message toFriendname: (NSString *) friendname
 {
     if ([UIUtils stringIsNilOrEmpty:friendname]) return;
     
@@ -549,7 +549,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     [dict setObject:friendname forKey:@"to"];
     [dict setObject:_username forKey:@"from"];
     [dict setObject:b64iv forKey:@"iv"];
-    [dict setObject:@"text/plain" forKey:@"mimeType"];
+    [dict setObject:MIME_TYPE_TEXT forKey:@"mimeType"];
     [dict setObject:[NSNumber numberWithBool:YES] forKey:@"hashed"];
     
     SurespotMessage * sm =[[SurespotMessage alloc] initWithDictionary: dict];
@@ -557,6 +557,34 @@ static const int MAX_REAUTH_RETRIES = 1;
     //cache the plain data locally
     sm.plainData = message;
     [UIUtils setTextMessageHeights:sm size:[UIScreen mainScreen].bounds.size ourUsername:_username];
+    
+    ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
+    [dataSource addMessage: sm refresh:NO];
+    [dataSource postRefresh];
+    
+    [self enqueueMessage:sm];
+}
+
+
+-(void) sendImageMessage: (NSURL*) localUrl  toFriend: (NSString *) friendname {
+    //add message locally
+    NSData * iv = [EncryptionController getIv];
+    NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:friendname forKey:@"to"];
+    [dict setObject:_username forKey:@"from"];
+    [dict setObject:b64iv forKey:@"iv"];
+    [dict setObject:MIME_TYPE_IMAGE forKey:@"mimeType"];
+    [dict setObject:[NSNumber numberWithBool:YES] forKey:@"hashed"];
+    
+    SurespotMessage * sm =[[SurespotMessage alloc] initWithDictionary: dict];
+    
+    //cache the plain data locally
+    sm.plainData = [localUrl absoluteString];
+    
+    DDLogDebug(@"sendImageMessage adding local image message, url: %@", sm.plainData);
+    
+    [UIUtils setImageMessageHeights:sm size:[UIScreen mainScreen].bounds.size];
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
@@ -585,29 +613,39 @@ static const int MAX_REAUTH_RETRIES = 1;
         
         //see if we have an operation for this message, and if not create one
         
-        SendTextMessageOperation * stmo;
-        for (SendTextMessageOperation * operation in [_messageSendQueue operations]) {
+        SendMessageOperation * smo;
+        for (SendMessageOperation * operation in [_messageSendQueue operations]) {
             if ([SurespotMessage areMessagesEqual:qm message:[operation message]]) {
-                stmo = operation;
+                smo = operation;
                 break;
             }
         }
         
-        if (!stmo) {
-            DDLogVerbose(@"Creating send text message operation for %@", qm.iv);
-            [_messageSendQueue addOperation: [[SendTextMessageOperation alloc] initWithMessage:qm username:_username callback:^(SurespotMessage * message) {
-                if (message) {
-                    [self removeMessageFromBuffer:message];
-                    [self processNextMessage];
+        
+        
+        if (!smo) {
+            if ([qm.mimeType isEqualToString:MIME_TYPE_TEXT]) {
+                DDLogVerbose(@"Creating send text message operation for %@", qm.iv);
+                [_messageSendQueue addOperation: [[SendTextMessageOperation alloc] initWithMessage:qm username:_username callback:^(SurespotMessage * message) {
+                    if (message) {
+                        [self removeMessageFromBuffer:message];
+                        [self processNextMessage];
+                    }
+                    else {
+                        //no message, error message queue
+                        //when queue loads again it will recreate the operations
+                        //todo show notification, can't do it till ios 10
+                        DDLogDebug(@"Message send operation finished with no message, cancelling message send operations");
+                        [_messageSendQueue cancelAllOperations];
+                    }
+                }]];
+            }
+            else {
+                if ([qm.mimeType isEqualToString:MIME_TYPE_IMAGE]) {
+                    
                 }
-                else {
-                    //no message, error message queue
-                    //when queue loads again it will recreate the operations
-                    //todo show notification, can't do it till ios 10
-                    DDLogDebug(@"Message send operation finished with no message, cancelling message send operations");
-                    [_messageSendQueue cancelAllOperations];
-                }
-            }]];
+                
+            }
         }
         else {
             //see if it's been sent
@@ -632,6 +670,113 @@ static const int MAX_REAUTH_RETRIES = 1;
     }
     [self processNextMessage];
 }
+
+
+
+
+
+
+
+
+-(void) prepAndSendImageMessage: (SurespotMessage *) message {
+    
+    //
+    //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    //
+    //        [[IdentityController sharedInstance] getTheirLatestVersionForOurUsername:_username theirUsername: friendname callback:^(NSString *version) {
+    //            if (version) {
+    //                //compress encrypt and upload the image
+    //
+    //
+    //                //encrypt
+    //                [EncryptionController symmetricEncryptData:imageData
+    //                                               ourUsername: _username
+    //                                                ourVersion:_ourVersion
+    //                                             theirUsername:_theirUsername
+    //                                              theirVersion:version
+    //                                                        iv:iv
+    //                                                  callback:^(NSData * encryptedImageData) {
+    //                                                      if (encryptedImageData) {
+    //                                                          //create message
+    //                                                          SurespotMessage * message = [SurespotMessage new];
+    //                                                          message.from = _username;
+    //                                                          message.fromVersion = _ourVersion;
+    //                                                          message.to = _theirUsername;
+    //                                                          message.toVersion = version;
+    //                                                          message.mimeType = MIME_TYPE_IMAGE;
+    //                                                          message.iv = [iv base64EncodedStringWithSeparateLines:NO];
+    //                                                          NSString * key = [@"dataKey_" stringByAppendingString: message.iv];
+    //                                                          message.data = key;
+    //                                                          message.hashed = YES;
+    //
+    //                                                          DDLogInfo(@"adding local image to cache %@", key);
+    //                                                          [[[SDWebImageManager sharedManager] imageCache] storeImage:scaledImage imageData:encryptedImageData mimeType:MIME_TYPE_IMAGE forKey:key toDisk:YES];
+    //
+    //                                                          //add message locally before we upload it
+    //                                                          ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname:_theirUsername];
+    //                                                          [cds addMessage:message refresh:YES];
+    //
+    //                                                          //upload image to server
+    //                                                          DDLogInfo(@"uploading image %@ to server", key);
+    //                                                          [[[NetworkManager sharedInstance] getNetworkController:_username] postFileStreamData:encryptedImageData
+    //                                                                                                                                    ourVersion:_ourVersion
+    //                                                                                                                                 theirUsername:_theirUsername
+    //                                                                                                                                  theirVersion:version
+    //                                                                                                                                        fileid:[iv SR_stringByBase64Encoding]
+    //                                                                                                                                      mimeType:MIME_TYPE_IMAGE
+    //                                                                                                                                  successBlock:^(id JSON) {
+    //
+    //                                                                                                                                      //update the message with the id and url
+    //                                                                                                                                      NSInteger serverid = [[JSON objectForKey:@"id"] integerValue];
+    //                                                                                                                                      NSString * url = [JSON objectForKey:@"url"];
+    //                                                                                                                                      NSInteger size = [[JSON objectForKey:@"size"] integerValue];
+    //                                                                                                                                      NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
+    //
+    //                                                                                                                                      DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", message.iv, (long)serverid, url, date, (long)size);
+    //
+    //                                                                                                                                      SurespotMessage * updatedMessage = [message copyWithZone:nil];
+    //
+    //                                                                                                                                      updatedMessage.serverid = serverid;
+    //                                                                                                                                      updatedMessage.data = url;
+    //                                                                                                                                      updatedMessage.dateTime = date;
+    //                                                                                                                                      updatedMessage.dataSize = size;
+    //
+    //                                                                                                                                      [cds addMessage:updatedMessage refresh:YES];
+    //
+    //                                                                                                                                      [self stopProgress];
+    //                                                                                                                                  } failureBlock:^(NSURLResponse *operation, NSError *Error) {
+    //                                                                                                                                      long statusCode = [(NSHTTPURLResponse *) operation statusCode];
+    //                                                                                                                                      DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", key, statusCode);
+    //                                                                                                                                      [self stopProgress];
+    //                                                                                                                                      if (statusCode == 401) {
+    //                                                                                                                                          message.errorStatus = 401;
+    //                                                                                                                                      }
+    //                                                                                                                                      else {
+    //                                                                                                                                          if (statusCode == 402) {
+    //                                                                                                                                              message.errorStatus = 402;
+    //                                                                                                                                          }                                                                                                   else {
+    //                                                                                                                                              message.errorStatus = 500;
+    //                                                                                                                                          }
+    //                                                                                                                                      }
+    //
+    //                                                                                                                                      [cds postRefresh];
+    //                                                                                                                                  }];
+    //                                                      }
+    //                                                      else {
+    //                                                          [self stopProgress];
+    //                                                          [UIUtils showToastKey:@"could_not_upload_image" duration:2];
+    //
+    //                                                      }
+    //                                                  }];
+    //            }
+    //            else {
+    //                [UIUtils showToastKey:@"could_not_upload_image" duration:2];
+    //            }
+    //        }];
+    //    });
+    
+}
+
 //
 //-(void) sendMessageOnSocket: (SurespotMessage *) message {
 //    //array doesn't seem to work
@@ -1431,7 +1576,5 @@ static const int MAX_REAUTH_RETRIES = 1;
          [self stopProgress: @"removeFriendImage"];
      }];
 }
-
-
 
 @end

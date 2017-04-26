@@ -10,13 +10,10 @@
 #define SendTextMessageOperation_h
 
 #import "SurespotMessage.h"
+#import "SendMessageOperation.h"
 #import "SurespotConstants.h"
 
-@interface SendTextMessageOperation : NSOperation
--(id) initWithMessage: (SurespotMessage *) message
-             username: (NSString *) ourUsername
-             callback: (CallbackBlock) callback;
-@property (nonatomic) SurespotMessage * message;
+@interface SendTextMessageOperation : SendMessageOperation
 @end
 
 
