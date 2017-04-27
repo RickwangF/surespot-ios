@@ -170,59 +170,76 @@ const NSInteger SEND_THRESHOLD = 25;
         cell.message = message;
         DDLogVerbose(@"attaching message %@ to cell %@", [message iv], cell);
         
-        [[SDWebImageManager sharedManager] downloadWithURL:[NSURL URLWithString: message.data]
-                                                  mimeType:message.mimeType
-                                               ourUsername:_username
-                                                ourVersion:[message getOurVersion: _username]
-                                             theirUsername:[message getOtherUser: _username]
-                                              theirVersion:[message getTheirVersion: _username]
-                                                        iv:message.iv
-                                                    hashed: message.hashed
-                                                   options: SDWebImageRetryFailed
-                                                  progress:nil
-                                                 completed:^(id data, NSString *mimeType, NSError *error, SDImageCacheType cacheType, BOOL finished) {
-                                                     
-                                                     if ((!data || error) && finished) {
-                                                         message.playVoice = NO;
-                                                         message.voicePlayed = YES;
-                                                         if (error) {
-                                                             DDLogError(@"error downloading voice message: %@ - %@", error.localizedDescription, error.localizedFailureReason);
+        //see if we have local data
+        NSData * voiceData;
+        if (message.plainData) {
+            voiceData = [NSData dataWithContentsOfURL: [NSURL URLWithString:message.plainData]];
+        }
+        
+        if (voiceData) {
+            [self playMessageData:voiceData message:message];
+        }
+        else {
+            [[SDWebImageManager sharedManager] downloadWithURL:[NSURL URLWithString: message.data]
+                                                      mimeType:message.mimeType
+                                                   ourUsername:_username
+                                                    ourVersion:[message getOurVersion: _username]
+                                                 theirUsername:[message getOtherUser: _username]
+                                                  theirVersion:[message getTheirVersion: _username]
+                                                            iv:message.iv
+                                                        hashed: message.hashed
+                                                       options: SDWebImageRetryFailed
+                                                      progress:nil
+                                                     completed:^(id data, NSString *mimeType, NSError *error, SDImageCacheType cacheType, BOOL finished) {
+                                                         if ((!data || error) && finished) {
+                                                             message.playVoice = NO;
+                                                             message.voicePlayed = YES;
+                                                             if (error) {
+                                                                 DDLogError(@"error downloading voice message: %@ - %@", error.localizedDescription, error.localizedFailureReason);
+                                                             }
+                                                             
+                                                             cell.messageStatusLabel.text = NSLocalizedString(@"error_downloading_message_data", nil);
+                                                             return;
                                                          }
-                                                         
-                                                         cell.messageStatusLabel.text = NSLocalizedString(@"error_downloading_message_data", nil);
-                                                         return;
-                                                     }
-                                                     
-                                                     _player = [[AVAudioPlayer alloc] initWithData: data error:nil];
-                                                     if ([_player duration] > 0) {
-                                                         _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
-                                                         _cell.audioSlider.maximumValue = [_player duration];
-                                                         [_playLock lock];
-                                                         [_playTimer invalidate];
-                                                         _playTimer = [NSTimer timerWithTimeInterval:.05
-                                                                                              target:self
-                                                                                            selector:@selector(updateTime:)
-                                                                                            userInfo:nil
-                                                                                             repeats:YES];
                                                          
                                                          if (message.formattedDate) {
                                                              cell.messageStatusLabel.text = message.formattedDate;
                                                          }
                                                          
-                                                         //default loop is suspended when scrolling so timer events don't fire
-                                                         //http://bynomial.com/blog/?p=67
-                                                         [[NSRunLoop mainRunLoop] addTimer:_playTimer forMode:NSRunLoopCommonModes];
-                                                         [_playLock unlock];
-                                                         [_player setDelegate:self];
-                                                         [_player play];
-                                                     }
-                                                     else {
-                                                         [self stopPlayingDeactivateSession:YES];
-                                                     }
-                                                     message.playVoice = NO;
-                                                     message.voicePlayed = YES;
-                                                 }];
+                                                         [self playMessageData:data message:message];
+                                                         
+                                                     }];
+        }
     }
+}
+
+-(void) playMessageData: (NSData *) data message: (SurespotMessage *) message {
+    
+    _player = [[AVAudioPlayer alloc] initWithData: data error:nil];
+    if ([_player duration] > 0) {
+        _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
+        _cell.audioSlider.maximumValue = [_player duration];
+        [_playLock lock];
+        [_playTimer invalidate];
+        _playTimer = [NSTimer timerWithTimeInterval:.05
+                                             target:self
+                                           selector:@selector(updateTime:)
+                                           userInfo:nil
+                                            repeats:YES];
+        
+        
+        //default loop is suspended when scrolling so timer events don't fire
+        //http://bynomial.com/blog/?p=67
+        [[NSRunLoop mainRunLoop] addTimer:_playTimer forMode:NSRunLoopCommonModes];
+        [_playLock unlock];
+        [_player setDelegate:self];
+        [_player play];
+    }
+    else {
+        [self stopPlayingDeactivateSession:YES];
+    }
+    message.playVoice = NO;
+    message.voicePlayed = YES;
 }
 
 -(void) attachCell: (MessageView *) cell {

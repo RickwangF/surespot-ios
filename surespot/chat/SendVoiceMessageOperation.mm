@@ -80,7 +80,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                           ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
                                                           [cds addMessage:self.message refresh:YES];
                                                           [self sendImageMessageViaHttp];
-                                                
+                                                          
                                                       }
                                                       else {
                                                           [self scheduleRetrySend];
@@ -104,15 +104,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         encryptedImageData = [[[SDWebImageManager sharedManager] imageCache] dataForKey:self.message.data];
     }
     
-    //    if (!encryptedImageData) {
-    //        DDLogDebug(@"No encrypted image data, message: %@", self.message);
-    //     //   self.message.data = nil;
-    //      //  [self scheduleRetrySend];
-    //        [self finish:nil];
-    //        return;
-    //    }
+    if (!encryptedImageData) {
+        DDLogDebug(@"No encrypted voice data, message: %@", self.message);
+        self.message.fromVersion = nil;
+        [self scheduleRetrySend];
+        return;
+    }
     //upload image to server
-    DDLogInfo(@"uploading image %@ to server", self.message.data);
+    DDLogInfo(@"uploading voice %@ to server", self.message.data);
     [[[NetworkManager sharedInstance] getNetworkController:self.message.from]
      postFileStreamData:encryptedImageData
      ourVersion:self.message.fromVersion
@@ -128,7 +127,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
          NSInteger size = [[JSON objectForKey:@"size"] integerValue];
          NSDate * date = [NSDate dateWithTimeIntervalSince1970: [[JSON objectForKey:@"time"] doubleValue]/1000];
          
-         DDLogInfo(@"uploaded data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", self.message.iv, (long)serverid, url, date, (long)size);
+         DDLogInfo(@"uploaded voice data %@ to server successfully, server id: %ld, url: %@, date: %@, size: %ld", self.message.iv, (long)serverid, url, date, (long)size);
          
          SurespotMessage * updatedMessage = [self.message copyWithZone:nil];
          

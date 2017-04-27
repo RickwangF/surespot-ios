@@ -75,7 +75,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 //   DDLogDebug(@"getting messageData latestMessageId: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
                 //load message data
                 //   DDLogInfo(@"startProgress: %@", username);
-
+                
                 NSDictionary* userInfo = @{@"key": theirUsername};
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:self userInfo:userInfo];
                 [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getMessageDataForUsername:_theirUsername andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
@@ -124,7 +124,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             
             _latestControlMessageId = [[chatData objectForKey:@"latestControlMessageId"] integerValue];
             messages = [chatData objectForKey:@"messages"];
-        
+            
             //convert messages to SurespotMessage
             for (SurespotMessage * message in messages) {
                 DDLogVerbose(@"adding message %@, iv: %@", message, message.iv);
@@ -227,6 +227,26 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             DDLogInfo(@"updating message: %@", message);
             SurespotMessage * existingMessage = [self.messages objectAtIndex:index];
             DDLogInfo(@"updating existing message: %@", message);
+            
+            if (message.plainData && !existingMessage.plainData) {
+                existingMessage.plainData = message.plainData;
+            }
+            
+            if (message.toVersion && !existingMessage.toVersion) {
+                existingMessage.toVersion = message.toVersion;
+            }
+            
+            
+            if (message.fromVersion && !existingMessage.fromVersion) {
+                existingMessage.fromVersion = message.fromVersion;
+            }
+            
+            
+            if (message.errorStatus && !existingMessage.errorStatus) {
+                existingMessage.errorStatus = message.errorStatus;
+            }
+            
+            
             if (message.serverid > 0) {
                 existingMessage.serverid = message.serverid;
                 if (message.dateTime) {
@@ -253,41 +273,24 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                             
                             //remove now defunct cached local data
                             [[[SDWebImageManager sharedManager] imageCache] removeImageForKey:existingMessage.data fromDisk:YES];
-                            
+                            existingMessage.plainData = nil;
                             DDLogInfo(@"key exists for %@: %@", existingMessage.data, [[[SDWebImageManager sharedManager] imageCache] diskImageExistsWithKey:existingMessage.data] ? @"YES" : @"NO" );
                         }
                     }
                     
                     existingMessage.data = message.data;
+                    
                 }
             }
-            
-            if (message.plainData && !existingMessage.plainData) {
+            else {
+                if (message.data && !existingMessage.data) {
+                    existingMessage.data = message.data;
+                }
                 
-                existingMessage.plainData = message.plainData;
             }
             
-            
-            if (message.data && !existingMessage.data) {
-                existingMessage.data = message.data;
-            }
-
-            
-            if (message.toVersion && !existingMessage.toVersion) {
-                existingMessage.toVersion = message.toVersion;
-            }
-
-            
-            if (message.fromVersion && !existingMessage.fromVersion) {
-                existingMessage.fromVersion = message.fromVersion;
-            }
-
-            
-            if (message.errorStatus && !existingMessage.errorStatus) {
-                existingMessage.errorStatus = message.errorStatus;
-            }
             DDLogInfo(@"updating result message: %@", existingMessage);
-
+            
         }
         
         if (applicableControlMessages && [applicableControlMessages count] > 0) {
@@ -471,7 +474,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 });
             }
         }];
-    }    
+    }
 }
 
 
