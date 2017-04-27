@@ -134,7 +134,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
          updatedMessage.dataSize = size;
          
          ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
-         
          [cds addMessage:updatedMessage refresh:YES];
          
          [self finish:updatedMessage];

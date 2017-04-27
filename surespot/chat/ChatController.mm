@@ -633,6 +633,16 @@ static const int MAX_REAUTH_RETRIES = 1;
 
     if([_messageBuffer count] > 0) {
         SurespotMessage * qm = [_messageBuffer objectAtIndex:0];
+        
+        //see if it's been sent
+        ChatDataSource * cds = [self getDataSourceForFriendname:[qm getOtherUser:_username]];
+        if ([[cds getMessageByIv: qm.iv] serverid] > 0) {
+            DDLogDebug(@"Message %@ already sent, cancelling send operation", qm);
+            [self removeMessageFromBuffer:qm];
+            [self processNextMessage];
+            return;
+        }
+
         //see if we have an operation for this message, and if not create one
         SendMessageOperation * smo;
         for (SendMessageOperation * operation in [_messageSendQueue operations]) {
@@ -696,15 +706,6 @@ static const int MAX_REAUTH_RETRIES = 1;
                         }]];
                     }
                 }
-            }
-        }
-        else {
-            //see if it's been sent
-            ChatDataSource * cds = [self getDataSourceForFriendname:[qm getOtherUser:_username]];
-            if ([[cds getMessageByIv: qm.iv] serverid] > 0) {
-                DDLogDebug(@"Message %@ already sent, cancelling send operation", qm);
-                [self removeMessageFromBuffer:qm];
-                [self processNextMessage];
             }
         }
     }

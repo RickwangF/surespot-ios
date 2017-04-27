@@ -12,6 +12,8 @@
 #import "EncryptionController.h"
 #import "NetworkManager.h"
 #import "UIUtils.h"
+#import "ChatManager.h"
+
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -33,6 +35,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                             self.message.fromVersion = ourLatestVersion;
                             self.message.toVersion = version;
                             self.message.data = cipherText;
+                            
+                            ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
+                            [cds addMessage:self.message refresh:YES];
+
                             [self sendTextMessageViaHttp];
                         }
                         else {
@@ -83,9 +89,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
              NSInteger status = [[messageStatus objectForKey:@"status"] integerValue];
              dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                  
-                 
                  if (status == 204) {
                      SurespotMessage * message = [[SurespotMessage alloc] initWithDictionary:[messageStatus objectForKey:@"message"]];
+                     ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
+                     [cds addMessage:message refresh:YES];
                      [self finish:message];
                  }
                  else {
