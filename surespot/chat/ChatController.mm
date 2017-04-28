@@ -435,7 +435,7 @@ static const int MAX_REAUTH_RETRIES = 1;
             DDLogVerbose(@"getting message and control data for spot: %@",spot );
             NSMutableDictionary * messageId = [[NSMutableDictionary alloc] init];
             [messageId setObject: username forKey:@"u"];
-            [messageId setObject: [NSNumber numberWithInteger: [chatDataSource latestMessageId]] forKey:@"m"];
+            [messageId setObject: [NSNumber numberWithInteger: [chatDataSource latestHttpMessageId]] forKey:@"m"];
             [messageId setObject: [NSNumber numberWithInteger:[chatDataSource latestControlMessageId]] forKey:@"cm"];
             [messageIds addObject:messageId];
         }

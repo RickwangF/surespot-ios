@@ -19,7 +19,7 @@
 #import "ChatManager.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -60,7 +60,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             //   DDLogInfo(@"dispatch group 1 notified");
             //If the socket is connected get the data from the server, otherwise it'll be retrieved when the socket connects
-            if ([[[ChatManager sharedInstance] getChatController: _ourUsername] isConnected] && (availableId > _latestMessageId || availableControlId > _latestControlMessageId)) {
+            if ([[[ChatManager sharedInstance] getChatController: _ourUsername] isConnected] && (availableId > _latestHttpMessageId || availableControlId > _latestControlMessageId)) {
                 dispatch_group_t group2 = dispatch_group_create();
                 //                   DDLogInfo(@"dispatch group enter %@", username);
                 dispatch_group_enter(group2);
@@ -72,13 +72,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 });
                 
                 
-                //   DDLogDebug(@"getting messageData latestMessageId: %ld, latestControlId: %ld", (long)_latestMessageId ,(long)_latestControlMessageId);
+                DDLogDebug(@"getting messageData latestHttpMessageId: %ld, latestMessageId: %ld, latestControlId: %ld", (long) _latestHttpMessageId, (long)_latestMessageId ,(long)_latestControlMessageId);
                 //load message data
                 //   DDLogInfo(@"startProgress: %@", username);
                 
                 NSDictionary* userInfo = @{@"key": theirUsername};
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:self userInfo:userInfo];
-                [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getMessageDataForUsername:_theirUsername andMessageId:_latestMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
+                [[[NetworkManager sharedInstance] getNetworkController:_ourUsername] getMessageDataForUsername:_theirUsername andMessageId:_latestHttpMessageId andControlId:_latestControlMessageId successBlock:^(NSURLSessionTask *task, id JSON) {
                     //    DDLogInfo(@"get messageData response");
                     
                     NSArray * controlMessages =[((NSDictionary *) JSON) objectForKey:@"controlMessages"];
@@ -87,8 +87,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     
                     NSArray * messages =[((NSDictionary *) JSON) objectForKey:@"messages"];
                     
+                    SurespotMessage * lastMessage;
                     for (id jsonMessage in messages) {
-                        SurespotMessage *lastMessage = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
+                        lastMessage = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
                         //    DDLogInfo(@"dispatch group message enter %@", username);
                         dispatch_group_enter(group2);
                         [self addMessage:lastMessage refresh:NO callback:^(id result) {
@@ -97,6 +98,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                             dispatch_group_leave(group2);
                         }];
                     }
+                    
+                    self.latestHttpMessageId = [lastMessage serverid];
                     
                     // DDLogInfo(@"dispatch group leave %@", username);
                     dispatch_group_leave(group2);
@@ -121,7 +124,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         if (chatData) {
             DDLogInfo(@"loading chat data from: %@", path);
-            
+            _latestHttpMessageId = [[chatData objectForKey:@"latestHttpMessageId"] integerValue];
             _latestControlMessageId = [[chatData objectForKey:@"latestControlMessageId"] integerValue];
             messages = [chatData objectForKey:@"messages"];
             
@@ -224,9 +227,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             if (callback) {
                 callback(nil);
             }
-            DDLogInfo(@"updating message: %@", message);
+            DDLogVerbose(@"updating message: %@", message);
             SurespotMessage * existingMessage = [self.messages objectAtIndex:index];
-            DDLogInfo(@"updating existing message: %@", message);
+            DDLogVerbose(@"updating existing message: %@", message);
             
             if (message.plainData && !existingMessage.plainData) {
                 existingMessage.plainData = message.plainData;
@@ -289,7 +292,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 
             }
             
-            DDLogInfo(@"updating result message: %@", existingMessage);
+            DDLogVerbose(@"updating result message: %@", existingMessage);
             
         }
         
@@ -337,7 +340,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) postRefreshScroll: (BOOL) scroll {
-    DDLogInfo(@"postRefreshScroll username: %@, %hhd", _theirUsername, (char)scroll);
+    DDLogVerbose(@"postRefreshScroll username: %@, %hhd", _theirUsername, (char)scroll);
     [self sort];
     dispatch_async(dispatch_get_main_queue(), ^{
         
@@ -366,6 +369,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         NSArray * messages = [_messages subarrayWithRange:NSMakeRange([_messages count] - count ,count)];
         [dict setObject:messages forKey:@"messages"];
         [dict setObject:[NSNumber numberWithInteger:_latestControlMessageId] forKey:@"latestControlMessageId"];
+        [dict setObject:[NSNumber numberWithInteger:_latestHttpMessageId] forKey:@"latestHttpMessageId"];
+        
         BOOL saved =[NSKeyedArchiver archiveRootObject:dict toFile:filename];
         
         DDLogInfo(@"saved %lu messages for user %@, success?: %@",(unsigned long)[messages count],_theirUsername, saved ? @"YES" : @"NO");
@@ -444,6 +449,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 [weakSelf postRefresh];
             }
         }];
+        _latestHttpMessageId = [lastMessage serverid];
         if (isNew  ) {
             areNew = isNew;
         }

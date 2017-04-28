@@ -15,6 +15,7 @@
 
 @property (nonatomic, strong) NSMutableArray * messages;
 @property (nonatomic, assign) NSInteger latestMessageId;
+@property (nonatomic, assign) NSInteger latestHttpMessageId;
 @property (nonatomic, assign) NSInteger latestControlMessageId;
 
 -(ChatDataSource*)initWithTheirUsername:(NSString *) theirUsername ourUsername: (NSString * ) ourUsername availableId: (NSInteger) availableId availableControlId: (NSInteger) availableControlId callback: (CallbackBlock) initCallback;

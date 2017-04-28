@@ -1727,7 +1727,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
-    DDLogDebug(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
+    DDLogVerbose(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
     
     
     UITableView * tableView;
@@ -1754,7 +1754,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     NSInteger numRows =[tableView numberOfRowsInSection:0];
     if (numRows > 0) {
-        DDLogInfo(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
+        DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
         if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
