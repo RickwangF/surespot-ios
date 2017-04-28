@@ -45,12 +45,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         //listen for network changes so we can reconnect
         [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+            BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
             NSString * activeUser = [[IdentityController sharedInstance] getLoggedInUser];
             if (activeUser) {
                 ChatController * controller = [self getChatController: activeUser];
                 //if we're foregrounded
                 if (![controller paused]) {
-                    BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
                     
                     if(isReachable)
                     {
@@ -69,11 +69,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                         DDLogInfo(@"Notification Says Unreachable");
                     }
                 }
+                
+                if (isReachable) {
+                    [controller reachabilityConnect];
+                }
             }
             
             DDLogInfo(@"setting network status from %ld to: %ld", (long)_networkReachabilityStatus, (long) status);
             _networkReachabilityStatus = status;
-        }];
+            
+                  }];
         
         [[AFNetworkReachabilityManager sharedManager] startMonitoring];
         _networkReachabilityStatus = [[AFNetworkReachabilityManager sharedManager] networkReachabilityStatus];

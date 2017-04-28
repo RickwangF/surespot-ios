@@ -44,6 +44,7 @@
 @property (assign, atomic) BOOL paused;
 -(void) connect;
 -(void) disconnect;
+-(void) reachabilityConnect;
 
 -(void) sendTextMessage: (NSString *) message toFriendname: (NSString *) friendname;
 -(void) sendImageMessage: (NSURL*) localUrl  to: (NSString *) to;

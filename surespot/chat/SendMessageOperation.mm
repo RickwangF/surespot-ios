@@ -77,6 +77,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self prepAndSendMessage];
 }
 
+//regained network connectivity, try again immediately
+-(void) connected {
+    DDLogVerbose(@"received connected signal");
+    if (_isExecuting) {
+        [_bgSendTimer invalidate];
+        _bgSendTimer = nil;
+        [self prepAndSendMessage];
+    }
+}
+
 
 - (void)finish: (SurespotMessage *) message
 {

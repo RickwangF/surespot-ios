@@ -89,6 +89,7 @@ static const int MAX_REAUTH_RETRIES = 1;
         if (_reconnectTimer) {
             [_reconnectTimer invalidate];
         }
+        
         [self processNextMessage];
         [self getData];
     }];
@@ -208,6 +209,14 @@ static const int MAX_REAUTH_RETRIES = 1;
     
 }
 
+-(void) reachabilityConnect {
+    
+    //tell operation on head of queue we connected in case it's awaiting timer firing to attempt sending
+    if (_messageSendQueue.operationCount > 0) {
+        SendMessageOperation * smo = _messageSendQueue.operations[0];
+        [smo connected];
+    }
+}
 
 -(void) connect {
     DDLogDebug(@"connecting socket");

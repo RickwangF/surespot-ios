@@ -23,7 +23,8 @@
 @property (nonatomic) SurespotMessage * message;
 -(void) prepAndSendMessage;
 -(void) scheduleRetrySend;
-- (void)finish: (SurespotMessage *) message;
+-(void) finish: (SurespotMessage *) message;
+-(void) connected;
 @end
 
 
