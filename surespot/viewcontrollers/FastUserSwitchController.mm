@@ -26,18 +26,7 @@
     [super viewDidLoad];
     [self loadIdentityNames];
     
-    NSString * currentUser = [[IdentityController sharedInstance] getLoggedInUser];
-    NSInteger index = 0;
-    
-    if (currentUser) {
-        index = [_identityNames indexOfObject:currentUser];
-        if (index == NSNotFound) {
-            index = 0;
-        }
-    }
     [_userTableView setScrollEnabled:NO];
-    
-    [_userTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] animated:NO scrollPosition:UITableViewScrollPositionMiddle];
     
     [[self view] setBackgroundColor: [UIColor clearColor]];
     [_activeIdentityLabel setTextColor:[UIUtils surespotBlue]];
@@ -45,7 +34,6 @@
     [_userTableView setSeparatorColor:[UIColor clearColor]];
     
     [self.navigationController setNavigationBarHidden:YES];
-    
 }
 
 -(void) viewDidAppear:(BOOL)animated {
@@ -91,6 +79,19 @@
 
 -(void) loadIdentityNames {
     _identityNames = [[IdentityController sharedInstance] getIdentityNames];
+    
+    NSString * currentUser = [[IdentityController sharedInstance] getLoggedInUser];
+    NSInteger index = 0;
+    
+    if (currentUser) {
+        index = [_identityNames indexOfObject:currentUser];
+        if (index == NSNotFound) {
+            index = 0;
+        }
+    }
+
+    
+    [_userTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] animated:NO scrollPosition:UITableViewScrollPositionMiddle];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
