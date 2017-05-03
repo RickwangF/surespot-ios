@@ -43,7 +43,6 @@
 
 -(void) refresh {
     [self loadIdentityNames];
-    [_userTableView reloadData];
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -79,6 +78,7 @@
 
 -(void) loadIdentityNames {
     _identityNames = [[IdentityController sharedInstance] getIdentityNames];
+    [_userTableView reloadData];
     
     NSString * currentUser = [[IdentityController sharedInstance] getLoggedInUser];
     NSInteger index = 0;
@@ -89,7 +89,6 @@
             index = 0;
         }
     }
-
     
     [_userTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] animated:NO scrollPosition:UITableViewScrollPositionMiddle];
 }
