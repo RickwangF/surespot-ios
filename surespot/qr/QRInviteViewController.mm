@@ -63,7 +63,7 @@
 
 -(UIImage *) generateQRInviteImage: (NSString *) username {
     int qrcodeImageDimension = 250;
-    NSString * inviteUrl = [NSString stringWithFormat:@"%@/%@%@", [[SurespotConfiguration sharedInstance] baseUrl], [username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/qr_ios"];
+    NSString * inviteUrl = [NSString stringWithFormat:@"%@/autoinvite/%@%@", [[SurespotConfiguration sharedInstance] baseUrl], [username stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding], @"/qr_ios"];
     
     
     // Generation of QR code image
