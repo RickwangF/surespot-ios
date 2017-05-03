@@ -23,8 +23,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 static char operationKey;
 static char operationArrayKey;
 
-static const NSInteger retryAttempts = 5;
-
 @implementation MessageView (WebCache)
 
 
@@ -122,7 +120,7 @@ static const NSInteger retryAttempts = 5;
                                                                             }
                                                                             else {
                                                                                 //retry
-                                                                                if (retryAttempt < retryAttempts) {
+                                                                                if (retryAttempt < RETRY_ATTEMPTS) {
                                                                                     DDLogVerbose(@"no data downloaded, retrying attempt: %ld", (long)retryAttempt+1);
                                                                                     [self setMessage:message ourUsername: ourUsername progress:progressBlock completed:completedBlock retryAttempt:retryAttempt+1];
                                                                                     return;
