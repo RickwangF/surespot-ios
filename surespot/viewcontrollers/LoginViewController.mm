@@ -21,6 +21,7 @@
 #import "HelpViewController.h"
 #import "NSBundle+FallbackLanguage.h"
 #import "ChatManager.h"
+#import "SurespotLeftNavButton.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -67,7 +68,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [_userPicker selectRow:index inComponent:0 animated:YES];
     
     [self updatePassword:[_identityNames objectAtIndex:index]];
-  
+    
     [self.bLogin setTintColor:[UIUtils surespotBlue]];
     [self.bLogin setTitle:NSLocalizedString(@"login", nil) forState:UIControlStateNormal];
     //  _textPassword.returnKeyType = UIReturnKeyGo;
@@ -91,6 +92,20 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
     
     [UIUtils setTextFieldColors:self.textPassword localizedStringKey:@"password"];
+    [self setBackButtonIcon];
+}
+
+-(void) setBackButtonIcon {
+    if (self.navigationController.viewControllers.count == 1) {
+        SurespotLeftNavButton *backButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0, 36.0f, 36.0f) inset:2];
+        UIBarButtonItem * backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+        UIImage * backImage = [UIImage imageNamed:@"surespot_logo"];
+        [backButton setBackgroundImage:backImage  forState:UIControlStateNormal];
+        [backButton setContentMode:UIViewContentModeScaleAspectFit];
+        self.navigationItem.leftItemsSupplementBackButton = NO;
+        self.navigationItem.hidesBackButton = YES;
+        self.navigationItem.leftBarButtonItem = backButtonItem;
+    }
 }
 
 - (void)registerForKeyboardNotifications

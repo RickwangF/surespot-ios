@@ -23,6 +23,7 @@
 #import "AboutViewController.h"
 #import "NSBundle+FallbackLanguage.h"
 #import "ChatManager.h"
+#import "SurespotLeftNavButton.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -108,12 +109,26 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [self.tbPassword setAttributedPlaceholder: [[NSAttributedString alloc] initWithString:NSLocalizedString(@"password", nil) attributes:@{NSForegroundColorAttributeName:[UIUtils surespotForegroundGrey]}]];
         [self.tbPassword.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
         [self.tbPassword.layer setBorderWidth:1.0f];
-
+        
         [self.tbPasswordConfirm setTextColor: [UIUtils surespotForegroundGrey]];
         [self.tbPasswordConfirm setAttributedPlaceholder: [[NSAttributedString alloc] initWithString:NSLocalizedString(@"confirm_password", nil) attributes:@{NSForegroundColorAttributeName:[UIUtils surespotForegroundGrey]}]];
         [self.tbPasswordConfirm.layer setBorderColor:[[UIUtils surespotGrey] CGColor]];
         [self.tbPasswordConfirm.layer setBorderWidth:1.0f];
+    }
+    
+    [self setBackButtonIcon];
+}
 
+-(void) setBackButtonIcon {
+    if (self.navigationController.viewControllers.count == 1) {
+        SurespotLeftNavButton *backButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0, 36.0f, 36.0f) inset:2];
+        UIBarButtonItem * backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+        UIImage * backImage = [UIImage imageNamed:@"surespot_logo"];
+        [backButton setBackgroundImage:backImage  forState:UIControlStateNormal];
+        [backButton setContentMode:UIViewContentModeScaleAspectFit];
+        self.navigationItem.leftItemsSupplementBackButton = NO;
+        self.navigationItem.hidesBackButton = YES;
+        self.navigationItem.leftBarButtonItem = backButtonItem;
     }
 }
 
@@ -310,7 +325,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if ([[ChatManager sharedInstance] networkReachabilityStatus] == AFNetworkReachabilityStatusNotReachable) {
         [UIUtils showToastKey: @"no_network_connection"];
         return;
-    }    
+    }
     
     _lastCheckedUsername = username;
     _progressView = [LoadingView showViewKey:@"user_exists_progress"];
