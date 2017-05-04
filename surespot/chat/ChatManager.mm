@@ -43,6 +43,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if (self) {
         _chatControllers = [[NSMutableDictionary alloc] initWithCapacity:MAX_IDENTITIES];
         
+        //handle auto invites
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAutoinvitesNotification:) name:@"autoinvites" object:nil];
+        
         //listen for network changes so we can reconnect
         [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
             BOOL isReachable = status == AFNetworkReachabilityStatusReachableViaWiFi || status == AFNetworkReachabilityStatusReachableViaWWAN;
@@ -94,6 +97,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(ChatController *) getChatController: (NSString *) username {
+    if (!username) return nil;
+    
     ChatController * chatController = [_chatControllers objectForKey:username];
     if (!chatController) {
         chatController = [[ChatController alloc] init: username];
@@ -111,6 +116,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) resume: (NSString *) username {
     _activeUser = username;
     [[self getChatController:username] resume];
+}
+
+-(void) handleAutoinvitesNotification: (NSNotification *) notification {
+    [[self getChatControllerIfPresent:_activeUser] handleAutoinvites];
 }
 
 @end

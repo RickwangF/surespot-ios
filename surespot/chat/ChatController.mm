@@ -68,9 +68,7 @@ static const int MAX_REAUTH_RETRIES = 1;
         //serial message queue to maintain order
         _messageSendQueue = [[NSOperationQueue alloc] init];
         [_messageSendQueue setMaxConcurrentOperationCount:1];
-        [_messageSendQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAutoinvitesNotification:) name:@"autoinvites" object:nil];
+        [_messageSendQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];    
     }
     
     return self;
@@ -1346,10 +1344,6 @@ static const int MAX_REAUTH_RETRIES = 1;
             }
         }
     }
-}
-
--(void) handleAutoinvitesNotification: (NSNotification *) notification {
-    [self handleAutoinvites];
 }
 
 -(void) handleAutoinvites {
