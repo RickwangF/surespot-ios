@@ -1,5 +1,7 @@
 use_frameworks!
 
+platform :ios, '8.4'
+
 target 'surespot' do
   pod 'AFNetworking','~> 3.1'
   pod 'Socket.IO-Client-Swift', '~> 8.3.0'

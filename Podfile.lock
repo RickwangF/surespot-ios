@@ -16,11 +16,11 @@ PODS:
     - AFNetworking/NSURLSession
   - AGWindowView (0.1.9)
   - AppAuth (0.7.1)
-  - CocoaLumberjack (3.1.0):
-    - CocoaLumberjack/Default (= 3.1.0)
-    - CocoaLumberjack/Extensions (= 3.1.0)
-  - CocoaLumberjack/Default (3.1.0)
-  - CocoaLumberjack/Extensions (3.1.0):
+  - CocoaLumberjack (3.2.0):
+    - CocoaLumberjack/Default (= 3.2.0)
+    - CocoaLumberjack/Extensions (= 3.2.0)
+  - CocoaLumberjack/Default (3.2.0)
+  - CocoaLumberjack/Extensions (3.2.0):
     - CocoaLumberjack/Default
   - DACircularProgress (2.3.1)
   - GoogleAPIClientForREST (1.2.1):
@@ -82,7 +82,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   MWPhotoBrowser:
-    :commit: fb072afc82b306920f6d2c4616e5f974cc11df76
+    :commit: 70364bc0d6f9f8b0abc455a666f9bccc0b18f36b
     :git: git@github.com:surespot/MWPhotoBrowser.git
   SideMenu:
     :commit: 26c096a478b8b5d2fd45f28b68cc7422035f9607
@@ -92,7 +92,7 @@ SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   AGWindowView: 08dc8d448b8c96430e78b3945a9c2cf5b0fde754
   AppAuth: c56d352b0d50bb34dbb302d7ba50b20aa6b6ae89
-  CocoaLumberjack: 8311463ddf9ee86a06ef92a071dd656c89244500
+  CocoaLumberjack: 9b4aed7073d242f29cc2f62068d995faf67f703a
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
   GTMAppAuth: 4b7bdc1fefdf6a49f3d9fc1aa6123f0c7e9b6660
@@ -109,6 +109,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: 42bca3dfe395098b129e28bdc9886d95289413bf
+PODFILE CHECKSUM: 4899705810a19f9fd043758d709004f498d007e4
 
 COCOAPODS: 1.2.1
