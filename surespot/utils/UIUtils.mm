@@ -520,4 +520,34 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }];
 }
 
++(void) showPasswordAlertTitle: (NSString *) title
+                       message: (NSString *) message
+                    controller: (UIViewController *) controller
+                      callback: (CallbackBlock) callback {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = NSLocalizedString(@"password", nil);
+        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        textField.secureTextEntry = YES;
+    }];
+    
+    UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"ok", nil) style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                         NSArray * textfields = alert.textFields;
+                                                         UITextField * passwordfield = textfields[0];
+                                                         NSString * password = [passwordfield text];
+                                                         callback(password);
+                                                     }];
+    
+    [alert addAction:okAction];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"cancel", nil) style:UIAlertActionStyleCancel
+                                                         handler:nil];
+    
+    [alert addAction:cancelAction];
+    [controller presentViewController:alert animated:YES completion:nil];
+}
+
 @end

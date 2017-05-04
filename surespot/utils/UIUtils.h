@@ -52,5 +52,10 @@
 +(BOOL) confirmLogout;
 +(double) generateIntervalK: (NSInteger) k maxInterval: (NSInteger) maxInterval;
 +(void) getLocalImageFromAssetUrl: (NSString *) url callback:(CallbackBlock) callback;
++(void) showPasswordAlertTitle: (NSString *) title
+                       message: (NSString *) message
+                    controller: (UIViewController *) controller
+                      callback: (CallbackBlock) callback;
 @end
+
 

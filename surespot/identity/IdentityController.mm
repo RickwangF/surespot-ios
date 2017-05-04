@@ -406,19 +406,16 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
      password:passwordString
      signature:signatureString
      successBlock:^(NSURLSessionTask *operation, id responseObject) {
-         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-             DDLogDebug(@"validated user");
-             //regenerate the identity with full validation for saving
-             SurespotIdentity * validatedIdentity = [self decodeIdentityData:decryptedIdentity password:password validate:YES];
-             if ([self saveIdentity:validatedIdentity withPassword:[password stringByAppendingString:CACHE_IDENTITY_ID]]) {
-                 [[CredentialCachingController sharedInstance] updateIdentity: identity onlyIfExists: YES];
-                 callback(nil);
-             }
-             else {
-                 callback([NSString stringWithFormat:NSLocalizedString(@"could_not_restore_identity_name", nil), username]);
-             }
-             
-         });
+         DDLogDebug(@"validated user");
+         //regenerate the identity with full validation for saving
+         SurespotIdentity * validatedIdentity = [self decodeIdentityData:decryptedIdentity password:password validate:YES];
+         if ([self saveIdentity:validatedIdentity withPassword:[password stringByAppendingString:CACHE_IDENTITY_ID]]) {
+             [[CredentialCachingController sharedInstance] updateIdentity: identity onlyIfExists: YES];
+             callback(nil);
+         }
+         else {
+             callback([NSString stringWithFormat:NSLocalizedString(@"could_not_restore_identity_name", nil), username]);
+         }
          
      } failureBlock:^(NSURLSessionTask *operation, NSError *error) {
          switch ([(NSHTTPURLResponse*)operation.response statusCode]) {
@@ -446,7 +443,7 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
         if (unzipped) {
             [self importIdentityData:unzipped username:username password:password callback:callback];
         }
-    }    
+    }
 }
 
 -(void) exportIdentityToDocumentsForUsername: (NSString *) username password: (NSString *) password callback: (CallbackErrorBlock) callback {

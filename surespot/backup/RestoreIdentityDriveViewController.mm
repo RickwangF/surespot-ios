@@ -375,73 +375,53 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     _name = name;
     _identifier = identifier;
     
-    //if (!_password) {
+    [UIUtils showPasswordAlertTitle:[NSString stringWithFormat:NSLocalizedString(@"restore_identity", nil), name]
+                            message:[NSString stringWithFormat:NSLocalizedString(@"enter_password_for", nil), name]
+                         controller:self callback:^(NSString * password) {
+                             if (![UIUtils stringIsNilOrEmpty:password]) {
+                                 [self importIdentity:_name identifier:_identifier password:password];
+                             }
+                         }];
     
-    //show alert view to get password
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"restore_identity", nil), name] message:[NSString stringWithFormat:NSLocalizedString(@"enter_password_for", nil), name] delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:NSLocalizedString(@"ok", nil), nil];
-    alertView.alertViewStyle = UIAlertViewStyleSecureTextInput;
-    [alertView show];
     
-    //    }
-    //    else {
-    //        //show alert view to confirm
-    //        //todo localization
-    //        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"are you sure" message:@"are you sure you want to import this identity" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ok", nil];
-    //        [alertView show];
-    //    }
-}
-
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 1) {
-        NSString * password = nil;
-        if (alertView.alertViewStyle == UIAlertViewStyleSecureTextInput) {
-            password = [[alertView textFieldAtIndex:0] text];
-        }
-        
-        if (![UIUtils stringIsNilOrEmpty:password]) {
-            [self importIdentity:_name identifier: _identifier password:password];
-        }
-    }
+    
 }
 
 -(void) importIdentity: (NSString *) name identifier: (NSString *) identifier password: (NSString *) password {
     DDLogDebug(@"importIdentity");
+    DDLogDebug(@"showing progress");
     _progressView = [LoadingView showViewKey:@"progress_restoring_identity"];
     
     GTLRQuery *query = [GTLRDriveQuery_FilesGet queryForMediaWithFileId:identifier];
     [self.driveService executeQuery:query completionHandler:^(GTLRServiceTicket * ticket, GTLRDataObject *file, NSError * _Nullable error) {
         
         if (error == nil) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-                NSData * identityData = [FileController gunzipIfNecessary:file.data];
-                [[IdentityController sharedInstance] importIdentityData:identityData username:name password:password callback:^(id result) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        DDLogDebug(@"Tearing progress down");
-                        [_progressView removeView];
-                        _progressView = nil;
-                        
-                        if (result) {
-                            [UIUtils showToastMessage:result duration:2];
-                        }
-                        else {
-                            [UIUtils showToastKey:@"identity_imported_successfully" duration:2];
-                        }
-                        
-                        //update stored password
-                        if (![UIUtils stringIsNilOrEmpty:_storedPassword] && ![_storedPassword isEqualToString:password]) {
-                            [[IdentityController sharedInstance] storePasswordForIdentity:name password:password];
-                        }
-                        
-                        _storedPassword = nil;
-                        
-                        //if we now only have 1 identity, go to login view controller
-                        if ([[[IdentityController sharedInstance] getIdentityNames] count] == 1) {
-                            UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
-                            [self.navigationController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
-                        }
-                    });
-                }];
-            });
+            NSData * identityData = [FileController gunzipIfNecessary:file.data];
+            [[IdentityController sharedInstance] importIdentityData:identityData username:name password:password callback:^(id result) {
+                DDLogDebug(@"Tearing progress down");
+                [_progressView removeView];
+                _progressView = nil;
+                
+                if (result) {
+                    [UIUtils showToastMessage:result duration:2];
+                }
+                else {
+                    [UIUtils showToastKey:@"identity_imported_successfully" duration:2];
+                }
+                
+                //update stored password
+                if (![UIUtils stringIsNilOrEmpty:_storedPassword] && ![_storedPassword isEqualToString:password]) {
+                    [[IdentityController sharedInstance] storePasswordForIdentity:name password:password];
+                }
+                
+                _storedPassword = nil;
+                
+                //if we now only have 1 identity, go to login view controller
+                if ([[[IdentityController sharedInstance] getIdentityNames] count] == 1) {
+                    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+                    [self.navigationController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
+                }
+            }];
         } else {
             DDLogError(@"An error occurred: %@", error);
             DDLogDebug(@"Tearing progress down");

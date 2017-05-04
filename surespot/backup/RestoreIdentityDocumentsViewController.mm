@@ -166,30 +166,46 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     _name = name;
     _file = file;
     
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:NSLocalizedString(@"restore_identity", nil), name]
+                                                                   message:[NSString stringWithFormat:NSLocalizedString(@"enter_password_for", nil), name]
+                                                            preferredStyle:UIAlertControllerStyleAlert];
     
-    //show alert view to get password
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"restore_identity", nil), name] message:[NSString stringWithFormat:NSLocalizedString(@"enter_password_for", nil), name] delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:NSLocalizedString(@"ok", nil), nil];
-    alertView.alertViewStyle = UIAlertViewStyleSecureTextInput;
-    [alertView show];
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = NSLocalizedString(@"password", nil);
+       //textField.textColor = [UIColor blueColor];
+        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        //textField.borderStyle = UITextBorderStyleRoundedRect;
+        textField.secureTextEntry = YES;
+    }];
     
-}
+    UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"ok", nil) style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              NSArray * textfields = alert.textFields;
+                                                              UITextField * passwordfield = textfields[0];
+                                                              
+                                                              NSString * password = [passwordfield text];
+                                                              
+                                                              
+                                                              if (![UIUtils stringIsNilOrEmpty:password]) {
+                                                                  [self importIdentity:_name filename:_file password:password];
+                                                              }
 
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 1) {
-        NSString * password = nil;
-        if (alertView.alertViewStyle == UIAlertViewStyleSecureTextInput) {
-            password = [[alertView textFieldAtIndex:0] text];
-        }
-        
-        if (![UIUtils stringIsNilOrEmpty:password]) {
-            [self importIdentity:_name filename:_file password:password];
-        }
-    }
+                                                          }];
+    
+    [alert addAction:okAction];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"cancel", nil) style:UIAlertActionStyleCancel
+                                                     handler:nil];
+    
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 -(void) importIdentity: (NSString *) name filename: (NSString *) filename password: (NSString *) password {
+    _progressView = [LoadingView showViewKey:@"progress_restoring_identity"];
     [[IdentityController sharedInstance] importIdentityFilename:filename username:name password:password callback:^(id result) {
         if (!result) {
+            [_progressView removeView];
+            _progressView = nil;
             [UIUtils showToastKey:@"identity_imported_successfully" duration:2];
             
             

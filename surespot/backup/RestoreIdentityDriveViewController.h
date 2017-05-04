@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RestoreIdentityDriveViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
+@interface RestoreIdentityDriveViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
 
 @end

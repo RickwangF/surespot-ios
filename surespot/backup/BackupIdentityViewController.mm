@@ -47,10 +47,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (strong, nonatomic) IBOutlet UIButton *bDocuments;
 @property (nonatomic, strong) UIPopoverController * popover;
 @property (strong, nonatomic) IBOutlet UILabel *lBackup;
-@property (nonatomic, strong) UIAlertView * driveAlertView;
 @property (strong, nonatomic) IBOutlet UILabel *lDocuments;
 @property (strong, nonatomic) IBOutlet UILabel *lSelect;
-@property (nonatomic, strong) UIAlertView * documentsAlertView;
 @end
 
 
@@ -360,40 +358,15 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
         _name = name;
         
         //show alert view to get password
-        _driveAlertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"backup_identity", nil), name] message:[NSString stringWithFormat:NSLocalizedString(@"enter_password_for", nil), name] delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:NSLocalizedString(@"ok", nil), nil];
-        _driveAlertView.alertViewStyle = UIAlertViewStyleSecureTextInput;
-        [_driveAlertView show];
-    }
-    
-}
+        [UIUtils showPasswordAlertTitle:[NSString stringWithFormat:NSLocalizedString(@"backup_identity", nil), name]
+                                message:[NSString stringWithFormat:NSLocalizedString(@"enter_password_for", nil), name] controller:self callback:^(id password) {
+                                    if (![UIUtils stringIsNilOrEmpty:password]) {
+                                        [self backupIdentity:_name password:password];
+                                    }
 
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (alertView == _driveAlertView) {
-        if (buttonIndex == 1) {
-            NSString * password = nil;
-            if (alertView.alertViewStyle == UIAlertViewStyleSecureTextInput) {
-                password = [[alertView textFieldAtIndex:0] text];
-            }
-            
-            if (![UIUtils stringIsNilOrEmpty:password]) {
-                [self backupIdentity:_name password:password];
-            }
+                                }];
         }
-        _driveAlertView = nil;
-    }
-    else {
-        if (buttonIndex == 1) {
-            NSString * password = nil;
-            if (alertView.alertViewStyle == UIAlertViewStyleSecureTextInput) {
-                password = [[alertView textFieldAtIndex:0] text];
-            }
-            
-            if (![UIUtils stringIsNilOrEmpty:password]) {
-                [self backupIdentityDocuments:_name password:password];
-            }
-        }
-        _documentsAlertView = nil;
-    }
+    
 }
 
 -(void) getIdentityFile: (NSString *) identityDirId name: (NSString *) name callback: (CallbackBlock) callback {
@@ -587,9 +560,14 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     _name = name;
     
     //show alert view to get password
-    _documentsAlertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"backup_identity", nil), name] message:[NSString stringWithFormat:NSLocalizedString(@"enter_password_for", nil), name] delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:NSLocalizedString(@"ok", nil), nil];
-    _documentsAlertView.alertViewStyle = UIAlertViewStyleSecureTextInput;
-    [_documentsAlertView show];
+    [UIUtils showPasswordAlertTitle:[NSString stringWithFormat:NSLocalizedString(@"backup_identity", nil), name]
+                            message:[NSString stringWithFormat:NSLocalizedString(@"enter_password_for", nil), name]
+                         controller:self
+                           callback:^(id password) {
+                               if (![UIUtils stringIsNilOrEmpty:password]) {
+                                   [self backupIdentityDocuments:_name password:password];
+                               }
+                           }];
     
     
 }
