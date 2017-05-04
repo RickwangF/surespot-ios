@@ -68,7 +68,7 @@ static const int MAX_REAUTH_RETRIES = 1;
         //serial message queue to maintain order
         _messageSendQueue = [[NSOperationQueue alloc] init];
         [_messageSendQueue setMaxConcurrentOperationCount:1];
-        [_messageSendQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];    
+        [_messageSendQueue setUnderlyingQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
     }
     
     return self;
@@ -94,9 +94,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     [self.socket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket disconnect, data: %@", data);
-        //gets fired before the server knows it's disconnected and if we end the background task here
-        //the server doesn't get disconnected (on ios 7.1.2 at least)
-        //   [[UIApplication sharedApplication] endBackgroundTask:_bgSocketTaskId];
+        [[UIApplication sharedApplication] endBackgroundTask:_bgSocketTaskId];
     }];
     
     [self.socket on:@"error" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -637,7 +635,7 @@ static const int MAX_REAUTH_RETRIES = 1;
 }
 
 -(void) processNextMessage {
-
+    
     if([_messageBuffer count] > 0) {
         SurespotMessage * qm = [_messageBuffer objectAtIndex:0];
         
@@ -649,7 +647,7 @@ static const int MAX_REAUTH_RETRIES = 1;
             [self processNextMessage];
             return;
         }
-
+        
         //see if we have an operation for this message, and if not create one
         SendMessageOperation * smo;
         for (SendMessageOperation * operation in [_messageSendQueue operations]) {
@@ -658,7 +656,7 @@ static const int MAX_REAUTH_RETRIES = 1;
                 break;
             }
         }
-
+        
         if (!smo) {
             if ([qm.mimeType isEqualToString:MIME_TYPE_TEXT]) {
                 DDLogVerbose(@"Creating send text message operation for %@", qm.iv);
@@ -684,7 +682,7 @@ static const int MAX_REAUTH_RETRIES = 1;
                             [self removeMessageFromBuffer:message];
                             [self processNextMessage];
                         }
-        
+                        
                         else {
                             //no message, error message queue
                             //when queue loads again it will recreate the operations
