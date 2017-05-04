@@ -121,8 +121,13 @@ static char operationArrayKey;
                                                                             else {
                                                                                 //retry
                                                                                 if (retryAttempt < RETRY_ATTEMPTS) {
-                                                                                    DDLogVerbose(@"no data downloaded, retrying attempt: %ld", (long)retryAttempt+1);
-                                                                                    [self setMessage:message ourUsername: ourUsername progress:progressBlock completed:completedBlock retryAttempt:retryAttempt+1];
+                                                                                    double timerInterval = [UIUtils generateIntervalK: retryAttempt maxInterval: RETRY_DELAY];
+                                                                                    DDLogInfo(@"no data downloaded, retrying attempt: %ld, in %f seconds", (long)retryAttempt+1, timerInterval);
+                                                                                    
+                                                                                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timerInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                                                                         [self setMessage:message ourUsername: ourUsername progress:progressBlock completed:completedBlock retryAttempt:retryAttempt+1];
+                                                                                    });
+                                                                                   
                                                                                     return;
                                                                                 }
                                                                                 else {
