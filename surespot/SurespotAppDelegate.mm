@@ -22,7 +22,7 @@
 #import "FileController.h"
 #import "NSBundle+FallbackLanguage.h"
 #import "NetworkManager.h"
-#import "SideMenu-swift.h"
+#import "SideMenu-Swift.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;

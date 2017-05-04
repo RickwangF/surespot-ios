@@ -2575,7 +2575,7 @@ const Float32 voiceRecordDelay = 0.3;
     NSDictionary * userInfo = [notification userInfo];
     [_progress setObject: @""  forKey:[userInfo objectForKey:@"key"]];
     [UIUtils startSpinAnimation: _backImageView];
-    DDLogInfo(@"progress count:%ld", [_progress count]);
+    DDLogInfo(@"progress count:%ld", (unsigned long)[_progress count]);
 }
 
 -(void) stopProgress: (NSNotification *) notification {
