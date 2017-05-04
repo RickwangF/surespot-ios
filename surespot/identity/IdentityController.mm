@@ -438,14 +438,13 @@ NSString *const EXPORT_IDENTITY_ID = @"_export_identity";
 -(void) importIdentityFilename: (NSString *) filePath username: (NSString * ) username password: (NSString *) password callback: (CallbackBlock) callback {
     
     NSData *myData = [NSData dataWithContentsOfFile:filePath];
-    
     if (myData) {
         //gunzip the identity data
         //NSError* error = nil;
         NSData* unzipped = [myData gzipInflate];
-        NSData * identity = [EncryptionController decryptIdentity: unzipped withPassword:[password stringByAppendingString:EXPORT_IDENTITY_ID]];
-        if (identity) {
-            [self importIdentityData:identity username:username password:password callback:callback];
+        
+        if (unzipped) {
+            [self importIdentityData:unzipped username:username password:password callback:callback];
         }
     }    
 }
