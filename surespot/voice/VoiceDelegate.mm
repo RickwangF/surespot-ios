@@ -138,7 +138,9 @@ const NSInteger SEND_THRESHOLD = 25;
 }
 
 -(void) prepareRecording {
-    _outputPath = [[FileController getCacheDir] stringByAppendingPathComponent: @"tempVoiceMessage.m4a"];
+    NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString] ;
+    NSString *uniqueFileName = [NSString stringWithFormat:@"%@.m4a", guid];
+    _outputPath = [[FileController getCacheDir] stringByAppendingPathComponent: uniqueFileName];
     DDLogInfo(@"recording to %@", _outputPath);
     NSURL *outputFileURL = [NSURL fileURLWithPath:_outputPath];
     
