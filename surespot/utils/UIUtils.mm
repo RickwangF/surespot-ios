@@ -499,25 +499,30 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return reconnectTime;
 }
 
-+(void) getLocalImageFromAssetUrl: (NSString *) url callback:(CallbackBlock) callback {
-    //compress encrypt and upload the image
++(void) getLocalImageFromAssetUrl: (NSString *) url callback:(CallbackBlock) callback {    
     ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
     [assetsLibrary assetForURL:[NSURL URLWithString: url] resultBlock:^(ALAsset *asset) {
         ALAssetRepresentation *rep = [asset defaultRepresentation];
         @autoreleasepool {
             CGImageRef iref = [rep fullResolutionImage];
             if (iref) {
-                UIImage *image = [UIImage imageWithCGImage:iref];
-                
+                UIImage *scaledImage = [UIImage imageWithCGImage:iref
+                                                           scale:[self scaleFactorForWidth:rep.dimensions.width
+                                                                                    height:rep.dimensions.height
+                                                                              desiredWidth:400
+                                                                             desiredHeight:400]
+                                                     orientation:(UIImageOrientation)[rep orientation]];
                 iref = nil;
-                
-                UIImage * scaledImage = [image imageScaledToMaxWidth:400 maxHeight:400];
                 callback(scaledImage);
-                           }
+            }
         }
     } failureBlock:^(NSError *error) {
         callback(nil);
     }];
+}
+
++(CGFloat) scaleFactorForWidth:(CGFloat)width height:(CGFloat)height desiredWidth: (CGFloat) desiredWidth desiredHeight: (CGFloat) desiredHeight {
+    return (width > height) ? desiredWidth / width : desiredHeight / height;
 }
 
 @end
