@@ -205,7 +205,7 @@
     [d appendFormat:@"\nmessage toVersion: %@", self.toVersion];
     [d appendFormat:@"\nmessage fromVersion: %@", self.fromVersion];
     [d appendFormat:@"\nmessage mimeType: %@", self.mimeType];
-    [d appendFormat:@"\nmessage plainData: %@", self.plainData];
+    //[d appendFormat:@"\nmessage plainData: %@", self.plainData];
     [d appendFormat:@"\nmessage dateTime: %@", self.dateTime];
     [d appendFormat:@"\nmessage errorStatus: %ld", (long)self.errorStatus];
     [d appendFormat:@"\nmessage formattedDate: %@", self.formattedDate];
