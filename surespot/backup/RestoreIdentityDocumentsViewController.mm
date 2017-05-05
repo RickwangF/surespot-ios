@@ -172,9 +172,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
         textField.placeholder = NSLocalizedString(@"password", nil);
-       //textField.textColor = [UIColor blueColor];
         textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-        //textField.borderStyle = UITextBorderStyleRoundedRect;
         textField.secureTextEntry = YES;
     }];
     
@@ -182,9 +180,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                           handler:^(UIAlertAction * action) {
                                                               NSArray * textfields = alert.textFields;
                                                               UITextField * passwordfield = textfields[0];
-                                                              
                                                               NSString * password = [passwordfield text];
-                                                              
                                                               
                                                               if (![UIUtils stringIsNilOrEmpty:password]) {
                                                                   [self importIdentity:_name filename:_file password:password];
@@ -203,9 +199,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) importIdentity: (NSString *) name filename: (NSString *) filename password: (NSString *) password {
     _progressView = [LoadingView showViewKey:@"progress_restoring_identity"];
     [[IdentityController sharedInstance] importIdentityFilename:filename username:name password:password callback:^(id result) {
+        [_progressView removeView];
+        _progressView = nil;
         if (!result) {
-            [_progressView removeView];
-            _progressView = nil;
+            
             [UIUtils showToastKey:@"identity_imported_successfully" duration:2];
             
             
