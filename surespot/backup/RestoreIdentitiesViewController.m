@@ -42,6 +42,7 @@
     if ([UIUtils isBlackTheme]) {
         [self.view setBackgroundColor:[UIColor blackColor]];
         [self.tabBar setBarTintColor:[UIUtils surespotGrey]];
+        [self.tabBar setTintColor:[UIUtils surespotBlue]];
     }
 }
 
