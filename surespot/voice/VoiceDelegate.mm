@@ -126,9 +126,7 @@ const NSInteger SEND_THRESHOLD = 25;
                                              selector:@selector(applicationWillResignActive:)
                                                  name:UIApplicationWillResignActiveNotification
                                                object:nil];
-    
-    
-    
+
     return self;
 }
 
@@ -312,8 +310,6 @@ const NSInteger SEND_THRESHOLD = 25;
         
         XThrowIfError(AudioOutputUnitStart(rioUnit), "couldn't start remote i/o unit");
         
-        
-        
         unitIsRunning = 1;
         
         DDLogInfo(@"activating audio session");
@@ -333,12 +329,6 @@ const NSInteger SEND_THRESHOLD = 25;
         //position the countdown view
         [_countdownView setFrame:CGRectMake(10, _scopeRect.origin.y+10, 44, 44)];
         
-        
-        
-        
-        //  UIWindow * aWindow =((SurespotAppDelegate *)[[UIApplication sharedApplication] delegate]).overlayWindow;
-        //   aWindow.userInteractionEnabled = YES;
-        
         AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
         CGRect frame = overlayView.frame;
         
@@ -352,7 +342,6 @@ const NSInteger SEND_THRESHOLD = 25;
         [overlayView addSubview:view];
         [overlayView addSubview:_countdownView];
         [_countdownTextField setFrame:CGRectMake(0, 0, 44, 44)];
-        
         
         [_recorder record];
         [view startAnimation];
@@ -404,20 +393,11 @@ const NSInteger SEND_THRESHOLD = 25;
         [_backgroundView removeFromSuperview];
         _backgroundView = nil;
         
-        
-        
-        
         AudioOutputUnitStop(rioUnit);
         
         DDLogInfo(@"deactivating audio session");
         AVAudioSession *audioSession = [AVAudioSession sharedInstance];
         [audioSession setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
-        
-        
-        //    UIWindow * aWindow =((SurespotAppDelegate *)[[UIApplication sharedApplication] delegate]).overlayWindow;
-        //    aWindow.userInteractionEnabled = NO;
-        
-        
         
         if ([send boolValue]) {
             [self uploadVoiceUrl:_recorder.url];
@@ -471,6 +451,7 @@ void rioInterruptionListener(void *inClientData, UInt32 inInterruption)
         fprintf(stderr, "Error: %s (%s)\n", e.mOperation, e.FormatError(buf));
     }
 }
+
 
 #pragma mark -RIO Input Callback
 
@@ -553,8 +534,6 @@ static OSStatus	PerformThru(
 
 - (void)initScope
 {
-    
-    
     // Turn off the idle timer, since this app doesn't rely on constant touch input
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     
@@ -564,35 +543,12 @@ static OSStatus	PerformThru(
     inputProc.inputProcRefCon = (__bridge void *) self;
     
     try {
-        
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            
-            // Initialize and configure the audio session
-            XThrowIfError(AudioSessionInitialize(NULL, NULL, rioInterruptionListener, (__bridge void *) self), "couldn't initialize audio session");
-            
-            
-            
-            UInt32 audioCategory = kAudioSessionCategory_PlayAndRecord;
-            XThrowIfError(AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(audioCategory), &audioCategory), "couldn't set audio category");
-            
-            UInt32 doChangeDefaultRoute = 1;
-            
-            XThrowIfError(AudioSessionSetProperty (
-                                                   kAudioSessionProperty_OverrideCategoryDefaultToSpeaker,
-                                                   sizeof (doChangeDefaultRoute),
-                                                   &doChangeDefaultRoute
-                                                   ), "couldn't set speaker output");
-            
-            
-            Float32 preferredBufferSize = .005;
-            XThrowIfError(AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(preferredBufferSize), &preferredBufferSize), "couldn't set i/o buffer duration");
-            
-            UInt32 size = sizeof(hwSampleRate);
-            XThrowIfError(AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate, &size, &hwSampleRate), "couldn't get hw sample rate");
-            
-            
-        });
+        [[AVAudioSession sharedInstance] setActive:YES error:nil];
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+        [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+        [[AVAudioSession sharedInstance] setPreferredIOBufferDuration:0.005 error:nil];
+        hwSampleRate = [[AVAudioSession sharedInstance] sampleRate];
+        [[AVAudioSession sharedInstance] setPreferredSampleRate:hwSampleRate error:nil];
         
         XThrowIfError(SetupRemoteIO(rioUnit, hwSampleRate, inputProc, thruFormat), "couldn't setup remote i/o unit");
         unitHasBeenCreated = true;
@@ -777,10 +733,5 @@ static OSStatus	PerformThru(
     [self stopRecordingSendInternal:[NSNumber numberWithBool:NO]];
     view.applicationResignedActive = YES;
 }
-
-
-
-
-
 
 @end
