@@ -37,8 +37,12 @@
     
     
     NSString * labelText = NSLocalizedString(@"welcome_to_surespot",nil);
-            
-    if ([UIUtils isBlackTheme]) {[_helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
+    
+    if ([UIUtils isBlackTheme]) {
+        [self.view setBackgroundColor:[UIColor blackColor]];
+        [self.scrollView setBackgroundColor:[UIColor blackColor]];
+        
+        [_helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
         [_helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
     }
     
@@ -65,7 +69,6 @@
     
     NSMutableAttributedString * label2String = [[NSMutableAttributedString alloc] initWithString:label2Text];
     if ([UIUtils isBlackTheme]) {
-        [self.scrollView setBackgroundColor:[UIColor blackColor]];
         [label2String addAttribute:NSForegroundColorAttributeName value:[UIUtils surespotForegroundGrey] range:[label2Text rangeOfString:label2Text]];
     }
     [label2String addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:[label2Text rangeOfString: helpBackupIdsString1]];

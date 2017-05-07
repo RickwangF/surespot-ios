@@ -82,7 +82,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   MWPhotoBrowser:
-    :commit: 70364bc0d6f9f8b0abc455a666f9bccc0b18f36b
+    :commit: 228e958fd23eed2f9617b95ea1f9b7f80ff60963
     :git: git@github.com:surespot/MWPhotoBrowser.git
   SideMenu:
     :commit: 26c096a478b8b5d2fd45f28b68cc7422035f9607
