@@ -43,7 +43,7 @@
         [self.scrollView setBackgroundColor:[UIColor blackColor]];
         
         [_helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
-        [_helpLabel setTextColor:[UIUtils surespotForegroundGrey]];
+        [_tosLabel setTextColor:[UIUtils surespotForegroundGrey]];
     }
     
     [UIUtils setLinkLabel:_helpLabel delegate:self labelText:labelText linkMatchTexts:matches urlStrings:links];
@@ -89,7 +89,7 @@
         NSArray * matches = @[NSLocalizedString(@"tos_match", nil)];
         NSArray * links = @[NSLocalizedString(@"tos_link",nil)];
         NSString * tosText = NSLocalizedString(@"help_agreement",nil);
-        
+       
         [UIUtils setLinkLabel:_tosLabel delegate:self labelText:tosText linkMatchTexts:matches urlStrings:links];
         [_tosButton setTitle:NSLocalizedString(@"ok", nil) forState:UIControlStateNormal];
         [_tosButton setTintColor:[UIUtils surespotBlue]];
