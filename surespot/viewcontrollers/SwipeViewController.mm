@@ -58,8 +58,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (nonatomic, strong) NSDateFormatter * dateFormatter;
 @property (nonatomic, strong) UIViewPager * viewPager;
 @property (nonatomic, strong) NSMutableDictionary * tabLoading;
+@property (nonatomic, strong) NSMutableDictionary * needsScroll;
 @property (strong, readwrite, nonatomic) REMenu *menu;
-//@property (atomic, assign) NSInteger progressCount;
 @property (nonatomic, weak) UIView * backImageView;
 @property (atomic, assign) NSInteger scrollingTo;
 @property (nonatomic, strong) NSMutableDictionary * bottomIndexPaths;
@@ -104,6 +104,7 @@ const Float32 voiceRecordDelay = 0.3;
     _assetLibrary = [ALAssetsLibrary new];
     
     _tabLoading = [NSMutableDictionary new];
+    _needsScroll = [NSMutableDictionary new];
     
     _dateFormatQueue = dispatch_queue_create("date format queue", NULL);
     _dateFormatter = [[NSDateFormatter alloc]init];
@@ -772,6 +773,10 @@ const Float32 voiceRecordDelay = 0.3;
                 if (![_tabLoading objectForKey:map.username]) {
                     //         [tableview reloadData];
                     
+                    //scroll if we need to
+                    BOOL scrolledUsingIndexPath = NO;
+                    
+                    
                     //if we've got saved scroll positions
                     if (_bottomIndexPaths) {
                         id path = [_bottomIndexPaths objectForKey:map.username];
@@ -779,6 +784,18 @@ const Float32 voiceRecordDelay = 0.3;
                             DDLogVerbose(@"scrolling using saved index path for %@",map.username);
                             [self scrollTableViewToCell:tableview indexPath:path];
                             [_bottomIndexPaths removeObjectForKey:map.username];
+                            scrolledUsingIndexPath = YES;
+                        }
+                    }
+                    
+                    if (!scrolledUsingIndexPath) {
+                        @synchronized (_needsScroll ) {
+                            id needsit = [_needsScroll  objectForKey:map.username];
+                            if (needsit) {
+                                DDLogVerbose(@"scrolling %@ to bottom",map.username);
+                                [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableview afterDelay:0.5];
+                                [_needsScroll removeObjectForKey:map.username];
+                            }
                         }
                     }
                 }
@@ -1729,7 +1746,6 @@ const Float32 voiceRecordDelay = 0.3;
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
     DDLogVerbose(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
     
-    
     UITableView * tableView;
     @synchronized (_chats) {
         tableView = [_chats objectForKey:username];
@@ -1737,9 +1753,24 @@ const Float32 voiceRecordDelay = 0.3;
     
     if (tableView) {
         [tableView reloadData];
-        
-        if (scroll) {
-            [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableView afterDelay:0.5];
+    }
+    
+    if (scroll) {
+        if ([username isEqualToString: [self getCurrentTabName]]) {
+            @synchronized (_needsScroll) {
+                [_needsScroll removeObjectForKey:username];
+            }
+            
+            if (tableView) {
+                [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableView afterDelay:0.5];
+            }
+        }
+        else {
+            @synchronized (_needsScroll) {
+                DDLogVerbose(@"setting needs scroll for %@", username);
+                [_needsScroll setObject:@"yourmama" forKey:username];
+                [_bottomIndexPaths removeObjectForKey:username];
+            }            
         }
     }
 }
