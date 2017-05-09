@@ -2624,9 +2624,12 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 -(void) unauthorized: (NSNotification *) notification {
-    DDLogVerbose(@"unauthorized");
-    // [UIUtils showToastKey:@"unauthorized" duration:2];
-    [self logout];
+    NSString * username = [[notification userInfo] objectForKey:@"username"];
+    DDLogVerbose(@"unauthorized, username: %@", username);
+    if ([username isEqualToString:_username]) {
+        DDLogDebug(@"logging out SwipeViewController");
+        [self logout];
+    }
 }
 
 -(void) newMessage: (NSNotification *) notification {

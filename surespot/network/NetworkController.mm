@@ -707,9 +707,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #pragma mark helper methods
 
 -(void) setUnauthorized {
-    //TODO send username in notification
     [self clearCookie];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"unauthorized" object: nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"unauthorized" object:nil userInfo:[NSDictionary dictionaryWithObject:_username forKey:@"username"]];
 }
 
 -(NSHTTPCookie *) extractConnectCookie {
