@@ -71,15 +71,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
              success:success
              failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                  if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-                     [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
+                     [self reloginSuccessBlock:^(NSURLSessionTask *task2, id responseObject) {
                          //relogin success, call original method
                          DDLogDebug(@"reauth Success");
                          [self reauthGET:URLString parameters:parameters success:success failure:failure];
                      } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
                          //relogin failed, call fail block  with original task and error
                          failure(task, error);
-                         if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
-                             DDLogDebug(@"reuuth failure");
+                         if (!task2 || [(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                             DDLogDebug(@"reauth failure");
                              [self setUnauthorized];
                          }
                          
@@ -99,13 +99,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 {
     return [self POST:URLString parameters:parameters progress:nil success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task2, id responseObject) {
                 //relogin success, call original method
                 [self reauthPOST:URLString parameters:parameters success:success failure:failure];
             } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
                 //relogin failed, call fail block  with original task and error
                 failure(task, error);
-                if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                if (!task2 || [(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
                     [self setUnauthorized];
                 }
             }];
@@ -124,13 +124,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 {
     return [self DELETE:URLString parameters:parameters success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task2, id responseObject) {
                 //relogin success, call original method
                 [self reauthDELETE:URLString parameters:parameters success:success failure:failure];
             } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
                 //relogin failed, call fail block  with original task and error
                 failure(task, error);
-                if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                if (!task2 || [(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
                     [self setUnauthorized];
                 }
             }];
@@ -149,13 +149,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 {
     return [self PUT:URLString parameters:parameters success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([(NSHTTPURLResponse *)[task response] statusCode] == 401) {
-            [self reloginSuccessBlock:^(NSURLSessionTask *task, id responseObject) {
+            [self reloginSuccessBlock:^(NSURLSessionTask *task2, id responseObject) {
                 //relogin success, call original method
                 [self reauthPUT:URLString parameters:parameters success:success failure:failure];
             } failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
                 //relogin failed, call fail block  with original task and error
                 failure(task, error);
-                if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                if (!task2 || [(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
                     [self setUnauthorized];
                 }
             }];
