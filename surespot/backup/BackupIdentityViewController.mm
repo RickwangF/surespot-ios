@@ -269,10 +269,12 @@ static NSString *const kRedirectURI = @"com.googleusercontent.apps.428168563991-
                                        } else {
                                            DDLogError(@"Authorization error: %@", [error localizedDescription]);
                                            
-                                           [UIUtils showToastMessage:error.localizedDescription duration:2];
+                                           if ([error code] != OIDErrorCodeUserCanceledAuthorizationFlow && [error code] != OIDErrorCodeProgramCanceledAuthorizationFlow) {
+                                               [UIUtils showToastMessage:error.localizedDescription duration:2];
+                                           }
                                            
                                            self.driveService.authorizer = nil;
-                                           _accountLabel.text = nil;
+                                           [self updateUI];
                                        }
                                        
                                    }];
