@@ -34,8 +34,6 @@ PODS:
   - GTMAppAuth (0.5.0):
     - AppAuth (~> 0.7.0)
     - GTMSessionFetcher (~> 1.1)
-  - GTMOAuth2 (1.1.4):
-    - GTMSessionFetcher (~> 1.1)
   - GTMSessionFetcher (1.1.9):
     - GTMSessionFetcher/Full (= 1.1.9)
   - GTMSessionFetcher/Core (1.1.9)
@@ -64,7 +62,6 @@ DEPENDENCIES:
   - GoogleAPIClientForREST
   - GoogleAPIClientForREST/Drive
   - GTMAppAuth
-  - GTMOAuth2 (~> 1.1.4)
   - HPGrowingTextView
   - InAppSettingsKit
   - MWPhotoBrowser (from `git@github.com:surespot/MWPhotoBrowser.git`)
@@ -96,7 +93,6 @@ SPEC CHECKSUMS:
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
   GTMAppAuth: 4b7bdc1fefdf6a49f3d9fc1aa6123f0c7e9b6660
-  GTMOAuth2: 7fc9c10f5c745f4d9850419ea88889fe3baa6b7d
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
   HPGrowingTextView: 88a716d97fb853bcb08a4a08e4727da17efc9b19
   InAppSettingsKit: 94d2fba3ccd700fc4e32c6d09fabcc0af2426744
@@ -109,6 +105,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: 4899705810a19f9fd043758d709004f498d007e4
+PODFILE CHECKSUM: a88ed10469c9d9bee7ff422af28eccbf1ff1a468
 
 COCOAPODS: 1.2.1

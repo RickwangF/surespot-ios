@@ -8,7 +8,6 @@ target 'surespot' do
   pod 'TTTAttributedLabel'
   pod 'SideMenu', :git => 'git@github.com:surespot/SideMenu.git'
   pod 'GTMAppAuth'
-  pod 'GTMOAuth2', '~> 1.1.4'
   pod 'GoogleAPIClientForREST'
   pod 'GoogleAPIClientForREST/Drive'
   pod 'InAppSettingsKit'

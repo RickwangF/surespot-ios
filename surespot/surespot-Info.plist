@@ -33,7 +33,16 @@
 			<array>
 				<string>surespot</string>
 			</array>
+            
 		</dict>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.428168563991-kjkqs31gov2lmgh05ajbhcpi7bkpuop7</string>
+            </array>
+        </dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>12</string>

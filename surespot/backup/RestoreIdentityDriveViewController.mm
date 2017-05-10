@@ -8,7 +8,6 @@
 
 #import "RestoreIdentityDriveViewController.h"
 #import "GTLRDrive.h"
-#import "GTMOAuth2ViewControllerTouch.h"
 #import "CocoaLumberjack.h"
 #import "SurespotConstants.h"
 #import "IdentityCell.h"
@@ -18,6 +17,10 @@
 #import "LoadingView.h"
 #import "NSBundle+FallbackLanguage.h"
 #import "SurespotConfiguration.h"
+#import <AppAuth/AppAuth.h>
+#import <GTMAppAuth/GTMAppAuth.h>
+#import "SurespotAppDelegate.h"
+#import <GTMSessionFetcher/GTMSessionFetcher.h>
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -27,6 +30,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 static NSString *const kKeychainItemName = @"Google Drive surespot";
 static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
+static NSString *const kNewKeychainItemName = @"Google surespot GTMAppAuth";
+static NSString *const kRedirectURI = @"com.googleusercontent.apps.428168563991-kjkqs31gov2lmgh05ajbhcpi7bkpuop7:/oauthredirect";
 
 @interface RestoreIdentityDriveViewController ()
 @property (strong, nonatomic) IBOutlet UITableView *tvDrive;
@@ -41,7 +46,6 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 @property (strong, nonatomic) IBOutlet UIButton *bSelect;
 @property (strong, nonatomic) IBOutlet UILabel *accountLabel;
 @property (strong, nonatomic) IBOutlet UILabel *labelGoogleDriveBackup;
-
 @end
 
 @implementation RestoreIdentityDriveViewController
@@ -87,21 +91,46 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 }
 
 -(void) setAccountFromKeychain {
-    self.driveService.authorizer = [GTMOAuth2ViewControllerTouch authForGoogleFromKeychainForName:kKeychainItemName
-                                                                                         clientID:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_ID]
-                                                                                     clientSecret:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_SECRET]];
+    // Attempt to deserialize from Keychain in GTMAppAuth format.
+    id<GTMFetcherAuthorizationProtocol> authorization =
+    [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:kNewKeychainItemName];
+    
+    // If no data found in the new format, try to deserialize data from GTMOAuth2
+    if (!authorization) {
+        // Tries to load the data serialized by GTMOAuth2 using old keychain name.
+        // If you created a new client id, be sure to use the *previous* client id and secret here.
+        authorization =
+        [GTMOAuth2KeychainCompatibility authForGoogleFromKeychainForName:kKeychainItemName
+                                                                clientID:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_ID]
+                                                            clientSecret:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_SECRET]];
+        if (authorization) {
+            // Remove previously stored GTMOAuth2-formatted data.
+            [GTMOAuth2KeychainCompatibility removeAuthFromKeychainForName:kKeychainItemName];
+            // Serialize to Keychain in GTMAppAuth format.
+            [GTMAppAuthFetcherAuthorization saveAuthorization:(GTMAppAuthFetcherAuthorization *)authorization
+                                            toKeychainForName:kNewKeychainItemName];
+        }
+    }
+    
+    self.driveService.authorizer = authorization;
     [self updateUI];
 }
 
 -(void) updateUI {
-    if (_driveService.authorizer && [_driveService.authorizer isMemberOfClass:[GTMOAuth2Authentication class]]) {
-        NSString * currentEmail = [[((GTMOAuth2Authentication *) _driveService.authorizer ) parameters] objectForKey:@"email"];
-        if (currentEmail) {
-            _accountLabel.text = currentEmail;
-            [_bSelect setTitle:NSLocalizedString(@"remove", nil) forState:UIControlStateNormal];
-            return;
-            
-        }
+    //    if (_driveService.authorizer && [_driveService.authorizer isMemberOfClass:[GTMOAuth2Authentication class]]) {
+    //        NSString * currentEmail = [[((GTMOAuth2Authentication *) _driveService.authorizer ) parameters] objectForKey:@"email"];
+    //        if (currentEmail) {
+    //            _accountLabel.text = currentEmail;
+    //            [_bSelect setTitle:NSLocalizedString(@"remove", nil) forState:UIControlStateNormal];
+    //            return;
+    //
+    //        }
+    //    }
+    
+    if (_driveService.authorizer) {
+        _accountLabel.text = [_driveService.authorizer userEmail];
+        [_bSelect setTitle:NSLocalizedString(@"remove", nil) forState:UIControlStateNormal];
+        return;
     }
     
     _accountLabel.text = NSLocalizedString(@"no_google_account_selected", nil);
@@ -114,57 +143,54 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
 // Helper to check if user is authorized
 - (BOOL)isAuthorized
 {
-    return [((GTMOAuth2Authentication *)self.driveService.authorizer) canAuthorize];
+    return [_driveService.authorizer canAuthorize];
 }
 
-// Creates the auth controller for authorizing access to Google Drive.
-- (GTMOAuth2ViewControllerTouch *)createAuthController
-{
-    GTMOAuth2ViewControllerTouch *authController;
-    //http://stackoverflow.com/questions/13693617/error-500-when-performing-a-query-with-drive-file-scope
-    authController = [[GTMOAuth2ViewControllerTouch alloc] initWithScope: [[kGTLRAuthScopeDriveFile stringByAppendingString:@" "] stringByAppendingString: kGTLRAuthScopeDriveMetadataReadonly]
-                                                                clientID:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_ID]
-                                                            clientSecret:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_SECRET]
-                                                        keychainItemName:kKeychainItemName
-                                                                delegate:self
-                                                        finishedSelector:@selector(viewController:finishedWithAuth:error:)];
-    return authController;
-}
-
-// Handle completion of the authorization process, and updates the Drive service
-// with the new credentials.
-- (void)viewController:(GTMOAuth2ViewControllerTouch *)viewController
-      finishedWithAuth:(GTMOAuth2Authentication *)authResult
-                 error:(NSError *)error
-{
-    if (error != nil)
-    {
-        if ([error code] != GTMOAuth2ErrorWindowClosed) {
-            [UIUtils showToastMessage:error.localizedDescription duration:2];
-        }
-        self.driveService.authorizer = nil;
-        _accountLabel.text = nil;
-    }
-    else
-    {
-        if (authResult) {
-            self.driveService.authorizer = authResult;
-            [self updateUI];
-            [self loadIdentitiesAuthIfNecessary:NO];
-            
-        }
-    }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+-(void) authorize {
+    OIDServiceConfiguration *configuration =
+    [GTMAppAuthFetcherAuthorization configurationForGoogle];
+    NSURL * redirectURL = [NSURL URLWithString: kRedirectURI];
+    // builds authentication request
+    OIDAuthorizationRequest *request =
+    [[OIDAuthorizationRequest alloc] initWithConfiguration:configuration
+                                                  clientId:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_ID]
+                                              clientSecret:[[SurespotConfiguration sharedInstance] GOOGLE_CLIENT_SECRET]
+                                                    scopes:@[OIDScopeEmail, kGTLRAuthScopeDriveFile, kGTLRAuthScopeDriveMetadataReadonly]
+                                               redirectURL:redirectURL
+                                              responseType:OIDResponseTypeCode
+                                      additionalParameters:nil];
+    // performs authentication request
+    SurespotAppDelegate *appDelegate = (SurespotAppDelegate *)[UIApplication sharedApplication].delegate;
+    appDelegate.currentAuthorizationFlow =
+    [OIDAuthState authStateByPresentingAuthorizationRequest:request
+                                   presentingViewController:self callback:^(OIDAuthState * _Nullable authState, NSError * _Nullable error) {
+                                       if (authState) {
+                                           // Creates the GTMAppAuthFetcherAuthorization from the OIDAuthState.
+                                           GTMAppAuthFetcherAuthorization *authorization =
+                                           [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:authState];
+                                           
+                                           self.driveService.authorizer = authorization;
+                                           [GTMAppAuthFetcherAuthorization saveAuthorization:(GTMAppAuthFetcherAuthorization *)authorization
+                                                                           toKeychainForName:kNewKeychainItemName];
+                                           DDLogDebug(@"Got authorization tokens. Access token: %@",
+                                                      authState.lastTokenResponse.accessToken);
+                                           [self updateUI];
+                                           [self loadIdentitiesAuthIfNecessary:NO];
+                                       } else {
+                                           DDLogError(@"Authorization error: %@", [error localizedDescription]);
+                                           
+                                           [UIUtils showToastMessage:error.localizedDescription duration:2];
+                                           
+                                           self.driveService.authorizer = nil;
+                                           _accountLabel.text = nil;
+                                       }
+                                       
+                                   }];
 }
 
 - (IBAction)bLoadIdentities:(id)sender {
     if ([self isAuthorized]) {
-        [GTMOAuth2ViewControllerTouch removeAuthFromKeychainForName:kKeychainItemName];
+        [GTMAppAuthFetcherAuthorization removeAuthorizationFromKeychainForName:kNewKeychainItemName];
         _driveService.authorizer = nil;
         [self updateUI];
     }
@@ -177,9 +203,8 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
     if (![self isAuthorized])
     {
         if (auth) {
-            // Not yet authorized, request authorization and push the login UI onto the navigation stack.
             DDLogInfo(@"launching google authorization");
-            [self.navigationController pushViewController:[self createAuthController] animated:YES];
+            [self authorize];
         }
         return;
     }
@@ -193,7 +218,6 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
         }]];
         [_tvDrive reloadData];
     }];
-    
 }
 
 -(void) ensureDriveIdentityDirectoryCompletionBlock: (CallbackBlock) completionBlock {
@@ -220,15 +244,6 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                           folderObj.name = DRIVE_IDENTITY_FOLDER;
                           folderObj.mimeType = @"application/vnd.google-apps.folder";
                           
-                          // To create a folder in a specific parent folder, specify the identifier
-                          // of the parent:
-                          // _resourceId is the identifier from the parent folder
-                          
-                          //                          GTLDriveParentReference *parentRef = [GTLDriveParentReference object];
-                          //                          parentRef.identifier = @"root";
-                          //                          folderObj.parents = [NSArray arrayWithObject:parentRef];
-                          
-                          
                           GTLRDriveQuery_FilesCreate *query = [GTLRDriveQuery_FilesCreate   queryWithObject:folderObj uploadParameters:nil];
                           
                           [_driveService executeQuery:query
@@ -247,19 +262,13 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
                                         }
                                         completionBlock(identityDirId);
                                         return;
-                                        
                                     }];
-                          
-                          
                       }
-                      
-                      
                   } else {
                       DDLogError(@"An error occurred: %@", error);
                       completionBlock(nil);
                   }
               }];
-    
 }
 
 - (void)retrieveIdentityFilesCompletionBlock:(CallbackBlock) callback {
@@ -280,7 +289,6 @@ static NSString* const DRIVE_IDENTITY_FOLDER = @"surespot identity backups";
         GTLRDriveQuery_FilesList *queryFilesList = [GTLRDriveQuery_FilesList query];
         
         queryFilesList.q = [NSString stringWithFormat: @"trashed = false and \'%@\' in parents", identityDirId];
-        //  queryFilesList.additionalURLQueryParameters = [NSDictionary dictionaryWithObjectsAndKeys:@"alt", @"media", nil];
         queryFilesList.fields = @"files(id, modifiedTime,originalFilename)";
         
         [_driveService executeQuery:queryFilesList

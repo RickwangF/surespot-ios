@@ -8,11 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "AGWindowView.h"
+#import <AppAuth/AppAuth.h>
 
 @interface SurespotAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) UIImageView *imageView;
+@property(nonatomic, nullable) id<OIDAuthorizationFlowSession> currentAuthorizationFlow;
 
 //@property (strong, nonatomic) AGWindowView * overlayView;
 //@property (strong, nonatomic) UIWindow * overlayWindow;
