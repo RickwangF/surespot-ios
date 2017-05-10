@@ -30,6 +30,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             [self.tableView setBackgroundColor:[UIColor blackColor]];
             [self.tableView setSeparatorColor: [UIUtils surespotSeparatorGrey]];
         }
+        self.neverShowPrivacySettings = YES;
     }
     
     return self;
