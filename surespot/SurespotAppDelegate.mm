@@ -109,6 +109,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     //clean up old file locations
     [FileController deleteOldSecrets];
     
+    //clear local cache
+    BOOL cacheCleared = [[NSUserDefaults standardUserDefaults] boolForKey:@"cacheCleared13"];
+    if (!cacheCleared) {
+        [UIUtils clearLocalCache];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"cacheCleared13"];
+    }
+    
+    
     //get reachability started
     [ChatManager sharedInstance];
 
