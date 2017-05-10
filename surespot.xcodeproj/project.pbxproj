@@ -742,6 +742,7 @@
 				66EBDF2F1855C96F00F2452D /* backup */,
 				66EBDF081855C96F00F2452D /* chat */,
 				66EBDF481855C96F00F2452D /* encryption */,
+				662C06501EC3C7E900BBBC1A /* gifs */,
 				66EBE0A21855C97100F2452D /* home */,
 				66EBDEF31855C96F00F2452D /* identity */,
 				66EBDF381855C96F00F2452D /* images */,
@@ -782,6 +783,13 @@
 				66E21DFF1847E1220005D91E /* InAppSettings.bundle */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		662C06501EC3C7E900BBBC1A /* gifs */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = gifs;
 			sourceTree = "<group>";
 		};
 		662CA5A01873494E00684790 /* purchases */ = {

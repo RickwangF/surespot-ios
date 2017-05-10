@@ -53,7 +53,16 @@
                                                     
                                                     //figure out message height for both orientations
                                                     if (![UIUtils stringIsNilOrEmpty:plaintext]){
+                                                        
+                                                        
+                                                        
                                                         _message.plainData = plaintext;
+                                                        
+                                                        if ([_message.mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
+                                                                        [UIUtils setImageMessageHeights:_message size:_size];
+                                                        }
+                                                        
+                                                        
                                                     }
                                                     else {
                                                         //todo more granular error messages

@@ -44,6 +44,7 @@
 #import "SurespotSettingsViewController.h"
 #import "SurespotLeftNavButton.h"
 #import "SurespotConfiguration.h"
+#import "FLAnimatedImageView.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -1224,10 +1225,10 @@ const Float32 voiceRecordDelay = 0.3;
             }
             
             if ([message.mimeType isEqualToString:MIME_TYPE_TEXT] ||
-                [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK] ||
                 [message.mimeType isEqualToString:MIME_TYPE_FILE]) {
                 cell.messageLabel.hidden = NO;
                 cell.uiImageView.hidden = YES;
+                cell.gifView.hidden = YES;
                 cell.shareableView.hidden = YES;
                 cell.audioIcon.hidden = YES;
                 cell.audioSlider.hidden = YES;
@@ -1245,6 +1246,7 @@ const Float32 voiceRecordDelay = 0.3;
                 if ([message.mimeType isEqualToString:MIME_TYPE_IMAGE]) {
                     cell.shareableView.hidden = NO;
                     cell.messageLabel.hidden = YES;
+                    cell.gifView.hidden = YES;
                     cell.uiImageView.image = nil;
                     cell.uiImageView.hidden = NO;
                     cell.uiImageView.alignTop = YES;
@@ -1294,24 +1296,15 @@ const Float32 voiceRecordDelay = 0.3;
                     DDLogVerbose(@"imageView: %@", cell.uiImageView);
                 }
                 else {
-                    if ([message.mimeType isEqualToString:MIME_TYPE_M4A]) {
-                        CGRect messageStatusFrame = cell.messageStatusLabel.frame;
-                        if (ours) {
-                            [cell.audioIcon setImage: [UIImage imageNamed:@"ic_media_play"]];
-                            messageStatusFrame.origin.x = 13;
-                        }
-                        else {
-                            if (message.voicePlayed) {
-                                [cell.audioIcon setImage: [UIImage imageNamed:@"ic_media_play"]];
-                            }
-                            else {
-                                [cell.audioIcon setImage: [UIImage imageNamed:@"ic_media_played"]];
-                            }
-                            messageStatusFrame.origin.x = 63;
-                            
-                        }
-                        cell.messageStatusLabel.frame = messageStatusFrame;
+                    if ([message.mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
+                        cell.shareableView.hidden = NO;
+                        cell.messageLabel.hidden = YES;
+                        cell.uiImageView.hidden = YES;
+                        cell.gifView.hidden = NO;
                         
+                        
+                        cell.audioIcon.hidden = YES;
+                        cell.audioSlider.hidden = YES;
                         if ([message dataSize ] > 0) {
                             cell.messageSize.hidden = NO;
                             cell.messageSize.text = [NSString stringWithFormat:@"%d KB", (int) ceil(message.dataSize/1000.0)];
@@ -1319,51 +1312,107 @@ const Float32 voiceRecordDelay = 0.3;
                         else {
                             cell.messageSize.hidden = YES;
                         }
-                        cell.shareableView.hidden = YES;
-                        cell.messageLabel.hidden = YES;
-                        cell.uiImageView.hidden = YES;
-                        cell.audioIcon.hidden = NO;
-                        cell.audioSlider.hidden = NO;
                         
-                        if (message.playVoice && [username isEqualToString: [self getCurrentTabName]]) {
-                            [self ensureVoiceDelegate];
-                            [_voiceDelegate playVoiceMessage:message cell:cell];
-                        }
-                        else {
-                            [cell setMessage:message
-                                 ourUsername:_username
-                                    progress:^(NSUInteger receivedSize, long long expectedSize) {
-                                        
-                                    }
-                                   completed:^(id data, NSString * mimeType, NSError *error, SDImageCacheType cacheType) {
-                                       if (!error) {
-                                           
-                                       }
-                                   }
-                                retryAttempt:0
-                             ];
-                        }
                         
-                        [self ensureVoiceDelegate];
-                        [_voiceDelegate attachCell:cell];
-                    }
-                    
-                    else {
-                        cell.messageLabel.hidden = NO;
-                        cell.uiImageView.hidden = YES;
-                        cell.shareableView.hidden = YES;
-                        cell.audioIcon.hidden = YES;
-                        cell.audioSlider.hidden = YES;
-                        cell.messageSize.hidden = YES;
                         CGRect messageStatusFrame = cell.messageStatusLabel.frame;
                         if (ours) {
-                            messageStatusFrame.origin.x = 13;
+                            messageStatusFrame.origin.x = 22;
                         }
                         else {
-                            messageStatusFrame.origin.x = 63;
+                            messageStatusFrame.origin.x = 72;
                         }
+                        
                         cell.messageStatusLabel.frame = messageStatusFrame;
                         
+                        if (message.shareable) {
+                            cell.shareableView.image = [UIImage imageNamed:@"ic_partial_secure"];
+                        }
+                        else {
+                            cell.shareableView.image = [UIImage imageNamed:@"ic_secure"];
+                        }
+                        
+                        if (message.plainData) {
+                            FLAnimatedImage * image = [FLAnimatedImage animatedImageWithGIFData:[NSData dataWithContentsOfURL: [NSURL URLWithString:message.plainData]]];
+                            cell.gifView.animatedImage = image;
+                        }
+                        
+                        
+                        
+                        DDLogVerbose(@"imageView: %@", cell.uiImageView);
+                    }
+                    else {
+                        if ([message.mimeType isEqualToString:MIME_TYPE_M4A]) {
+                            CGRect messageStatusFrame = cell.messageStatusLabel.frame;
+                            if (ours) {
+                                [cell.audioIcon setImage: [UIImage imageNamed:@"ic_media_play"]];
+                                messageStatusFrame.origin.x = 13;
+                            }
+                            else {
+                                if (message.voicePlayed) {
+                                    [cell.audioIcon setImage: [UIImage imageNamed:@"ic_media_play"]];
+                                }
+                                else {
+                                    [cell.audioIcon setImage: [UIImage imageNamed:@"ic_media_played"]];
+                                }
+                                messageStatusFrame.origin.x = 63;
+                                
+                            }
+                            cell.messageStatusLabel.frame = messageStatusFrame;
+                            
+                            if ([message dataSize ] > 0) {
+                                cell.messageSize.hidden = NO;
+                                cell.messageSize.text = [NSString stringWithFormat:@"%d KB", (int) ceil(message.dataSize/1000.0)];
+                            }
+                            else {
+                                cell.messageSize.hidden = YES;
+                            }
+                            cell.shareableView.hidden = YES;
+                            cell.messageLabel.hidden = YES;
+                            cell.uiImageView.hidden = YES;
+                            cell.gifView.hidden = YES;
+                            cell.audioIcon.hidden = NO;
+                            cell.audioSlider.hidden = NO;
+                            
+                            if (message.playVoice && [username isEqualToString: [self getCurrentTabName]]) {
+                                [self ensureVoiceDelegate];
+                                [_voiceDelegate playVoiceMessage:message cell:cell];
+                            }
+                            else {
+                                [cell setMessage:message
+                                     ourUsername:_username
+                                        progress:^(NSUInteger receivedSize, long long expectedSize) {
+                                            
+                                        }
+                                       completed:^(id data, NSString * mimeType, NSError *error, SDImageCacheType cacheType) {
+                                           if (!error) {
+                                               
+                                           }
+                                       }
+                                    retryAttempt:0
+                                 ];
+                            }
+                            
+                            [self ensureVoiceDelegate];
+                            [_voiceDelegate attachCell:cell];
+                        }
+                        
+                        else {
+                            cell.messageLabel.hidden = NO;
+                            cell.uiImageView.hidden = YES;
+                            cell.gifView.hidden = YES;
+                            cell.shareableView.hidden = YES;
+                            cell.audioIcon.hidden = YES;
+                            cell.audioSlider.hidden = YES;
+                            cell.messageSize.hidden = YES;
+                            CGRect messageStatusFrame = cell.messageStatusLabel.frame;
+                            if (ours) {
+                                messageStatusFrame.origin.x = 13;
+                            }
+                            else {
+                                messageStatusFrame.origin.x = 63;
+                            }
+                            cell.messageStatusLabel.frame = messageStatusFrame;
+                        }
                     }
                 }
             }
@@ -1770,7 +1819,7 @@ const Float32 voiceRecordDelay = 0.3;
                 DDLogVerbose(@"setting needs scroll for %@", username);
                 [_needsScroll setObject:@"yourmama" forKey:username];
                 [_bottomIndexPaths removeObjectForKey:username];
-            }            
+            }
         }
     }
 }

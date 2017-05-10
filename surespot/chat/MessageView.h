@@ -11,6 +11,7 @@
 #import "UIImageViewAligned.h"
 #import "SurespotMessage.h"
 #import "TTTAttributedLabel.h"
+#import "FLAnimatedImage.h"
 
 @interface MessageView : UITableViewCell
 @property (strong, nonatomic) IBOutlet FilledRectView *messageSentView;
@@ -21,5 +22,6 @@
 @property (strong, nonatomic) IBOutlet UISlider *audioSlider;
 @property (strong, nonatomic) IBOutlet UIImageView *shareableView;
 @property (strong, nonatomic) IBOutlet UILabel *messageSize;
+@property (strong, nonatomic) IBOutlet FLAnimatedImageView *gifView;
 @property (weak, nonatomic) SurespotMessage * message;
 @end

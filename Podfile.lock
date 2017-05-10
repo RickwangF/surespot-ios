@@ -23,6 +23,7 @@ PODS:
   - CocoaLumberjack/Extensions (3.2.0):
     - CocoaLumberjack/Default
   - DACircularProgress (2.3.1)
+  - FLAnimatedImage (1.0.12)
   - GoogleAPIClientForREST (1.2.1):
     - GoogleAPIClientForREST/Core (= 1.2.1)
     - GTMSessionFetcher (>= 1.1.7)
@@ -59,6 +60,7 @@ DEPENDENCIES:
   - AFNetworking (~> 3.1)
   - AGWindowView
   - CocoaLumberjack
+  - FLAnimatedImage (~> 1.0)
   - GoogleAPIClientForREST
   - GoogleAPIClientForREST/Drive
   - GTMAppAuth
@@ -91,6 +93,7 @@ SPEC CHECKSUMS:
   AppAuth: c56d352b0d50bb34dbb302d7ba50b20aa6b6ae89
   CocoaLumberjack: 9b4aed7073d242f29cc2f62068d995faf67f703a
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
   GTMAppAuth: 4b7bdc1fefdf6a49f3d9fc1aa6123f0c7e9b6660
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
@@ -105,6 +108,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: a88ed10469c9d9bee7ff422af28eccbf1ff1a468
+PODFILE CHECKSUM: a2bcdaf200efdb225ceed294444a6f3fdafa5854
 
 COCOAPODS: 1.2.1
