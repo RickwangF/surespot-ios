@@ -102,11 +102,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
          }];
      }
      
-     failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
-         //todo bail on fatal error
-         DDLogDebug(@"failure sending messages via http");
-         [self scheduleRetrySend];
-     }];
-    
+     failureBlock:^(NSURLSessionTask *task, NSError *Error) {
+         long statusCode = [(NSHTTPURLResponse *) task.response statusCode];
+         DDLogInfo(@"sending text %@ to server failed, statuscode: %ld", self.message.data, statusCode);
+         
+         if (statusCode == 401) {
+             [self finish:nil];
+         }
+         else {
+             [self scheduleRetrySend];
+         }
+     }];    
 }
 @end

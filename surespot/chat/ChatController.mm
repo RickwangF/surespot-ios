@@ -524,10 +524,15 @@ static const int MAX_REAUTH_RETRIES = 1;
         [self stopProgress:@"socket"];
         [_homeDataSource postRefresh];
         [self processNextMessage];
-    } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
+    } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
         DDLogWarn(@"getLatestData failed: %@", Error.localizedDescription);
         [self stopProgress:@"socket"];
-        [UIUtils showToastKey:@"loading_latest_messages_failed"];
+        
+        long statusCode = [(NSHTTPURLResponse *) task.response statusCode];
+        
+        if (statusCode != 401) {
+            [UIUtils showToastKey:@"loading_latest_messages_failed"];
+        }
     }];
 }
 

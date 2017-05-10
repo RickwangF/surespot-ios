@@ -104,11 +104,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     // DDLogInfo(@"dispatch group leave %@", username);
                     dispatch_group_leave(group2);
                     
-                } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
+                } failureBlock:^(NSURLSessionTask *task, NSError *Error) {
                     DDLogInfo(@"get messagedata response error: %@",  Error);
-                    dispatch_async(dispatch_get_main_queue(), ^{
+                    long statusCode = [(NSHTTPURLResponse *) task.response statusCode];
+                    if (statusCode != 401) {
                         [UIUtils showToastKey:@"loading_latest_messages_failed"];
-                    });
+                    }
                     
                     dispatch_group_leave(group2);
                 }];
@@ -118,9 +119,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     initCallback(nil);
                 });
             }
-            
         });
-        
         
         if (chatData) {
             DDLogInfo(@"loading chat data from: %@", path);
