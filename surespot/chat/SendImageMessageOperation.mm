@@ -141,7 +141,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
          long statusCode = [(NSHTTPURLResponse *) operation statusCode];
          DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", self.message.data, statusCode);
          
-         [self scheduleRetrySend];
+         if (statusCode == 401) {
+             [self finish:nil];
+         }
+         else {
+             [self scheduleRetrySend];
+         }
      }];
     
 }

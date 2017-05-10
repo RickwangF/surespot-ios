@@ -129,6 +129,9 @@ static const int MAX_REAUTH_RETRIES = 1;
             
             if (!reAuthing) {
                 DDLogInfo(@"not attempting to reauth");
+                //stop the queue
+                [_messageSendQueue cancelAllOperations];
+                
                 [[[NetworkManager sharedInstance] getNetworkController:_username] setUnauthorized];
                 return;
             }

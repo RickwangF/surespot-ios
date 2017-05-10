@@ -618,7 +618,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }
                              failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
                                  failureBlock(response, error);
-                                 if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                                 if (!task2 || [(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
                                      [self setUnauthorized];
                                  }
                              }];
@@ -668,7 +668,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }
                              failureBlock:^(NSURLSessionTask *task2, NSError *error2) {
                                  failureBlock(response, error);
-                                 if ([(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
+                                 if (!task2 || [(NSHTTPURLResponse *)[task2 response] statusCode] == 401) {
                                      [self setUnauthorized];
                                  }
                              }];
