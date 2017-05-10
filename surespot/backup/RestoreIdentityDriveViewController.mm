@@ -20,7 +20,6 @@
 #import <AppAuth/AppAuth.h>
 #import <GTMAppAuth/GTMAppAuth.h>
 #import "SurespotAppDelegate.h"
-#import <GTMSessionFetcher/GTMSessionFetcher.h>
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -117,16 +116,6 @@ static NSString *const kRedirectURI = @"com.googleusercontent.apps.428168563991-
 }
 
 -(void) updateUI {
-    //    if (_driveService.authorizer && [_driveService.authorizer isMemberOfClass:[GTMOAuth2Authentication class]]) {
-    //        NSString * currentEmail = [[((GTMOAuth2Authentication *) _driveService.authorizer ) parameters] objectForKey:@"email"];
-    //        if (currentEmail) {
-    //            _accountLabel.text = currentEmail;
-    //            [_bSelect setTitle:NSLocalizedString(@"remove", nil) forState:UIControlStateNormal];
-    //            return;
-    //
-    //        }
-    //    }
-    
     if (_driveService.authorizer) {
         _accountLabel.text = [_driveService.authorizer userEmail];
         [_bSelect setTitle:NSLocalizedString(@"remove", nil) forState:UIControlStateNormal];
