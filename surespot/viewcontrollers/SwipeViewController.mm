@@ -44,8 +44,10 @@
 #import "SurespotSettingsViewController.h"
 #import "SurespotLeftNavButton.h"
 #import "SurespotConfiguration.h"
-#import "FLAnimatedImageView.h"
+#import "FLAnimatedImage.h"
 #import "GiphyView.h"
+#import "DownloadGifOperation.h"
+#import "MessageView+NSURLCache.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -1301,9 +1303,8 @@ const Float32 voiceRecordDelay = 0.3;
                         cell.shareableView.hidden = NO;
                         cell.messageLabel.hidden = YES;
                         cell.uiImageView.hidden = YES;
+                        cell.gifView.animatedImage = nil;
                         cell.gifView.hidden = NO;
-                        
-                        
                         cell.audioIcon.hidden = YES;
                         cell.audioSlider.hidden = YES;
                         if ([message dataSize ] > 0) {
@@ -1313,7 +1314,6 @@ const Float32 voiceRecordDelay = 0.3;
                         else {
                             cell.messageSize.hidden = YES;
                         }
-                        
                         
                         CGRect messageStatusFrame = cell.messageStatusLabel.frame;
                         if (ours) {
@@ -1332,14 +1332,8 @@ const Float32 voiceRecordDelay = 0.3;
                             cell.shareableView.image = [UIImage imageNamed:@"ic_secure"];
                         }
                         
-                        if (message.plainData) {
-                            FLAnimatedImage * image = [FLAnimatedImage animatedImageWithGIFData:[NSData dataWithContentsOfURL: [NSURL URLWithString:message.plainData]]];
-                            cell.gifView.animatedImage = image;
-                        }
-                        
-                        
-                        
-                        DDLogVerbose(@"imageView: %@", cell.uiImageView);
+                        [cell setMessage:message ourUsername:_username callback:nil retryAttempt:0];
+                      
                     }
                     else {
                         if ([message.mimeType isEqualToString:MIME_TYPE_M4A]) {
@@ -1381,14 +1375,8 @@ const Float32 voiceRecordDelay = 0.3;
                             else {
                                 [cell setMessage:message
                                      ourUsername:_username
-                                        progress:^(NSUInteger receivedSize, long long expectedSize) {
-                                            
-                                        }
-                                       completed:^(id data, NSString * mimeType, NSError *error, SDImageCacheType cacheType) {
-                                           if (!error) {
-                                               
-                                           }
-                                       }
+                                        progress:nil
+                                       completed:nil
                                     retryAttempt:0
                                  ];
                             }

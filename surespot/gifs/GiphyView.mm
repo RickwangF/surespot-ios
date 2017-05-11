@@ -8,7 +8,6 @@
 
 #import "GiphyView.h"
 #import "NetworkManager.h"
-#import "FLAnimatedImageView.h"
 #import "FLAnimatedImage.h"
 #import "CocoaLumberjack.h"
 
