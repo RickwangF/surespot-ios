@@ -47,8 +47,9 @@
 -(void) reachabilityConnect;
 
 -(void) sendTextMessage: (NSString *) message toFriendname: (NSString *) friendname;
--(void) sendImageMessage: (NSURL*) localUrl  to: (NSString *) to;
+-(void) sendImageMessage: (NSURL*) localUrl  to: (NSString *) friendname;
 -(void) sendVoiceMessage: (NSURL*) localUrl  to: (NSString *) friendname;
+-(void) sendGifLinkUrl: (NSURL*) url to: (NSString *) friendname;
 
 -(void) handleAutoinvites;
 @end

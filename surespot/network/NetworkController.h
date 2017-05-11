@@ -112,5 +112,5 @@ typedef void (^HTTPFailureBlock) (NSURLSessionTask* task, NSError *error );
 -(void) deleteFriendImage:(NSString *) friendname successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
 -(void) updateSigs: (NSDictionary *) sigs;
 -(void) sendMessages: (NSArray *) messages successBlock:(HTTPSuccessBlock)successBlock failureBlock: (HTTPFailureBlock) failureBlock;
-
+-(void) searchGiphy:(NSString*) query callback: (CallbackBlock) callback;
 @end

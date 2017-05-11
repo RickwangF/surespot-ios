@@ -576,6 +576,37 @@ static const int MAX_REAUTH_RETRIES = 1;
     [self enqueueMessage:sm];
 }
 
+- (void) sendGifLinkUrl:(NSString *)url to:(NSString *)friendname
+{
+    if ([UIUtils stringIsNilOrEmpty:friendname]) return;
+    
+    Friend * afriend = [_homeDataSource getFriendByName:friendname];
+    if ([afriend isDeleted]) return;
+    
+    
+    NSData * iv = [EncryptionController getIv];
+    NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:friendname forKey:@"to"];
+    [dict setObject:_username forKey:@"from"];
+    [dict setObject:b64iv forKey:@"iv"];
+    [dict setObject:MIME_TYPE_GIF_LINK forKey:@"mimeType"];
+    [dict setObject:[NSNumber numberWithBool:YES] forKey:@"hashed"];
+    
+    SurespotMessage * sm =[[SurespotMessage alloc] initWithDictionary: dict];
+    
+    //cache the plain data locally
+    sm.plainData = url;
+    [UIUtils setImageMessageHeights:sm size:[UIScreen mainScreen].bounds.size];
+    
+    ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
+    [dataSource addMessage: sm refresh:NO];
+    [dataSource postRefresh];
+    
+    [self enqueueMessage:sm];
+}
+
+
 
 -(void) sendImageMessage: (NSURL*) localUrl  to: (NSString *) friendname {
     //add message locally
@@ -666,7 +697,7 @@ static const int MAX_REAUTH_RETRIES = 1;
         }
         
         if (!smo) {
-            if ([qm.mimeType isEqualToString:MIME_TYPE_TEXT]) {
+            if ([qm.mimeType isEqualToString:MIME_TYPE_TEXT] || [qm.mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
                 DDLogVerbose(@"Creating send text message operation for %@", qm.iv);
                 [_messageSendQueue addOperation: [[SendTextMessageOperation alloc] initWithMessage:qm callback:^(SurespotMessage * message) {
                     if (message) {

@@ -35,6 +35,7 @@
         _GOOGLE_CLIENT_ID = [config objectForKey:@"google_client_id"];
         _GOOGLE_CLIENT_SECRET = [config objectForKey:@"google_client_secret"];
         _BITLY_TOKEN = [config objectForKey:@"bitly_token"];
+                _GIPHY_API_KEY = [config objectForKey:@"giphy_api_key"];
     }
     
     return self;

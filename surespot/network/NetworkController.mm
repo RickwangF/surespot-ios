@@ -704,6 +704,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [task resume];
 }
 
+-(void) searchGiphy:(NSString*) query callback: (CallbackBlock) callback
+{
+    NSString * path = [[NSString stringWithFormat:@"https://api.giphy.com/v1/gifs/search?q=%@&api_key=%@", query, [[SurespotConfiguration sharedInstance] GIPHY_API_KEY]] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:@"GET" URLString:path parameters:nil error:nil];
+    NSURLSessionDataTask * task = [self dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+            callback(responseObject);
+    }];
+    [task resume];
+}
+
 #pragma mark helper methods
 
 -(void) setUnauthorized {

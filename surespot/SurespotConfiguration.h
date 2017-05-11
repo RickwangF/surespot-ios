@@ -15,6 +15,7 @@
 @property (strong, nonatomic, readonly) NSString *GOOGLE_CLIENT_ID;
 @property (strong, nonatomic, readonly) NSString *GOOGLE_CLIENT_SECRET;
 @property (strong, nonatomic, readonly) NSString *BITLY_TOKEN;
+@property (strong, nonatomic, readonly) NSString *GIPHY_API_KEY;
 @end
 
 #endif /* SurespotConfiguration_h */

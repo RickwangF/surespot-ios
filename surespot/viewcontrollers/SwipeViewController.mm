@@ -45,6 +45,7 @@
 #import "SurespotLeftNavButton.h"
 #import "SurespotConfiguration.h"
 #import "FLAnimatedImageView.h"
+#import "GiphyView.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -2813,21 +2814,34 @@ const Float32 voiceRecordDelay = 0.3;
     self.popover = nil;
 }
 - (IBAction)qrTouch:(id)sender {
-    QRInviteViewController * controller = [[QRInviteViewController alloc] initWithNibName:@"QRInviteView" username: _username];
+//    QRInviteViewController * controller = [[QRInviteViewController alloc] initWithNibName:@"QRInviteView" username: _username];
+//    
+//    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+//        _popover = [[UIPopoverController alloc] initWithContentViewController:controller];
+//        _popover.delegate = self;
+//        CGFloat x = self.view.bounds.size.width;
+//        CGFloat y =self.view.bounds.size.height;
+//        DDLogVerbose(@"setting popover x, y to: %f, %f", x/2,y/2);
+//        [_popover setPopoverContentSize:CGSizeMake(320, 370) animated:NO];
+//        [_popover presentPopoverFromRect:CGRectMake(x/2,y/2, 1,1 ) inView:self.view permittedArrowDirections:0 animated:YES];
+//        
+//    } else {
+//        [self resignAllResponders];
+//        [self.navigationController pushViewController:controller animated:YES];
+//    }
     
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        _popover = [[UIPopoverController alloc] initWithContentViewController:controller];
-        _popover.delegate = self;
-        CGFloat x = self.view.bounds.size.width;
-        CGFloat y =self.view.bounds.size.height;
-        DDLogVerbose(@"setting popover x, y to: %f, %f", x/2,y/2);
-        [_popover setPopoverContentSize:CGSizeMake(320, 370) animated:NO];
-        [_popover presentPopoverFromRect:CGRectMake(x/2,y/2, 1,1 ) inView:self.view permittedArrowDirections:0 animated:YES];
-        
-    } else {
-        [self resignAllResponders];
-        [self.navigationController pushViewController:controller animated:YES];
-    }
+    
+    //show gif
+//    UIWindow* window = [UIApplication sharedApplication].keyWindow;
+    
+    GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];//[[GiphyView alloc] initWithFrame: CGRectMake(0,0, self.view.bounds.size.width, 200)];
+    [view setCallback:^(id result) {
+        [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl:  [result objectForKey:@"url"] to: [self getCurrentTabName]];
+    }];
+    view.frame = CGRectMake(0, self.view.bounds.size.height - 200, self.view.bounds.size.width, 200);
+    [self.view addSubview:view];
+    [view searchGifs:@"what"];
+    
 }
 
 -(void) resignAllResponders {
