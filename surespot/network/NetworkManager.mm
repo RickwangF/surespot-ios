@@ -46,7 +46,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if (self) {
         _networkControllers = [[NSMutableDictionary alloc] initWithCapacity:MAX_IDENTITIES];
         
-        
+        NSUInteger cacheSizeMemory = 50*1024*1024; // 500 MB
+        NSUInteger cacheSizeDisk = 100*1024*1024; // 500 MB
+        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
+        [NSURLCache setSharedURLCache:sharedCache];
     }
     
     return self;

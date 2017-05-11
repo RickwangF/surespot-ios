@@ -50,7 +50,7 @@
 +(BOOL) isBlackTheme;
 +(void) setTextFieldColors: (UITextField *) textField localizedStringKey: (NSString *) key;
 +(BOOL) confirmLogout;
-+(double) generateIntervalK: (NSInteger) k maxInterval: (NSInteger) maxInterval;
++(double) generateIntervalK: (double) k maxInterval: (double) maxInterval;
 +(void) getLocalImageFromAssetUrl: (NSString *) url callback:(CallbackBlock) callback;
 +(void) showPasswordAlertTitle: (NSString *) title
                        message: (NSString *) message

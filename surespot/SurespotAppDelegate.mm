@@ -36,11 +36,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @implementation SurespotAppDelegate
 
-static NSOperationQueue * _operationQueue;
-+(NSOperationQueue *) operationQueue { return _operationQueue; }
-+(void) setOperationQueue:(NSOperationQueue *)operationQueue {_operationQueue = operationQueue; }
-
-
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -78,13 +73,6 @@ static NSOperationQueue * _operationQueue;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
-    static dispatch_once_t oncePredicate;
-    dispatch_once(&oncePredicate, ^{
-        [SurespotAppDelegate setOperationQueue: [NSOperationQueue new]];
-        SurespotAppDelegate.operationQueue.maxConcurrentOperationCount = 4;
-    });
-    
     _lastUsers = [[NSMutableDictionary alloc] init];
     
     // iOS 8 Notifications

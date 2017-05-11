@@ -20,11 +20,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
-    @interface DownloadGifOperation()
-
-
-    @end
-
 @implementation DownloadGifOperation
 
 
@@ -32,10 +27,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
              callback: (CallbackBlock) callback {
     
     if (self = [super init]) {
-        
-          
-        
-        
         self.message = message;
         self.callback = callback;
         
@@ -52,10 +43,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [self didChangeValueForKey:@"isExecuting"];
     
     DDLogVerbose(@"executing");
-    
-    //_bgTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
-    
-    
+
     [self downloadMessage];
 }
 

@@ -47,7 +47,7 @@
 #import "FLAnimatedImage.h"
 #import "GiphyView.h"
 #import "DownloadGifOperation.h"
-#import "MessageView+NSURLCache.h"
+#import "MessageView+GifCache.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;

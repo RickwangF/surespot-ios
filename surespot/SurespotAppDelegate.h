@@ -13,9 +13,7 @@
 @interface SurespotAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow * _Nonnull window;
-@property (strong, nonatomic) UIImageView *imageView;
+@property (strong, nonatomic) UIImageView * _Nullable imageView;
 @property(nonatomic, nullable) id<OIDAuthorizationFlowSession> currentAuthorizationFlow;
-@property (class) NSOperationQueue * operationQueue;
-//@property (strong, nonatomic) AGWindowView * overlayView;
-//@property (strong, nonatomic) UIWindow * overlayWindow;
+
 @end

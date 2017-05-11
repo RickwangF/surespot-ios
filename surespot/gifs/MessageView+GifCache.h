@@ -4,7 +4,7 @@
 #import "SurespotMessage.h"
 #import "SurespotConstants.h"
 
-@interface MessageView (NSURLCache)
+@interface MessageView (GifCache)
 
 - (void)setMessage:(SurespotMessage *) message
        ourUsername:(NSString *) ourUsername

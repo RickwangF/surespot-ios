@@ -487,8 +487,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
 }
 
-+(double) generateIntervalK: (NSInteger) k maxInterval: (NSInteger) maxInterval {
-    NSInteger timerInterval = pow(2,k);
++(double) generateIntervalK: (double) k maxInterval: (double) maxInterval {
+    double timerInterval = pow(2,k);
     
     if (timerInterval > maxInterval) {
         timerInterval = maxInterval;

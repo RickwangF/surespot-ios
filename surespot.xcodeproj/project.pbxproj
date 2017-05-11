@@ -59,7 +59,8 @@
 		665180E81EC4E982000CBB44 /* DownloadGifOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 665180E71EC4E982000CBB44 /* DownloadGifOperation.mm */; };
 		665180ED1EC4F645000CBB44 /* GiphyView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 665180EB1EC4F645000CBB44 /* GiphyView.mm */; };
 		665180EE1EC4F645000CBB44 /* GiphyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 665180EC1EC4F645000CBB44 /* GiphyView.xib */; };
-		665180F11EC4FB5A000CBB44 /* MessageView+NSURLCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 665180F01EC4FB5A000CBB44 /* MessageView+NSURLCache.m */; };
+		665180F11EC4FB5A000CBB44 /* MessageView+GifCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 665180F01EC4FB5A000CBB44 /* MessageView+GifCache.m */; };
+		665180F71EC51427000CBB44 /* SharedCacheAndQueueManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 665180F61EC51427000CBB44 /* SharedCacheAndQueueManager.m */; };
 		6652F2AA1875F16D00E023A7 /* PwylViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6652F2A91875F16D00E023A7 /* PwylViewController.m */; };
 		66536BEC1E79BA5D00520131 /* FastUserSwitchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */; };
 		66536BEE1E79BEF400520131 /* FastUserSwitchController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66536BED1E79BEF400520131 /* FastUserSwitchController.mm */; };
@@ -275,8 +276,10 @@
 		665180EA1EC4F645000CBB44 /* GiphyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GiphyView.h; path = gifs/GiphyView.h; sourceTree = "<group>"; };
 		665180EB1EC4F645000CBB44 /* GiphyView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GiphyView.mm; path = gifs/GiphyView.mm; sourceTree = "<group>"; };
 		665180EC1EC4F645000CBB44 /* GiphyView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GiphyView.xib; path = gifs/GiphyView.xib; sourceTree = "<group>"; };
-		665180EF1EC4FB30000CBB44 /* MessageView+NSURLCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MessageView+NSURLCache.h"; path = "surespot/gifs/MessageView+NSURLCache.h"; sourceTree = SOURCE_ROOT; };
-		665180F01EC4FB5A000CBB44 /* MessageView+NSURLCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MessageView+NSURLCache.m"; path = "surespot/gifs/MessageView+NSURLCache.m"; sourceTree = SOURCE_ROOT; };
+		665180EF1EC4FB30000CBB44 /* MessageView+GifCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MessageView+GifCache.h"; path = "surespot/gifs/MessageView+GifCache.h"; sourceTree = SOURCE_ROOT; };
+		665180F01EC4FB5A000CBB44 /* MessageView+GifCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MessageView+GifCache.m"; path = "surespot/gifs/MessageView+GifCache.m"; sourceTree = SOURCE_ROOT; };
+		665180F21EC51387000CBB44 /* SharedCacheAndQueueManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedCacheAndQueueManager.h; sourceTree = "<group>"; };
+		665180F61EC51427000CBB44 /* SharedCacheAndQueueManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedCacheAndQueueManager.m; sourceTree = "<group>"; };
 		6652F2A81875F16D00E023A7 /* PwylViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PwylViewController.h; path = purchases/PwylViewController.h; sourceTree = "<group>"; };
 		6652F2A91875F16D00E023A7 /* PwylViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PwylViewController.m; path = purchases/PwylViewController.m; sourceTree = "<group>"; };
 		66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FastUserSwitchView.xib; sourceTree = "<group>"; };
@@ -799,13 +802,13 @@
 		662C06501EC3C7E900BBBC1A /* gifs */ = {
 			isa = PBXGroup;
 			children = (
-				665180E91EC4EA00000CBB44 /* DownloadGifOperation.h */,
-				665180E71EC4E982000CBB44 /* DownloadGifOperation.mm */,
 				665180EA1EC4F645000CBB44 /* GiphyView.h */,
 				665180EB1EC4F645000CBB44 /* GiphyView.mm */,
 				665180EC1EC4F645000CBB44 /* GiphyView.xib */,
-				665180EF1EC4FB30000CBB44 /* MessageView+NSURLCache.h */,
-				665180F01EC4FB5A000CBB44 /* MessageView+NSURLCache.m */,
+				665180E91EC4EA00000CBB44 /* DownloadGifOperation.h */,
+				665180E71EC4E982000CBB44 /* DownloadGifOperation.mm */,
+				665180EF1EC4FB30000CBB44 /* MessageView+GifCache.h */,
+				665180F01EC4FB5A000CBB44 /* MessageView+GifCache.m */,
 			);
 			name = gifs;
 			sourceTree = "<group>";
@@ -1350,6 +1353,8 @@
 				66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */,
 				66DEA49118DA6E5A00AAF24C /* UsernameAliasMap.h */,
 				66DEA49218DA6E5A00AAF24C /* UsernameAliasMap.m */,
+				665180F21EC51387000CBB44 /* SharedCacheAndQueueManager.h */,
+				665180F61EC51427000CBB44 /* SharedCacheAndQueueManager.m */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1584,7 +1589,7 @@
 				66EBE0D01855C97100F2452D /* IdentityCell.m in Sources */,
 				6686626C185B6A2E001491B1 /* UIImage+GIF.m in Sources */,
 				66EBE13A1855C97100F2452D /* SurespotLogFormatter.m in Sources */,
-				665180F11EC4FB5A000CBB44 /* MessageView+NSURLCache.m in Sources */,
+				665180F11EC4FB5A000CBB44 /* MessageView+GifCache.m in Sources */,
 				6614EEB8185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */,
 				66DAB62E186DEEFC006C262F /* VoiceDelegate.mm in Sources */,
 				5AF842511B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm in Sources */,
@@ -1613,6 +1618,7 @@
 				66866268185B6A2E001491B1 /* SDWebImageDownloaderOperation.mm in Sources */,
 				66EBE13D1855C97100F2452D /* HomeCell.m in Sources */,
 				665CA9AB1E918E4C0045EEDD /* NetworkManager.mm in Sources */,
+				665180F71EC51427000CBB44 /* SharedCacheAndQueueManager.m in Sources */,
 				661F3B911868D160003C7AE3 /* KeyFingerprintCollectionCell.m in Sources */,
 				6686626D185B6A2E001491B1 /* UIImage+MultiFormat.mm in Sources */,
 				6686626E185B6A2E001491B1 /* UIImage+WebP.m in Sources */,
