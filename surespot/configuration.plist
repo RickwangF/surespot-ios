@@ -10,5 +10,7 @@
 	<string>google_client_id</string>
 	<key>google_client_secret</key>
 	<string>google_client_secret</string>
+    <key>giphy_api_key</key>
+    <string>giphy_api_key</string>
 </dict>
 </plist>
