@@ -67,12 +67,7 @@ static char operationKey;
             
             
             
-            if ([image size].height > [image size].width) {
-                [wself.gifView setContentMode:UIViewContentModeScaleAspectFit];
-            }
-            else {
-                [wself.gifView setContentMode:UIViewContentModeScaleAspectFill];
-            }
+            [self setContentModeImage:image imageView:wself.gifView];
             return;
             
         }
@@ -92,15 +87,7 @@ static char operationKey;
                     //                                    animations:^{
                     wself.gifView.animatedImage = image;
                     //                                    } completion:nil];
-                    
-                    
-                    
-                    if ([image size].height > [image size].width) {
-                        [wself.gifView setContentMode:UIViewContentModeScaleAspectFit];
-                    }
-                    else {
-                        [wself.gifView setContentMode:UIViewContentModeScaleAspectFill];
-                    }
+                    [self setContentModeImage:image imageView:wself.gifView];
                     [[[SharedCacheAndQueueManager sharedInstance] gifCache] setObject:image forKey:message.plainData];
                 }
                 if (message.formattedDate) {
@@ -117,15 +104,26 @@ static char operationKey;
                     wself.messageStatusLabel.text = NSLocalizedString(@"error_downloading_message_data", nil);
                 }
             }
-            
-            
-            //[wself setNeedsLayout];
         }];
         
         objc_setAssociatedObject(self, &operationKey, operation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         [[[SharedCacheAndQueueManager sharedInstance] downloadQueue] addOperation:operation];
     }
 }
+
+-(void) setContentModeImage: (FLAnimatedImage *) image imageView: (FLAnimatedImageView *) imageView {
+    double imageViewRatio = imageView.bounds.size.height / imageView.bounds.size.width;
+    double imageRatio = image.size.height/image.size.width;
+    DDLogDebug(@"imageViewRatio %f, imageRatio: %f", imageViewRatio, imageRatio);
+    if (imageViewRatio < imageRatio) {
+        [imageView setContentMode:UIViewContentModeScaleAspectFit];
+    }
+    else {
+        [imageView setContentMode:UIViewContentModeScaleAspectFill];
+    }
+
+}
+
 
 -(void) scheduleRetryMessage:(SurespotMessage *) message
                  ourUsername:(NSString *) ourUsername
