@@ -1,10 +1,10 @@
-/*
- * This file is part of the SDWebImage package.
- * (c) Olivier Poitrey <rs@dailymotion.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+//
+//  MessageView+GifCache.m
+//  surespot
+//
+//  Created by Adam on 5/11/17.
+//  Copyright © 2017 surespot. All rights reserved.
+//
 
 #import "MessageView+GifCache.h"
 #import "objc/runtime.h"
@@ -55,7 +55,7 @@ static char operationKey;
         }
         
         //See if it's already loaded
-        __block FLAnimatedImage * image = [[[SharedCacheAndQueueManager sharedInstance] gifCache] objectForKey:message.plainData];
+        __block FLAnimatedImage * image = [[[SharedCacheAndQueueManager sharedInstance] gifCache] objectForKey:message.iv];
         if (!wself) return;
         if (image) {
 //            [UIView transitionWithView:wself.imageView
@@ -74,7 +74,7 @@ static char operationKey;
         
         
         
-        DownloadGifOperation * operation = [[DownloadGifOperation alloc] initWithMessage:message callback:^(id data) {
+        DownloadGifOperation * operation = [[DownloadGifOperation alloc] initWithUrlString:message.plainData callback:^(id data) {
             if (!wself) return;
             if (data)
             {
@@ -88,7 +88,7 @@ static char operationKey;
                     wself.gifView.animatedImage = image;
                     //                                    } completion:nil];
                     [self setContentModeImage:image imageView:wself.gifView];
-                    [[[SharedCacheAndQueueManager sharedInstance] gifCache] setObject:image forKey:message.plainData];
+                    [[[SharedCacheAndQueueManager sharedInstance] gifCache] setObject:image forKey:message.iv];
                 }
                 if (message.formattedDate) {
                     wself.messageStatusLabel.text = message.formattedDate;

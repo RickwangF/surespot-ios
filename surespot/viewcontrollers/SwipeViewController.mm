@@ -2824,7 +2824,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];//[[GiphyView alloc] initWithFrame: CGRectMake(0,0, self.view.bounds.size.width, 200)];
     [view setCallback:^(id result) {
-        [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl:  [result objectForKey:@"url"] to: [self getCurrentTabName]];
+        [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
     }];
     view.frame = CGRectMake(0, self.view.bounds.size.height - 200, self.view.bounds.size.width, 200);
     [self.view addSubview:view];

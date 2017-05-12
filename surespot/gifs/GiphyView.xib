@@ -22,10 +22,6 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Zy-Sd-zAr">
-                    <rect key="frame" x="0.0" y="67" width="448" height="128"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                </scrollView>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sqy-Ge-Hn9">
                     <rect key="frame" x="0.0" y="215" width="448" height="53"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
@@ -45,12 +41,23 @@
                         <action selector="closeButtonTouch:" destination="iN0-l3-epB" eventType="touchUpInside" id="4uG-Ez-dcV"/>
                     </connections>
                 </button>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="69r-k5-rZH">
+                    <rect key="frame" x="0.0" y="67" width="448" height="128"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="St2-JT-ZgK">
+                        <size key="itemSize" width="50" height="50"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                </collectionView>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="giphyLastSearch" destination="6HQ-oT-TEk" id="Byj-Ds-9vO"/>
-                <outlet property="giphyPreview" destination="3Zy-Sd-zAr" id="OO4-OH-xJV"/>
+                <outlet property="giphyPreview" destination="69r-k5-rZH" id="Dr5-kz-Z5L"/>
                 <outlet property="giphySearchView" destination="i7c-al-3dh" id="USl-Gl-sbs"/>
                 <outlet property="giphySearches" destination="sqy-Ge-Hn9" id="pm3-aE-osU"/>
             </connections>

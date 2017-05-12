@@ -61,6 +61,9 @@
 		665180EE1EC4F645000CBB44 /* GiphyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 665180EC1EC4F645000CBB44 /* GiphyView.xib */; };
 		665180F11EC4FB5A000CBB44 /* MessageView+GifCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 665180F01EC4FB5A000CBB44 /* MessageView+GifCache.m */; };
 		665180F71EC51427000CBB44 /* SharedCacheAndQueueManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 665180F61EC51427000CBB44 /* SharedCacheAndQueueManager.m */; };
+		665180FA1EC53F4C000CBB44 /* GifSearchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665180F91EC53F4C000CBB44 /* GifSearchView.m */; };
+		665180FC1EC540E6000CBB44 /* GifSearchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 665180FB1EC540E6000CBB44 /* GifSearchView.xib */; };
+		665180FF1EC54B9C000CBB44 /* GifSearchView+GifCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 665180FE1EC54B9C000CBB44 /* GifSearchView+GifCache.m */; };
 		6652F2AA1875F16D00E023A7 /* PwylViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6652F2A91875F16D00E023A7 /* PwylViewController.m */; };
 		66536BEC1E79BA5D00520131 /* FastUserSwitchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */; };
 		66536BEE1E79BEF400520131 /* FastUserSwitchController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66536BED1E79BEF400520131 /* FastUserSwitchController.mm */; };
@@ -280,6 +283,11 @@
 		665180F01EC4FB5A000CBB44 /* MessageView+GifCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MessageView+GifCache.m"; path = "surespot/gifs/MessageView+GifCache.m"; sourceTree = SOURCE_ROOT; };
 		665180F21EC51387000CBB44 /* SharedCacheAndQueueManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedCacheAndQueueManager.h; sourceTree = "<group>"; };
 		665180F61EC51427000CBB44 /* SharedCacheAndQueueManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedCacheAndQueueManager.m; sourceTree = "<group>"; };
+		665180F81EC53F2D000CBB44 /* GifSearchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GifSearchView.h; path = gifs/GifSearchView.h; sourceTree = "<group>"; };
+		665180F91EC53F4C000CBB44 /* GifSearchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GifSearchView.m; path = surespot/gifs/GifSearchView.m; sourceTree = SOURCE_ROOT; };
+		665180FB1EC540E6000CBB44 /* GifSearchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GifSearchView.xib; path = gifs/GifSearchView.xib; sourceTree = "<group>"; };
+		665180FD1EC54B89000CBB44 /* GifSearchView+GifCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GifSearchView+GifCache.h"; sourceTree = "<group>"; };
+		665180FE1EC54B9C000CBB44 /* GifSearchView+GifCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "GifSearchView+GifCache.m"; path = "gifs/GifSearchView+GifCache.m"; sourceTree = "<group>"; };
 		6652F2A81875F16D00E023A7 /* PwylViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PwylViewController.h; path = purchases/PwylViewController.h; sourceTree = "<group>"; };
 		6652F2A91875F16D00E023A7 /* PwylViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PwylViewController.m; path = purchases/PwylViewController.m; sourceTree = "<group>"; };
 		66536BEB1E79BA5D00520131 /* FastUserSwitchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FastUserSwitchView.xib; sourceTree = "<group>"; };
@@ -805,6 +813,11 @@
 				665180EA1EC4F645000CBB44 /* GiphyView.h */,
 				665180EB1EC4F645000CBB44 /* GiphyView.mm */,
 				665180EC1EC4F645000CBB44 /* GiphyView.xib */,
+				665180F81EC53F2D000CBB44 /* GifSearchView.h */,
+				665180F91EC53F4C000CBB44 /* GifSearchView.m */,
+				665180FB1EC540E6000CBB44 /* GifSearchView.xib */,
+				665180FD1EC54B89000CBB44 /* GifSearchView+GifCache.h */,
+				665180FE1EC54B9C000CBB44 /* GifSearchView+GifCache.m */,
 				665180E91EC4EA00000CBB44 /* DownloadGifOperation.h */,
 				665180E71EC4E982000CBB44 /* DownloadGifOperation.mm */,
 				665180EF1EC4FB30000CBB44 /* MessageView+GifCache.h */,
@@ -1470,6 +1483,7 @@
 				5A4EF5D11BC5AD920000D3F3 /* AfterBackupIdentityHelpView.xib in Resources */,
 				668D24FF186A36520096D155 /* QRInviteView.xib in Resources */,
 				666D3368187F69AD00B73F69 /* message.caf in Resources */,
+				665180FC1EC540E6000CBB44 /* GifSearchView.xib in Resources */,
 				666D338118847B5000B73F69 /* surespot-invite.caf in Resources */,
 				66EBE13E1855C97100F2452D /* HomeCell.xib in Resources */,
 				6604A2D817626B9E0072216A /* MainStoryboard.storyboard in Resources */,
@@ -1572,6 +1586,7 @@
 				66EBE0D91855C97100F2452D /* EncryptionController.mm in Sources */,
 				665CA9B21E9AC04C0045EEDD /* SurespotConfiguration.m in Sources */,
 				66866269185B6A2E001491B1 /* SDWebImageManager.m in Sources */,
+				665180FA1EC53F4C000CBB44 /* GifSearchView.m in Sources */,
 				6604A2CF17626B9E0072216A /* SurespotAppDelegate.mm in Sources */,
 				66EBE0C31855C97100F2452D /* SurespotButton.m in Sources */,
 				66EBE0C11855C97100F2452D /* MessageView.m in Sources */,
@@ -1601,6 +1616,7 @@
 				66EBE0BE1855C97100F2452D /* FilledRectView.m in Sources */,
 				662CA5A31873496F00684790 /* PurchaseDelegate.m in Sources */,
 				666D337A188476B100B73F69 /* CADebugPrintf.cpp in Sources */,
+				665180FF1EC54B9C000CBB44 /* GifSearchView+GifCache.m in Sources */,
 				666D337B188476B100B73F69 /* CAStreamBasicDescription.cpp in Sources */,
 				661F3B8118689A19003C7AE3 /* KeyFingerprintViewController.mm in Sources */,
 				6674480C1EA1ACB500DF292A /* SurespotSettingsViewController.m in Sources */,

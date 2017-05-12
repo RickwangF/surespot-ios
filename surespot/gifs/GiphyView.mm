@@ -1,5 +1,5 @@
 //
-//  UIView+giphyView.m
+//  GiphyView.m
 //  surespot
 //
 //  Created by Adam on 5/10/17.
@@ -10,6 +10,8 @@
 #import "NetworkManager.h"
 #import "FLAnimatedImage.h"
 #import "CocoaLumberjack.h"
+#import "GifSearchView.h"
+#import "GifSearchView+GifCache.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -20,27 +22,23 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface GiphyView ()
 @property (strong, nonatomic) IBOutlet UITextField *giphySearchView;
 @property (strong, nonatomic) IBOutlet UILabel *giphyLastSearch;
-@property (strong, nonatomic) IBOutlet UIScrollView *giphyPreview;
+@property (strong, nonatomic) IBOutlet UICollectionView *giphyPreview;
 @property (strong, nonatomic) IBOutlet UIScrollView *giphySearches;
-@property (strong, nonatomic) NSMapTable *gifViewMap;                                                         
 @property (strong, nonatomic) CallbackBlock callback;
+@property (strong, nonatomic) NSMutableArray * gifs;
 @end
 
 @implementation GiphyView
 
-
-//-(id) initWithFrame:(CGRect)frame {
-//    self = [super initWithFrame:frame];
-//    id mainView;
-//    if (self) {
-//        NSArray *subviewArray = [[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil];
-//        mainView = [subviewArray objectAtIndex:0];
-//        [self addSubview:mainView];
-//
-//    }
-//    return self;
-//}
-
+-(void) awakeFromNib {
+    [super awakeFromNib];
+    // [_giphyPreview content]
+    [_giphyPreview setDelegate:self];
+    [_giphyPreview setDataSource:self];
+    [_giphyPreview registerNib:[UINib nibWithNibName:@"GifSearchView" bundle:nil] forCellWithReuseIdentifier:@"GifCell"];
+    UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc] init];
+    [layout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+}
 
 - (IBAction)closeButtonTouch:(id)sender {
     [self removeFromSuperview];
@@ -48,49 +46,57 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) searchGifs: (NSString *) query {
     [[[NetworkManager sharedInstance] getNetworkController:nil] searchGiphy:query callback:^(id result) {
-        //  DDLogDebug(@"gif search results: %@", result);
-        self.gifViewMap = [NSMapTable weakToStrongObjectsMapTable];
-        [self filterGifs:result];
+        _gifs = [result objectForKey:@"data"];
+        [_giphyPreview reloadData];
     }];
-}
-
--(void) filterGifs: (NSDictionary *) searchResults {
-    CGFloat cx = 0;
-    NSArray * data = [searchResults objectForKey:@"data"];
-    
-    
-    for (NSDictionary * result in data) {
-        NSDictionary * gifData = [[result objectForKey:@"images"] objectForKey:@"fixed_height"];
-        
-        FLAnimatedImage * image = [FLAnimatedImage animatedImageWithGIFData:[NSData dataWithContentsOfURL: [NSURL URLWithString:[gifData objectForKey:@"url"]]]];
-        
-        DDLogDebug(@"image Width: %f, image Height: %f, data Width: %@, Data Height: %@, screen scale: %f", image.size.width, image.size.height, [gifData objectForKey:@"width"], [gifData objectForKey:@"height"],  [[UIScreen mainScreen] scale]);
-        
-        FLAnimatedImageView * gifView =  [[FLAnimatedImageView alloc] initWithFrame:CGRectMake(cx, 0, [[gifData objectForKey:@"width"] intValue]  / [[UIScreen mainScreen] scale], [[gifData objectForKey:@"height"] intValue] / [[UIScreen mainScreen] scale]) ];
-        
-        gifView.userInteractionEnabled = YES;
-        gifView.animatedImage = image;
-        cx += gifView.frame.size.width;
-        
-        [_gifViewMap setObject:gifData forKey:gifView];
-        
-        [gifView addGestureRecognizer: [[UITapGestureRecognizer alloc]
-                                        initWithTarget:self
-                                                action:@selector(handleSingleTap:)]];
-        
-        [_giphyPreview addSubview:gifView];
-        [_giphyPreview setContentSize:CGSizeMake(cx, _giphyPreview.bounds.size.height)] ;
-    }
-}
-
-- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer
-{
-    _callback([_gifViewMap objectForKey:recognizer.view]);
 }
 
 -(void) setCallback: (CallbackBlock) callback {
     
     _callback = callback;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return [_gifs count];
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    return 0;
+}
+
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSDictionary * data = [_gifs objectAtIndex:[indexPath row]];
+    NSDictionary * gifData = [[data objectForKey:@"images"] objectForKey:@"fixed_height"];
+    CGFloat width = [[gifData objectForKey:@"width"] intValue] / [[UIScreen mainScreen] scale];
+    CGFloat height = [[gifData objectForKey:@"height"] intValue] / [[UIScreen mainScreen] scale];
+    
+    DDLogDebug(@"item: %ld, width: %f, height: %f", [indexPath row], width,height);
+    return CGSizeMake( width, height);
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
+                  cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    GifSearchView* newCell = [self.giphyPreview dequeueReusableCellWithReuseIdentifier:@"GifCell"
+                                                                          forIndexPath:indexPath];
+    
+    [[newCell gifView] setAnimatedImage:nil];
+    
+    NSDictionary * data = [_gifs objectAtIndex:[indexPath row]];
+    NSDictionary * gifData = [[data objectForKey:@"images"] objectForKey:@"fixed_height"];
+    NSString * url =[gifData objectForKey:@"url"];
+    newCell.url = url;
+    [newCell setUrl:url retryAttempt:0];
+    return newCell;
+}
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    // If you need to use the touched cell, you can retrieve it like so
+    GifSearchView *cell = (GifSearchView *)[collectionView cellForItemAtIndexPath:indexPath];
+    _callback([cell url]);
+  
 }
 
 @end

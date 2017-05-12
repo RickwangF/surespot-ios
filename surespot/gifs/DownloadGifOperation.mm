@@ -23,11 +23,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @implementation DownloadGifOperation
 
 
--(id) initWithMessage: (SurespotMessage *) message
+-(id) initWithUrlString: (NSString *) urlString
              callback: (CallbackBlock) callback {
     
     if (self = [super init]) {
-        self.message = message;
+        self.urlString = urlString;
         self.callback = callback;
         
         _isExecuting = NO;
@@ -44,15 +44,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     DDLogVerbose(@"executing");
 
-    [self downloadMessage];
+    [self downloadUrl];
 }
 
--(void) downloadMessage {
-    if (_message.plainData) {
+-(void) downloadUrl {
+   
         NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
         NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: nil delegateQueue: [NSOperationQueue mainQueue]];
         
-        NSURL * url = [NSURL URLWithString:_message.plainData];
+        NSURL * url = [NSURL URLWithString:_urlString];
         
         NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithURL:url
                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
@@ -64,10 +64,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                         }];
         
         [dataTask resume];
-    }
-    else {
-        [self finish:nil];
-    }
+  
 }
 
 

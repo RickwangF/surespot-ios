@@ -17,9 +17,9 @@
 @property (nonatomic) BOOL isExecuting;
 @property (nonatomic) BOOL isFinished;
 @property (nonatomic, strong) CallbackBlock callback;
--(id) initWithMessage: (SurespotMessage *) message
+-(id) initWithUrlString: (NSString *) urlString
              callback: (CallbackBlock) callback;
-@property (nonatomic) SurespotMessage * message;
+@property (nonatomic) NSString * urlString;
 -(void) finish: (NSData *) data;
 @end
 
