@@ -48,12 +48,23 @@
 #import "GiphyView.h"
 #import "DownloadGifOperation.h"
 #import "MessageView+GifCache.h"
+#import "AGWindowView.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
+
+
+typedef NS_ENUM(NSInteger, MessageMode) {
+    MessageModeNone,
+    MessageModeKeyboard,
+    MessageModeGIF,
+    MessageModeCamera,
+    MessageModeGallery,
+    MessageModeMore
+};
 
 //#import <QuartzCore/CATransaction.h>
 
@@ -93,8 +104,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (nonatomic, strong) NSArray<UIBarButtonItem *>* homeBackButtons;
 @property (nonatomic, strong) NSArray<UIBarButtonItem *>* chatBackButtons;
 @property (nonatomic, strong) UIBarButtonItem * backButtonItem;
+@property (nonatomic, assign) enum MessageMode currentMode;
+@property (nonatomic, assign) enum MessageMode desiredMode;
+@property (nonatomic, strong) GiphyView * gifView;
 @end
 @implementation SwipeViewController
+
 
 
 const Float32 voiceRecordDelay = 0.3;
@@ -359,12 +374,15 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (void)registerForKeyboardNotifications
 {
-    //use old positioning pre ios 8
     
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillBeShown:)
                                                  name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWasShown:)
+                                                 name:UIKeyboardDidShowNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillBeHidden:)
@@ -386,9 +404,16 @@ const Float32 voiceRecordDelay = 0.3;
     [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
     [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
     CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    DDLogInfo(@"keyboardHeight: %f", keyboardRect.size.height);
+    
     CGFloat keyboardHeight = keyboardRect.size.height;
     CGFloat deltaHeight = keyboardHeight - _keyboardState.keyboardHeight;
     _keyboardState.keyboardHeight = keyboardHeight;
+    _keyboardState.keyboardRect = keyboardRect;
+    
+    [self createGifView];
+    
     
     // run animation using keyboard's curve and duration
     [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
@@ -429,6 +454,13 @@ const Float32 voiceRecordDelay = 0.3;
                 //            }
             }
         }
+        if (_desiredMode == MessageModeGIF) {
+            _desiredMode = MessageModeNone;
+            _currentMode = MessageModeGIF;
+            [self showGifView];
+        }
+        
+        
     } completion:^(BOOL completion) {
         
     }];
@@ -478,7 +510,7 @@ const Float32 voiceRecordDelay = 0.3;
         _theButton.frame = buttonFrame;
         
         
-        
+        [self hideGifView];
     } completion:^(BOOL completion) {
         
     }];
@@ -1333,7 +1365,7 @@ const Float32 voiceRecordDelay = 0.3;
                         }
                         
                         [cell setMessage:message ourUsername:_username callback:nil retryAttempt:0];
-                      
+                        
                     }
                     else {
                         if ([message.mimeType isEqualToString:MIME_TYPE_M4A]) {
@@ -2802,35 +2834,90 @@ const Float32 voiceRecordDelay = 0.3;
     self.popover = nil;
 }
 - (IBAction)qrTouch:(id)sender {
-//    QRInviteViewController * controller = [[QRInviteViewController alloc] initWithNibName:@"QRInviteView" username: _username];
-//    
-//    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-//        _popover = [[UIPopoverController alloc] initWithContentViewController:controller];
-//        _popover.delegate = self;
-//        CGFloat x = self.view.bounds.size.width;
-//        CGFloat y =self.view.bounds.size.height;
-//        DDLogVerbose(@"setting popover x, y to: %f, %f", x/2,y/2);
-//        [_popover setPopoverContentSize:CGSizeMake(320, 370) animated:NO];
-//        [_popover presentPopoverFromRect:CGRectMake(x/2,y/2, 1,1 ) inView:self.view permittedArrowDirections:0 animated:YES];
-//        
-//    } else {
-//        [self resignAllResponders];
-//        [self.navigationController pushViewController:controller animated:YES];
-//    }
+    //    QRInviteViewController * controller = [[QRInviteViewController alloc] initWithNibName:@"QRInviteView" username: _username];
+    //
+    //    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+    //        _popover = [[UIPopoverController alloc] initWithContentViewController:controller];
+    //        _popover.delegate = self;o
+    //        CGFloat x = self.view.bounds.size.width;
+    //        CGFloat y =self.view.bounds.size.height;
+    //        DDLogVerbose(@"setting popover x, y to: %f, %f", x/2,y/2);
+    //        [_popover setPopoverContentSize:CGSizeMake(320, 370) animated:NO];
+    //        [_popover presentPopoverFromRect:CGRectMake(x/2,y/2, 1,1 ) inView:self.view permittedArrowDirections:0 animated:YES];
+    //
+    //    } else {
+    //        [self resignAllResponders];
+    //        [self.navigationController pushViewController:controller animated:YES];
+    //    }
     
     
-    //show gif
-//    UIWindow* window = [UIApplication sharedApplication].keyWindow;
-    
-    GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];//[[GiphyView alloc] initWithFrame: CGRectMake(0,0, self.view.bounds.size.width, 200)];
-    [view setCallback:^(id result) {
-        [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
-    }];
-    view.frame = CGRectMake(0, self.view.bounds.size.height - 200, self.view.bounds.size.width, 200);
-    [self.view addSubview:view];
-    [view searchGifs:@"what"];
+    if ([_keyboardState keyboardHeight] == 0) {
+        //   _currentMode = MessageModeGIF;
+        
+        //show gif
+        _desiredMode = MessageModeGIF;
+        
+        [_messageTextView becomeFirstResponder];
+        // AGWindowView * aSuperview = [[AGWindowView alloc] initAndAddToKeyWindow];
+    }
+    else {
+        
+        [self createGifView];
+        [self showGifView];
+    }
+}
+
+- (void)keyboardWasShown:(NSNotification*)aNotification
+{
     
 }
+
+-(void) createGifView {
+    if (!_gifView) {
+        GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
+        _gifView = view;
+        
+        
+        
+        
+        [view setCallback:^(id result) {
+            [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
+        }];
+      
+    }
+    
+    [self hideGifView];
+    
+    
+}
+
+-(void) showGifView {
+    
+    DDLogInfo(@"showGifView");
+    
+    CGRect gifFrame = _gifView.frame;
+    gifFrame = _keyboardState.keyboardRect;
+    // gifFrame.size.height = _keyboardState.keyboardHeight;
+    //gifFrame.size.width = self.view.frame.size.width;
+    _gifView.frame = gifFrame;
+    UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
+    [window addSubview: _gifView];
+    [window bringSubviewToFront:self.view];
+    [_gifView searchGifs:@"what"];
+
+    
+}
+
+
+-(void) hideGifView {
+    CGRect gifFrame = _gifView.frame;
+    gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
+        // gifFrame.size.height = _keyboardState.keyboardHeight;
+    //gifFrame.size.width = self.view.frame.size.width;
+    _gifView.frame = gifFrame;
+    
+}
+
 
 -(void) resignAllResponders {
     [_messageTextView resignFirstResponder];

@@ -72,7 +72,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     CGFloat width = [[gifData objectForKey:@"width"] intValue] / [[UIScreen mainScreen] scale];
     CGFloat height = [[gifData objectForKey:@"height"] intValue] / [[UIScreen mainScreen] scale];
     
-    DDLogDebug(@"item: %ld, width: %f, height: %f", [indexPath row], width,height);
+    DDLogVerbose(@"item: %ld, width: %f, height: %f", [indexPath row], width,height);
     return CGSizeMake( width, height);
 }
 

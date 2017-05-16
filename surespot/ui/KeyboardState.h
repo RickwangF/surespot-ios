@@ -10,4 +10,5 @@
 
 @interface KeyboardState : NSObject
 @property (nonatomic) CGFloat keyboardHeight;
+@property (nonatomic) CGRect keyboardRect;
 @end
