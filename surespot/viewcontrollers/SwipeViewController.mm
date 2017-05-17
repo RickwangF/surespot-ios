@@ -105,7 +105,7 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, strong) NSArray<UIBarButtonItem *>* chatBackButtons;
 @property (nonatomic, strong) UIBarButtonItem * backButtonItem;
 @property (nonatomic, assign) enum MessageMode currentMode;
-@property (nonatomic, assign) enum MessageMode desiredMode;
+//@property (nonatomic, assign) enum MessageMode desiredMode;
 @property (nonatomic, strong) GiphyView * gifView;
 @end
 @implementation SwipeViewController
@@ -118,6 +118,8 @@ const Float32 voiceRecordDelay = 0.3;
 {
     DDLogDebug(@"swipeviewdidload %@", self);
     [super viewDidLoad];
+    
+    _currentMode = MessageModeNone;
     
     _username = [[IdentityController sharedInstance] getLoggedInUser];
     _assetLibrary = [ALAssetsLibrary new];
@@ -214,6 +216,16 @@ const Float32 voiceRecordDelay = 0.3;
     [_messageTextView.layer setBorderWidth:0.5];
     [_messageTextView setBackgroundColor:[UIColor clearColor]];
     _messageTextView.layer.cornerRadius = 5;
+    
+    //    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(messageTextViewTapped:)];
+    //    gestureRecognizer.numberOfTapsRequired = 1;
+    //
+    //    for (UIGestureRecognizer *messageViewGesture in [_messageTextView.internalTextView gestureRecognizers]) {
+    //        [messageViewGesture requireGestureRecognizerToFail:gestureRecognizer];
+    //    }
+    //    [_messageTextView addGestureRecognizer:gestureRecognizer];
+    
+    
     
     _inviteTextView.enablesReturnKeyAutomatically = NO;
     [_inviteTextView setFont:[UIFont systemFontOfSize:14]];
@@ -417,7 +429,24 @@ const Float32 voiceRecordDelay = 0.3;
         
         [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve];
     }
+    
+    if (_currentMode == MessageModeGIF) {
+        [self hideGifView];
+        
+        _currentMode = MessageModeKeyboard;
+    }
 }
+
+
+//-(void) messageTextViewTapped: (UITapGestureRecognizer*) recognizer {
+//    DDLogInfo(@"messageTextViewTapped");
+//    if (_currentMode == MessageModeGIF) {
+//        [self hideGifView];
+//        self.currentMode = MessageModeKeyboard;
+//        
+//    }
+//    
+//}
 
 -(void) animateMoveViewsVerticallyBy: (NSInteger) yDelta duration: (NSTimeInterval) animationDuration curve: (UIViewAnimationOptions) curve
 {
@@ -2873,13 +2902,16 @@ const Float32 voiceRecordDelay = 0.3;
     //    else {
     
     if ([self currentMode] == MessageModeGIF) {
-        self.currentMode = MessageModeKeyboard;
+        
         [self hideGifView];
         NSInteger delta = 271;
         if ([_keyboardState keyboardHeight] > 0) {
             delta = _keyboardState.keyboardHeight;
+            self.currentMode = MessageModeKeyboard;
         }else {
-            [self moveViewsVerticallyBy:delta];
+            [_messageTextView becomeFirstResponder];
+            //       [self moveViewsVerticallyBy:delta];
+            self.currentMode = MessageModeKeyboard;
         }
         
     }
@@ -2900,19 +2932,19 @@ const Float32 voiceRecordDelay = 0.3;
 //    if (!_gifView) {
 //        GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
 //        _gifView = view;
-//        
-//        
-//        
-//        
+//
+//
+//
+//
 //        [view setCallback:^(id result) {
 //            [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
 //        }];
-//        
+//
 //    }
-//    
+//
 //    [self hideGifView];
-//    
-//    
+//
+//
 //}
 
 -(void) showGifView {
@@ -2927,54 +2959,54 @@ const Float32 voiceRecordDelay = 0.3;
         [view setCallback:^(id result) {
             [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
         }];
-      
-
-    
-
-    
-    DDLogInfo(@"showGifView, keyboard height: %f",_keyboardState.keyboardHeight);
-    
-    //    if ([_keyboardState keyboardRect].size.height > 0) {
-    //
-    //    }
-    // else {
-    UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
-    
-    
-    [UIView animateWithDuration:0.5
-                          delay:0.0
-                        options: UIViewAnimationCurveEaseIn
-                     animations:^{
-                         NSInteger yDelta = 271;
-                         
-                         //if keyboard open we know how much to move by
-                         if (_keyboardState.keyboardHeight > 0)
-                         {
-                             yDelta = _keyboardState.keyboardHeight;
+        
+        
+        
+        
+        
+        DDLogInfo(@"showGifView, keyboard height: %f",_keyboardState.keyboardHeight);
+        
+        //    if ([_keyboardState keyboardRect].size.height > 0) {
+        //
+        //    }
+        // else {
+        UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
+        
+        
+        [UIView animateWithDuration:0.5
+                              delay:0.0
+                            options: UIViewAnimationCurveEaseIn
+                         animations:^{
+                             NSInteger yDelta = 271;
+                             
+                             //if keyboard open we know how much to move by
+                             if (_keyboardState.keyboardHeight > 0)
+                             {
+                                 yDelta = _keyboardState.keyboardHeight;
+                                 
+                             }
+                             else {
+                                 //keyboard not open so move the ui up
+                                 
+                                 [self moveViewsVerticallyBy: -yDelta];
+                             }
+                             //  else yDelta = 350;
+                             
+                             
+                             CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
+                             // gifFrame.size.height = _keyboardState.keyboardHeight;
+                             //gifFrame.size.width = self.view.frame.size.width;
+                             _gifView.frame = gifFrame;
+                             
                              
                          }
-                         else {
-                             //keyboard not open so move the ui up
-                             
-                             [self moveViewsVerticallyBy: -yDelta];
-                         }
-                         //  else yDelta = 350;
-                         
-                         
-                         CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
-                         // gifFrame.size.height = _keyboardState.keyboardHeight;
-                         //gifFrame.size.width = self.view.frame.size.width;
-                         _gifView.frame = gifFrame;
-                         
-                         
-                     }
-                     completion:^(BOOL finished){
-                     }];
-    //  }
-    
-    [window addSubview: _gifView];
-    [window bringSubviewToFront:self.view];
-    [_gifView searchGifs:@"what"];
+                         completion:^(BOOL finished){
+                         }];
+        //  }
+        
+        [window addSubview: _gifView];
+        [window bringSubviewToFront:self.view];
+        [_gifView searchGifs:@"what"];
     }
 }
 
