@@ -431,9 +431,8 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     if (_currentMode == MessageModeGIF) {
-        [self hideGifView];
+        [self disableMessageModeShowKeyboard: YES setResponders:NO];
         
-        _currentMode = MessageModeKeyboard;
     }
 }
 
@@ -552,8 +551,8 @@ const Float32 voiceRecordDelay = 0.3;
     //
     //    }];
     
-    [self hideGifView];
-    self.currentMode = MessageModeNone;
+    [self disableMessageModeShowKeyboard: NO setResponders:NO];
+    
     _keyboardState.keyboardHeight = 0.0f;
 }
 
@@ -2903,22 +2902,12 @@ const Float32 voiceRecordDelay = 0.3;
     
     if ([self currentMode] == MessageModeGIF) {
         
-        [self hideGifView];
-        NSInteger delta = 271;
-        if ([_keyboardState keyboardHeight] > 0) {
-            delta = _keyboardState.keyboardHeight;
-            self.currentMode = MessageModeKeyboard;
-        }else {
-            [_messageTextView becomeFirstResponder];
-            //       [self moveViewsVerticallyBy:delta];
-            self.currentMode = MessageModeKeyboard;
-        }
+        [self disableMessageModeShowKeyboard: YES setResponders:YES];
         
     }
     else {
         //[self createGifView];
-        [self showGifView];
-        self.currentMode = MessageModeGIF;
+        [self setMessageMode:MessageModeGIF];
     }
     //   }
 }
@@ -2947,96 +2936,76 @@ const Float32 voiceRecordDelay = 0.3;
 //
 //}
 
--(void) showGifView {
+-(void) setMessageMode: (MessageMode) mode {
+    self.currentMode = MessageModeGIF;
     
-    if (!_gifView) {
-        GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
-        _gifView = view;
-        CGRect gifFrame = _gifView.frame;
-        gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
-        _gifView.frame = gifFrame;
-        
-        [view setCallback:^(id result) {
-            [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
-        }];
-        
-        
-        
-        
-        
-        DDLogInfo(@"showGifView, keyboard height: %f",_keyboardState.keyboardHeight);
-        
-        //    if ([_keyboardState keyboardRect].size.height > 0) {
-        //
-        //    }
-        // else {
-        UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
-        
-        
-        [UIView animateWithDuration:0.5
-                              delay:0.0
-                            options: UIViewAnimationCurveEaseIn
-                         animations:^{
-                             NSInteger yDelta = 271;
-                             
-                             //if keyboard open we know how much to move by
-                             if (_keyboardState.keyboardHeight > 0)
-                             {
-                                 yDelta = _keyboardState.keyboardHeight;
+    switch (mode) {
+            
+        case MessageModeGIF:
+            
+            GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
+            _gifView = view;
+            CGRect gifFrame = _gifView.frame;
+            gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
+            _gifView.frame = gifFrame;
+            
+            [view setCallback:^(id result) {
+                [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
+            }];
+            
+            
+            
+            
+            
+            DDLogInfo(@"showGifView, keyboard height: %f",_keyboardState.keyboardHeight);
+            
+            //    if ([_keyboardState keyboardRect].size.height > 0) {
+            //
+            //    }
+            // else {
+            UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
+            
+            
+            [UIView animateWithDuration:0.5
+                                  delay:0.0
+                                options: UIViewAnimationCurveEaseIn
+                             animations:^{
+                                 NSInteger yDelta = 271;
+                                 
+                                 //if keyboard open we know how much to move by
+                                 if (_keyboardState.keyboardHeight > 0)
+                                 {
+                                     yDelta = _keyboardState.keyboardHeight;
+                                     
+                                 }
+                                 else {
+                                     //keyboard not open so move the ui up
+                                     
+                                     [self moveViewsVerticallyBy: -yDelta];
+                                 }
+                                 //  else yDelta = 350;
+                                 
+                                 CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
+                                 // gifFrame.size.height = _keyboardState.keyboardHeight;
+                                 //gifFrame.size.width = self.view.frame.size.width;
+                                 _gifView.frame = gifFrame;
+                                 
                                  
                              }
-                             else {
-                                 //keyboard not open so move the ui up
-                                 
-                                 [self moveViewsVerticallyBy: -yDelta];
-                             }
-                             //  else yDelta = 350;
-                             
-                             CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
-                             // gifFrame.size.height = _keyboardState.keyboardHeight;
-                             //gifFrame.size.width = self.view.frame.size.width;
-                             _gifView.frame = gifFrame;
-                             
-                             
-                         }
-                         completion:^(BOOL finished){
-                         }];
-        //  }
-        
-        [window addSubview: _gifView];
-        [window bringSubviewToFront:self.view];
-        [_gifView searchGifs:@"what"];
+                             completion:^(BOOL finished){
+                             }];
+            //  }
+            
+            [window addSubview: _gifView];
+            [window bringSubviewToFront:self.view];
+            [_gifView searchGifs:@"what"];
+            
+            
+            break;
     }
 }
 
 
--(void) hideGifView {
-    DDLogInfo(@"hideGifView");
-    
-    [UIView animateWithDuration:0.5
-                          delay:0.0
-                        options: UIViewAnimationCurveEaseOut
-                     animations:^{
-                         
-                         CGRect gifFrame = _gifView.frame;
-                         gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
-                         
-                         
-                         //     gifFrame.size.height = _keyboardState.keyboardHeight;
-                         //   gifFrame.size.width = self.view.frame.size.width;
-                         _gifView.frame = gifFrame;
-                         _gifView= nil;
-                         
-                         
-                     }
-                     completion:^(BOOL finished){
-                         [_gifView removeFromSuperview];
-                         
-                     }];
-    //  }
-    
-    
-}
 
 
 -(void) resignAllResponders {
@@ -3185,7 +3154,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    [self resignAllResponders];
+    [self disableMessageModeShowKeyboard:NO setResponders:YES];
+    
 }
 
 - (NSString *) getCurrentTabName
@@ -3267,6 +3237,54 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 -(void) setThemeStuff {
     [_messageTextView setTextColor:[self getThemeForegroundColor]];
     [_inviteTextView setTextColor:[self getThemeForegroundColor]];
+}
+
+-(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {
+    if (_gifView) {
+                [UIView animateWithDuration:0.5
+                              delay:0.0
+                            options: UIViewAnimationCurveEaseOut
+                         animations:^{
+                             
+                             
+                             if (setResponders) {
+                                 //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
+                                 if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
+                                     
+                                     [self moveViewsVerticallyBy:271];
+                                 }
+                                 
+                                 
+                             }
+                             
+                             CGRect gifFrame = _gifView.frame;
+                             gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
+                        
+                             _gifView.frame = gifFrame;
+                             
+                             
+                             
+                         }
+                         completion:^(BOOL finished){
+                             [_gifView removeFromSuperview];
+                             _gifView = nil;
+                         }];
+    }
+    if (showKeyboard) {
+        if (setResponders) {
+            [_messageTextView becomeFirstResponder];
+        }
+        _currentMode = MessageModeKeyboard;
+        
+    }
+    else {
+        if (setResponders) {
+            [self resignAllResponders];
+        }
+        _currentMode = MessageModeNone;
+    }
+    
+    
 }
 
 @end
