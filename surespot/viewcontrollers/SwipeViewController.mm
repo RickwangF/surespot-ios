@@ -410,7 +410,7 @@ const Float32 voiceRecordDelay = 0.3;
 // Called when the UIKeyboardDidShowNotification is sent.
 - (void)keyboardWillBeShown:(NSNotification*)aNotification {
     
-    DDLogInfo(@"keyboard shown");
+    DDLogInfo(@"keyboard shown, mode: %ld", _currentMode);
     NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
     UIViewAnimationOptions curve;
@@ -443,9 +443,9 @@ const Float32 voiceRecordDelay = 0.3;
 //    if (_currentMode == MessageModeGIF) {
 //        [self hideGifView];
 //        self.currentMode = MessageModeKeyboard;
-//        
+//
 //    }
-//    
+//
 //}
 
 -(void) animateMoveViewsVerticallyBy: (NSInteger) yDelta duration: (NSTimeInterval) animationDuration curve: (UIViewAnimationOptions) curve
@@ -504,7 +504,7 @@ const Float32 voiceRecordDelay = 0.3;
 // Called when the UIKeyboardWillHideNotification is sent
 - (void)keyboardWillBeHidden:(NSNotification *) aNotification
 {
-    DDLogInfo(@"keyboard hide");
+    DDLogInfo(@"keyboard hide, mode: %ld", (long)_currentMode);
     NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
     UIViewAnimationOptions curve;
@@ -2992,7 +2992,6 @@ const Float32 voiceRecordDelay = 0.3;
                              }
                              //  else yDelta = 350;
                              
-                             
                              CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
                              // gifFrame.size.height = _keyboardState.keyboardHeight;
                              //gifFrame.size.width = self.view.frame.size.width;
@@ -3012,20 +3011,30 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 -(void) hideGifView {
-    DDLogInfo(@"hideGifView: %f", _keyboardState.keyboardHeight);
-    CGRect gifFrame = _gifView.frame;
-    gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
-    //    NSInteger delta = 271;
-    //    if (_keyboardState.keyboardHeight == 0) {
-    //        delta = _keyboardState.keyboardHeight;
-    //
-    //    }
-    //    [self animateMoveViewsVerticallyBy:_keyboardState.keyboardHeight duration:.5 curve:UIViewAnimationCurveEaseOut];
-    gifFrame.size.height = _keyboardState.keyboardHeight;
-    gifFrame.size.width = self.view.frame.size.width;
-    [_gifView removeFromSuperview];
-    _gifView.frame = gifFrame;
-    _gifView= nil;
+    DDLogInfo(@"hideGifView");
+    
+    [UIView animateWithDuration:0.5
+                          delay:0.0
+                        options: UIViewAnimationCurveEaseOut
+                     animations:^{
+                         
+                         CGRect gifFrame = _gifView.frame;
+                         gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
+                         
+                         
+                         //     gifFrame.size.height = _keyboardState.keyboardHeight;
+                         //   gifFrame.size.width = self.view.frame.size.width;
+                         _gifView.frame = gifFrame;
+                         _gifView= nil;
+                         
+                         
+                     }
+                     completion:^(BOOL finished){
+                         [_gifView removeFromSuperview];
+                         
+                     }];
+    //  }
+    
     
 }
 
