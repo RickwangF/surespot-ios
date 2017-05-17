@@ -393,10 +393,6 @@ const Float32 voiceRecordDelay = 0.3;
                                                  name:UIKeyboardWillShowNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWasShown:)
-                                                 name:UIKeyboardDidShowNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillBeHidden:)
                                                  name:UIKeyboardWillHideNotification object:nil];
 }
@@ -423,9 +419,12 @@ const Float32 voiceRecordDelay = 0.3;
     CGFloat keyboardHeight = keyboardRect.size.height;
     CGFloat deltaHeight = keyboardHeight - _keyboardState.keyboardHeight;
     _keyboardState.keyboardHeight = keyboardHeight;
-    _keyboardState.keyboardRect = keyboardRect;
     
-    if (_currentMode == MessageModeNone) {
+    
+    DDLogInfo(@"deltaHeight: %f", deltaHeight);
+    
+    
+    if (_currentMode == MessageModeNone || _currentMode == MessageModeKeyboard) {
         
         [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve];
     }
@@ -433,6 +432,12 @@ const Float32 voiceRecordDelay = 0.3;
     if (_currentMode == MessageModeGIF) {
         [self disableMessageModeShowKeyboard: YES setResponders:NO];
         
+        
+        //if the height's not equal, adjust
+        if (271 - deltaHeight != 0) {
+            deltaHeight = 271 - deltaHeight;
+            [self animateMoveViewsVerticallyBy:deltaHeight duration:animationDuration curve:curve];
+        }
     }
 }
 
@@ -2906,35 +2911,12 @@ const Float32 voiceRecordDelay = 0.3;
         
     }
     else {
-        //[self createGifView];
         [self setMessageMode:MessageModeGIF];
+        
+        
     }
     //   }
 }
-
-- (void)keyboardWasShown:(NSNotification*)aNotification
-{
-    
-}
-//
-//-(void) createGifView {
-//    if (!_gifView) {
-//        GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
-//        _gifView = view;
-//
-//
-//
-//
-//        [view setCallback:^(id result) {
-//            [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
-//        }];
-//
-//    }
-//
-//    [self hideGifView];
-//
-//
-//}
 
 -(void) setMessageMode: (MessageMode) mode {
     self.currentMode = MessageModeGIF;
@@ -3241,7 +3223,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 -(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {
     if (_gifView) {
-                [UIView animateWithDuration:0.5
+        [UIView animateWithDuration:0.5
                               delay:0.0
                             options: UIViewAnimationCurveEaseOut
                          animations:^{
@@ -3259,7 +3241,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              
                              CGRect gifFrame = _gifView.frame;
                              gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
-                        
+                             
                              _gifView.frame = gifFrame;
                              
                              
