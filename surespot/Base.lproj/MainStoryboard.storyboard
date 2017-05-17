@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" colorMatched="YES" initialViewController="mXI-aR-0Jk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" colorMatched="YES" initialViewController="mXI-aR-0Jk">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -205,8 +205,8 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
-                            <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" id="XCg-uf-vcR" customClass="SwipeView">
-                                <rect key="frame" x="0.0" y="30" width="375" height="525"/>
+                            <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" id="XCg-uf-vcR" customClass="SwipeView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="558"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
@@ -218,35 +218,66 @@
                                 <rect key="frame" x="0.0" y="558" width="334" height="45"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" id="ria-nr-JTt" customClass="HPGrowingTextView">
-                                        <rect key="frame" x="42" y="5" width="279" height="30"/>
+                                    <view contentMode="scaleToFill" misplaced="YES" id="WBR-1z-qRA">
+                                        <rect key="frame" x="0.0" y="0.0" width="112" height="45"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mrL-vK-V99">
+                                                <rect key="frame" x="8" y="10" width="28" height="28"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" image="YES"/>
+                                                </accessibility>
+                                                <state key="normal" image="qr_surespot">
+                                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="qrTouch:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="2vL-CH-xTj"/>
+                                                </connections>
+                                            </button>
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mjH-sq-mNH">
+                                                <rect key="frame" x="8" y="10" width="28" height="28"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                                <state key="normal" image="gif"/>
+                                                <connections>
+                                                    <action selector="gifTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="vEP-6R-FE2"/>
+                                                </connections>
+                                            </button>
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="JjR-Xr-7Di">
+                                                <rect key="frame" x="42" y="10" width="28" height="28"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                                <state key="normal" image="camera"/>
+                                                <connections>
+                                                    <action selector="cameraTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="UCb-Tv-3cw"/>
+                                                </connections>
+                                            </button>
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="AGW-7o-azW">
+                                                <rect key="frame" x="76" y="10" width="28" height="28"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                                <state key="normal" image="photo"/>
+                                                <connections>
+                                                    <action selector="galleryTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="daF-g8-Egu"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <view contentMode="scaleToFill" misplaced="YES" id="ria-nr-JTt" customClass="HPGrowingTextView">
+                                        <rect key="frame" x="113" y="5" width="208" height="30"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
-                                    <view contentMode="scaleToFill" id="Mis-7v-AKC" customClass="HPGrowingTextView">
-                                        <rect key="frame" x="42" y="5" width="279" height="30"/>
+                                    <view contentMode="scaleToFill" misplaced="YES" id="Mis-7v-AKC" customClass="HPGrowingTextView">
+                                        <rect key="frame" x="113" y="6" width="208" height="31.5"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
-                                    <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mrL-vK-V99">
-                                        <rect key="frame" x="7" y="8" width="28" height="28"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <accessibility key="accessibilityConfiguration">
-                                            <accessibilityTraits key="traits" image="YES"/>
-                                        </accessibility>
-                                        <state key="normal" image="qr_surespot">
-                                            <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="qrTouch:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="2vL-CH-xTj"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="byV-5h-Uzr" customClass="SurespotButton">
-                                <rect key="frame" x="314" y="542" width="70" height="70"/>
+                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="byV-5h-Uzr" customClass="SurespotButton">
+                                <rect key="frame" x="329" y="558" width="48" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <accessibility key="accessibilityConfiguration">
@@ -267,8 +298,12 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
                         <outlet property="bgImageView" destination="58e-YQ-Uld" id="hSx-hb-MMz"/>
+                        <outlet property="cameraButton" destination="JjR-Xr-7Di" id="KbD-qt-geo"/>
+                        <outlet property="galleryButton" destination="AGW-7o-azW" id="Hyw-Wg-AJ1"/>
+                        <outlet property="gifButton" destination="mjH-sq-mNH" id="tMI-Br-EEu"/>
                         <outlet property="inviteTextView" destination="ria-nr-JTt" id="2Nq-OH-E0e"/>
                         <outlet property="messageTextView" destination="Mis-7v-AKC" id="gvu-jj-xXU"/>
+                        <outlet property="qrButton" destination="mrL-vK-V99" id="e9E-Ow-IW2"/>
                         <outlet property="swipeView" destination="XCg-uf-vcR" id="Hkv-YP-hj9"/>
                         <outlet property="textFieldContainer" destination="Mgi-22-lGU" id="7W7-M6-lr3"/>
                         <outlet property="theButton" destination="byV-5h-Uzr" id="Fk8-y9-s2y"/>
@@ -276,10 +311,13 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="s1j-Zl-x1y" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="149" y="204"/>
+            <point key="canvasLocation" x="148.5" y="203.5"/>
         </scene>
     </scenes>
     <resources>
+        <image name="camera" width="96" height="96"/>
+        <image name="gif" width="96" height="96"/>
+        <image name="photo" width="96" height="96"/>
         <image name="qr_surespot" width="28" height="28"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
