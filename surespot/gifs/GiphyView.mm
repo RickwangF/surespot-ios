@@ -20,10 +20,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 @interface GiphyView ()
-@property (strong, nonatomic) IBOutlet UITextField *giphySearchView;
-@property (strong, nonatomic) IBOutlet UILabel *giphyLastSearch;
+
 @property (strong, nonatomic) IBOutlet UICollectionView *giphyPreview;
-@property (strong, nonatomic) IBOutlet UIScrollView *giphySearches;
+
 @property (strong, nonatomic) CallbackBlock callback;
 @property (strong, nonatomic) NSMutableArray * gifs;
 @end
