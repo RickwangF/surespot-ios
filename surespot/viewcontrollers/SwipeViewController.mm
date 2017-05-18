@@ -444,6 +444,14 @@ const Float32 voiceRecordDelay = 0.3;
         if (271 - deltaHeight != 0) {
             deltaHeight = 271 - deltaHeight;
             [self animateMoveViewsVerticallyBy:deltaHeight duration:animationDuration curve:curve];
+            
+            
+            //animate mode frame
+            CGRect gifFrame = _currentModeView.frame;
+            gifFrame.size.height -= deltaHeight;
+            gifFrame.origin.y -= deltaHeight;
+            _currentModeView.frame = gifFrame;
+
         }
     }
 }
@@ -3130,53 +3138,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [_messageTextView setTextColor:[self getThemeForegroundColor]];
     [_inviteTextView setTextColor:[self getThemeForegroundColor]];
 }
-
--(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {
-    if (_currentModeView) {
-        [UIView animateWithDuration:0.5
-                              delay:0.0
-                            options: UIViewAnimationCurveEaseOut
-                         animations:^{
-                             
-                             
-                             if (setResponders) {
-                                 //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
-                                 if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
-                                     
-                                     [self moveViewsVerticallyBy:271];
-                                 }
-                                 
-                                 
-                             }
-                             
-                             
-                             
-                             
-                         }
-                         completion:^(BOOL finished){
-                             [_gifView removeFromSuperview];
-                             [_galleryView removeFromSuperview];
-                             _currentModeView = nil;
-                             _gifView = nil;
-                             _galleryView = nil;
-                         }];
-    }
-    if (showKeyboard) {
-        if (setResponders) {
-            [_messageTextView becomeFirstResponder];
-        }
-        _currentMode = MessageModeKeyboard;
-        
-    }
-    else {
-        if (setResponders) {
-            [self resignAllResponders];
-        }
-        _currentMode = MessageModeNone;
-    }
-    
-    
-}
 - (IBAction)gifTouchUpInside:(id)sender {
     //
     //    if ([_keyboardState keyboardHeight] == 0) {
@@ -3232,11 +3193,16 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 -(void) setMessageMode: (MessageMode) mode {
     //UIView * oldView;
     //   oldView = _currentModeView;
-    if (mode == _currentMode) {
-        DDLogInfo(@"setMessageMode same mode doing nothing.");
-    }
+    
     BOOL keyboardOpen = _keyboardState.keyboardHeight > 0;
     BOOL modeNone = _currentMode == MessageModeNone;
+    
+    if (mode == _currentMode) {
+        DDLogInfo(@"setMessageMode same mode doing nothing.");
+        [self disableMessageModeShowKeyboard:keyboardOpen setResponders:YES];
+        return;
+    }
+    
     DDLogInfo(@"setMessageMode,currentMode: %ld, mode: %ld, keyboard open: %d, modeNone: %d, keyboard height: %f",(long)_currentMode, (long)mode, keyboardOpen, modeNone,  _keyboardState.keyboardHeight);
     
     switch (mode) {
@@ -3246,7 +3212,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
             _gifView = view;
-             if (modeNone) {
+            if (modeNone) {
                 DDLogInfo(@"No mode currently set so setting gif frame offscreen.");
                 
                 CGRect gifFrame = _gifView.frame;
@@ -3277,7 +3243,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
             
             
-            if (modeNone && !keyboardOpen) {
+            if (modeNone) {
                 
                 [UIView animateWithDuration:0.5
                                       delay:0.0
@@ -3291,20 +3257,15 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                          yDelta = _keyboardState.keyboardHeight;
                                      }
                                      
-                                     
-                                     
                                      //if not showing a view and the keyboard's not open
-                                     //   if (modeNone && !keyboardOpen) {
-                                     //if (!keyboardOpen) {
-                                     [self moveViewsVerticallyBy: -yDelta];
-                                     //
-                                     //  }
+                                     if (!keyboardOpen) {
+                                         [self moveViewsVerticallyBy: -yDelta];
+                                     }
+                                     
                                      CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
-                                     // gifFrame.size.height = _keyboardState.keyboardHeight;
-                                     //gifFrame.size.width = self.view.frame.size.width;
                                      
                                      _gifView.frame = gifFrame;
-                                     //     }
+                                     
                                      
                                      
                                  }
@@ -3328,7 +3289,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         {
             GalleryView * view = [[[NSBundle mainBundle] loadNibNamed:@"GalleryView" owner:self options:nil] firstObject];
             _galleryView = view;
-           
+            
             
             if (modeNone) {
                 DDLogInfo(@"No mode currently set so setting gallery frame offscreen.");
@@ -3354,17 +3315,10 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 }
             }
             
-            
-            
-            
-            
             DDLogInfo(@"showGalleryView, keyboard height: %f",_keyboardState.keyboardHeight);
-            
-            
             UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
             
-            
-            if (modeNone && !keyboardOpen) {
+            if (modeNone) {
                 [UIView animateWithDuration:0.5
                                       delay:0.0
                                     options: UIViewAnimationCurveEaseIn
@@ -3379,16 +3333,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                      
                                      
                                      //if not showing a view or the keyboard's not open
-                                    // if (modeNone && !keyboardOpen) {
+                                     if (!keyboardOpen) {
                                          [self moveViewsVerticallyBy: -yDelta];
-                                         
-                                         CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
-                                         // gifFrame.size.height = _keyboardState.keyboardHeight;
-                                         //gifFrame.size.width = self.view.frame.size.width;
-                                         
-                                         _galleryView.frame = gifFrame;
-                               //      }
-                             //
+                                     }
+                                     CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
+                                     _galleryView.frame = gifFrame;
                                  }
                                  completion:^(BOOL finished){
                                  }];
@@ -3397,7 +3346,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [window addSubview: _galleryView];
             [window bringSubviewToFront:self.view];
             
-             _currentModeView = view;
+            _currentModeView = view;
             self.currentMode = MessageModeGallery;
             
             break;
@@ -3406,6 +3355,55 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     
     
 }
+
+
+-(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {
+    
+    DDLogDebug(@"disableMessageModeShowKeyboard: %d, setResponders: %d, keyboard height: %f, currentModeView: %@",showKeyboard, setResponders, _keyboardState.keyboardHeight, _currentModeView);
+    if (_currentModeView) {
+        [UIView animateWithDuration:0.5
+                              delay:0.0
+                            options: UIViewAnimationCurveEaseOut
+                         animations:^{
+                             
+                             
+                             if (setResponders) {
+                                 //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
+                                 if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
+                                     NSInteger yDelta = 271;
+                                     [self moveViewsVerticallyBy:yDelta];
+                                     
+                                     CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height, self.view.frame.size.width, yDelta);
+                                     _currentModeView.frame = gifFrame;
+                                     
+                                 }
+                             }
+                         }
+                         completion:^(BOOL finished){
+                             [_gifView removeFromSuperview];
+                             [_galleryView removeFromSuperview];
+                             _currentModeView = nil;
+                             _gifView = nil;
+                             _galleryView = nil;
+                         }];
+    }
+    if (showKeyboard) {
+        if (setResponders) {
+            [_messageTextView becomeFirstResponder];
+        }
+        _currentMode = MessageModeKeyboard;
+        
+    }
+    else {
+        if (setResponders) {
+            [self resignAllResponders];
+        }
+        _currentMode = MessageModeNone;
+    }
+    
+    
+}
+
 
 
 
