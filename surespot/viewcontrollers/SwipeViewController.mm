@@ -382,6 +382,9 @@ const Float32 voiceRecordDelay = 0.3;
 -(void) pause: (NSNotification *)  notification{
     DDLogVerbose(@"pause");
     [[ChatManager sharedInstance] pause: _username];
+    
+    //  //reset keyboard measurements
+    [self disableMessageModeShowKeyboard:NO setResponders:YES];
 }
 
 
@@ -451,7 +454,6 @@ const Float32 voiceRecordDelay = 0.3;
             gifFrame.size.height -= deltaHeight;
             gifFrame.origin.y -= deltaHeight;
             _currentModeView.frame = gifFrame;
-
         }
     }
 }
@@ -3191,14 +3193,14 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(void) setMessageMode: (MessageMode) mode {
-    //UIView * oldView;
-    //   oldView = _currentModeView;
+    UIView * oldView;
+    oldView = _currentModeView;
     
     BOOL keyboardOpen = _keyboardState.keyboardHeight > 0;
     BOOL modeNone = _currentMode == MessageModeNone;
     
     if (mode == _currentMode) {
-        DDLogInfo(@"setMessageMode same mode doing nothing.");
+        DDLogInfo(@"setMessageMode same mode disabling.");
         [self disableMessageModeShowKeyboard:keyboardOpen setResponders:YES];
         return;
     }
@@ -3212,35 +3214,52 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
             _gifView = view;
+            [view setCallback:^(id result) {
+                [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
+            }];
             if (modeNone) {
                 DDLogInfo(@"No mode currently set so setting gif frame offscreen.");
                 
                 CGRect gifFrame = _gifView.frame;
                 gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
                 _gifView.frame = gifFrame;
+                DDLogDebug(@"setting frame to y: %f, height: %f", _gifView.frame.origin.y, _gifView.frame.size.height);
                 
-                [view setCallback:^(id result) {
-                    [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
-                }];
+                
             }
             else {
                 if (keyboardOpen) {
                     DDLogInfo(@"keyboard open so setting gif frame to keyboard frame");
                     
                     _gifView.frame = _keyboardState.keyboardRect;
+                    DDLogDebug(@"setting frame to y: %f, height: %f", _gifView.frame.origin.y, _gifView.frame.size.height);
+                    
                 }
                 else {
                     DDLogInfo(@"Mode currently set so setting gif frame to current mode view's frame.");
                     
                     _gifView.frame = _currentModeView.frame;
+                    DDLogDebug(@"setting frame to y: %f, height: %f", _gifView.frame.origin.y, _gifView.frame.size.height);
                 }
             }
             
             
             
             
+            //get the topmost window
+            UIWindow * theWindowWeWillUse;
             
-            UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
+            UIWindowLevel theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = 0;
+            for (UIWindow * window in [UIApplication sharedApplication].windows) {
+                DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ hidden = %d class = %@\n",
+                           window.isKeyWindow, window.windowLevel,
+                           NSStringFromCGRect(window.frame),window.hidden, window.class.description);
+                if (window.windowLevel>=theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn && !window.hidden) {
+                    theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = window.windowLevel;
+                    theWindowWeWillUse = window;
+                    DDLogDebug(@"This is the window we shall use");
+                }
+            }
             
             
             if (modeNone) {
@@ -3263,7 +3282,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                      }
                                      
                                      CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
-                                     
+                                     DDLogDebug(@"setting frame to y: %f, height: %f", gifFrame.origin.y, gifFrame.size.height);
                                      _gifView.frame = gifFrame;
                                      
                                      
@@ -3273,9 +3292,12 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                      
                                  }];
             }
+            else {
+                [oldView removeFromSuperview];
+            }
             
-            [window addSubview: _gifView];
-            [window bringSubviewToFront:self.view];
+            [theWindowWeWillUse addSubview: _gifView];
+            [theWindowWeWillUse bringSubviewToFront:_gifView];
             [_gifView searchGifs:@"what"];
             _currentModeView = view;
             
@@ -3297,6 +3319,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 CGRect gifFrame = _galleryView.frame;
                 gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
                 _galleryView.frame = gifFrame;
+                DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
                 
                 [view setCallback:^(id result) {
                     //      [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
@@ -3307,17 +3330,62 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                     DDLogInfo(@"keyboard open so setting gallery frame to keyboard frame");
                     
                     _galleryView.frame = _keyboardState.keyboardRect;
+                    DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
+                    
                 }
                 else {
                     DDLogInfo(@"Mode currently set so setting gallery frame to current mode view's frame.");
                     
                     _galleryView.frame = _currentModeView.frame;
+                    DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
+                    
                 }
             }
             
             DDLogInfo(@"showGalleryView, keyboard height: %f",_keyboardState.keyboardHeight);
-            UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
             
+            
+            //get the topmost window
+            UIWindow * theWindowWeWillUse;
+            
+            UIWindowLevel theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = 0;
+            for (UIWindow * window in [UIApplication sharedApplication].windows) {
+                DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ hidden = %d class = %@\n",
+                                                      window.isKeyWindow, window.windowLevel,
+                                                      NSStringFromCGRect(window.frame),window.hidden, window.class.description);
+                if (window.windowLevel>=theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn && !window.hidden) {
+                    theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = window.windowLevel;
+                    theWindowWeWillUse = window;
+                    DDLogDebug(@"This is the window we shall use");
+                }
+            }
+//            
+//            [[UIApplication sharedApplication].windows enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(UIWindow * obj, NSUInteger idx, BOOL *stop) {
+//                DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ class = %@\n",
+//                           obj.isKeyWindow, obj.windowLevel,
+//                           NSStringFromCGRect(obj.frame), obj.class.description);
+//                if ([obj isKindOfClass:NSClassFromString(@"UITextEffectsWindow")]) {
+//                    
+//                    //   UITextEffectsWindow * w = (UITextEffectsWindow *) obj;
+//                    keyboardWindow = obj;
+//                    DDLogDebug(@"got a keyboard window, hidden: %d", keyboardWindow.hidden);
+//                    if (notTheKeyboardWindow) {
+//                        //*stop = YES;
+//                    }
+//                }
+//                else {
+//                    DDLogDebug(@"got a not the keyboard window");
+//                    notTheKeyboardWindow = obj;
+//                    
+//                    if (keyboardWindow) {
+//                  //      *stop = YES;
+//                    }
+//                }
+//            }];
+//            
+//            
+//            UIWindow *window = keyboardOpen && keyboardWindow ? keyboardWindow : notTheKeyboardWindow;
+//            
             if (modeNone) {
                 [UIView animateWithDuration:0.5
                                       delay:0.0
@@ -3337,14 +3405,20 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                          [self moveViewsVerticallyBy: -yDelta];
                                      }
                                      CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
+                                     DDLogDebug(@"setting frame to y: %f, height: %f", gifFrame.origin.y, gifFrame.size.height);
+                                     
                                      _galleryView.frame = gifFrame;
                                  }
                                  completion:^(BOOL finished){
                                  }];
             }
+            else {
+                [oldView removeFromSuperview];
+            }
             
-            [window addSubview: _galleryView];
-            [window bringSubviewToFront:self.view];
+            
+            [theWindowWeWillUse addSubview: _galleryView];
+          //  [theWindowWeWillUse bringSubviewToFront:_galleryView];
             
             _currentModeView = view;
             self.currentMode = MessageModeGallery;
@@ -3374,17 +3448,22 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                      [self moveViewsVerticallyBy:yDelta];
                                      
                                      CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height, self.view.frame.size.width, yDelta);
+                                     DDLogDebug(@"setting frame to y: %f, height: %f", gifFrame.origin.y, gifFrame.size.height);
                                      _currentModeView.frame = gifFrame;
                                      
                                  }
                              }
-                         }
-                         completion:^(BOOL finished){
+                             
+                             DDLogDebug(@"disable mode animation finished");
                              [_gifView removeFromSuperview];
                              [_galleryView removeFromSuperview];
                              _currentModeView = nil;
                              _gifView = nil;
                              _galleryView = nil;
+                             
+                             
+                         }
+                         completion:^(BOOL finished){
                          }];
     }
     if (showKeyboard) {
