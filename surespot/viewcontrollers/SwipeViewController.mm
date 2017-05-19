@@ -3141,30 +3141,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [_inviteTextView setTextColor:[self getThemeForegroundColor]];
 }
 - (IBAction)gifTouchUpInside:(id)sender {
-    //
-    //    if ([_keyboardState keyboardHeight] == 0) {
-    //        //   _currentMode = MessageModeGIF;
-    //
-    //        //show gif
-    //        _desiredMode = MessageModeGIF;
-    //
-    //        [_messageTextView becomeFirstResponder];
-    //        // AGWindowView * aSuperview = [[AGWindowView alloc] initAndAddToKeyWindow];
-    //    }
-    //    else {
-    
-    //    if ([self currentMode] == MessageModeGIF) {
-    //
-    //        [self disableMessageModeShowKeyboard: YES setResponders:YES];
-    //
-    //    }
-    //    else {
-    [self setMessageMode:MessageModeGIF];
-    
-    
-    //  }
-    //   }
-    
+     [self setMessageMode:MessageModeGIF];
 }
 - (IBAction)galleryTouchUpInside:(id)sender {
     [self setMessageMode:MessageModeGallery];
@@ -3198,6 +3175,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     
     BOOL keyboardOpen = _keyboardState.keyboardHeight > 0;
     BOOL modeNone = _currentMode == MessageModeNone;
+    BOOL modeKeyboard = _currentMode == MessageModeKeyboard;
     
     if (mode == _currentMode) {
         DDLogInfo(@"setMessageMode same mode disabling.");
@@ -3217,8 +3195,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [view setCallback:^(id result) {
                 [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
             }];
-            if (modeNone) {
-                DDLogInfo(@"No mode currently set so setting gif frame offscreen.");
+            if (modeNone || modeKeyboard) {
+                DDLogInfo(@"No mode currently set, or keyboard open so setting gif frame offscreen.");
                 
                 CGRect gifFrame = _gifView.frame;
                 gifFrame.origin.y = [[UIScreen mainScreen] bounds].size.height;
@@ -3228,19 +3206,10 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 
             }
             else {
-                if (keyboardOpen) {
-                    DDLogInfo(@"keyboard open so setting gif frame to keyboard frame");
-                    
-                    _gifView.frame = _keyboardState.keyboardRect;
-                    DDLogDebug(@"setting frame to y: %f, height: %f", _gifView.frame.origin.y, _gifView.frame.size.height);
-                    
-                }
-                else {
-                    DDLogInfo(@"Mode currently set so setting gif frame to current mode view's frame.");
-                    
-                    _gifView.frame = _currentModeView.frame;
-                    DDLogDebug(@"setting frame to y: %f, height: %f", _gifView.frame.origin.y, _gifView.frame.size.height);
-                }
+                DDLogInfo(@"Mode currently set so setting gif frame to current mode view's frame.");
+                
+                _gifView.frame = _currentModeView.frame;
+                DDLogDebug(@"setting frame to y: %f, height: %f", _gifView.frame.origin.y, _gifView.frame.size.height);
             }
             
             
@@ -3262,7 +3231,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             }
             
             
-            if (modeNone) {
+            if (modeNone || modeKeyboard) {
                 
                 [UIView animateWithDuration:0.5
                                       delay:0.0
@@ -3292,12 +3261,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                      
                                  }];
             }
-            else {
-                [oldView removeFromSuperview];
-            }
-            
+            [oldView removeFromSuperview];
             [theWindowWeWillUse addSubview: _gifView];
-            [theWindowWeWillUse bringSubviewToFront:_gifView];
             [_gifView searchGifs:@"what"];
             _currentModeView = view;
             
@@ -3313,7 +3278,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             _galleryView = view;
             
             
-            if (modeNone) {
+            if (modeNone || modeKeyboard) {
                 DDLogInfo(@"No mode currently set so setting gallery frame offscreen.");
                 
                 CGRect gifFrame = _galleryView.frame;
@@ -3326,20 +3291,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 }];
             }
             else {
-                if (keyboardOpen) {
-                    DDLogInfo(@"keyboard open so setting gallery frame to keyboard frame");
-                    
-                    _galleryView.frame = _keyboardState.keyboardRect;
-                    DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
-                    
-                }
-                else {
-                    DDLogInfo(@"Mode currently set so setting gallery frame to current mode view's frame.");
-                    
-                    _galleryView.frame = _currentModeView.frame;
-                    DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
-                    
-                }
+                DDLogInfo(@"Mode currently set so setting gallery frame to current mode view's frame.");
+                
+                _galleryView.frame = _currentModeView.frame;
+                DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
+                
             }
             
             DDLogInfo(@"showGalleryView, keyboard height: %f",_keyboardState.keyboardHeight);
@@ -3351,42 +3307,16 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             UIWindowLevel theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = 0;
             for (UIWindow * window in [UIApplication sharedApplication].windows) {
                 DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ hidden = %d class = %@\n",
-                                                      window.isKeyWindow, window.windowLevel,
-                                                      NSStringFromCGRect(window.frame),window.hidden, window.class.description);
+                           window.isKeyWindow, window.windowLevel,
+                           NSStringFromCGRect(window.frame),window.hidden, window.class.description);
                 if (window.windowLevel>=theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn && !window.hidden) {
                     theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = window.windowLevel;
                     theWindowWeWillUse = window;
                     DDLogDebug(@"This is the window we shall use");
                 }
             }
-//            
-//            [[UIApplication sharedApplication].windows enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(UIWindow * obj, NSUInteger idx, BOOL *stop) {
-//                DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ class = %@\n",
-//                           obj.isKeyWindow, obj.windowLevel,
-//                           NSStringFromCGRect(obj.frame), obj.class.description);
-//                if ([obj isKindOfClass:NSClassFromString(@"UITextEffectsWindow")]) {
-//                    
-//                    //   UITextEffectsWindow * w = (UITextEffectsWindow *) obj;
-//                    keyboardWindow = obj;
-//                    DDLogDebug(@"got a keyboard window, hidden: %d", keyboardWindow.hidden);
-//                    if (notTheKeyboardWindow) {
-//                        //*stop = YES;
-//                    }
-//                }
-//                else {
-//                    DDLogDebug(@"got a not the keyboard window");
-//                    notTheKeyboardWindow = obj;
-//                    
-//                    if (keyboardWindow) {
-//                  //      *stop = YES;
-//                    }
-//                }
-//            }];
-//            
-//            
-//            UIWindow *window = keyboardOpen && keyboardWindow ? keyboardWindow : notTheKeyboardWindow;
-//            
-            if (modeNone) {
+            
+            if (modeNone || modeKeyboard) {
                 [UIView animateWithDuration:0.5
                                       delay:0.0
                                     options: UIViewAnimationCurveEaseIn
@@ -3398,7 +3328,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                      {
                                          yDelta = _keyboardState.keyboardHeight;
                                      }
-                                     
                                      
                                      //if not showing a view or the keyboard's not open
                                      if (!keyboardOpen) {
@@ -3416,9 +3345,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 [oldView removeFromSuperview];
             }
             
-            
             [theWindowWeWillUse addSubview: _galleryView];
-          //  [theWindowWeWillUse bringSubviewToFront:_galleryView];
             
             _currentModeView = view;
             self.currentMode = MessageModeGallery;
@@ -3426,8 +3353,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             break;
         }
     }
-    
-    
 }
 
 
@@ -3439,31 +3364,24 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                               delay:0.0
                             options: UIViewAnimationCurveEaseOut
                          animations:^{
-                             
-                             
                              if (setResponders) {
+                                 NSInteger yDelta = 271;
                                  //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
                                  if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
-                                     NSInteger yDelta = 271;
                                      [self moveViewsVerticallyBy:yDelta];
-                                     
-                                     CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height, self.view.frame.size.width, yDelta);
-                                     DDLogDebug(@"setting frame to y: %f, height: %f", gifFrame.origin.y, gifFrame.size.height);
-                                     _currentModeView.frame = gifFrame;
-                                     
                                  }
+                                 CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height, self.view.frame.size.width, yDelta);
+                                 DDLogDebug(@"setting frame to y: %f, height: %f", gifFrame.origin.y, gifFrame.size.height);
+                                 _currentModeView.frame = gifFrame;
                              }
-                             
+                         }
+                         completion:^(BOOL finished){
                              DDLogDebug(@"disable mode animation finished");
                              [_gifView removeFromSuperview];
                              [_galleryView removeFromSuperview];
                              _currentModeView = nil;
                              _gifView = nil;
                              _galleryView = nil;
-                             
-                             
-                         }
-                         completion:^(BOOL finished){
                          }];
     }
     if (showKeyboard) {
@@ -3471,7 +3389,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [_messageTextView becomeFirstResponder];
         }
         _currentMode = MessageModeKeyboard;
-        
     }
     else {
         if (setResponders) {
@@ -3479,8 +3396,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         }
         _currentMode = MessageModeNone;
     }
-    
-    
 }
 
 
