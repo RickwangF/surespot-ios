@@ -12,5 +12,5 @@
 
 @interface GalleryView : UIView <UICollectionViewDelegate, UICollectionViewDataSource>
 -(void) setCallback: (CallbackBlock) callback;
--(void) searchGifs: (NSString *) query;
+-(void) fetchAssetsWithHeight: (NSInteger) height;
 @end

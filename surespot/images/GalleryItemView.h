@@ -11,5 +11,5 @@
 
 @interface GalleryItemView : UICollectionViewCell
 @property (weak, nonatomic) NSString * url;
-@property (weak, nonatomic) IBOutlet FLAnimatedImageView *galleryView;
+@property (weak, nonatomic) IBOutlet UIImageView *galleryView;
 @end

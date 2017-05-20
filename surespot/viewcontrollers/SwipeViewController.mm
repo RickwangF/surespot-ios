@@ -3141,7 +3141,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [_inviteTextView setTextColor:[self getThemeForegroundColor]];
 }
 - (IBAction)gifTouchUpInside:(id)sender {
-     [self setMessageMode:MessageModeGIF];
+    [self setMessageMode:MessageModeGIF];
 }
 - (IBAction)galleryTouchUpInside:(id)sender {
     [self setMessageMode:MessageModeGallery];
@@ -3316,12 +3316,13 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 }
             }
             
+            __block NSInteger yDelta = 271;
             if (modeNone || modeKeyboard) {
                 [UIView animateWithDuration:0.5
                                       delay:0.0
                                     options: UIViewAnimationCurveEaseIn
                                  animations:^{
-                                     NSInteger yDelta = 271;
+                                     
                                      
                                      //if keyboard open we know how much to move by
                                      if (keyboardOpen)
@@ -3349,6 +3350,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             _currentModeView = view;
             self.currentMode = MessageModeGallery;
+            [view fetchAssetsWithHeight:(float)yDelta/2];
             
             break;
         }

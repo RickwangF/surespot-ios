@@ -85,6 +85,7 @@
 		66649E821ECD0F5600288620 /* GalleryView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66649E811ECD0F5600288620 /* GalleryView.mm */; };
 		66649E851ECD10A000288620 /* GalleryItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66649E841ECD10A000288620 /* GalleryItemView.m */; };
 		66649E881ECD10EE00288620 /* GalleryItemView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66649E871ECD10EE00288620 /* GalleryItemView.xib */; };
+		66649E8A1ED0C66200288620 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66649E891ED0C66200288620 /* Photos.framework */; };
 		666659A31DD338CF0099B284 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2CA17626B9E0072216A /* main.m */; };
 		666D3364187F69AD00B73F69 /* invite-accept.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D335E187F69AD00B73F69 /* invite-accept.caf */; };
 		666D3368187F69AD00B73F69 /* message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D3362187F69AD00B73F69 /* message.caf */; };
@@ -330,6 +331,7 @@
 		66649E841ECD10A000288620 /* GalleryItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GalleryItemView.m; sourceTree = "<group>"; };
 		66649E861ECD10DB00288620 /* GalleryItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GalleryItemView.h; sourceTree = "<group>"; };
 		66649E871ECD10EE00288620 /* GalleryItemView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GalleryItemView.xib; sourceTree = "<group>"; };
+		66649E891ED0C66200288620 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		666D335E187F69AD00B73F69 /* invite-accept.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "invite-accept.caf"; sourceTree = "<group>"; };
 		666D3362187F69AD00B73F69 /* message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = message.caf; sourceTree = "<group>"; };
 		666D336A188476B100B73F69 /* aurio_helper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = aurio_helper.cpp; path = voice/aurio_helper.cpp; sourceTree = "<group>"; };
@@ -660,6 +662,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66649E8A1ED0C66200288620 /* Photos.framework in Frameworks */,
 				666FE5601E8CB6DE00F16569 /* QuartzCore.framework in Frameworks */,
 				666FE55F1E8CB69300F16569 /* CoreImage.framework in Frameworks */,
 				667F800D1A3FB9A900181B42 /* OpenGLES.framework in Frameworks */,
@@ -729,6 +732,7 @@
 		6604A2BD17626B9E0072216A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				66649E891ED0C66200288620 /* Photos.framework */,
 				666FE55E1E8CB69300F16569 /* CoreImage.framework */,
 				668707C91E6FCBF20029A06B /* AFNetworking.framework */,
 				668707CA1E6FCBF20029A06B /* SocketIO.framework */,
@@ -1312,8 +1316,8 @@
 				66649E861ECD10DB00288620 /* GalleryItemView.h */,
 				66649E841ECD10A000288620 /* GalleryItemView.m */,
 				66649E871ECD10EE00288620 /* GalleryItemView.xib */,
-				66649E831ECD0F6600288620 /* GalleryView.h */,
 				66649E7F1ECD0F2600288620 /* GalleryView.xib */,
+				66649E831ECD0F6600288620 /* GalleryView.h */,
 				66649E811ECD0F5600288620 /* GalleryView.mm */,
 				6614EEBD185F5A0200A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.h */,
 				6614EEB7185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m */,
