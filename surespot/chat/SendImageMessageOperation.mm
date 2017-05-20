@@ -40,7 +40,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     //    }
     //
     if (![self.message readyToSend]) {
-        [UIUtils getLocalImageFromAssetUrl:self.message.plainData callback:^(id scaledImage) {
+        [UIUtils getLocalImageFromAssetUrlOrId:self.message.plainData callback:^(id scaledImage) {
             if (scaledImage) {
                 NSData * imageData = UIImageJPEGRepresentation(scaledImage, 0.5);
                 NSString * ourLatestVersion = [[IdentityController sharedInstance] getOurLatestVersion: self.message.from];

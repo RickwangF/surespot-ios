@@ -8,7 +8,7 @@
 
 
 #import <AssetsLibrary/AssetsLibrary.h>
-
+#import <Photos/Photos.h>
 #import "UIUtils.h"
 #import "Toast+UIView.h"
 #import "ChatUtils.h"
@@ -499,25 +499,34 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return reconnectTime;
 }
 
-+(void) getLocalImageFromAssetUrl: (NSString *) url callback:(CallbackBlock) callback {
-    ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
-    [assetsLibrary assetForURL:[NSURL URLWithString: url] resultBlock:^(ALAsset *asset) {
-        ALAssetRepresentation *rep = [asset defaultRepresentation];
-        @autoreleasepool {
-            CGImageRef iref = [rep fullResolutionImage];
-            if (iref) {
-                UIImage *image = [UIImage imageWithCGImage:iref
-                                                     scale:1
-                                               orientation:(UIImageOrientation)[rep orientation]];
-                
-                iref = nil;
-                UIImage * scaledImage = [image imageScaledToMaxWidth:400 maxHeight:400];
-                callback(scaledImage);
++(void) getLocalImageFromAssetUrlOrId: (NSString *) urlOrId callback:(CallbackBlock) callback {
+    if ([urlOrId hasPrefix:@"assets-library://"]) {
+        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:[NSURL URLWithString: urlOrId] resultBlock:^(ALAsset *asset) {
+            ALAssetRepresentation *rep = [asset defaultRepresentation];
+            @autoreleasepool {
+                CGImageRef iref = [rep fullResolutionImage];
+                if (iref) {
+                    UIImage *image = [UIImage imageWithCGImage:iref
+                                                         scale:1
+                                                   orientation:(UIImageOrientation)[rep orientation]];
+                    
+                    iref = nil;
+                    UIImage * scaledImage = [image imageScaledToMaxWidth:400 maxHeight:400];
+                    callback(scaledImage);
+                }
             }
-        }
-    } failureBlock:^(NSError *error) {
-        callback(nil);
-    }];
+        } failureBlock:^(NSError *error) {
+            callback(nil);
+        }];
+    }
+    else {
+        //local id from PHAsset
+        PHFetchResult * result = [PHAsset fetchAssetsWithLocalIdentifiers:@[urlOrId] options:nil];
+        [[result firstObject] requestContentEditingInputWithOptions:nil completionHandler:^(PHContentEditingInput * _Nullable contentEditingInput, NSDictionary * _Nonnull info) {
+            callback([[contentEditingInput displaySizeImage] imageScaledToMaxWidth:400 maxHeight:400]);
+        }];
+    }
 }
 
 +(void) showPasswordAlertTitle: (NSString *) title

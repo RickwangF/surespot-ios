@@ -39,7 +39,7 @@ static char operationArrayKey;
     //see if we have unencrypted locally
     NSString * localUrl = message.plainData;
     if (localUrl) {
-        [UIUtils getLocalImageFromAssetUrl:localUrl callback:^(id image) {
+        [UIUtils getLocalImageFromAssetUrlOrId:localUrl callback:^(id image) {
             if (!wself) return;
             dispatch_main_async_safe(^{
                 if (!wself) return;

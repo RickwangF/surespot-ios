@@ -3276,7 +3276,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         {
             GalleryView * view = [[[NSBundle mainBundle] loadNibNamed:@"GalleryView" owner:self options:nil] firstObject];
             _galleryView = view;
-            
+            [view setCallback:^(id result) {
+                [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+            }];
             
             if (modeNone || modeKeyboard) {
                 DDLogInfo(@"No mode currently set so setting gallery frame offscreen.");
@@ -3286,9 +3288,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 _galleryView.frame = gifFrame;
                 DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
                 
-                [view setCallback:^(id result) {
-                    //      [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
-                }];
+               
             }
             else {
                 DDLogInfo(@"Mode currently set so setting gallery frame to current mode view's frame.");

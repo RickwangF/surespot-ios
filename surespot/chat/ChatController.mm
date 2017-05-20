@@ -608,7 +608,7 @@ static const int MAX_REAUTH_RETRIES = 1;
 
 
 
--(void) sendImageMessage: (NSURL*) localUrl  to: (NSString *) friendname {
+-(void) sendImageMessage: (NSString*) localUrlOrId  to: (NSString *) friendname {
     //add message locally
     NSData * iv = [EncryptionController getIv];
     NSString * b64iv = [iv base64EncodedStringWithSeparateLines:NO];
@@ -622,7 +622,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     SurespotMessage * sm =[[SurespotMessage alloc] initWithDictionary: dict];
     
     //cache the plain data locally
-    sm.plainData = [localUrl absoluteString];
+    sm.plainData = localUrlOrId;
     
     DDLogDebug(@"sendImageMessage adding local image message, url: %@", sm.plainData);
     

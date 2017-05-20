@@ -51,7 +51,7 @@
 +(void) setTextFieldColors: (UITextField *) textField localizedStringKey: (NSString *) key;
 +(BOOL) confirmLogout;
 +(double) generateIntervalK: (double) k maxInterval: (double) maxInterval;
-+(void) getLocalImageFromAssetUrl: (NSString *) url callback:(CallbackBlock) callback;
++(void) getLocalImageFromAssetUrlOrId: (NSString *) url callback:(CallbackBlock) callback;
 +(void) showPasswordAlertTitle: (NSString *) title
                        message: (NSString *) message
                     controller: (UIViewController *) controller

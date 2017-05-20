@@ -35,7 +35,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [_galleryPreview setDelegate:self];
     [_galleryPreview setDataSource:self];
     [_galleryPreview registerNib:[UINib nibWithNibName:@"GalleryItemView" bundle:nil] forCellWithReuseIdentifier:@"GalleryCell"];
-   CHTCollectionViewWaterfallLayout *layout = [[CHTCollectionViewWaterfallLayout alloc] init];
+    CHTCollectionViewWaterfallLayout *layout = [[CHTCollectionViewWaterfallLayout alloc] init];
     layout.columnCount = 2;
     layout.minimumInteritemSpacing = 2;
     layout.minimumColumnSpacing = 2;
@@ -84,7 +84,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     CGFloat height = [asset pixelHeight] * scale;
     
     DDLogDebug(@"cell size for scaled item: %@, width: %f, height: %f, scale: %f", asset, width,height,scale);
-   
+    
     PHImageRequestOptions *requestOptions = [[PHImageRequestOptions alloc] init];
     requestOptions.resizeMode   = PHImageRequestOptionsResizeModeFast;
     requestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeFastFormat;
@@ -105,10 +105,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    // If you need to use the touched cell, you can retrieve it like so
-    GalleryItemView *cell = (GalleryItemView *)[collectionView cellForItemAtIndexPath:indexPath];
-    _callback([cell url]);
+    NSInteger index =[indexPath row];
+    PHAsset * asset = [_photos objectAtIndex: index];
     
+    if (_callback) {
+        _callback ([asset localIdentifier]);
+    }
 }
 
 @end

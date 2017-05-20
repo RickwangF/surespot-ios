@@ -179,7 +179,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         return;
     }
     
-    [[[ChatManager sharedInstance] getChatController:_username] sendImageMessage:imageUrl to:_theirUsername];
+    [[[ChatManager sharedInstance] getChatController:_username] sendImageMessage:[imageUrl absoluteString] to:_theirUsername];
 }
 
 
