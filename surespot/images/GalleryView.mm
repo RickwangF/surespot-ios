@@ -39,6 +39,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [_galleryPreview registerNib:[UINib nibWithNibName:@"GalleryItemView" bundle:nil] forCellWithReuseIdentifier:@"GalleryCell"];
     UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc] init];
     
+
     [layout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
 }
 
@@ -61,25 +62,33 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     _callback = callback;
 }
 
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 2;
+}
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [_photos count];
+    return [_photos count]/2;
 }
 
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 0;
-}
+
+
+//- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+//    return 2;
+//}
 
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    PHAsset * asset = [_photos objectAtIndex:[indexPath row]];
-    DDLogDebug(@"desired height: %ld", _height);
-    DDLogDebug(@"size for original item: %@, width: %lu, height: %lu",asset,[asset pixelWidth], (unsigned long)[asset pixelHeight]);
+    NSInteger index =([indexPath section] * [_photos count] / 2) + [indexPath row];
+    
+    PHAsset * asset = [_photos objectAtIndex:index];
+    DDLogDebug(@"size index: %ld, section: %ld, row: %ld, desired height: %ld", index, [indexPath section], [indexPath row], _height);
+ //   DDLogDebug(@"size for original item: %@, width: %lu, height: %lu",asset,[asset pixelWidth], (unsigned long)[asset pixelHeight]);
     CGFloat scale = (float) _height / [asset pixelHeight];
     CGFloat width = [asset pixelWidth] *scale;
     CGFloat height = [asset pixelHeight]* scale;
     
-    DDLogDebug(@"size for scaled item: %@, width: %f, height: %f, scale: %f", asset, width,height,scale);
+  //  DDLogDebug(@"size for scaled item: %@, width: %f, height: %f, scale: %f", asset, width,height,scale);
     return CGSizeMake( width, height);
 }
 
@@ -87,16 +96,19 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                   cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     GalleryItemView* newCell = [self.galleryPreview dequeueReusableCellWithReuseIdentifier:@"GalleryCell"
                                                                               forIndexPath:indexPath];
-    
-    PHAsset * asset = [_photos objectAtIndex:[indexPath row]];
+    NSInteger index =([indexPath section] * [_photos count] / 2) + [indexPath row];
+    PHAsset * asset = [_photos objectAtIndex: index];
     // NSDictionary * gifData = [[data objectForKey:@"images"] objectForKey:@"fixed_height"];
     
-    DDLogDebug(@"cell size for original item: %@, width: %lu, height: %lu",asset,[asset pixelWidth], (unsigned long)[asset pixelHeight]);
-    CGFloat scale = _height / [asset pixelHeight];
-    CGFloat width = [asset pixelWidth] *scale;
-    CGFloat height = [asset pixelHeight]* scale;
     
-    DDLogDebug(@"cell size for scaled item: %@, width: %f, height: %f, scale: %f", asset, width,height,scale);
+    DDLogDebug(@"cell index: %ld, section: %ld, row: %ld, desired height: %ld", index, [indexPath section], [indexPath row], _height);
+
+ //   DDLogDebug(@"cell size for original item: %@, width: %lu, height: %lu",asset,[asset pixelWidth], (unsigned long)[asset pixelHeight]);
+    CGFloat scale = (float) _height / [asset pixelHeight];
+    CGFloat width = [asset pixelWidth] * scale;
+    CGFloat height = [asset pixelHeight] * scale;
+    
+  //  DDLogDebug(@"cell size for scaled item: %@, width: %f, height: %f, scale: %f", asset, width,height,scale);
    
     PHImageRequestOptions *requestOptions = [[PHImageRequestOptions alloc] init];
     requestOptions.resizeMode   = PHImageRequestOptionsResizeModeFast;
