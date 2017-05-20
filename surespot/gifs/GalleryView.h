@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "SurespotConstants.h"
+#import "CHTCollectionViewWaterfallLayout.h"
 
 
-@interface GalleryView : UIView <UICollectionViewDelegate, UICollectionViewDataSource>
+@interface GalleryView : UIView <CHTCollectionViewDelegateWaterfallLayout, UICollectionViewDataSource>
 -(void) setCallback: (CallbackBlock) callback;
--(void) fetchAssetsWithHeight: (NSInteger) height;
+-(void) fetchAssets;
 @end

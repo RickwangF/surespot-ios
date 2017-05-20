@@ -12,7 +12,7 @@
 #import "CocoaLumberjack.h"
 #import "GalleryItemView.h"
 #import <Photos/Photos.h>
-//#import "GifSearchView+GifCache.h"
+#import "CHTCollectionViewWaterfallLayout.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -26,35 +26,29 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @property (strong, nonatomic) CallbackBlock callback;
 @property (strong, nonatomic) PHFetchResult * photos;
-@property (assign, nonatomic) NSInteger height;
 @end
 
 @implementation GalleryView
 
 -(void) awakeFromNib {
     [super awakeFromNib];
-    // [_galleryPreview content]
     [_galleryPreview setDelegate:self];
     [_galleryPreview setDataSource:self];
     [_galleryPreview registerNib:[UINib nibWithNibName:@"GalleryItemView" bundle:nil] forCellWithReuseIdentifier:@"GalleryCell"];
-    UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc] init];
-    
-
-    [layout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+   CHTCollectionViewWaterfallLayout *layout = [[CHTCollectionViewWaterfallLayout alloc] init];
+    layout.columnCount = 2;
+    layout.minimumInteritemSpacing = 2;
+    layout.minimumColumnSpacing = 2;
+    [_galleryPreview setCollectionViewLayout:layout];
 }
 
 - (IBAction)closeButtonTouch:(id)sender {
     [self removeFromSuperview];
 }
 
--(void) fetchAssetsWithHeight: (NSInteger) height {
-    
-    DDLogDebug(@"fetching assets with height: %ld", height);
-    _height = height;
-    
+-(void) fetchAssets {
     _photos = [PHAsset fetchAssetsWithOptions:nil];
     [_galleryPreview reloadData];
-    
 }
 
 -(void) setCallback: (CallbackBlock) callback {
@@ -64,51 +58,32 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 2;
+    return 1;
 }
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [_photos count]/2;
+    return  [_photos count];
 }
-
-
-
-//- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-//    return 2;
-//}
-
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger index =([indexPath section] * [_photos count] / 2) + [indexPath row];
-    
+    NSInteger index =  [indexPath row];
     PHAsset * asset = [_photos objectAtIndex:index];
-    DDLogDebug(@"size index: %ld, section: %ld, row: %ld, desired height: %ld", index, [indexPath section], [indexPath row], _height);
- //   DDLogDebug(@"size for original item: %@, width: %lu, height: %lu",asset,[asset pixelWidth], (unsigned long)[asset pixelHeight]);
-    CGFloat scale = (float) _height / [asset pixelHeight];
-    CGFloat width = [asset pixelWidth] *scale;
-    CGFloat height = [asset pixelHeight]* scale;
-    
-  //  DDLogDebug(@"size for scaled item: %@, width: %f, height: %f, scale: %f", asset, width,height,scale);
-    return CGSizeMake( width, height);
+    return CGSizeMake( [asset pixelWidth], [asset pixelHeight]);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
                   cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     GalleryItemView* newCell = [self.galleryPreview dequeueReusableCellWithReuseIdentifier:@"GalleryCell"
                                                                               forIndexPath:indexPath];
-    NSInteger index =([indexPath section] * [_photos count] / 2) + [indexPath row];
+    NSInteger index =[indexPath row];
     PHAsset * asset = [_photos objectAtIndex: index];
-    // NSDictionary * gifData = [[data objectForKey:@"images"] objectForKey:@"fixed_height"];
     
-    
-    DDLogDebug(@"cell index: %ld, section: %ld, row: %ld, desired height: %ld", index, [indexPath section], [indexPath row], _height);
-
- //   DDLogDebug(@"cell size for original item: %@, width: %lu, height: %lu",asset,[asset pixelWidth], (unsigned long)[asset pixelHeight]);
-    CGFloat scale = (float) _height / [asset pixelHeight];
+    CGFloat screenWidth = [[UIScreen mainScreen] applicationFrame].size.width;
+    CGFloat scale = (float) screenWidth / [asset pixelWidth];
     CGFloat width = [asset pixelWidth] * scale;
     CGFloat height = [asset pixelHeight] * scale;
     
-  //  DDLogDebug(@"cell size for scaled item: %@, width: %f, height: %f, scale: %f", asset, width,height,scale);
+    DDLogDebug(@"cell size for scaled item: %@, width: %f, height: %f, scale: %f", asset, width,height,scale);
    
     PHImageRequestOptions *requestOptions = [[PHImageRequestOptions alloc] init];
     requestOptions.resizeMode   = PHImageRequestOptionsResizeModeFast;
@@ -125,11 +100,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                        newCell.galleryView.image = result;
                                                    }];
     
-    //    NSDictionary * data = [_photos objectAtIndex:[indexPath row]];
-    //    NSDictionary * gifData = [[data objectForKey:@"images"] objectForKey:@"fixed_height"];
-    //    NSString * url =[gifData objectForKey:@"url"];
-    //    newCell.url = url;
-    //   [newCell setUrl:url retryAttempt:0];
     return newCell;
 }
 

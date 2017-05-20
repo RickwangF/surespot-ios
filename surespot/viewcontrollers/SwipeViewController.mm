@@ -3350,7 +3350,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             _currentModeView = view;
             self.currentMode = MessageModeGallery;
-            [view fetchAssetsWithHeight:(float)(yDelta-10)/2];
+            [view fetchAssets];
             
             break;
         }

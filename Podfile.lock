@@ -16,6 +16,9 @@ PODS:
     - AFNetworking/NSURLSession
   - AGWindowView (0.1.9)
   - AppAuth (0.7.1)
+  - CHTCollectionViewWaterfallLayout (0.9.5):
+    - CHTCollectionViewWaterfallLayout/ObjC (= 0.9.5)
+  - CHTCollectionViewWaterfallLayout/ObjC (0.9.5)
   - CocoaLumberjack (3.2.0):
     - CocoaLumberjack/Default (= 3.2.0)
     - CocoaLumberjack/Extensions (= 3.2.0)
@@ -59,6 +62,7 @@ PODS:
 DEPENDENCIES:
   - AFNetworking (~> 3.1)
   - AGWindowView
+  - CHTCollectionViewWaterfallLayout
   - CocoaLumberjack
   - FLAnimatedImage (~> 1.0)
   - GoogleAPIClientForREST
@@ -91,6 +95,7 @@ SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   AGWindowView: 08dc8d448b8c96430e78b3945a9c2cf5b0fde754
   AppAuth: c56d352b0d50bb34dbb302d7ba50b20aa6b6ae89
+  CHTCollectionViewWaterfallLayout: 775ff73f48cfc13859b62d8bceb96e772e4a0318
   CocoaLumberjack: 9b4aed7073d242f29cc2f62068d995faf67f703a
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
@@ -108,6 +113,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: a2bcdaf200efdb225ceed294444a6f3fdafa5854
+PODFILE CHECKSUM: bd777576b6419e6b78eb7f9e1d98a1e83a533ada
 
 COCOAPODS: 1.2.1

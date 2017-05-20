@@ -18,4 +18,5 @@ target 'surespot' do
   pod 'HPGrowingTextView'
   pod 'MWPhotoBrowser', :git => 'git@github.com:surespot/MWPhotoBrowser.git'
   pod 'FLAnimatedImage', '~> 1.0'
+  pod 'CHTCollectionViewWaterfallLayout'
 end
