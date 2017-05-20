@@ -3288,7 +3288,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 _galleryView.frame = gifFrame;
                 DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
                 
-               
+                
             }
             else {
                 DDLogInfo(@"Mode currently set so setting gallery frame to current mode view's frame.");
@@ -3354,8 +3354,27 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             break;
         }
+        case MessageModeCamera:
+        {
+            Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
+            if ([theFriend isFriend] && ![theFriend isDeleted]) {
+                              NSString * theirUsername = [self getCurrentTabName];
+                
+                _imageDelegate = [[ImageDelegate alloc]
+                                  initWithUsername:_username
+                                  ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
+                                  theirUsername:theirUsername
+                                  assetLibrary:_assetLibrary];
+                [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
+                [self disableMessageModeShowKeyboard:NO setResponders:YES];
+                
+            }
+            break;
+        }
     }
 }
+
+
 
 
 -(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {

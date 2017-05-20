@@ -244,20 +244,20 @@
                                                     <action selector="gifTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="vEP-6R-FE2"/>
                                                 </connections>
                                             </button>
-                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="JjR-Xr-7Di">
-                                                <rect key="frame" x="42" y="10" width="28" height="28"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
-                                                <state key="normal" image="camera"/>
-                                                <connections>
-                                                    <action selector="cameraTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="UCb-Tv-3cw"/>
-                                                </connections>
-                                            </button>
                                             <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="AGW-7o-azW">
-                                                <rect key="frame" x="76" y="10" width="28" height="28"/>
+                                                <rect key="frame" x="42" y="10" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
                                                 <state key="normal" image="photo"/>
                                                 <connections>
                                                     <action selector="galleryTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="daF-g8-Egu"/>
+                                                </connections>
+                                            </button>
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="JjR-Xr-7Di">
+                                                <rect key="frame" x="76" y="10" width="28" height="28"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                                <state key="normal" image="camera"/>
+                                                <connections>
+                                                    <action selector="cameraTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="UCb-Tv-3cw"/>
                                                 </connections>
                                             </button>
                                         </subviews>
