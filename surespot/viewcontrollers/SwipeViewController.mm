@@ -185,6 +185,11 @@ const Float32 voiceRecordDelay = 0.3;
     [self.view addSubview:_viewPager];
     _viewPager.delegate = self;
     
+    CGRect swipeViewFrame = _swipeView.frame;
+    swipeViewFrame.origin.y += 30;
+    swipeViewFrame.size.height -= 30;
+    _swipeView.frame = swipeViewFrame;
+    
     NSString * chatFromDefaults = [self checkDefaultsForChat];
     
     //open active tabs, don't load data now well get it after connect
