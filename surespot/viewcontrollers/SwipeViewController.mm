@@ -111,8 +111,8 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (strong, nonatomic) IBOutlet UIButton *galleryButton;
 @property (strong, nonatomic) IBOutlet UIButton *cameraButton;
 @property (strong, nonatomic) IBOutlet UIButton *qrButton;
-@property (nonatomic, strong) GiphyView * gifView;
-@property (nonatomic, strong) GalleryView * galleryView;
+@property (atomic, strong) GiphyView * gifView;
+@property (atomic, strong) GalleryView * galleryView;
 //@property (nonatomic, strong)  UIView * currentModeView;
 @end
 @implementation SwipeViewController
@@ -2896,8 +2896,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    
+   
     [self disableMessageModeShowKeyboard:NO setResponders:YES];
+    
     
 }
 
@@ -3036,7 +3037,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     DDLogInfo(@"deltaHeight: %f", deltaHeight);
     if (deltaHeight == 0) return;
     
-    if (_currentMode == MessageModeNone || _currentMode == MessageModeGIF) {
+    if (_currentMode == MessageModeNone || _currentMode == MessageModeKeyboard || _currentMode == MessageModeGIF) {
         if (_previousMode != MessageModeGallery) {
             [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve];
         }
@@ -3158,6 +3159,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         return;
     }
     
+    BOOL modeKeyboard = _currentMode == MessageModeKeyboard;
     _previousMode = _currentMode;
     _currentMode = mode;
     
@@ -3166,6 +3168,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
         case MessageModeGIF:
         {
+            [_gifView removeFromSuperview];
             GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
             _gifView = view;
             if ([UIUtils isBlackTheme]) {
@@ -3198,6 +3201,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         }
         case MessageModeGallery:
         {
+            [_galleryView removeFromSuperview];
             GalleryView * view = [[[NSBundle mainBundle] loadNibNamed:@"GalleryView" owner:self options:nil] firstObject];
             _galleryView = view;
             [view setCallback:^(id result) {
@@ -3252,6 +3256,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              }
                              completion:^(BOOL finished){
                                  [_gifView removeFromSuperview];
+                                 
                                  _gifView = nil;
                              }];
             
@@ -3300,14 +3305,14 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              
                              //                             }
                              //                             else {
-                             //                                 if (_currentMode == MessageModeGallery) {
-                             //
-                             //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
-                             if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
-                                 [self moveViewsVerticallyBy:yDelta];
+                             if (_currentMode == MessageModeGallery) {
+                                 //
+                                 //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
+                                 if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
+                                     [self moveViewsVerticallyBy:yDelta];
+                                 }
+                                 [self hideGalleryFrame: yDelta];
                              }
-                             [self hideGalleryFrame: yDelta];
-                             //                                 }
                          }
                          
                      }
@@ -3323,13 +3328,15 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (setResponders) {
             [_messageTextView becomeFirstResponder];
         }
+        _currentMode = MessageModeKeyboard;
     }
     else {
         if (setResponders) {
             [self resignAllResponders];
         }
+        _currentMode = MessageModeNone;
     }
-    _currentMode = MessageModeNone;
+    
     
 }
 
