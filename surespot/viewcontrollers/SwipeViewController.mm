@@ -106,7 +106,7 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, strong) NSArray<UIBarButtonItem *>* chatBackButtons;
 @property (nonatomic, strong) UIBarButtonItem * backButtonItem;
 @property (nonatomic, assign) enum MessageMode currentMode;
-//@property (nonatomic, assign) enum MessageMode desiredMode;
+@property (nonatomic, assign) enum MessageMode previousMode;
 @property (strong, nonatomic) IBOutlet UIButton *gifButton;
 @property (strong, nonatomic) IBOutlet UIButton *galleryButton;
 @property (strong, nonatomic) IBOutlet UIButton *cameraButton;
@@ -416,184 +416,6 @@ const Float32 voiceRecordDelay = 0.3;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWillBeShown:(NSNotification*)aNotification {
-    
-    DDLogInfo(@"keyboard shown, mode: %ld", _currentMode);
-    NSDictionary* info = [aNotification userInfo];
-    NSTimeInterval animationDuration;
-    UIViewAnimationOptions curve;
-    [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
-    [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
-    CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    
-    DDLogInfo(@"keyboardHeight: %f", keyboardRect.size.height);
-    
-    CGFloat keyboardHeight = keyboardRect.size.height;
-    CGFloat deltaHeight = keyboardHeight - _keyboardState.keyboardHeight;
-    _keyboardState.keyboardHeight = keyboardHeight;
-    _keyboardState.keyboardRect = keyboardRect;
-    
-    DDLogInfo(@"deltaHeight: %f", deltaHeight);
-    
-    
-    if (_currentMode == MessageModeNone || _currentMode == MessageModeKeyboard || _currentMode == MessageModeGIF) {
-        //   else {
-        [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve];
-        
-        if (_currentMode == MessageModeGIF && deltaHeight != 0) {
-            [self animateGifWindowOpen];
-        }
-        
-        //  }
-    }
-    
-    if (_currentMode != MessageModeNone && _currentMode != MessageModeKeyboard && _currentMode != MessageModeGIF)  {
-        [self disableMessageModeShowKeyboard: YES setResponders:NO];
-        
-        
-        //if the height's not equal, adjust
-        if (271 - deltaHeight != 0) {
-            deltaHeight = 271 - deltaHeight;
-            [self animateMoveViewsVerticallyBy:deltaHeight duration:animationDuration curve:curve];
-            
-            
-            //animate mode frame
-            CGRect gifFrame = _currentModeView.frame;
-            gifFrame.size.height -= deltaHeight;
-            gifFrame.origin.y -= deltaHeight;
-            _currentModeView.frame = gifFrame;
-        }
-    }
-}
-
-
-//-(void) messageTextViewTapped: (UITapGestureRecognizer*) recognizer {
-//    DDLogInfo(@"messageTextViewTapped");
-//    if (_currentMode == MessageModeGIF) {
-//        [self hideGifView];
-//        self.currentMode = MessageModeKeyboard;
-//
-//    }
-//
-//}
-
--(void) animateMoveViewsVerticallyBy: (NSInteger) yDelta duration: (NSTimeInterval) animationDuration curve: (UIViewAnimationOptions) curve
-{
-    
-    
-    // run animation using keyboard's curve and duration
-    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
-        
-        [self moveViewsVerticallyBy:yDelta];
-        
-        
-    } completion:^(BOOL completion) {
-        
-    }];
-}
-
-
--(void) moveViewsVerticallyBy:(NSInteger) yDelta {
-    
-    DDLogDebug(@"moveViewsVerticallyBy: %ld", yDelta);
-    DDLogDebug(@"moveViewsVerticallyBy, text frame origin before: %f", _textFieldContainer.frame.origin.y);
-    
-    
-    CGRect textFieldFrame = _textFieldContainer.frame;
-    textFieldFrame.origin.y += yDelta;
-    _textFieldContainer.frame = textFieldFrame;
-    
-    DDLogDebug(@"moveViewsVerticallyBy, text frame origin after: %f", _textFieldContainer.frame.origin.y);
-    
-    CGRect frame = _swipeView.frame;
-    frame.size.height += yDelta;
-    _swipeView.frame = frame;
-    
-    CGRect buttonFrame = _theButton.frame;
-    buttonFrame.origin.y += yDelta;
-    _theButton.frame = buttonFrame;
-    
-    // size or move views appropriately so they are not obscured by the keyboard
-    @synchronized (_chats) {
-        for (NSString * key in [_chats allKeys]) {
-            UITableView * tableView = [_chats objectForKey:key];
-            
-            //            UITableViewCell * bottomCell = nil;
-            //            NSArray * visibleCells = [tableView visibleCells];
-            //            if ([visibleCells count ] > 0) {
-            //                bottomCell = [visibleCells objectAtIndex:[visibleCells count]-1];
-            //            }
-            //
-            //            if (bottomCell) {
-            //    CGRect aRect = self.view.frame;
-            //    aRect.size.height -= deltaHeight;
-            //   if (!CGRectContainsPoint(aRect, bottomCell.frame.origin) ) {
-            if ([tableView respondsToSelector:@selector(contentOffset)]) {
-                CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - yDelta);
-                [tableView setContentOffset:newOffset animated:NO];
-            }
-            //  }
-            //            }
-        }
-    }
-}
-// Called when the UIKeyboardWillHideNotification is sent
-- (void)keyboardWillBeHidden:(NSNotification *) aNotification
-{
-    DDLogInfo(@"keyboard hide, mode: %ld", (long)_currentMode);
-    NSDictionary* info = [aNotification userInfo];
-    NSTimeInterval animationDuration;
-    UIViewAnimationOptions curve;
-    [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
-    [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
-    CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat keyboardHeight = keyboardRect.size.height;
-    
-    //height is reported as 0 sometimes WTF apple
-    DDLogInfo(@"keyboard reported height: %f, my height: %f", keyboardHeight, _keyboardState.keyboardHeight);
-    keyboardHeight = _keyboardState.keyboardHeight;
-    
-    [self animateMoveViewsVerticallyBy:keyboardHeight duration:animationDuration curve:curve];
-    
-    //    // run animation using keyboard's curve and duration
-    //    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
-    //        //reset content position
-    //        @synchronized (_chats) {
-    //            for (NSString * key in [_chats allKeys]) {
-    //                UITableView * tableView = [_chats objectForKey:key];
-    //                if ([tableView respondsToSelector:@selector(contentOffset)]) {
-    //                    CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - keyboardHeight);
-    //                    [tableView setContentOffset:newOffset animated:NO];
-    //                }
-    //            }
-    //        }
-    //
-    //        CGRect swipeFrame = _swipeView.frame;
-    //        swipeFrame.size.height += keyboardHeight;
-    //        _swipeView.frame = swipeFrame;
-    //        [_swipeView setNeedsLayout];
-    //
-    //        CGRect textFieldFrame = _textFieldContainer.frame;
-    //        textFieldFrame.origin.y += keyboardHeight;
-    //        _textFieldContainer.frame = textFieldFrame;
-    //
-    //
-    //        CGRect buttonFrame = _theButton.frame;
-    //        buttonFrame.origin.y += keyboardHeight;
-    //        _theButton.frame = buttonFrame;
-    //
-    //
-    //        [self hideGifView];
-    //    } completion:^(BOOL completion) {
-    //
-    //    }];
-    
-    [self disableMessageModeShowKeyboard: NO setResponders:NO];
-    
-    _keyboardState.keyboardHeight = 0.0f;
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation
@@ -3191,20 +3013,211 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     
 }
 
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeShown:(NSNotification*)aNotification {
+    
+    DDLogInfo(@"keyboard shown, mode: %ld", _currentMode);
+    NSDictionary* info = [aNotification userInfo];
+    NSTimeInterval animationDuration;
+    UIViewAnimationOptions curve;
+    [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
+    [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
+    CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    DDLogInfo(@"keyboardHeight: %f", keyboardRect.size.height);
+    
+    CGFloat keyboardHeight = keyboardRect.size.height;
+    CGFloat deltaHeight = keyboardHeight - _keyboardState.keyboardHeight;
+    _keyboardState.keyboardHeight = keyboardHeight;
+    _keyboardState.keyboardRect = keyboardRect;
+    
+    DDLogInfo(@"deltaHeight: %f", deltaHeight);
+    if (deltaHeight == 0) return;
+    
+    if (_currentMode == MessageModeNone || _currentMode == MessageModeKeyboard || _currentMode == MessageModeGIF) {
+        //   else {
+        if (_previousMode != MessageModeGallery) {
+        [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve];
+        }
+        
+        if (_currentMode == MessageModeGIF && deltaHeight != 0) {
+            [self animateGifWindowOpen];
+        }
+        
+        //  }
+    }
+    
+    if (_currentMode != MessageModeNone && _currentMode != MessageModeKeyboard && _currentMode != MessageModeGIF)  {
+        [self disableMessageModeShowKeyboard: YES setResponders:NO];
+        
+        
+        //if the height's not equal, adjust
+        if (271 - deltaHeight != 0) {
+            deltaHeight = 271 - deltaHeight;
+            [self animateMoveViewsVerticallyBy:deltaHeight duration:animationDuration curve:curve];
+            
+            
+            //animate mode frame
+            CGRect gifFrame = _currentModeView.frame;
+            gifFrame.size.height -= deltaHeight;
+            gifFrame.origin.y -= deltaHeight;
+            _currentModeView.frame = gifFrame;
+        }
+    }
+    
+
+}
+
+
+// Called when the UIKeyboardWillHideNotification is sent
+- (void)keyboardWillBeHidden:(NSNotification *) aNotification
+{
+    DDLogInfo(@"keyboard hide, mode: %ld", (long)_currentMode);
+    NSDictionary* info = [aNotification userInfo];
+    NSTimeInterval animationDuration;
+    UIViewAnimationOptions curve;
+    [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
+    [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&curve];
+    CGRect keyboardRect = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGFloat keyboardHeight = keyboardRect.size.height;
+    
+    //height is reported as 0 sometimes WTF apple
+    DDLogInfo(@"keyboard reported height: %f, my height: %f", keyboardHeight, _keyboardState.keyboardHeight);
+    keyboardHeight = _keyboardState.keyboardHeight;
+    
+    [self animateMoveViewsVerticallyBy:keyboardHeight duration:animationDuration curve:curve];
+    
+    //    // run animation using keyboard's curve and duration
+    //    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
+    //        //reset content position
+    //        @synchronized (_chats) {
+    //            for (NSString * key in [_chats allKeys]) {
+    //                UITableView * tableView = [_chats objectForKey:key];
+    //                if ([tableView respondsToSelector:@selector(contentOffset)]) {
+    //                    CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - keyboardHeight);
+    //                    [tableView setContentOffset:newOffset animated:NO];
+    //                }
+    //            }
+    //        }
+    //
+    //        CGRect swipeFrame = _swipeView.frame;
+    //        swipeFrame.size.height += keyboardHeight;
+    //        _swipeView.frame = swipeFrame;
+    //        [_swipeView setNeedsLayout];
+    //
+    //        CGRect textFieldFrame = _textFieldContainer.frame;
+    //        textFieldFrame.origin.y += keyboardHeight;
+    //        _textFieldContainer.frame = textFieldFrame;
+    //
+    //
+    //        CGRect buttonFrame = _theButton.frame;
+    //        buttonFrame.origin.y += keyboardHeight;
+    //        _theButton.frame = buttonFrame;
+    //
+    //
+    //        [self hideGifView];
+    //    } completion:^(BOOL completion) {
+    //
+    //    }];
+    
+    [self disableMessageModeShowKeyboard: NO setResponders:NO];
+    
+    _keyboardState.keyboardHeight = 0.0f;
+}
+
+
+
+//-(void) messageTextViewTapped: (UITapGestureRecognizer*) recognizer {
+//    DDLogInfo(@"messageTextViewTapped");
+//    if (_currentMode == MessageModeGIF) {
+//        [self hideGifView];
+//        self.currentMode = MessageModeKeyboard;
+//
+//    }
+//
+//}
+
+-(void) animateMoveViewsVerticallyBy: (NSInteger) yDelta duration: (NSTimeInterval) animationDuration curve: (UIViewAnimationOptions) curve
+{
+    
+    
+    // run animation using keyboard's curve and duration
+    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
+        
+        [self moveViewsVerticallyBy:yDelta];
+        
+        
+    } completion:^(BOOL completion) {
+        
+    }];
+}
+
+
+-(void) moveViewsVerticallyBy:(NSInteger) yDelta {
+    
+    DDLogDebug(@"moveViewsVerticallyBy: %ld", yDelta);
+    DDLogDebug(@"moveViewsVerticallyBy, text frame origin before: %f", _textFieldContainer.frame.origin.y);
+    
+    
+    CGRect textFieldFrame = _textFieldContainer.frame;
+    textFieldFrame.origin.y += yDelta;
+    _textFieldContainer.frame = textFieldFrame;
+    
+    DDLogDebug(@"moveViewsVerticallyBy, text frame origin after: %f", _textFieldContainer.frame.origin.y);
+    
+    CGRect frame = _swipeView.frame;
+    frame.size.height += yDelta;
+    _swipeView.frame = frame;
+    
+    CGRect buttonFrame = _theButton.frame;
+    buttonFrame.origin.y += yDelta;
+    _theButton.frame = buttonFrame;
+    
+    // size or move views appropriately so they are not obscured by the keyboard
+    @synchronized (_chats) {
+        for (NSString * key in [_chats allKeys]) {
+            UITableView * tableView = [_chats objectForKey:key];
+            
+            //            UITableViewCell * bottomCell = nil;
+            //            NSArray * visibleCells = [tableView visibleCells];
+            //            if ([visibleCells count ] > 0) {
+            //                bottomCell = [visibleCells objectAtIndex:[visibleCells count]-1];
+            //            }
+            //
+            //            if (bottomCell) {
+            //    CGRect aRect = self.view.frame;
+            //    aRect.size.height -= deltaHeight;
+            //   if (!CGRectContainsPoint(aRect, bottomCell.frame.origin) ) {
+            if ([tableView respondsToSelector:@selector(contentOffset)]) {
+                CGPoint newOffset = CGPointMake(0, tableView.contentOffset.y - yDelta);
+                [tableView setContentOffset:newOffset animated:NO];
+            }
+            //  }
+            //            }
+        }
+    }
+}
+
 -(void) setMessageMode: (MessageMode) mode {
-    UIView * oldView;
-    oldView = _currentModeView;
     
     BOOL keyboardOpen = _keyboardState.keyboardHeight > 0;
-    BOOL modeNone = _currentMode == MessageModeNone;
-    BOOL modeKeyboard = _currentMode == MessageModeKeyboard;
-    BOOL modeGIF = _currentMode == MessageModeGIF;
     
     if (mode == _currentMode) {
         DDLogInfo(@"setMessageMode same mode disabling.");
         [self disableMessageModeShowKeyboard:keyboardOpen setResponders:YES];
         return;
     }
+    
+    UIView * oldView;
+    oldView = _currentModeView;
+    
+    _previousMode = _currentMode;
+    BOOL modeNone = _currentMode == MessageModeNone;
+    BOOL modeKeyboard = _currentMode == MessageModeKeyboard;
+    BOOL modeGIF = _currentMode == MessageModeGIF;
+    
+
     
     DDLogInfo(@"setMessageMode,currentMode: %ld, mode: %ld, keyboard open: %d, modeNone: %d, keyboard height: %f",(long)_currentMode, (long)mode, keyboardOpen, modeNone,  _keyboardState.keyboardHeight);
     
@@ -3424,6 +3437,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 
 
+
 -(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {
     
     DDLogDebug(@"disableMessageModeShowKeyboard: %d, setResponders: %d, keyboard height: %f, currentModeView: %@",showKeyboard, setResponders, _keyboardState.keyboardHeight, _currentModeView);
@@ -3475,7 +3489,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 -(void) hideModeFrame: (NSInteger) yDelta {
     CGRect gifFrame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height, self.view.frame.size.width, yDelta);
-    DDLogDebug(@"setting frame to y: %f, height: %f", gifFrame.origin.y, gifFrame.size.height);
+    DDLogDebug(@"hideModeFrame setting frame to y: %f, height: %f", gifFrame.origin.y, gifFrame.size.height);
     _currentModeView.frame = gifFrame;
     
     
@@ -3530,7 +3544,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     CGRect gifFrame = _gifView.frame;
     gifFrame.origin.y =   _textFieldContainer.frame.origin.y;
     //  gifFrame.size.width = [UIScreen mainScreen].bounds.size.width;
-    DDLogDebug(@"tex field container frame origin y: %f",_textFieldContainer.frame.origin.y);
+    DDLogDebug(@"hideGifView: text field container frame origin y: %f",_textFieldContainer.frame.origin.y);
     // gifFrame.size.height = 0;
     _gifView.frame = gifFrame;
     
