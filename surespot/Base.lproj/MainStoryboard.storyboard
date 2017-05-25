@@ -214,11 +214,11 @@
                                     <outlet property="delegate" destination="tcp-OJ-fTS" id="xyT-N7-5qo"/>
                                 </connections>
                             </view>
-                            <view opaque="NO" contentMode="scaleToFill" id="Mgi-22-lGU">
+                            <view contentMode="scaleToFill" id="Mgi-22-lGU">
                                 <rect key="frame" x="0.0" y="558" width="334" height="45"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" misplaced="YES" id="WBR-1z-qRA">
+                                    <view opaque="NO" contentMode="scaleToFill" misplaced="YES" id="WBR-1z-qRA">
                                         <rect key="frame" x="0.0" y="0.0" width="112" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
@@ -261,7 +261,8 @@
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </view>
                                     <view contentMode="scaleToFill" misplaced="YES" id="ria-nr-JTt" customClass="HPGrowingTextView">
                                         <rect key="frame" x="113" y="5" width="208" height="30"/>
@@ -274,12 +275,11 @@
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                             <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="byV-5h-Uzr" customClass="SurespotButton">
                                 <rect key="frame" x="329" y="558" width="48" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" button="YES" updatesFrequently="YES"/>
                                 </accessibility>

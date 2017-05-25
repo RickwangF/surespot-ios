@@ -12,6 +12,7 @@
 #import "CocoaLumberjack.h"
 #import "GifSearchView.h"
 #import "GifSearchView+GifCache.h"
+#import "UIUtils.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
