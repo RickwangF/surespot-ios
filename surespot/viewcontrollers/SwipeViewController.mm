@@ -3036,7 +3036,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     DDLogInfo(@"deltaHeight: %f", deltaHeight);
     if (deltaHeight == 0) return;
     
-    if (_currentMode == MessageModeNone || _currentMode == MessageModeKeyboard || _currentMode == MessageModeGIF) {
+    if (_currentMode == MessageModeNone || _currentMode == MessageModeGIF) {
         if (_previousMode != MessageModeGallery) {
             [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve];
         }
@@ -3118,6 +3118,10 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     buttonFrame.origin.y += yDelta;
     _theButton.frame = buttonFrame;
     
+    [self setContentOffsets:yDelta];
+}
+
+-(void) setContentOffsets: (NSInteger) yDelta  {
     // size or move views appropriately so they are not obscured by the keyboard
     @synchronized (_chats) {
         for (NSString * key in [_chats allKeys]) {
@@ -3141,6 +3145,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             //            }
         }
     }
+    
 }
 
 -(void) setMessageMode: (MessageMode) mode {
@@ -3154,22 +3159,13 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     }
     
     _previousMode = _currentMode;
-    BOOL modeNone = _currentMode == MessageModeNone;
-    BOOL modeKeyboard = _currentMode == MessageModeKeyboard;
-    BOOL modeGIF = _currentMode == MessageModeGIF;
-    BOOL modeGallery = _currentMode == MessageModeGallery;
+    _currentMode = mode;
     
-    
-    
-    DDLogInfo(@"setMessageMode,currentMode: %ld, mode: %ld, keyboard open: %d, modeNone: %d, keyboard height: %f",(long)_currentMode, (long)mode, keyboardOpen, modeNone,  _keyboardState.keyboardHeight);
-    
+    DDLogInfo(@"setMessageMode,currentMode: %ld, mode: %ld, keyboard open: %d, keyboard height: %f",(long)_currentMode, (long)mode, keyboardOpen,  _keyboardState.keyboardHeight);
     switch (mode) {
             
         case MessageModeGIF:
         {
-            
-            self.currentMode = MessageModeGIF;
-            
             GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
             _gifView = view;
             if ([UIUtils isBlackTheme]) {
@@ -3178,7 +3174,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             CGRect gifFrame = _gifView.frame;
             gifFrame.origin.y =   _textFieldContainer.frame.origin.y;
             gifFrame.size.width = [UIScreen mainScreen].bounds.size.width;
-            DDLogDebug(@"tex field container frame origin y: %f",_textFieldContainer.frame.origin.y);
+            DDLogDebug(@"text field container frame origin y: %f",_textFieldContainer.frame.origin.y);
             gifFrame.size.height = 100;
             _gifView.frame = gifFrame;
             
@@ -3237,9 +3233,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                   delay:0.0
                                 options: UIViewAnimationCurveEaseIn
                              animations:^{
-                                 if (modeGIF) {
-                                     [self hideGifView];
-                                 }
+                                 [self hideGifView];
                                  
                                  //if keyboard open we know how much to move by
                                  if (keyboardOpen)
@@ -3257,14 +3251,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                  _galleryView.frame = frame;
                              }
                              completion:^(BOOL finished){
-                                 if (modeGIF) {
-                                     [_gifView removeFromSuperview];
-                                     _gifView = nil;
-                                 }
+                                 [_gifView removeFromSuperview];
+                                 _gifView = nil;
                              }];
             
             [theWindowWeWillUse addSubview: _galleryView];
-            self.currentMode = MessageModeGallery;
             [view fetchAssets];
             
             break;
@@ -3304,26 +3295,27 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              NSInteger yDelta = 271;
                              
                              
-                             if (_currentMode == MessageModeGIF ) {
-                                 [self hideGifView];
-                                 
+                             //        if (_currentMode == MessageModeGIF ) {
+                             [self hideGifView];
+                             
+                             //                             }
+                             //                             else {
+                             //                                 if (_currentMode == MessageModeGallery) {
+                             //
+                             //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
+                             if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
+                                 [self moveViewsVerticallyBy:yDelta];
                              }
-                             else {
-                                 if (_currentMode == MessageModeGallery) {
-                                     
-                                     //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
-                                     if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
-                                         [self moveViewsVerticallyBy:yDelta];
-                                     }
-                                     [self hideGalleryFrame: yDelta];
-                                 }
-                             }}
+                             [self hideGalleryFrame: yDelta];
+                             //                                 }
+                         }
+                         
                      }
                      completion:^(BOOL finished){
                          DDLogDebug(@"disable mode animation finished");
                          [_gifView removeFromSuperview];
                          [_galleryView removeFromSuperview];
-                        _gifView = nil;
+                         _gifView = nil;
                          _galleryView = nil;
                      }];
     
@@ -3331,14 +3323,14 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (setResponders) {
             [_messageTextView becomeFirstResponder];
         }
-        _currentMode = MessageModeKeyboard;
     }
     else {
         if (setResponders) {
             [self resignAllResponders];
         }
-        _currentMode = MessageModeNone;
     }
+    _currentMode = MessageModeNone;
+    
 }
 
 -(void) hideGalleryFrame: (NSInteger) yDelta {
@@ -3356,19 +3348,15 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          CGRect gifFrame = _gifView.frame;
                          gifFrame.origin.y =   _textFieldContainer.frame.origin.y - 100;
                          DDLogDebug(@"text field container frame origin y: %f",_textFieldContainer.frame.origin.y);
-                         // gifFrame.size.height = 100;
                          _gifView.frame = gifFrame;
                          DDLogDebug(@"setting frame to y: %f, height: %f", _gifView.frame.origin.y, _gifView.frame.size.height);
                          
-                        // if (hideGalleryFrame) {
-                             [self hideGalleryFrame:271];
-                     //    }
+                         //   [self setContentOffsets:-100];
+                         [self hideGalleryFrame:271];
                      } completion:^(BOOL finished) {
-                      //   if (hideGalleryFrame) {
-                             DDLogDebug(@"animateGifWindow open removing gallery view from superview");
-                             [_galleryView removeFromSuperview];
-                             _galleryView = nil;
-                    //     }
+                         DDLogDebug(@"animateGifWindow open removing gallery view from superview");
+                         [_galleryView removeFromSuperview];
+                         _galleryView = nil;
                      }];
     
     
@@ -3377,10 +3365,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 -(void) hideGifView {
     CGRect gifFrame = _gifView.frame;
     gifFrame.origin.y =   _textFieldContainer.frame.origin.y;
-    //  gifFrame.size.width = [UIScreen mainScreen].bounds.size.width;
     DDLogDebug(@"hideGifView: text field container frame origin y: %f",_textFieldContainer.frame.origin.y);
-    // gifFrame.size.height = 0;
     _gifView.frame = gifFrame;
+    //[self setContentOffsets:100];
     
 }
 
