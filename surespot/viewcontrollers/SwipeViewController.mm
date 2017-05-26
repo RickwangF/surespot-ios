@@ -3033,26 +3033,29 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     
     DDLogInfo(@"deltaHeight: %f", deltaHeight);
     if (deltaHeight == 0) return;
+    NSInteger offsets = 0;
     
-    if (_currentMode == MessageModeNone || _currentMode == MessageModeKeyboard || _currentMode == MessageModeGIF) {
-        if (_previousMode != MessageModeGallery) {
-            
-            NSInteger offsets = 0;
-            if (_currentMode == MessageModeGIF && _gifOffsets == 0) {
-                _gifOffsets = 100;
-                offsets = 100;
-            }
-            
-            [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve offsetDelta:-(deltaHeight+offsets)];
-        }
-        else {
-            
-        }
-        
-        if (_currentMode == MessageModeGIF && deltaHeight != 0) {
-            [self animateGifWindowOpenSetContent: NO];
+    if (_currentMode == MessageModeGIF && _gifOffsets == 0) {
+        _gifOffsets = 100;
+        offsets = 100;
+    }
+    
+    if (_currentMode == MessageModeGallery) {
+        [self disableMessageModeShowKeyboard:YES setResponders:NO];
+        //if the height's not equal, adjust
+        if (271 - deltaHeight != 0) {
+            deltaHeight = -(271 - deltaHeight);
+            DDLogInfo(@"gallery deltaHeight: %f", deltaHeight);
         }
     }
+    
+    [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve offsetDelta:-(deltaHeight+offsets)];
+    
+    if (_currentMode == MessageModeGIF && deltaHeight != 0) {
+        [self animateGifWindowOpenSetContent: NO];
+    }
+
+    _previousMode = _currentMode;
 }
 
 
