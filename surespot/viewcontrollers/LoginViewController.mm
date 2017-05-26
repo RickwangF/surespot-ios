@@ -22,6 +22,7 @@
 #import "NSBundle+FallbackLanguage.h"
 #import "ChatManager.h"
 #import "SurespotLeftNavButton.h"
+#import "BackupIdentityViewController.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -449,6 +450,15 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }];
     
     [menuItems addObject:restoreItem];
+    
+    if ([_identityNames count] > 0) {
+        REMenuItem * backupItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"export_identity", nil) image:[UIImage imageNamed:@"ic_menu_save"] highlightedImage:nil action:^(REMenuItem * item){
+            BackupIdentityViewController * controller = [[BackupIdentityViewController alloc] init];
+            [self.navigationController pushViewController:controller animated:YES];
+        }];
+        
+        [menuItems addObject:backupItem];
+    }
     
     REMenuItem * removeIdentityItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"remove_identity_from_device", nil) image:[UIImage imageNamed:@"ic_menu_delete"] highlightedImage:nil action:^(REMenuItem * item){
         NSString * username = [_identityNames objectAtIndex:[_userPicker selectedRowInComponent:0]];
