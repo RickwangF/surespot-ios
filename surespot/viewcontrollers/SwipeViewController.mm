@@ -91,7 +91,7 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, strong) IBOutlet SwipeView *swipeView;
 @property (nonatomic, strong) UITableView *friendView;
 @property (strong, atomic) NSMutableDictionary *chats;
-@property (strong, nonatomic) KeyboardState * keyboardState;
+@property (strong, nonatomic) MessageBarState * keyboardState;
 @property (strong, nonatomic) IBOutlet UIButton *theButton;
 - (IBAction)buttonTouchUpInside:(id)sender;
 @property (strong, nonatomic) IBOutlet UIView *textFieldContainer;
@@ -150,7 +150,7 @@ const Float32 voiceRecordDelay = 0.3;
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
     // [self registerForKeyboardNotifications];
-    self.keyboardState = [[KeyboardState alloc] init];
+    self.keyboardState = [[MessageBarState alloc] init];
     
     
     UIBarButtonItem *anotherButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"menu",nil) style:UIBarButtonItemStylePlain target:self action:@selector(showMenuMenu)];
@@ -3027,6 +3027,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     DDLogInfo(@"keyboardHeight: %f", keyboardRect.size.height);
     
     CGFloat keyboardHeight = keyboardRect.size.height;
+    
+    
     CGFloat deltaHeight = keyboardHeight - _keyboardState.keyboardHeight;
     _keyboardState.keyboardHeight = keyboardHeight;
     _keyboardState.keyboardRect = keyboardRect;
@@ -3035,26 +3037,46 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     if (deltaHeight == 0) return;
     NSInteger offsets = 0;
     
+    //if we're opening gif view, move the views to the top of it
     if (_currentMode == MessageModeGIF && _gifOffsets == 0) {
         _gifOffsets = 100;
         offsets = 100;
     }
     
-    if (_currentMode == MessageModeGallery) {
-        [self disableMessageModeShowKeyboard:YES setResponders:NO];
-        //if the height's not equal, adjust
-        if (271 - deltaHeight != 0) {
-            deltaHeight = -(271 - deltaHeight);
+    DDLogDebug(@"keyboardState galleryViewHeight: %f", _keyboardState.galleryViewHeight);
+    //if the gallery view is showing, hide it
+    if (_keyboardState.galleryViewHeight > 0) {
+        
+        
+        
+        //if the gallery view is showing and the keyboard is coming in we now need to adjust to the keyboard location
+        //so figure out the delta of the keyboard height and the gallery view height
+        if (_keyboardState.galleryViewHeight - _keyboardState.keyboardHeight != 0) {
+            deltaHeight = _keyboardState.keyboardHeight - _keyboardState.galleryViewHeight;
             DDLogInfo(@"gallery deltaHeight: %f", deltaHeight);
         }
+        
+        _keyboardState.galleryViewHeight = 0;
+        //[self disableMessageModeShowKeyboard:YES setResponders:NO];
     }
     
-    [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve offsetDelta:-(deltaHeight+offsets)];
+    [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
+        NSInteger offsetDelta = -(deltaHeight+offsets);
+        [self moveViewsVerticallyBy:-deltaHeight];
+        if (offsetDelta != 0) {
+            [self setContentOffsets:offsetDelta];
+        }
+        if (_currentMode == MessageModeGIF && deltaHeight != 0) {
+            [self animateGifWindowOpenSetContent: NO];
+        }
+    } completion:^(BOOL completion) {
+        
+    }];
     
-    if (_currentMode == MessageModeGIF && deltaHeight != 0) {
-        [self animateGifWindowOpenSetContent: NO];
-    }
-
+    //  [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve offsetDelta:-(deltaHeight+offsets)];
+    
+    
+    
     _previousMode = _currentMode;
 }
 
@@ -3167,6 +3189,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 -(void) setMessageMode: (MessageMode) mode {
     
     BOOL keyboardOpen = _keyboardState.keyboardHeight > 0;
+    BOOL galleryOpen = _keyboardState.galleryViewHeight > 0;
     
     if (mode == _currentMode) {
         DDLogInfo(@"setMessageMode same mode disabling.");
@@ -3195,6 +3218,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             DDLogDebug(@"text field container frame origin y: %f",_textFieldContainer.frame.origin.y);
             gifFrame.size.height = 100;
             _gifView.frame = gifFrame;
+            _keyboardState.gifViewHeight = 100;
             
             [self.view insertSubview:_gifView belowSubview:_textFieldContainer];
             
@@ -3207,17 +3231,17 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 [_messageTextView becomeFirstResponder];
                 
                 //
-                if (modeGallery) {
-                    //
-                    [UIView animateWithDuration:0.5
-                                          delay:0.0
-                                        options: UIViewAnimationCurveEaseIn
-                                     animations:^{
-                                         
-                                         [self setContentOffsets:-100];
-                                         
-                                     }completion:nil];
-                }
+//                if (galleryOpen) {
+//                    //
+//                    [UIView animateWithDuration:0.5
+//                                          delay:0.0
+//                                        options: UIViewAnimationCurveEaseIn
+//                                     animations:^{
+//                                         
+//                                         [self setContentOffsets:-100];
+//                                         
+//                                     }completion:nil];
+//                }
             }
             else {
                 DDLogInfo(@"No mode currently set, or keyboard open so setting gif frame 0 height.");
@@ -3277,17 +3301,20 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                  if (!keyboardOpen) {
                                      [self moveViewsVerticallyBy: -yDelta];
                                      [self setContentOffsets:-yDelta];
-                                     _gifOffsets = 0;
+                                  //   _gifOffsets = 0;
+                                     _keyboardState.gifViewHeight = 0;
                                  }
                                  CGRect frame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
                                  DDLogDebug(@"setting frame to y: %f, height: %f", frame.origin.y, frame.size.height);
                                  
                                  _galleryView.frame = frame;
+                                 _keyboardState.galleryViewHeight = 271;
                              }
                              completion:^(BOOL finished){
                                  [_gifView removeFromSuperview];
                                  
                                  _gifView = nil;
+                                 
                              }];
             
             [theWindowWeWillUse addSubview: _galleryView];
@@ -3316,8 +3343,13 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {
-    
+    if (_currentMode == MessageModeNone || _currentMode == MessageModeKeyboard) {
+        return;
+    }
     DDLogDebug(@"disableMessageModeShowKeyboard: %d, setResponders: %d, keyboard height: %f",showKeyboard, setResponders, _keyboardState.keyboardHeight);
+   // _gifOffsets = 0;
+    _keyboardState.gifViewHeight = 0;
+    _keyboardState.galleryViewHeight = 0;
     [UIView animateWithDuration:0.5
                           delay:0.0
                         options: UIViewAnimationCurveEaseOut
@@ -3337,9 +3369,10 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                  if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
                                      [self moveViewsVerticallyBy:yDelta];
                                      [self setContentOffsets:yDelta];
-                                     _gifOffsets = 0;
+                                     
                                  }
                                  [self hideGalleryFrame: yDelta];
+                                 
                              }
                          }
                          
@@ -3383,6 +3416,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                      animations:^{
                          CGRect gifFrame = _gifView.frame;
                          _gifOffsets = 100;
+                         _keyboardState.gifViewHeight = 100;
                          gifFrame.origin.y =   _textFieldContainer.frame.origin.y - _gifOffsets;
                          DDLogDebug(@"text field container frame origin y: %f",_textFieldContainer.frame.origin.y);
                          _gifView.frame = gifFrame;
@@ -3392,6 +3426,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              [self setContentOffsets:-_gifOffsets];
                          }
                          [self hideGalleryFrame:271];
+                         _keyboardState.galleryViewHeight = 0;
                      } completion:^(BOOL finished) {
                          DDLogDebug(@"animateGifWindow open removing gallery view from superview");
                          [_galleryView removeFromSuperview];
@@ -3408,6 +3443,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     if (_gifOffsets != 0) {
         NSInteger offsets = _gifOffsets;
         _gifOffsets = 0;
+        _keyboardState.gifViewHeight = 0;
         [self setContentOffsets:offsets];
     }
 }

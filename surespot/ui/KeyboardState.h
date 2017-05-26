@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface KeyboardState : NSObject
+@interface MessageBarState : NSObject
 @property (nonatomic) CGFloat keyboardHeight;
 @property (nonatomic) CGRect keyboardRect;
+@property (nonatomic) CGFloat gifViewHeight;
+@property (nonatomic) CGFloat galleryViewHeight;
 @end

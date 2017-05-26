@@ -8,7 +8,7 @@
 
 #import "KeyboardState.h"
 
-@implementation KeyboardState
+@implementation MessageBarState
 - (id)init
 {
     self = [super init];
