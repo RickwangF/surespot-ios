@@ -176,11 +176,19 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 [[NSUserDefaults standardUserDefaults] setObject: autoinvites forKey: @"autoinvites"];
                 //fire event
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"autoinvites" object:nil ];
+                  return YES;
             }
         }
+        
+        
     }
     
-    return YES;
+    if ([_currentAuthorizationFlow resumeAuthorizationFlowWithURL:url]) {
+        _currentAuthorizationFlow = nil;
+        return YES;
+    }
+  
+    return NO;
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
