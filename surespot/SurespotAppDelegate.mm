@@ -110,10 +110,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [FileController deleteOldSecrets];
     
     //clear local cache
-    BOOL cacheCleared = [[NSUserDefaults standardUserDefaults] boolForKey:@"cacheCleared13"];
+    BOOL cacheCleared = [[NSUserDefaults standardUserDefaults] boolForKey:@"cacheCleared16"];
     if (!cacheCleared) {
         [UIUtils clearLocalCache];
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"cacheCleared13"];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"cacheCleared16"];
     }
     
     
