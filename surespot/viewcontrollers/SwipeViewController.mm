@@ -3016,7 +3016,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 // Called when the UIKeyboardDidShowNotification is sent.
 - (void)keyboardWillBeShown:(NSNotification*)aNotification {
     
-    DDLogInfo(@"keyboard shown, mode: %ld", _currentMode);
+    DDLogInfo(@"keyboard shown, mode: %ld, previous mode: %ld", _currentMode, _previousMode);
     NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
     UIViewAnimationOptions curve;
@@ -3044,6 +3044,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             }
             
             [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve offsetDelta:-(deltaHeight+offsets)];
+        }
+        else {
+            
         }
         
         if (_currentMode == MessageModeGIF && deltaHeight != 0) {
@@ -3130,6 +3133,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(void) setContentOffsets: (NSInteger) yDelta  {
+    
+    DDLogDebug(@"setContentOffsets: %ld",yDelta);
     // size or move views appropriately so they are not obscured by the keyboard
     @synchronized (_chats) {
         for (NSString * key in [_chats allKeys]) {
@@ -3166,11 +3171,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         return;
     }
     
-    BOOL modeKeyboard = _currentMode == MessageModeKeyboard;
+    BOOL modeGallery = _currentMode == MessageModeGallery;
     _previousMode = _currentMode;
     _currentMode = mode;
     
-    DDLogInfo(@"setMessageMode,currentMode: %ld, mode: %ld, keyboard open: %d, keyboard height: %f",(long)_currentMode, (long)mode, keyboardOpen,  _keyboardState.keyboardHeight);
+    DDLogInfo(@"setMessageMode,previous mode: %ld, mode: %ld, keyboard open: %d, keyboard height: %f",(long)_previousMode, (long)mode, keyboardOpen,  _keyboardState.keyboardHeight);
     switch (mode) {
             
         case MessageModeGIF:
@@ -3197,6 +3202,19 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             if (!keyboardOpen) {
                 // open the keyboard, do rest in keyborad open handler
                 [_messageTextView becomeFirstResponder];
+                
+                //
+                if (modeGallery) {
+                    //
+                    [UIView animateWithDuration:0.5
+                                          delay:0.0
+                                        options: UIViewAnimationCurveEaseIn
+                                     animations:^{
+                                         
+                                         [self setContentOffsets:-100];
+                                         
+                                     }completion:nil];
+                }
             }
             else {
                 DDLogInfo(@"No mode currently set, or keyboard open so setting gif frame 0 height.");
@@ -3344,7 +3362,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         }
         _previousMode = _currentMode;
         _currentMode = MessageModeNone;
-    
+        
     }
 }
 
@@ -3355,7 +3373,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(void) animateGifWindowOpenSetContent: (BOOL) setContent {
-    DDLogDebug(@"animateGifWindowOpen");
+    DDLogDebug(@"animateGifWindowOpen,setContent: %d", setContent);
     [UIView animateWithDuration:0.5
                           delay:0.0
                         options: UIViewAnimationCurveEaseIn
