@@ -197,7 +197,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     parameters:params
       progress:nil
        success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable JSON) {
-           NSHTTPCookie * cookie = [self extractConnectCookie];
+           NSHTTPCookie * cookie = [self extractConnectCookie: task];
            if (cookie) {
                [self setCookie:cookie];
                successBlock(task, JSON, cookie);
@@ -301,7 +301,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [params setObject:[ChatUtils hexFromData:apnToken] forKey:@"apnToken"];
     }
     [self POST:@"users3" parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSHTTPCookie * cookie = [self extractConnectCookie];
+        NSHTTPCookie * cookie = [self extractConnectCookie: task];
         if (cookie) {
             //set cookie in network controller for the user we just created
             [[[NetworkManager sharedInstance] getNetworkController:username] setCookie:cookie];
@@ -711,9 +711,21 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"unauthorized" object:nil userInfo:[NSDictionary dictionaryWithObject:_username forKey:@"username"]];
 }
 
--(NSHTTPCookie *) extractConnectCookie {
-    //save the cookie
-    NSArray *cookies = [[[[self session]configuration ] HTTPCookieStorage] cookiesForURL:[NSURL URLWithString:_baseUrl]];
+-(NSHTTPCookie *) extractConnectCookie: (NSURLSessionDataTask*) task {
+    //This doesn't work on iOS 8
+    NSArray *cookies = [[[[self session]configuration] HTTPCookieStorage] cookiesForURL:[NSURL URLWithString:_baseUrl]];
+    for (NSHTTPCookie *cookie in cookies)
+    {
+        if ([cookie.name isEqualToString:@"connect.sid"]) {
+            return cookie;
+        }
+    }
+    //This works on ios 8
+    DDLogDebug(@"extracting cookie from response");
+    cookies = [NSHTTPCookie
+               cookiesWithResponseHeaderFields:[(NSHTTPURLResponse *) task.response allHeaderFields]
+               forURL:[NSURL URLWithString:_baseUrl]];
+    
     
     for (NSHTTPCookie *cookie in cookies)
     {
