@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 surespot. All rights reserved.
 //
 
-#import "KeyboardState.h"
+#import "MessageBarState.h"
 
 @implementation MessageBarState
 - (id)init

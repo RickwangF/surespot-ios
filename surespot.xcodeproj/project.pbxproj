@@ -169,7 +169,7 @@
 		66EBE0C51855C97100F2452D /* SurespotErrorMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF1D1855C96F00F2452D /* SurespotErrorMessage.m */; };
 		66EBE0C61855C97100F2452D /* SurespotMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF1F1855C96F00F2452D /* SurespotMessage.m */; };
 		66EBE0C71855C97100F2452D /* TheirMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBDF201855C96F00F2452D /* TheirMessageCell.xib */; };
-		66EBE0CB1855C97100F2452D /* KeyboardState.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF2A1855C96F00F2452D /* KeyboardState.m */; };
+		66EBE0CB1855C97100F2452D /* MessageBarState.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF2A1855C96F00F2452D /* MessageBarState.m */; };
 		66EBE0CC1855C97100F2452D /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF2C1855C96F00F2452D /* LoadingView.m */; };
 		66EBE0CD1855C97100F2452D /* UIViewPager.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF2E1855C96F00F2452D /* UIViewPager.m */; };
 		66EBE0D01855C97100F2452D /* IdentityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EBDF341855C96F00F2452D /* IdentityCell.m */; };
@@ -608,8 +608,8 @@
 		66EBDF1E1855C96F00F2452D /* SurespotMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotMessage.h; sourceTree = "<group>"; };
 		66EBDF1F1855C96F00F2452D /* SurespotMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotMessage.m; sourceTree = "<group>"; };
 		66EBDF201855C96F00F2452D /* TheirMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TheirMessageCell.xib; sourceTree = "<group>"; };
-		66EBDF291855C96F00F2452D /* KeyboardState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardState.h; sourceTree = "<group>"; };
-		66EBDF2A1855C96F00F2452D /* KeyboardState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardState.m; sourceTree = "<group>"; };
+		66EBDF291855C96F00F2452D /* MessageBarState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBarState.h; sourceTree = "<group>"; };
+		66EBDF2A1855C96F00F2452D /* MessageBarState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageBarState.m; sourceTree = "<group>"; };
 		66EBDF2B1855C96F00F2452D /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
 		66EBDF2C1855C96F00F2452D /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		66EBDF2D1855C96F00F2452D /* UIViewPager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIViewPager.h; sourceTree = "<group>"; };
@@ -1271,8 +1271,8 @@
 		66EBDF281855C96F00F2452D /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				66EBDF291855C96F00F2452D /* KeyboardState.h */,
-				66EBDF2A1855C96F00F2452D /* KeyboardState.m */,
+				66EBDF291855C96F00F2452D /* MessageBarState.h */,
+				66EBDF2A1855C96F00F2452D /* MessageBarState.m */,
 				66EBDF2B1855C96F00F2452D /* LoadingView.h */,
 				66EBDF2C1855C96F00F2452D /* LoadingView.m */,
 				66EBDF2D1855C96F00F2452D /* UIViewPager.h */,
@@ -1632,7 +1632,7 @@
 				6614EEB8185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */,
 				66DAB62E186DEEFC006C262F /* VoiceDelegate.mm in Sources */,
 				5AF842511B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm in Sources */,
-				66EBE0CB1855C97100F2452D /* KeyboardState.m in Sources */,
+				66EBE0CB1855C97100F2452D /* MessageBarState.m in Sources */,
 				66EBE0B21855C97100F2452D /* GenerateSharedSecretOperation.mm in Sources */,
 				664135781EB0EFC5005A4957 /* SendMessageOperation.mm in Sources */,
 				66EBE0B51855C97100F2452D /* GetSharedSecretOperation.mm in Sources */,

@@ -91,7 +91,7 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, strong) IBOutlet SwipeView *swipeView;
 @property (nonatomic, strong) UITableView *friendView;
 @property (strong, atomic) NSMutableDictionary *chats;
-@property (strong, nonatomic) MessageBarState * keyboardState;
+@property (strong, nonatomic) MessageBarState * messageBarState;
 @property (strong, nonatomic) IBOutlet UIButton *theButton;
 - (IBAction)buttonTouchUpInside:(id)sender;
 @property (strong, nonatomic) IBOutlet UIView *textFieldContainer;
@@ -104,7 +104,6 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, strong) NSArray<UIBarButtonItem *>* chatBackButtons;
 @property (nonatomic, strong) UIBarButtonItem * backButtonItem;
 @property (nonatomic, assign) enum MessageMode currentMode;
-@property (nonatomic, assign) enum MessageMode previousMode;
 @property (strong, nonatomic) IBOutlet UIButton *gifButton;
 @property (strong, nonatomic) IBOutlet UIButton *galleryButton;
 @property (strong, nonatomic) IBOutlet UIButton *cameraButton;
@@ -150,7 +149,7 @@ const Float32 voiceRecordDelay = 0.3;
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
     // [self registerForKeyboardNotifications];
-    self.keyboardState = [[MessageBarState alloc] init];
+    self.messageBarState = [[MessageBarState alloc] init];
     
     
     UIBarButtonItem *anotherButton = [[UIBarButtonItem alloc] initWithTitle: NSLocalizedString(@"menu",nil) style:UIBarButtonItemStylePlain target:self action:@selector(showMenuMenu)];
@@ -387,7 +386,7 @@ const Float32 voiceRecordDelay = 0.3;
     [[ChatManager sharedInstance] pause: _username];
     
     //  //reset keyboard measurements
-    [self disableMessageModeShowKeyboard:NO setResponders:YES];
+    //  [self disableMessageModeShowKeyboard:NO setResponders:YES];
 }
 
 
@@ -421,7 +420,7 @@ const Float32 voiceRecordDelay = 0.3;
 {
     DDLogInfo(@"will rotate");
     [self resignAllResponders];
-    _keyboardState.keyboardHeight = 0;
+    _messageBarState.keyboardHeight = 0;
     
     
     _swipeView.suppressScrollEvent = YES;
@@ -3016,7 +3015,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 // Called when the UIKeyboardDidShowNotification is sent.
 - (void)keyboardWillBeShown:(NSNotification*)aNotification {
     
-    DDLogInfo(@"keyboard shown, mode: %ld, previous mode: %ld", _currentMode, _previousMode);
+    DDLogInfo(@"keyboard shown, mode: %ld", _currentMode);
     NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
     UIViewAnimationOptions curve;
@@ -3029,9 +3028,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     CGFloat keyboardHeight = keyboardRect.size.height;
     
     
-    CGFloat deltaHeight = keyboardHeight - _keyboardState.keyboardHeight;
-    _keyboardState.keyboardHeight = keyboardHeight;
-    _keyboardState.keyboardRect = keyboardRect;
+    CGFloat deltaHeight = keyboardHeight - _messageBarState.keyboardHeight;
+    _messageBarState.keyboardHeight = keyboardHeight;
     
     DDLogInfo(@"deltaHeight: %f", deltaHeight);
     if (deltaHeight == 0) return;
@@ -3043,21 +3041,16 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         offsets = 100;
     }
     
-    DDLogDebug(@"keyboardState galleryViewHeight: %f", _keyboardState.galleryViewHeight);
-    //if the gallery view is showing, hide it
-    if (_keyboardState.galleryViewHeight > 0) {
-        
-        
+    DDLogDebug(@"keyboardState galleryViewHeight: %f", _messageBarState.galleryViewHeight);
+    //if the gallery view is showing
+    if (_messageBarState.galleryViewHeight > 0) {
         
         //if the gallery view is showing and the keyboard is coming in we now need to adjust to the keyboard location
-        //so figure out the delta of the keyboard height and the gallery view height
-        if (_keyboardState.galleryViewHeight - _keyboardState.keyboardHeight != 0) {
-            deltaHeight = _keyboardState.keyboardHeight - _keyboardState.galleryViewHeight;
-            DDLogInfo(@"gallery deltaHeight: %f", deltaHeight);
-        }
+        //so use the delta of the keyboard height and the gallery view height
+        deltaHeight = _messageBarState.keyboardHeight - _messageBarState.galleryViewHeight;
+        DDLogInfo(@"gallery deltaHeight: %f", deltaHeight);
         
-        _keyboardState.galleryViewHeight = 0;
-        //[self disableMessageModeShowKeyboard:YES setResponders:NO];
+        _messageBarState.galleryViewHeight = 0;
     }
     
     [UIView animateWithDuration:animationDuration delay:0.0 options:curve animations:^{
@@ -3072,12 +3065,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     } completion:^(BOOL completion) {
         
     }];
-    
-    //  [self animateMoveViewsVerticallyBy:-deltaHeight duration:animationDuration curve:curve offsetDelta:-(deltaHeight+offsets)];
-    
-    
-    
-    _previousMode = _currentMode;
 }
 
 
@@ -3094,8 +3081,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     CGFloat keyboardHeight = keyboardRect.size.height;
     
     //height is reported as 0 sometimes WTF apple
-    DDLogInfo(@"keyboard reported height: %f, my height: %f", keyboardHeight, _keyboardState.keyboardHeight);
-    keyboardHeight = _keyboardState.keyboardHeight;
+    DDLogInfo(@"keyboard reported height: %f, my height: %f", keyboardHeight, _messageBarState.keyboardHeight);
+    keyboardHeight = _messageBarState.keyboardHeight;
     
     NSInteger offsets = 0;
     if (_gifOffsets > 0) {
@@ -3105,7 +3092,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [self animateMoveViewsVerticallyBy:keyboardHeight duration:animationDuration curve:curve offsetDelta: keyboardHeight + offsets];
     [self disableMessageModeShowKeyboard: NO setResponders:NO];
     
-    _keyboardState.keyboardHeight = 0.0f;
+    _messageBarState.keyboardHeight = 0.0f;
 }
 
 
@@ -3187,9 +3174,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(void) setMessageMode: (MessageMode) mode {
-    
-    BOOL keyboardOpen = _keyboardState.keyboardHeight > 0;
-    BOOL galleryOpen = _keyboardState.galleryViewHeight > 0;
+    BOOL keyboardOpen = _messageBarState.keyboardHeight > 0;
     
     if (mode == _currentMode) {
         DDLogInfo(@"setMessageMode same mode disabling.");
@@ -3197,11 +3182,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         return;
     }
     
-    BOOL modeGallery = _currentMode == MessageModeGallery;
-    _previousMode = _currentMode;
     _currentMode = mode;
-    
-    DDLogInfo(@"setMessageMode,previous mode: %ld, mode: %ld, keyboard open: %d, keyboard height: %f",(long)_previousMode, (long)mode, keyboardOpen,  _keyboardState.keyboardHeight);
+    DDLogInfo(@"setMessageMode, mode: %ld, keyboard open: %d, keyboard height: %f", (long)mode, keyboardOpen,  _messageBarState.keyboardHeight);
     switch (mode) {
             
         case MessageModeGIF:
@@ -3218,7 +3200,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             DDLogDebug(@"text field container frame origin y: %f",_textFieldContainer.frame.origin.y);
             gifFrame.size.height = 100;
             _gifView.frame = gifFrame;
-            _keyboardState.gifViewHeight = 100;
             
             [self.view insertSubview:_gifView belowSubview:_textFieldContainer];
             
@@ -3229,19 +3210,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             if (!keyboardOpen) {
                 // open the keyboard, do rest in keyborad open handler
                 [_messageTextView becomeFirstResponder];
-                
-                //
-//                if (galleryOpen) {
-//                    //
-//                    [UIView animateWithDuration:0.5
-//                                          delay:0.0
-//                                        options: UIViewAnimationCurveEaseIn
-//                                     animations:^{
-//                                         
-//                                         [self setContentOffsets:-100];
-//                                         
-//                                     }completion:nil];
-//                }
             }
             else {
                 DDLogInfo(@"No mode currently set, or keyboard open so setting gif frame 0 height.");
@@ -3266,7 +3234,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             frame.origin.y = [[UIScreen mainScreen] bounds].size.height;
             _galleryView.frame = frame;
             DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
-            DDLogInfo(@"showGalleryView, keyboard height: %f",_keyboardState.keyboardHeight);
+            DDLogInfo(@"showGalleryView, keyboard height: %f",_messageBarState.keyboardHeight);
             
             
             //get the topmost window
@@ -3294,21 +3262,19 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                  //if keyboard open we know how much to move by
                                  if (keyboardOpen)
                                  {
-                                     yDelta = _keyboardState.keyboardHeight;
+                                     yDelta = _messageBarState.keyboardHeight;
                                  }
                                  
                                  //if not showing a view or the keyboard's not open
                                  if (!keyboardOpen) {
                                      [self moveViewsVerticallyBy: -yDelta];
                                      [self setContentOffsets:-yDelta];
-                                  //   _gifOffsets = 0;
-                                     _keyboardState.gifViewHeight = 0;
                                  }
                                  CGRect frame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
                                  DDLogDebug(@"setting frame to y: %f, height: %f", frame.origin.y, frame.size.height);
                                  
                                  _galleryView.frame = frame;
-                                 _keyboardState.galleryViewHeight = 271;
+                                 _messageBarState.galleryViewHeight = 271;
                              }
                              completion:^(BOOL finished){
                                  [_gifView removeFromSuperview];
@@ -3334,6 +3300,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                   theirUsername:theirUsername
                                   assetLibrary:_assetLibrary];
                 [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
+                //pull the gif view immediately coz it looks janky just scroling down
+                [_gifView removeFromSuperview];
                 [self disableMessageModeShowKeyboard:NO setResponders:YES];
                 
             }
@@ -3343,13 +3311,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {
-    if (_currentMode == MessageModeNone || _currentMode == MessageModeKeyboard) {
-        return;
-    }
-    DDLogDebug(@"disableMessageModeShowKeyboard: %d, setResponders: %d, keyboard height: %f",showKeyboard, setResponders, _keyboardState.keyboardHeight);
-   // _gifOffsets = 0;
-    _keyboardState.gifViewHeight = 0;
-    _keyboardState.galleryViewHeight = 0;
+    DDLogDebug(@"disableMessageModeShowKeyboard: %d, setResponders: %d, keyboard height: %f",showKeyboard, setResponders, _messageBarState.keyboardHeight);
+    NSInteger galleryViewHeight = _messageBarState.galleryViewHeight;
+    _messageBarState.galleryViewHeight = 0;
     [UIView animateWithDuration:0.5
                           delay:0.0
                         options: UIViewAnimationCurveEaseOut
@@ -3357,25 +3321,18 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          if (setResponders) {
                              NSInteger yDelta = 271;
                              
-                             
-                             //        if (_currentMode == MessageModeGIF ) {
                              [self hideGifView];
                              
-                             //                             }
-                             //                             else {
-                             if (_currentMode == MessageModeGallery) {
+                             if (galleryViewHeight > 0) {
                                  //
                                  //if the keyboard's not showing and we're hiding the message mode view, scroll the ui down
-                                 if ([_keyboardState keyboardHeight] == 0 && !showKeyboard) {
+                                 if ([_messageBarState keyboardHeight] == 0 && !showKeyboard) {
                                      [self moveViewsVerticallyBy:yDelta];
                                      [self setContentOffsets:yDelta];
-                                     
                                  }
                                  [self hideGalleryFrame: yDelta];
-                                 
                              }
                          }
-                         
                      }
                      completion:^(BOOL finished){
                          DDLogDebug(@"disable mode animation finished");
@@ -3389,14 +3346,12 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (setResponders) {
             [_messageTextView becomeFirstResponder];
         }
-        _previousMode = _currentMode;
         _currentMode = MessageModeKeyboard;
     }
     else {
         if (setResponders) {
             [self resignAllResponders];
         }
-        _previousMode = _currentMode;
         _currentMode = MessageModeNone;
         
     }
@@ -3416,7 +3371,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                      animations:^{
                          CGRect gifFrame = _gifView.frame;
                          _gifOffsets = 100;
-                         _keyboardState.gifViewHeight = 100;
                          gifFrame.origin.y =   _textFieldContainer.frame.origin.y - _gifOffsets;
                          DDLogDebug(@"text field container frame origin y: %f",_textFieldContainer.frame.origin.y);
                          _gifView.frame = gifFrame;
@@ -3426,7 +3380,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              [self setContentOffsets:-_gifOffsets];
                          }
                          [self hideGalleryFrame:271];
-                         _keyboardState.galleryViewHeight = 0;
+                         _messageBarState.galleryViewHeight = 0;
                      } completion:^(BOOL finished) {
                          DDLogDebug(@"animateGifWindow open removing gallery view from superview");
                          [_galleryView removeFromSuperview];
@@ -3443,7 +3397,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     if (_gifOffsets != 0) {
         NSInteger offsets = _gifOffsets;
         _gifOffsets = 0;
-        _keyboardState.gifViewHeight = 0;
         [self setContentOffsets:offsets];
     }
 }

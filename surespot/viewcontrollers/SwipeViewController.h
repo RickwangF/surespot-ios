@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SwipeView.h"
-#import "KeyboardState.h"
+#import "MessageBarState.h"
 #import "FriendDelegate.h"
 #import "Friend.h"
 #import "UIViewPager.h"
