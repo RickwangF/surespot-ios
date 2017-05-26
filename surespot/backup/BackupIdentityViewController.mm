@@ -85,7 +85,10 @@ static NSString *const kRedirectURI = @"com.googleusercontent.apps.428168563991-
     UIBarButtonItem *anotherButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"help",nil) style:UIBarButtonItemStylePlain target:self action:@selector(showHelp)];
     self.navigationItem.rightBarButtonItem = anotherButton;
     
-    [_userPicker selectRow:[_identityNames indexOfObject:(_selectUsername ? _selectUsername : [[IdentityController sharedInstance] getLoggedInUser])] inComponent:0 animated:YES];
+    NSString * loggedInUser = [[IdentityController sharedInstance] getLoggedInUser];
+    if (loggedInUser) {
+        [_userPicker selectRow:[_identityNames indexOfObject:(_selectUsername ? _selectUsername : loggedInUser )] inComponent:0 animated:YES];
+    }
     
     [_lDocuments setText:NSLocalizedString(@"documents", nil)];
     [_bDocuments setTitle:NSLocalizedString(@"backup_to_documents", nil) forState:UIControlStateNormal];
