@@ -24,7 +24,7 @@ NSString * const MIME_TYPE_TEXT = @"text/plain";
 NSString * const MIME_TYPE_GIF_LINK = @"gif/https";
 NSString * const MIME_TYPE_M4A = @"audio/mp4";
 NSString * const MIME_TYPE_FILE = @"application/octet-stream";
-NSInteger const MAX_IDENTITIES = 30;
+NSInteger const MAX_IDENTITIES = 3;
 NSInteger const RETRY_DELAY = 10;
 NSInteger const RETRY_ATTEMPTS = 60;
 @end
