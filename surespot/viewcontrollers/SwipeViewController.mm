@@ -198,14 +198,6 @@ const Float32 voiceRecordDelay = 0.3;
         }
     }
     
-    //setup the button
-    //    _theButton.layer.cornerRadius = 35;
-    //    _theButton.layer.borderColor = [[UIUtils surespotBlue] CGColor];
-    //    _theButton.layer.borderWidth = 3.0f;
-    //    _theButton.backgroundColor = [UIColor whiteColor];
-    //    _theButton.opaque = YES;
-    
-    
     [[[ChatManager sharedInstance] getChatController: _username] resume];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pause:) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -3207,11 +3199,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     CGRect frame = _swipeView.frame;
     frame.size.height += yDelta;
     _swipeView.frame = frame;
-    
-    //    CGRect buttonFrame = _theButton.frame;
-    //    buttonFrame.origin.y += yDelta;
-    //    _theButton.frame = buttonFrame;
-    
 }
 
 -(void) setContentOffsets: (NSInteger) yDelta  {

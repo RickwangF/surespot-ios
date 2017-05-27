@@ -17,7 +17,7 @@
     if(highlighted) {
         self.backgroundColor = [UIUtils surespotBlue];
     } else {
-        self.backgroundColor = [UIColor whiteColor];
+        self.backgroundColor = [UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor];
     }
     [super setHighlighted:highlighted];
 }

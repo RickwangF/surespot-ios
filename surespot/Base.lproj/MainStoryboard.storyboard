@@ -223,7 +223,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <subviews>
                                             <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mrL-vK-V99">
-                                                <rect key="frame" x="8" y="10" width="28" height="28"/>
+                                                <rect key="frame" x="8" y="8" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
                                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <accessibility key="accessibilityConfiguration">
@@ -237,7 +237,7 @@
                                                 </connections>
                                             </button>
                                             <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mjH-sq-mNH">
-                                                <rect key="frame" x="8" y="8" width="28" height="28"/>
+                                                <rect key="frame" x="8" y="9" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
                                                 <state key="normal" image="gif"/>
                                                 <connections>
@@ -245,7 +245,7 @@
                                                 </connections>
                                             </button>
                                             <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="AGW-7o-azW">
-                                                <rect key="frame" x="42" y="10" width="28" height="28"/>
+                                                <rect key="frame" x="42" y="9" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
                                                 <state key="normal" image="photo"/>
                                                 <connections>
@@ -279,8 +279,8 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </view>
-                                    <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="byV-5h-Uzr" customClass="SurespotButton">
-                                        <rect key="frame" x="328" y="0.0" width="44" height="44"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="byV-5h-Uzr" customClass="SurespotButton">
+                                        <rect key="frame" x="335" y="4" width="40" height="35"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <accessibility key="accessibilityConfiguration">
