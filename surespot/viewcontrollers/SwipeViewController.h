@@ -32,6 +32,7 @@
     UIPopoverControllerDelegate,
     TTTAttributedLabelDelegate,
     HPGrowingTextViewDelegate,
-    UITextViewDelegate
+    UITextViewDelegate,
+    UIGestureRecognizerDelegate
 >
 @end

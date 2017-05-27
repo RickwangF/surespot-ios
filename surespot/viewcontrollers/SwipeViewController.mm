@@ -229,13 +229,10 @@ const Float32 voiceRecordDelay = 0.3;
     [_giphySearchTextView setBackgroundColor:[UIColor clearColor]];
     _giphySearchTextView.layer.cornerRadius = 5;
     
-    //    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(messageTextViewTapped:)];
-    //    gestureRecognizer.numberOfTapsRequired = 1;
-    //
-    //    for (UIGestureRecognizer *messageViewGesture in [_messageTextView.internalTextView gestureRecognizers]) {
-    //        [messageViewGesture requireGestureRecognizerToFail:gestureRecognizer];
-    //    }
-    //    [_messageTextView addGestureRecognizer:gestureRecognizer];
+    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(messageTextViewTapped:)];
+    gestureRecognizer.numberOfTapsRequired = 1;
+    gestureRecognizer.delegate = self;
+    [_messageTextView addGestureRecognizer:gestureRecognizer];
     
     
     
@@ -407,7 +404,7 @@ shouldChangeTextInRange:(NSRange)range
     DDLogVerbose(@"pause");
     [[ChatManager sharedInstance] pause: _username];
     
-   [self disableMessageModeShowKeyboard:NO setResponders:YES];
+    [self disableMessageModeShowKeyboard:NO setResponders:YES];
 }
 
 
@@ -708,8 +705,8 @@ shouldChangeTextInRange:(NSRange)range
         //update button
         [self updateTabChangeUI];
         [self disableMessageModeShowKeyboard:_messageBarState.keyboardHeight > 0 setResponders:YES];
-      //  [self updateKeyboardState:YES];
-
+        //  [self updateKeyboardState:YES];
+        
         
     }
     else {
@@ -1687,7 +1684,7 @@ shouldChangeTextInRange:(NSRange)range
         _giphySearchTextView.hidden = YES;
         _giphyImage.hidden = YES;
         _theButton.hidden = NO;
-
+        
     }
     else {
         _qrButton.hidden = YES;
@@ -3157,17 +3154,34 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     _messageBarState.keyboardHeight = 0.0f;
 }
 
+#pragma mark - Gesture recognizer delegate
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
 
-//-(void) messageTextViewTapped: (UITapGestureRecognizer*) recognizer {
-//    DDLogInfo(@"messageTextViewTapped");
-//    if (_currentMode == MessageModeGIF) {
-//        [self hideGifView];
-//        self.currentMode = MessageModeKeyboard;
-//
-//    }
-//
-//}
+-(void) messageTextViewTapped: (UITapGestureRecognizer*) recognizer {
+    DDLogInfo(@"messageTextViewTapped");
+    //if the gallery view and keyboard are open, hide the gallery view
+    //if the keyboard's not open it'll hide the gallery view when it's shown
+    if (_messageBarState.galleryViewHeight > 0 && _messageBarState.keyboardHeight > 0) {
+        _messageBarState.galleryViewHeight = 0;
+        [UIView animateWithDuration:0.5
+                              delay:0.0
+                            options: UIViewAnimationCurveEaseOut
+                         animations:^{
+                             NSInteger yDelta = 271;
+                             [self hideGalleryFrame: yDelta];
+                         }
+                         completion:^(BOOL finished){
+                             DDLogDebug(@"disable mode animation finished");
+                             [_galleryView removeFromSuperview];
+                             _galleryView = nil;
+                             [self updateTabChangeUI];
+                             _currentMode = MessageModeKeyboard;
+                         }];
+    }
+}
 
 -(void) animateMoveViewsVerticallyBy: (NSInteger) yDelta duration: (NSTimeInterval) animationDuration curve: (UIViewAnimationOptions) curve offsetDelta: (NSInteger) offsetDelta
 {
