@@ -47,7 +47,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) fetchAssets {
-    _photos = [PHAsset fetchAssetsWithOptions:nil];
+    PHFetchOptions * options = [[PHFetchOptions alloc] init];
+    options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"modificationDate" ascending:NO]];
+    _photos = [PHAsset fetchAssetsWithOptions:options];
     [_galleryPreview reloadData];
 }
 
