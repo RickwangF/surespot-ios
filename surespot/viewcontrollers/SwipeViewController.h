@@ -31,6 +31,7 @@
     MWPhotoBrowserDelegate,
     UIPopoverControllerDelegate,
     TTTAttributedLabelDelegate,
-    HPGrowingTextViewDelegate
+    HPGrowingTextViewDelegate,
+    UITextViewDelegate
 >
 @end

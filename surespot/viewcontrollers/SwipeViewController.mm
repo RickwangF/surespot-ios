@@ -110,6 +110,8 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (strong, nonatomic) IBOutlet UIButton *qrButton;
 @property (nonatomic, strong) GiphyView * gifView;
 @property (nonatomic, strong) GalleryView * galleryView;
+@property (strong, nonatomic) IBOutlet UITextView *giphySearchTextView;
+@property (strong, nonatomic) IBOutlet UIImageView *giphyImage;
 @property (atomic, assign) NSInteger gifOffsets;
 @end
 @implementation SwipeViewController
@@ -226,6 +228,15 @@ const Float32 voiceRecordDelay = 0.3;
     [_messageTextView setBackgroundColor:[UIColor clearColor]];
     _messageTextView.layer.cornerRadius = 5;
     
+    _giphySearchTextView.enablesReturnKeyAutomatically = NO;
+    [_giphySearchTextView setFont:[UIFont systemFontOfSize:14]];
+    _giphySearchTextView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _giphySearchTextView.delegate = self;
+    [_giphySearchTextView.layer setBorderColor:[[UIColor grayColor] CGColor]];
+    [_giphySearchTextView.layer setBorderWidth:0.5];
+    [_giphySearchTextView setBackgroundColor:[UIColor clearColor]];
+    _giphySearchTextView.layer.cornerRadius = 5;
+    
     //    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(messageTextViewTapped:)];
     //    gestureRecognizer.numberOfTapsRequired = 1;
     //
@@ -254,6 +265,7 @@ const Float32 voiceRecordDelay = 0.3;
     [self setTextBoxHints];
     [self setupSideView];
     [self setThemeStuff];
+    [self disableMessageModeShowKeyboard:NO setResponders:NO];
 }
 
 - (void) setupSideView {
@@ -322,7 +334,6 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (BOOL) growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *) string
 {
-    DDLogDebug(@"text: %@", string);
     if ([string containsString:@"\n"]) {
         if (growingTextView != _messageTextView || [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_return_sends_message"]) {
             [self handleTextAction];
@@ -351,6 +362,24 @@ const Float32 voiceRecordDelay = 0.3;
     return YES;
 }
 
+- (BOOL)textView:(UITextView *)textView
+shouldChangeTextInRange:(NSRange)range
+ replacementText:(NSString *)text {
+    
+    //Exit gif mode on empty string return
+    if ([textView.text isEqualToString:@""] && [text isEqualToString:@"\n"]) {
+        [self disableMessageModeShowKeyboard:YES setResponders:YES];
+        return NO;
+    }
+    
+    if ([text containsString:@"\n"]) {
+        [self.gifView searchGifs:textView.text];
+        [textView setText:@""];
+        return NO;
+    }
+    
+    return YES;
+}
 
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -2979,6 +3008,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 -(void) setThemeStuff {
     [_messageTextView setTextColor:[self getThemeForegroundColor]];
     [_inviteTextView setTextColor:[self getThemeForegroundColor]];
+    [_giphySearchTextView setTextColor:[self getThemeForegroundColor]];
     if ([UIUtils isBlackTheme]) {
         [_textFieldContainer setBackgroundColor:[UIColor blackColor]];
         [_theButton setBackgroundColor:[UIColor blackColor]];
@@ -3139,9 +3169,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     frame.size.height += yDelta;
     _swipeView.frame = frame;
     
-    CGRect buttonFrame = _theButton.frame;
-    buttonFrame.origin.y += yDelta;
-    _theButton.frame = buttonFrame;
+    //    CGRect buttonFrame = _theButton.frame;
+    //    buttonFrame.origin.y += yDelta;
+    //    _theButton.frame = buttonFrame;
     
 }
 
@@ -3208,16 +3238,27 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [view setCallback:^(id result) {
                 [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
             }];
-            if (!keyboardOpen) {
-                // open the keyboard, do rest in keyborad open handler
-                [_messageTextView becomeFirstResponder];
-            }
-            else {
+            //            if (!keyboardOpen) {
+            // open the keyboard, do rest in keyboard open handler
+            [_giphySearchTextView becomeFirstResponder];
+            
+            //          }
+            //        else {
+            if (keyboardOpen) {
                 DDLogInfo(@"No mode currently set, or keyboard open so setting gif frame 0 height.");
                 [self animateGifWindowOpenSetContent: YES];
+                //      }
             }
             
             [_gifView searchGifs:@"what"];
+            
+            _gifButton.hidden = NO;
+            _cameraButton.hidden = YES;
+            _galleryButton.hidden = YES;
+            _giphySearchTextView.hidden = NO;
+            _giphyImage.hidden = NO;
+            _messageTextView.hidden = YES;
+            _theButton.hidden = YES;
             break;
         }
         case MessageModeGallery:
@@ -3286,6 +3327,14 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             [theWindowWeWillUse addSubview: _galleryView];
             [view fetchAssets];
+            
+            _gifButton.hidden = NO;
+            _cameraButton.hidden = NO;
+            _galleryButton.hidden = NO;
+            _giphySearchTextView.hidden = YES;
+            _giphyImage.hidden = YES;
+            _messageTextView.hidden = NO;
+            _theButton.hidden = NO;
             
             break;
         }
@@ -3356,6 +3405,18 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         _currentMode = MessageModeNone;
         
     }
+    
+    //    if (setResponders) {
+    
+    _gifButton.hidden = NO;
+    _cameraButton.hidden = NO;
+    _galleryButton.hidden = NO;
+    _giphySearchTextView.hidden = YES;
+    _giphyImage.hidden = YES;
+    _messageTextView.hidden = NO;
+    _theButton.hidden = NO;
+    //   }
+    
 }
 
 -(void) hideGalleryFrame: (NSInteger) yDelta {
