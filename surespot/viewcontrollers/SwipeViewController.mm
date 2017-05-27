@@ -715,7 +715,9 @@ shouldChangeTextInRange:(NSRange)range
         
         //update button
         [self updateTabChangeUI];
-        [self updateKeyboardState:YES];
+        [self disableMessageModeShowKeyboard:_messageBarState.keyboardHeight > 0 setResponders:YES];
+      //  [self updateKeyboardState:YES];
+
         
     }
     else {
@@ -1689,25 +1691,60 @@ shouldChangeTextInRange:(NSRange)range
         _gifButton.hidden = YES;
         _cameraButton.hidden = YES;
         _galleryButton.hidden = YES;
+        
+        _giphySearchTextView.hidden = YES;
+        _giphyImage.hidden = YES;
+        _theButton.hidden = NO;
+
     }
     else {
+        _qrButton.hidden = YES;
         _inviteTextView.hidden = YES;
         Friend *afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
         if (afriend.isDeleted) {
             [_theButton setImage:[UIImage imageNamed:@"ic_menu_home"] forState:UIControlStateNormal];
             _messageTextView.hidden = YES;
-            _qrButton.hidden = YES;
             _gifButton.hidden = YES;
             _cameraButton.hidden = YES;
             _galleryButton.hidden = YES;
-            
+            _giphySearchTextView.hidden = YES;
+            _giphyImage.hidden = YES;
+            _theButton.hidden = NO;
         }
         else {
-            _messageTextView.hidden = NO;
-            _qrButton.hidden = YES;
-            _gifButton.hidden = NO;
-            _cameraButton.hidden = NO;
-            _galleryButton.hidden = NO;
+            switch (_currentMode) {
+                case MessageModeKeyboard:
+                case MessageModeNone:
+                    _messageTextView.hidden = NO;
+                    _qrButton.hidden = YES;
+                    _gifButton.hidden = NO;
+                    _cameraButton.hidden = NO;
+                    _galleryButton.hidden = NO;
+                    _giphySearchTextView.hidden = YES;
+                    _giphyImage.hidden = YES;
+                    _theButton.hidden = NO;
+                    break;
+                case MessageModeGIF:
+                    _messageTextView.hidden = YES;
+                    _qrButton.hidden = YES;
+                    _gifButton.hidden = NO;
+                    _cameraButton.hidden = YES;
+                    _galleryButton.hidden = YES;
+                    _giphySearchTextView.hidden = NO;
+                    _giphyImage.hidden = NO;
+                    _theButton.hidden = YES;
+                    break;
+                case MessageModeGallery:
+                    _messageTextView.hidden = NO;
+                    _qrButton.hidden = YES;
+                    _gifButton.hidden = NO;
+                    _cameraButton.hidden = NO;
+                    _galleryButton.hidden = NO;
+                    _giphySearchTextView.hidden = YES;
+                    _giphyImage.hidden = YES;
+                    _theButton.hidden = NO;
+                    break;
+            }
             
             if ([_messageTextView.text length] > 0) {
                 [_theButton setImage:[UIImage imageNamed:@"ic_menu_send"] forState:UIControlStateNormal];
@@ -3240,27 +3277,15 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [view setCallback:^(id result) {
                 [[[ChatManager sharedInstance] getChatController: _username ]  sendGifLinkUrl: result to: [self getCurrentTabName]];
             }];
-            //            if (!keyboardOpen) {
             // open the keyboard, do rest in keyboard open handler
             [_giphySearchTextView becomeFirstResponder];
-            
-            //          }
-            //        else {
             if (keyboardOpen) {
                 DDLogInfo(@"No mode currently set, or keyboard open so setting gif frame 0 height.");
                 [self animateGifWindowOpenSetContent: YES];
-                //      }
             }
             
             [_gifView searchGifs:@"what"];
             
-            _gifButton.hidden = NO;
-            _cameraButton.hidden = YES;
-            _galleryButton.hidden = YES;
-            _giphySearchTextView.hidden = NO;
-            _giphyImage.hidden = NO;
-            _messageTextView.hidden = YES;
-            _theButton.hidden = YES;
             break;
         }
         case MessageModeGallery:
@@ -3330,14 +3355,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [theWindowWeWillUse addSubview: _galleryView];
             [view fetchAssets];
             
-            _gifButton.hidden = NO;
-            _cameraButton.hidden = NO;
-            _galleryButton.hidden = NO;
-            _giphySearchTextView.hidden = YES;
-            _giphyImage.hidden = YES;
-            _messageTextView.hidden = NO;
-            _theButton.hidden = NO;
-            
             break;
         }
         case MessageModeCamera:
@@ -3360,6 +3377,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             break;
         }
     }
+    [self updateTabChangeUI];
 }
 
 -(void) disableMessageModeShowKeyboard:(BOOL) showKeyboard setResponders: (BOOL) setResponders {
@@ -3407,18 +3425,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         _currentMode = MessageModeNone;
         
     }
-    
-    //    if (setResponders) {
-    
-    _gifButton.hidden = NO;
-    _cameraButton.hidden = NO;
-    _galleryButton.hidden = NO;
-    _giphySearchTextView.hidden = YES;
-    _giphyImage.hidden = YES;
-    _messageTextView.hidden = NO;
-    _theButton.hidden = NO;
-    //   }
-    
+    [self updateTabChangeUI];
 }
 
 -(void) hideGalleryFrame: (NSInteger) yDelta {
