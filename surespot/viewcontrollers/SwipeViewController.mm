@@ -2780,6 +2780,7 @@ shouldChangeTextInRange:(NSRange)range
 -(void) resignAllResponders {
     [_messageTextView resignFirstResponder];
     [_inviteTextView resignFirstResponder];
+    [_giphySearchTextView resignFirstResponder];
 }
 
 
@@ -3093,6 +3094,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (_currentMode == MessageModeGIF && deltaHeight != 0) {
             [self animateGifWindowOpenSetContent: NO];
         }
+        [self hideGalleryFrame:271];
     } completion:^(BOOL completion) {
         
     }];
