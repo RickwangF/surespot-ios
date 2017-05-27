@@ -415,8 +415,7 @@ shouldChangeTextInRange:(NSRange)range
     DDLogVerbose(@"pause");
     [[ChatManager sharedInstance] pause: _username];
     
-    //  //reset keyboard measurements
-    //  [self disableMessageModeShowKeyboard:NO setResponders:YES];
+   [self disableMessageModeShowKeyboard:NO setResponders:YES];
 }
 
 
@@ -1409,6 +1408,7 @@ shouldChangeTextInRange:(NSRange)range
                 browser.navigationItem.title = NSLocalizedString(@"pan_and_zoom", nil);
                 [browser setNavBarAppearance:NO tintColor:[UIUtils surespotBlue]];
                 [self.navigationController pushViewController:browser animated:YES];
+                [self disableMessageModeShowKeyboard:NO setResponders:YES];
             }
             else {
                 if ([message.mimeType isEqualToString: MIME_TYPE_M4A]) {
