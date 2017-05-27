@@ -3279,6 +3279,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         {
             [_galleryView removeFromSuperview];
             GalleryView * view = [[[NSBundle mainBundle] loadNibNamed:@"GalleryView" owner:self options:nil] firstObject];
+            [view setBackgroundColor:[UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor]];
             _galleryView = view;
             [view setCallback:^(id result) {
                 [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];

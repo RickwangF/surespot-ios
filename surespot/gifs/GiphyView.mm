@@ -32,7 +32,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) awakeFromNib {
     [super awakeFromNib];
-    // [_giphyPreview content]
     [_giphyPreview setDelegate:self];
     [_giphyPreview setDataSource:self];
     [_giphyPreview registerNib:[UINib nibWithNibName:@"GifSearchView" bundle:nil] forCellWithReuseIdentifier:@"GifCell"];
@@ -61,7 +60,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 0;
+    return 2;
 }
 
 
