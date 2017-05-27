@@ -322,7 +322,8 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (BOOL) growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *) string
 {
-    if ([string isEqualToString:@"\n"]) {
+    DDLogDebug(@"text: %@", string);
+    if ([string containsString:@"\n"]) {
         if (growingTextView != _messageTextView || [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_return_sends_message"]) {
             [self handleTextAction];
             return NO;
