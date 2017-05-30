@@ -235,7 +235,7 @@ const Float32 voiceRecordDelay = 0.3;
     gestureRecognizer.numberOfTapsRequired = 1;
     gestureRecognizer.delegate = self;
     [_messageTextView addGestureRecognizer:gestureRecognizer];
-    
+    _messageBarState.origTextMessageFrame = _messageTextView.frame;
     
     
     _inviteTextView.enablesReturnKeyAutomatically = NO;
@@ -257,6 +257,7 @@ const Float32 voiceRecordDelay = 0.3;
     [self setupSideView];
     [self setThemeStuff];
     [self disableMessageModeShowKeyboard:NO setResponders:NO];
+    
 }
 
 - (void) setupSideView {
@@ -1672,8 +1673,17 @@ shouldChangeTextInRange:(NSRange)range
 }
 
 -(void) updateTabChangeUI {
-    BOOL expand = YES;
-    DDLogVerbose(@"updateTabChangeUI");
+   
+    
+    //calculate if we need to expand so we can show buttons on animation completion
+    BOOL expand = [self shouldExpand];
+    DDLogVerbose(@"updateTabChangeUI, shouldExpand: %d", expand);
+    if (expand && _collapsed) {
+        [self expand];
+        return;
+        
+    }
+    
     if (![self getCurrentTabName]) {
         [_theButton setImage:[UIImage imageNamed:@"ic_menu_invite"] forState:UIControlStateNormal];
         _messageTextView.hidden = YES;
@@ -1718,7 +1728,6 @@ shouldChangeTextInRange:(NSRange)range
                     break;
                 case MessageModeKeyboard:
                     _messageTextView.hidden = NO;
-                    expand = NO;
                     _expandButton.hidden = NO;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = YES;
@@ -3521,22 +3530,26 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                               delay:0.0
                             options: UIViewAnimationCurveEaseIn
                          animations:^{
-//                             CGRect cameraFrame = _cameraButton.frame;
-//                             CGRect messageTextFrame = _messageTextView.frame;
-//                             
-//                             CGFloat originalX = messageTextFrame.origin.x;
-//                             CGFloat deltaX = originalX - messageTextFrame.origin.x;
-//                             
-//                             //move left of text frame to right of camera button
-//                             messageTextFrame.origin.x = cameraFrame.origin.x + cameraFrame.size.width;
-//                             messageTextFrame.size.width -= deltaX;
+                             //                             CGRect cameraFrame = _cameraButton.frame;
+                             //                             CGRect messageTextFrame = _messageTextView.frame;
+                             //
+                             //                             CGFloat originalX = messageTextFrame.origin.x;
+                             //                             CGFloat deltaX = originalX - messageTextFrame.origin.x;
+                             //
+                             //                             //move left of text frame to right of camera button
+                             //                             messageTextFrame.origin.x = cameraFrame.origin.x + cameraFrame.size.width;
+                             //                             messageTextFrame.size.width -= deltaX;
                              _messageTextView.frame = _messageBarState.origTextMessageFrame;
                          } completion:^(BOOL finished) {
-                             
+                             //show buttons afterwards
+                             [self updateTabChangeUI];
                          }];
         
         
     }
+//    else {
+//        [self updateTabChangeUI];
+//    }
 }
 
 -(void) collapse {
@@ -3566,6 +3579,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     }
     
     
+}
+
+-(BOOL) shouldExpand {
+    
+    return [self getCurrentTabName] && (_currentMode != MessageModeKeyboard);
 }
 
 
