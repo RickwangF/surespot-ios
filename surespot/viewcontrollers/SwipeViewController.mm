@@ -3521,16 +3521,16 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                               delay:0.0
                             options: UIViewAnimationCurveEaseIn
                          animations:^{
-                             CGRect cameraFrame = _cameraButton.frame;
-                             CGRect messageTextFrame = _messageTextView.frame;
-                             
-                             CGFloat originalX = messageTextFrame.origin.x;
-                             CGFloat deltaX = originalX - messageTextFrame.origin.x;
-                             
-                             //move left of text frame to right of camera button
-                             messageTextFrame.origin.x = cameraFrame.origin.x + cameraFrame.size.width;
-                             messageTextFrame.size.width -= deltaX;
-                             _messageTextView.frame = messageTextFrame;
+//                             CGRect cameraFrame = _cameraButton.frame;
+//                             CGRect messageTextFrame = _messageTextView.frame;
+//                             
+//                             CGFloat originalX = messageTextFrame.origin.x;
+//                             CGFloat deltaX = originalX - messageTextFrame.origin.x;
+//                             
+//                             //move left of text frame to right of camera button
+//                             messageTextFrame.origin.x = cameraFrame.origin.x + cameraFrame.size.width;
+//                             messageTextFrame.size.width -= deltaX;
+                             _messageTextView.frame = _messageBarState.origTextMessageFrame;
                          } completion:^(BOOL finished) {
                              
                          }];
@@ -3549,6 +3549,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          animations:^{
                              CGRect expandFrame = _expandButton.frame;
                              CGRect messageTextFrame = _messageTextView.frame;
+                             
+                             _messageBarState.origTextMessageFrame = messageTextFrame;
                              
                              CGFloat originalX = messageTextFrame.origin.x;
                              

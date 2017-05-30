@@ -11,4 +11,5 @@
 @interface MessageBarState : NSObject
 @property (nonatomic) CGFloat keyboardHeight;
 @property (nonatomic) CGFloat galleryViewHeight;
+@property (nonatomic) CGRect origTextMessageFrame;
 @end
