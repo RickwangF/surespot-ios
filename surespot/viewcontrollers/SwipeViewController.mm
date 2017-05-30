@@ -112,7 +112,9 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, strong) GalleryView * galleryView;
 @property (strong, nonatomic) IBOutlet UITextView *giphySearchTextView;
 @property (strong, nonatomic) IBOutlet UIImageView *giphyImage;
-@property (atomic, assign) NSInteger gifOffsets;
+@property (strong, nonatomic) IBOutlet UIButton *expandButton;
+@property (nonatomic, assign) NSInteger gifOffsets;
+@property (nonatomic, assign) BOOL collapsed;
 @end
 @implementation SwipeViewController
 
@@ -1670,6 +1672,7 @@ shouldChangeTextInRange:(NSRange)range
 }
 
 -(void) updateTabChangeUI {
+    BOOL expand = YES;
     DDLogVerbose(@"updateTabChangeUI");
     if (![self getCurrentTabName]) {
         [_theButton setImage:[UIImage imageNamed:@"ic_menu_invite"] forState:UIControlStateNormal];
@@ -1702,9 +1705,9 @@ shouldChangeTextInRange:(NSRange)range
         }
         else {
             switch (_currentMode) {
-                case MessageModeKeyboard:
                 case MessageModeNone:
                     _messageTextView.hidden = NO;
+                    _expandButton.hidden = YES;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _cameraButton.hidden = NO;
@@ -1713,8 +1716,22 @@ shouldChangeTextInRange:(NSRange)range
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
                     break;
+                case MessageModeKeyboard:
+                    _messageTextView.hidden = NO;
+                    expand = NO;
+                    _expandButton.hidden = NO;
+                    _qrButton.hidden = YES;
+                    _gifButton.hidden = YES;
+                    _cameraButton.hidden = YES;
+                    _galleryButton.hidden = YES;
+                    _giphySearchTextView.hidden = YES;
+                    _giphyImage.hidden = YES;
+                    _theButton.hidden = NO;
+                    break;
+                    
                 case MessageModeGIF:
                     _messageTextView.hidden = YES;
+                    _expandButton.hidden = YES;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _cameraButton.hidden = YES;
@@ -1725,6 +1742,7 @@ shouldChangeTextInRange:(NSRange)range
                     break;
                 case MessageModeGallery:
                     _messageTextView.hidden = NO;
+                    _expandButton.hidden = YES;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _cameraButton.hidden = NO;
@@ -1750,6 +1768,13 @@ shouldChangeTextInRange:(NSRange)range
                 
             }
         }
+    }
+    
+    if (expand) {
+        [self expand];
+    }
+    else {
+        [self collapse];
     }
 }
 
@@ -3041,6 +3066,13 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         [_theButton setBackgroundColor:[UIColor blackColor]];
     }
 }
+
+- (IBAction)expandTouchUpInside:(id)sender {
+    _currentMode = MessageModeNone;
+    [self updateTabChangeUI];
+}
+
+
 - (IBAction)gifTouchUpInside:(id)sender {
     [self setMessageMode:MessageModeGIF];
 }
@@ -3068,6 +3100,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         [self.navigationController pushViewController:controller animated:YES];
     }
 }
+
 
 
 // Called when the UIKeyboardDidShowNotification is sent.
@@ -3162,6 +3195,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 -(void) messageTextViewTapped: (UITapGestureRecognizer*) recognizer {
     DDLogInfo(@"messageTextViewTapped");
+    _currentMode = MessageModeKeyboard;
+    
     //if the gallery view and keyboard are open, hide the gallery view
     //if the keyboard's not open it'll hide the gallery view when it's shown
     if (_messageBarState.galleryViewHeight > 0 && _messageBarState.keyboardHeight > 0) {
@@ -3178,8 +3213,10 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              [_galleryView removeFromSuperview];
                              _galleryView = nil;
                              [self updateTabChangeUI];
-                             _currentMode = MessageModeKeyboard;
                          }];
+    }
+    else {
+        [self updateTabChangeUI];
     }
 }
 
@@ -3418,15 +3455,16 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (setResponders) {
             [_messageTextView becomeFirstResponder];
         }
-        _currentMode = MessageModeKeyboard;
+        //        _currentMode = MessageModeKeyboard;
     }
     else {
         if (setResponders) {
             [self resignAllResponders];
         }
-        _currentMode = MessageModeNone;
+        
         
     }
+    _currentMode = MessageModeNone;
     [self updateTabChangeUI];
 }
 
@@ -3472,6 +3510,60 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         _gifOffsets = 0;
         [self setContentOffsets:offsets];
     }
+}
+
+-(void) expand {
+    if (self.collapsed) {
+        self.collapsed = NO;
+        
+        DDLogDebug(@"expand");
+        [UIView animateWithDuration:0.2
+                              delay:0.0
+                            options: UIViewAnimationCurveEaseIn
+                         animations:^{
+                             CGRect cameraFrame = _cameraButton.frame;
+                             CGRect messageTextFrame = _messageTextView.frame;
+                             
+                             CGFloat originalX = messageTextFrame.origin.x;
+                             CGFloat deltaX = originalX - messageTextFrame.origin.x;
+                             
+                             //move left of text frame to right of camera button
+                             messageTextFrame.origin.x = cameraFrame.origin.x + cameraFrame.size.width;
+                             messageTextFrame.size.width -= deltaX;
+                             _messageTextView.frame = messageTextFrame;
+                         } completion:^(BOOL finished) {
+                             
+                         }];
+        
+        
+    }
+}
+
+-(void) collapse {
+    if (!self.collapsed) {
+        self.collapsed = YES;
+        DDLogDebug(@"collapse");
+        [UIView animateWithDuration:0.2
+                              delay:0.0
+                            options: UIViewAnimationCurveEaseOut
+                         animations:^{
+                             CGRect expandFrame = _expandButton.frame;
+                             CGRect messageTextFrame = _messageTextView.frame;
+                             
+                             CGFloat originalX = messageTextFrame.origin.x;
+                             
+                             //move left of text frame to right of expand button
+                             messageTextFrame.origin.x = expandFrame.origin.x + expandFrame.size.width;
+                             CGFloat deltaX = originalX - messageTextFrame.origin.x;
+                             messageTextFrame.size.width += deltaX;
+                             _messageTextView.frame = messageTextFrame;
+                         } completion:^(BOOL finished) {
+                             
+                         }];
+        
+    }
+    
+    
 }
 
 

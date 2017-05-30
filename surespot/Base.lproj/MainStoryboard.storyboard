@@ -236,6 +236,19 @@
                                                     <action selector="qrTouch:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="2vL-CH-xTj"/>
                                                 </connections>
                                             </button>
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="nA2-I3-xb0" userLabel="Expand Button">
+                                                <rect key="frame" x="8" y="8" width="28" height="28"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" image="YES"/>
+                                                </accessibility>
+                                                <state key="normal" image="arrow">
+                                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="expandTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="3cW-lI-bsG"/>
+                                                </connections>
+                                            </button>
                                             <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mjH-sq-mNH">
                                                 <rect key="frame" x="8" y="9" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
@@ -309,6 +322,7 @@
                     <connections>
                         <outlet property="bgImageView" destination="58e-YQ-Uld" id="hSx-hb-MMz"/>
                         <outlet property="cameraButton" destination="JjR-Xr-7Di" id="KbD-qt-geo"/>
+                        <outlet property="expandButton" destination="nA2-I3-xb0" id="HTt-56-s1T"/>
                         <outlet property="galleryButton" destination="AGW-7o-azW" id="Hyw-Wg-AJ1"/>
                         <outlet property="gifButton" destination="mjH-sq-mNH" id="tMI-Br-EEu"/>
                         <outlet property="giphyImage" destination="8RG-1m-H5f" id="UvM-ZZ-HHB"/>
@@ -327,6 +341,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="arrow" width="96" height="96"/>
         <image name="camera" width="96" height="96"/>
         <image name="gif" width="96" height="96"/>
         <image name="photo" width="96" height="96"/>
