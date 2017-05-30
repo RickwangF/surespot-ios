@@ -3216,12 +3216,13 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          animations:^{
                              NSInteger yDelta = 271;
                              [self hideGalleryFrame: yDelta];
+                                [self updateTabChangeUI];
                          }
                          completion:^(BOOL finished){
                              DDLogDebug(@"disable mode animation finished");
                              [_galleryView removeFromSuperview];
                              _galleryView = nil;
-                             [self updateTabChangeUI];
+                          
                          }];
     }
     else {
