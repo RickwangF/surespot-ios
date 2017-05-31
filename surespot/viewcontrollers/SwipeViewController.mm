@@ -237,6 +237,11 @@ const Float32 voiceRecordDelay = 0.3;
     [_messageTextView addGestureRecognizer:gestureRecognizer];
     _messageBarState.origTextMessageFrame = _messageTextView.frame;
     
+    gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(giphyImageViewTapped:)];
+    gestureRecognizer.numberOfTapsRequired = 1;
+    gestureRecognizer.delegate = self;
+    [_giphyImage addGestureRecognizer:gestureRecognizer];
+    
     
     _inviteTextView.enablesReturnKeyAutomatically = NO;
     [_inviteTextView setFont:[UIFont systemFontOfSize:14]];
@@ -365,12 +370,19 @@ shouldChangeTextInRange:(NSRange)range
     }
     
     if ([text containsString:@"\n"]) {
-        [self.gifView searchGifs:textView.text];
-        [textView setText:@""];
+        [self searchGifs];
         return NO;
     }
     
     return YES;
+}
+
+-(void) searchGifs {
+    if ([_giphySearchTextView.text length] > 0) {
+        [self.gifView searchGifs:_giphySearchTextView.text];
+        [_giphySearchTextView setText:@""];
+    }
+    
 }
 
 -(void) viewDidAppear:(BOOL)animated {
@@ -1673,7 +1685,7 @@ shouldChangeTextInRange:(NSRange)range
 }
 
 -(void) updateTabChangeUI {
-   
+    
     
     //calculate if we need to expand so we can show buttons on animation completion
     BOOL expand = [self shouldExpand];
@@ -1905,46 +1917,46 @@ shouldChangeTextInRange:(NSRange)range
     NSMutableArray * menuItems = [NSMutableArray new];
     
     if ([self getCurrentTabName]) {
-        Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
-        if ([theFriend isFriend] && ![theFriend isDeleted]) {
-            NSString * theirUsername = [self getCurrentTabName];
-            
-            REMenuItem * selectImageItem = [[REMenuItem alloc]
-                                            initWithTitle:NSLocalizedString(@"select_image", nil)
-                                            image:[UIImage imageNamed:@"ic_menu_gallery"]
-                                            highlightedImage:nil
-                                            action:^(REMenuItem * item){
-                                                
-                                                _imageDelegate = [[ImageDelegate alloc]
-                                                                  initWithUsername:_username
-                                                                  ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-                                                                  theirUsername:theirUsername
-                                                                  assetLibrary:_assetLibrary];
-                                                
-                                                [ImageDelegate startImageSelectControllerFromViewController:self usingDelegate:_imageDelegate];
-                                                
-                                                
-                                            }];
-            [menuItems addObject:selectImageItem];
-            
-            
-            REMenuItem * captureImageItem = [[REMenuItem alloc]
-                                             initWithTitle:NSLocalizedString(@"capture_image", nil)
-                                             image:[UIImage imageNamed:@"ic_menu_camera"]
-                                             highlightedImage:nil
-                                             action:^(REMenuItem * item){
-                                                 
-                                                 _imageDelegate = [[ImageDelegate alloc]
-                                                                   initWithUsername:_username
-                                                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-                                                                   theirUsername:theirUsername
-                                                                   assetLibrary:_assetLibrary];
-                                                 [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
-                                                 
-                                                 
-                                             }];
-            [menuItems addObject:captureImageItem];
-        }
+        //       Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
+        //        if ([theFriend isFriend] && ![theFriend isDeleted]) {
+        //            NSString * theirUsername = [self getCurrentTabName];
+        //
+        //            REMenuItem * selectImageItem = [[REMenuItem alloc]
+        //                                            initWithTitle:NSLocalizedString(@"select_image", nil)
+        //                                            image:[UIImage imageNamed:@"ic_menu_gallery"]
+        //                                            highlightedImage:nil
+        //                                            action:^(REMenuItem * item){
+        //
+        //                                                _imageDelegate = [[ImageDelegate alloc]
+        //                                                                  initWithUsername:_username
+        //                                                                  ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
+        //                                                                  theirUsername:theirUsername
+        //                                                                  assetLibrary:_assetLibrary];
+        //
+        //                                                [ImageDelegate startImageSelectControllerFromViewController:self usingDelegate:_imageDelegate];
+        //
+        //
+        //                                            }];
+        //            [menuItems addObject:selectImageItem];
+        //
+        //
+        //            REMenuItem * captureImageItem = [[REMenuItem alloc]
+        //                                             initWithTitle:NSLocalizedString(@"capture_image", nil)
+        //                                             image:[UIImage imageNamed:@"ic_menu_camera"]
+        //                                             highlightedImage:nil
+        //                                             action:^(REMenuItem * item){
+        //
+        //                                                 _imageDelegate = [[ImageDelegate alloc]
+        //                                                                   initWithUsername:_username
+        //                                                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
+        //                                                                   theirUsername:theirUsername
+        //                                                                   assetLibrary:_assetLibrary];
+        //                                                 [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
+        //
+        //
+        //                                             }];
+        //            [menuItems addObject:captureImageItem];
+        //        }
         
         REMenuItem * closeTabItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_close_tab", nil) image:[UIImage imageNamed:@"ic_menu_end_conversation"] highlightedImage:nil action:^(REMenuItem * item){
             [self closeTab];
@@ -3085,6 +3097,12 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 - (IBAction)gifTouchUpInside:(id)sender {
     [self setMessageMode:MessageModeGIF];
 }
+
+-(void) giphyImageViewTapped: (UITapGestureRecognizer*) recognizer {
+    [self searchGifs];
+}
+
+
 - (IBAction)galleryTouchUpInside:(id)sender {
     [self setMessageMode:MessageModeGallery];
     
@@ -3216,13 +3234,13 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          animations:^{
                              NSInteger yDelta = 271;
                              [self hideGalleryFrame: yDelta];
-                                [self updateTabChangeUI];
+                             [self updateTabChangeUI];
                          }
                          completion:^(BOOL finished){
                              DDLogDebug(@"disable mode animation finished");
                              [_galleryView removeFromSuperview];
                              _galleryView = nil;
-                          
+                             
                          }];
     }
     else {
@@ -3548,9 +3566,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         
         
     }
-//    else {
-//        [self updateTabChangeUI];
-//    }
+    //    else {
+    //        [self updateTabChangeUI];
+    //    }
 }
 
 -(void) collapse {
