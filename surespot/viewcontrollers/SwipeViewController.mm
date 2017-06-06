@@ -3326,6 +3326,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         {
             [_gifView removeFromSuperview];
             GiphyView * view = [[[NSBundle mainBundle] loadNibNamed:@"GiphyView" owner:self options:nil] firstObject];
+            
             _gifView = view;
             if ([UIUtils isBlackTheme]) {
                 [_gifView setBackgroundColor:[UIColor blackColor]];
@@ -3350,8 +3351,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 [self animateGifWindowOpenSetContent: YES];
             }
             
-            [_gifView searchGifs:@"what"];
-            
+            [view loadRecentGifs: _username];
             break;
         }
         case MessageModeGallery:

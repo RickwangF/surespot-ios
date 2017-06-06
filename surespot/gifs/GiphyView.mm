@@ -26,6 +26,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @property (strong, nonatomic) CallbackBlock callback;
 @property (strong, nonatomic) NSMutableArray * gifs;
+@property (strong, nonatomic) NSString * username;
 @end
 
 @implementation GiphyView
@@ -45,7 +46,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) searchGifs: (NSString *) query {
     [[[NetworkManager sharedInstance] getNetworkController:nil] searchGiphy:query callback:^(id result) {
-        _gifs = [result objectForKey:@"data"];
+        _gifs = [[NSMutableArray alloc] init];
+        
+        for (NSDictionary * o : [result objectForKey:@"data"]) {
+            [_gifs addObject:[[o objectForKey: @"images"] objectForKey: @"fixed_height"]];
+        }
+        
         [_giphyPreview reloadData];
     }];
 }
@@ -66,8 +72,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary * data = [_gifs objectAtIndex:[indexPath row]];
-    NSDictionary * gifData = [[data objectForKey:@"images"] objectForKey:@"fixed_height"];
+    NSDictionary * gifData = [_gifs objectAtIndex:[indexPath row]];
     CGFloat width = [[gifData objectForKey:@"width"] intValue] / [[UIScreen mainScreen] scale];
     CGFloat height = [[gifData objectForKey:@"height"] intValue] / [[UIScreen mainScreen] scale];
     
@@ -82,8 +87,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     [[newCell gifView] setAnimatedImage:nil];
     
-    NSDictionary * data = [_gifs objectAtIndex:[indexPath row]];
-    NSDictionary * gifData = [[data objectForKey:@"images"] objectForKey:@"fixed_height"];
+    NSDictionary * gifData = [_gifs objectAtIndex:[indexPath row]];
     NSString * url =[gifData objectForKey:@"url"];
     newCell.url = url;
     [newCell setUrl:url retryAttempt:0];
@@ -92,10 +96,29 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSDictionary * gifData = [_gifs objectAtIndex:[indexPath row]];
+    //save recently used info
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    NSString * key = [NSString stringWithFormat:@"%@%@", _username, @"_recently_used_gifs"];
+    NSMutableArray * recentlyUsedGifs = [NSMutableArray arrayWithArray: [defaults objectForKey:key]];
+    if (!recentlyUsedGifs) {
+        recentlyUsedGifs = [[NSMutableArray alloc] init];
+    }
+    [recentlyUsedGifs removeObject:gifData];
+    [recentlyUsedGifs insertObject:gifData atIndex:0];
+    [defaults setObject:recentlyUsedGifs forKey:key];
+
     // If you need to use the touched cell, you can retrieve it like so
     GifSearchView *cell = (GifSearchView *)[collectionView cellForItemAtIndexPath:indexPath];
     _callback([cell url]);
   
 }
 
+-(void) loadRecentGifs:(NSString *)username {
+    _username = username;
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    NSString * key = [NSString stringWithFormat:@"%@%@", username, @"_recently_used_gifs"];
+    _gifs = [defaults objectForKey:key];
+    [_giphyPreview reloadData];
+}
 @end

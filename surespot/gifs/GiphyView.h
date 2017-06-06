@@ -13,4 +13,5 @@
 @interface GiphyView : UIView <UICollectionViewDelegate, UICollectionViewDataSource>
 -(void) setCallback: (CallbackBlock) callback;
 -(void) searchGifs: (NSString *) query;
+-(void) loadRecentGifs: (NSString *) username;
 @end
