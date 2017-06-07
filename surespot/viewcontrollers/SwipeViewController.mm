@@ -1216,7 +1216,7 @@ shouldChangeTextInRange:(NSRange)range
                     cell.gifView.hidden = YES;
                     cell.uiImageView.image = nil;
                     cell.uiImageView.hidden = NO;
-                  //  cell.uiImageView.alignTop = YES;
+                    //  cell.uiImageView.alignTop = YES;
                     cell.uiImageView.alignLeft = YES;
                     cell.audioIcon.hidden = YES;
                     cell.audioSlider.hidden = YES;
@@ -1268,7 +1268,7 @@ shouldChangeTextInRange:(NSRange)range
                         cell.messageLabel.hidden = YES;
                         cell.uiImageView.hidden = YES;
                         cell.gifView.realImageView.animatedImage = nil;
-                    //    cell.gifView.alignTop = YES;
+                        //    cell.gifView.alignTop = YES;
                         cell.gifView.alignLeft = YES;
                         cell.gifView.hidden = NO;
                         cell.audioIcon.hidden = YES;
@@ -1734,8 +1734,16 @@ shouldChangeTextInRange:(NSRange)range
                     _expandButton.hidden = YES;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
+            
+          //          [self setButtonTintColor:_expandButton selected:NO];
+                //    [self setButtonTintColor:_gifButton selected:NO];
+              //      [self setButtonTintColor:_galleryButton selected:NO];
+                    
+                    _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
                     _galleryButton.hidden = NO;
+                    _galleryButton.selected = NO;
+
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
@@ -1743,10 +1751,17 @@ shouldChangeTextInRange:(NSRange)range
                 case MessageModeKeyboard:
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = NO;
+                    _expandButton.selected = YES;
+               //    [self setButtonTintColor:_expandButton selected:YES];
+                //    [self setButtonTintColor:_gifButton selected:NO];
+                //    [self setButtonTintColor:_galleryButton selected:NO];
+                    _gifButton.selected = NO;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = YES;
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
+                    _galleryButton.selected = NO;
+
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
@@ -1757,19 +1772,31 @@ shouldChangeTextInRange:(NSRange)range
                     _expandButton.hidden = YES;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
+                    _gifButton.selected = YES;
+             //       [self setButtonTintColor:_expandButton selected:NO];
+                  //  [self setButtonTintColor:_gifButton selected:YES];
+             //       [self setButtonTintColor:_galleryButton selected:NO];
+                    
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
+                    _galleryButton.selected = NO;
                     _giphySearchTextView.hidden = NO;
                     _giphyImage.hidden = NO;
                     _theButton.hidden = YES;
                     break;
                 case MessageModeGallery:
+            //        [self setButtonTintColor:_expandButton selected:NO];
+                 //   [self setButtonTintColor:_gifButton selected:NO];
+                //    [self setButtonTintColor:_galleryButton selected:YES];
+                    
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
+                    _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
                     _galleryButton.hidden = NO;
+                    _galleryButton.selected = YES;
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
@@ -1786,7 +1813,7 @@ shouldChangeTextInRange:(NSRange)range
                     [_theButton setImage:[UIImage imageNamed:@"ic_menu_home"] forState:UIControlStateNormal];
                 }
                 else {
-                    [_theButton setImage:[UIImage imageNamed:@"ic_btn_speak_now"] forState:UIControlStateNormal];
+                    [_theButton setImage:[UIImage imageNamed:@"mic"] forState:UIControlStateNormal];
                 }
                 
             }
@@ -3087,6 +3114,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     if ([UIUtils isBlackTheme]) {
         [_textFieldContainer setBackgroundColor:[UIColor blackColor]];
         [_theButton setBackgroundColor:[UIColor blackColor]];
+        [_theButton setTintColor:[UIUtils surespotForegroundGrey]];
+        
+    }
+    else {
+        [_theButton setTintColor:[UIUtils surespotGrey]];
     }
 }
 
@@ -3603,9 +3635,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 }
 
 -(BOOL) shouldExpand {
-    
     return [self getCurrentTabName] && (_currentMode != MessageModeKeyboard);
 }
-
 
 @end

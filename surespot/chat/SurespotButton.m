@@ -9,17 +9,31 @@
 #import "SurespotButton.h"
 #import "UIUtils.h"
 
-@implementation SurespotButton 
+@implementation SurespotButton
 
 
 -(void) setHighlighted:(BOOL)highlighted {
     
-    if(highlighted) {
-        self.backgroundColor = [UIUtils surespotBlue];
+  
+    if(highlighted || [self isSelected]) {
+        self.tintColor = [UIUtils surespotBlue];
     } else {
-        self.backgroundColor = [UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor];
+    
+        self.tintColor = [UIUtils isBlackTheme] ? [UIUtils surespotForegroundGrey] : [UIUtils surespotGrey];
     }
     [super setHighlighted:highlighted];
+
+ }
+
+-(void) setSelected:(BOOL)selected {
+
+    if(selected || [self isHighlighted]) {
+        self.tintColor = [UIUtils surespotBlue];
+    } else {
+        self.tintColor = [UIUtils isBlackTheme] ? [UIUtils surespotForegroundGrey] : [UIUtils surespotGrey];
+    }
+    
+        [super setSelected:selected];
 }
 
 

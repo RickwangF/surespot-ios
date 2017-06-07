@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" colorMatched="YES" initialViewController="mXI-aR-0Jk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" colorMatched="YES" initialViewController="mXI-aR-0Jk">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -236,8 +236,8 @@
                                                     <action selector="qrTouch:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="2vL-CH-xTj"/>
                                                 </connections>
                                             </button>
-                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="nA2-I3-xb0" userLabel="Expand Button">
-                                                <rect key="frame" x="8" y="8" width="28" height="28"/>
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="nA2-I3-xb0" userLabel="Expand Button" customClass="SurespotButton">
+                                                <rect key="frame" x="6" y="9" width="28" height="26"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
                                                 <accessibility key="accessibilityConfiguration">
                                                     <accessibilityTraits key="traits" image="YES"/>
@@ -249,15 +249,15 @@
                                                     <action selector="expandTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="3cW-lI-bsG"/>
                                                 </connections>
                                             </button>
-                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mjH-sq-mNH">
-                                                <rect key="frame" x="8" y="9" width="28" height="28"/>
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" id="mjH-sq-mNH" customClass="SurespotButton">
+                                                <rect key="frame" x="8" y="10" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
                                                 <state key="normal" image="gif"/>
                                                 <connections>
                                                     <action selector="gifTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="vEP-6R-FE2"/>
                                                 </connections>
                                             </button>
-                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="AGW-7o-azW">
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" id="AGW-7o-azW" customClass="SurespotButton">
                                                 <rect key="frame" x="42" y="9" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
                                                 <state key="normal" image="photo"/>
@@ -265,7 +265,7 @@
                                                     <action selector="galleryTouchUpInside:" destination="tcp-OJ-fTS" eventType="touchUpInside" id="daF-g8-Egu"/>
                                                 </connections>
                                             </button>
-                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="JjR-Xr-7Di">
+                                            <button contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="JjR-Xr-7Di" customClass="SurespotButton">
                                                 <rect key="frame" x="76" y="10" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
                                                 <state key="normal" image="camera"/>
@@ -278,22 +278,22 @@
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </view>
                                     <view contentMode="scaleToFill" misplaced="YES" id="ria-nr-JTt" customClass="HPGrowingTextView">
-                                        <rect key="frame" x="42" y="6" width="290" height="33"/>
+                                        <rect key="frame" x="42" y="6" width="296" height="33"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                     <view contentMode="scaleToFill" misplaced="YES" id="Mis-7v-AKC" customClass="HPGrowingTextView">
-                                        <rect key="frame" x="112" y="6" width="220" height="33"/>
+                                        <rect key="frame" x="112" y="6" width="226" height="33"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                     <view hidden="YES" contentMode="scaleToFill" misplaced="YES" id="yXa-2o-hyB" userLabel="Giphy Search Text View" customClass="UITextView">
-                                        <rect key="frame" x="43" y="6" width="238" height="33"/>
+                                        <rect key="frame" x="43" y="6" width="244" height="33"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </view>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="byV-5h-Uzr" customClass="SurespotButton">
-                                        <rect key="frame" x="335" y="4" width="40" height="35"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" id="byV-5h-Uzr" customClass="SurespotButton">
+                                        <rect key="frame" x="342" y="8" width="28" height="28"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <accessibility key="accessibilityConfiguration">
