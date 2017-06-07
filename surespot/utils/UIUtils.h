@@ -56,6 +56,7 @@
                        message: (NSString *) message
                     controller: (UIViewController *) controller
                       callback: (CallbackBlock) callback;
++(UIColor*) getTextColor;
 @end
 
 

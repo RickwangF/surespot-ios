@@ -559,4 +559,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [controller presentViewController:alert animated:YES completion:nil];
 }
 
++(UIColor*) getTextColor {
+    return ([UIUtils isBlackTheme] ? [UIUtils surespotForegroundGrey] : [UIColor blackColor]);
+}
+
 @end

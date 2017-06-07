@@ -371,4 +371,7 @@ If you elect to backup your identity on Google Drive you will be storing a copy 
 "confirm_logout_message"="Logging out will also clear the password if it is stored. Are you sure?";
 "confirm_logout_title"="Logout?";
 "export_identity"="backup identity...";
+"no_gifs_found"="No GIFs found.";
+"no_recently_used_gifs"="No recently used GIFs.";
+
 

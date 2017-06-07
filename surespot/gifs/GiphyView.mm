@@ -26,6 +26,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @property (strong, nonatomic) CallbackBlock callback;
 @property (strong, nonatomic) NSMutableArray * gifs;
+@property (strong, nonatomic) IBOutlet UILabel *backgroundView;
 @property (strong, nonatomic) NSString * username;
 @end
 
@@ -45,6 +46,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) searchGifs: (NSString *) query {
+    [self setPreSearchBackground];
     [[[NetworkManager sharedInstance] getNetworkController:nil] searchGiphy:query callback:^(id result) {
         _gifs = [[NSMutableArray alloc] init];
         
@@ -52,6 +54,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             [_gifs addObject:[[o objectForKey: @"images"] objectForKey: @"fixed_height"]];
         }
         
+        [self setPostSearchBackground:NO];
         [_giphyPreview reloadData];
     }];
 }
@@ -107,18 +110,40 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [recentlyUsedGifs removeObject:gifData];
     [recentlyUsedGifs insertObject:gifData atIndex:0];
     [defaults setObject:recentlyUsedGifs forKey:key];
-
+    
     // If you need to use the touched cell, you can retrieve it like so
     GifSearchView *cell = (GifSearchView *)[collectionView cellForItemAtIndexPath:indexPath];
     _callback([cell url]);
-  
+    
 }
 
 -(void) loadRecentGifs:(NSString *)username {
+    [self setPreSearchBackground];
     _username = username;
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     NSString * key = [NSString stringWithFormat:@"%@%@", username, @"_recently_used_gifs"];
     _gifs = [defaults objectForKey:key];
-    [_giphyPreview reloadData];
+    [self setPostSearchBackground:YES];
+       [_giphyPreview reloadData];
+    
+}
+
+-(void) setPreSearchBackground {
+    UIActivityIndicatorView * activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:([UIUtils isBlackTheme] ?  UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray)];
+    activityIndicator.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
+    [activityIndicator startAnimating];
+    _giphyPreview.backgroundView = activityIndicator;
+}
+
+-(void) setPostSearchBackground: (BOOL) recentlyUsed {
+    if (_gifs.count == 0) {
+        _backgroundView.text = NSLocalizedString(recentlyUsed ? @"no_recently_used_gifs" : @"no_gifs_found", nil);
+        _backgroundView.textColor = [UIUtils getTextColor];
+        _giphyPreview.backgroundView = _backgroundView;
+    }
+    else {
+        _giphyPreview.backgroundView = nil;
+    }
+
 }
 @end
