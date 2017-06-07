@@ -119,7 +119,7 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @implementation SwipeViewController
 
 
-
+const NSInteger GALLERY_VIEW_OFFSET = 253;
 const Float32 voiceRecordDelay = 0.3;
 
 - (void)viewDidLoad
@@ -3182,7 +3182,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (_currentMode == MessageModeGIF && deltaHeight != 0) {
             [self animateGifWindowOpenSetContent: NO];
         }
-        [self hideGalleryFrame:271];
+        [self hideGalleryFrame:GALLERY_VIEW_OFFSET];
     } completion:^(BOOL completion) {
         
     }];
@@ -3234,7 +3234,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                               delay:0.0
                             options: UIViewAnimationCurveEaseOut
                          animations:^{
-                             NSInteger yDelta = 271;
+                             NSInteger yDelta = GALLERY_VIEW_OFFSET;
                              [self hideGalleryFrame: yDelta];
                              [self updateTabChangeUI];
                          }
@@ -3390,7 +3390,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 }
             }
             
-            __block NSInteger yDelta = 271;
+            __block NSInteger yDelta = GALLERY_VIEW_OFFSET;
             [UIView animateWithDuration:0.5
                                   delay:0.0
                                 options: UIViewAnimationCurveEaseIn
@@ -3412,7 +3412,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                  DDLogDebug(@"setting frame to y: %f, height: %f", frame.origin.y, frame.size.height);
                                  
                                  _galleryView.frame = frame;
-                                 _messageBarState.galleryViewHeight = 271;
+                                 _messageBarState.galleryViewHeight = GALLERY_VIEW_OFFSET;
                              }
                              completion:^(BOOL finished){
                                  [_gifView removeFromSuperview];
@@ -3458,7 +3458,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                         options: UIViewAnimationCurveEaseOut
                      animations:^{
                          if (setResponders) {
-                             NSInteger yDelta = 271;
+                             NSInteger yDelta = GALLERY_VIEW_OFFSET;
                              
                              [self hideGifView];
                              
@@ -3520,7 +3520,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          if (setContent) {
                              [self setContentOffsets:-_gifOffsets];
                          }
-                         [self hideGalleryFrame:271];
+                         [self hideGalleryFrame:GALLERY_VIEW_OFFSET];
                          _messageBarState.galleryViewHeight = 0;
                      } completion:^(BOOL finished) {
                          DDLogDebug(@"animateGifWindow open removing gallery view from superview");
