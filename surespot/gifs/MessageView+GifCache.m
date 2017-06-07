@@ -62,7 +62,7 @@ static char operationKey;
 //                              duration:1.0f
 //                               options:UIViewAnimationOptionTransitionCrossDissolve
 //                            animations:^{
-                                wself.gifView.animatedImage = image;
+                                wself.gifView.realImageView.animatedImage = image;
                            // } completion:nil];
             
             
@@ -85,7 +85,7 @@ static char operationKey;
                     //                                      duration:1.0f
                     //                                       options:UIViewAnimationOptionTransitionCrossDissolve
                     //                                    animations:^{
-                    wself.gifView.animatedImage = image;
+                    wself.gifView.realImageView.animatedImage = image;
                     //                                    } completion:nil];
                     [self setContentModeImage:image imageView:wself.gifView];
                     [[[SharedCacheAndQueueManager sharedInstance] gifCache] setObject:image forKey:message.iv];
@@ -111,16 +111,16 @@ static char operationKey;
     }
 }
 
--(void) setContentModeImage: (FLAnimatedImage *) image imageView: (FLAnimatedImageView *) imageView {
-    double imageViewRatio = imageView.bounds.size.height / imageView.bounds.size.width;
-    double imageRatio = image.size.height/image.size.width;
-    DDLogDebug(@"imageViewRatio %f, imageRatio: %f", imageViewRatio, imageRatio);
-    if (imageViewRatio < imageRatio) {
+-(void) setContentModeImage: (FLAnimatedImage *) image imageView: (GifImageViewAligned *) imageView {
+//    double imageViewRatio = imageView.bounds.size.height / imageView.bounds.size.width;
+//    double imageRatio = image.size.height/image.size.width;
+//    DDLogDebug(@"imageViewRatio %f, imageRatio: %f", imageViewRatio, imageRatio);
+//    if (imageViewRatio > imageRatio) {
         [imageView setContentMode:UIViewContentModeScaleAspectFit];
-    }
-    else {
-        [imageView setContentMode:UIViewContentModeScaleAspectFill];
-    }
+//    }
+//    else {
+//        [imageView setContentMode:UIViewContentModeScaleAspectFill];
+//    }
 
 }
 

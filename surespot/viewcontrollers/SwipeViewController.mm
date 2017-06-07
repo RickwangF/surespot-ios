@@ -1216,7 +1216,7 @@ shouldChangeTextInRange:(NSRange)range
                     cell.gifView.hidden = YES;
                     cell.uiImageView.image = nil;
                     cell.uiImageView.hidden = NO;
-                    cell.uiImageView.alignTop = YES;
+                  //  cell.uiImageView.alignTop = YES;
                     cell.uiImageView.alignLeft = YES;
                     cell.audioIcon.hidden = YES;
                     cell.audioSlider.hidden = YES;
@@ -1267,7 +1267,9 @@ shouldChangeTextInRange:(NSRange)range
                         cell.shareableView.hidden = NO;
                         cell.messageLabel.hidden = YES;
                         cell.uiImageView.hidden = YES;
-                        cell.gifView.animatedImage = nil;
+                        cell.gifView.realImageView.animatedImage = nil;
+                    //    cell.gifView.alignTop = YES;
+                        cell.gifView.alignLeft = YES;
                         cell.gifView.hidden = NO;
                         cell.audioIcon.hidden = YES;
                         cell.audioSlider.hidden = YES;

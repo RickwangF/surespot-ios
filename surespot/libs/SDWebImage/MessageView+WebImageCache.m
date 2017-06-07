@@ -61,12 +61,12 @@ static char operationArrayKey;
                                                  DDLogInfo(@"Using image from local asset; %@", localUrl);
                             wself.uiImageView.image = image;
                             
-                            if ([image size].height > [image size].width) {
+//                            if ([image size].height > [image size].width) {
                                 [wself.uiImageView setContentMode:UIViewContentModeScaleAspectFit];
-                            }
-                            else {
-                                [wself.uiImageView setContentMode:UIViewContentModeScaleAspectFill];
-                            }
+//                            }
+//                            else {
+//                                [wself.uiImageView setContentMode:UIViewContentModeScaleAspectFill];
+//                            }
                         [wself setNeedsLayout];
                     }
                 }
@@ -107,12 +107,12 @@ static char operationArrayKey;
                                                                                     wself.uiImageView.image = image;
                                                                                     
                                                                                     
-                                                                                    if ([image size].height > [image size].width) {
+                                                                            //        if ([image size].height > [image size].width) {
                                                                                         [wself.uiImageView setContentMode:UIViewContentModeScaleAspectFit];
-                                                                                    }
-                                                                                    else {
-                                                                                        [wself.uiImageView setContentMode:UIViewContentModeScaleAspectFill];
-                                                                                    }
+//                                                                                    }
+//                                                                                    else {
+//                                                                                        [wself.uiImageView setContentMode:UIViewContentModeScaleAspectFill];
+//                                                                                    }
                                                                                 }
                                                                                 if (message.formattedDate) {
                                                                                     wself.messageStatusLabel.text = message.formattedDate;

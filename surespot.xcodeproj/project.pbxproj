@@ -129,6 +129,7 @@
 		669BC187187DAACD00C3C752 /* HelpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 669BC186187DAACD00C3C752 /* HelpView.xib */; };
 		669BC195187DBF3500C3C752 /* AboutView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 669BC194187DBF3500C3C752 /* AboutView.xib */; };
 		669BC199187DC1CB00C3C752 /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 669BC197187DC1CB00C3C752 /* AboutViewController.m */; };
+		669C4D671EE7885300AA47EC /* GifImageViewAligned.m in Sources */ = {isa = PBXBuildFile; fileRef = 669C4D661EE7885300AA47EC /* GifImageViewAligned.m */; };
 		66A2D919183A7A7F00785270 /* SurespotConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D918183A7A7F00785270 /* SurespotConstants.m */; };
 		66AC20AB18690CBD004E58E1 /* KeyFingerprintLoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */; };
 		66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */; };
@@ -406,6 +407,8 @@
 		669BC194187DBF3500C3C752 /* AboutView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AboutView.xib; path = viewcontrollers/AboutView.xib; sourceTree = "<group>"; };
 		669BC196187DC1CB00C3C752 /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AboutViewController.h; path = viewcontrollers/AboutViewController.h; sourceTree = "<group>"; };
 		669BC197187DC1CB00C3C752 /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AboutViewController.m; path = viewcontrollers/AboutViewController.m; sourceTree = "<group>"; };
+		669C4D631EE7882500AA47EC /* GifImageViewAligned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GifImageViewAligned.h; path = gifs/GifImageViewAligned.h; sourceTree = "<group>"; };
+		669C4D661EE7885300AA47EC /* GifImageViewAligned.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GifImageViewAligned.m; path = gifs/GifImageViewAligned.m; sourceTree = "<group>"; };
 		66A2D917183A7A7F00785270 /* SurespotConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotConstants.h; sourceTree = "<group>"; };
 		66A2D918183A7A7F00785270 /* SurespotConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotConstants.m; sourceTree = "<group>"; };
 		66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeyFingerprintLoadingView.xib; sourceTree = "<group>"; };
@@ -824,6 +827,8 @@
 		662C06501EC3C7E900BBBC1A /* gifs */ = {
 			isa = PBXGroup;
 			children = (
+				669C4D631EE7882500AA47EC /* GifImageViewAligned.h */,
+				669C4D661EE7885300AA47EC /* GifImageViewAligned.m */,
 				665180EA1EC4F645000CBB44 /* GiphyView.h */,
 				665180EB1EC4F645000CBB44 /* GiphyView.mm */,
 				665180EC1EC4F645000CBB44 /* GiphyView.xib */,
@@ -1679,6 +1684,7 @@
 				66EBE1371855C97100F2452D /* NSData+Base64.m in Sources */,
 				666D3378188476B100B73F69 /* aurio_helper.cpp in Sources */,
 				666D3379188476B100B73F69 /* CADebugMacros.cpp in Sources */,
+				669C4D671EE7885300AA47EC /* GifImageViewAligned.m in Sources */,
 				66EBE0D21855C97100F2452D /* RestoreIdentityDriveViewController.mm in Sources */,
 				66EBE0B11855C97100F2452D /* CredentialCachingController.mm in Sources */,
 				66EBE0CD1855C97100F2452D /* UIViewPager.m in Sources */,
