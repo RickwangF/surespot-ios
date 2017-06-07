@@ -12,4 +12,5 @@
 @interface GifSearchView : UICollectionViewCell
 @property (weak, nonatomic) NSString * url;
 @property (weak, nonatomic) IBOutlet FLAnimatedImageView *gifView;
+@property (strong, nonatomic) UIActivityIndicatorView * activityIndicator;
 @end

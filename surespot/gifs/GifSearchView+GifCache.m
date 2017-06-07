@@ -59,6 +59,12 @@ static char operationKey;
     }
     
     
+    DDLogDebug(@"creating activity indicator for url: %@, frame width %f, height: %f", wself.url,wself.frame.size.width,wself.frame.size.height);
+    wself.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:([UIUtils isBlackTheme] ?  UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray)];
+    wself.activityIndicator.center = CGPointMake(wself.frame.size.width/2, wself.frame.size.height/2);
+    [wself.activityIndicator startAnimating];
+    [wself.contentView addSubview:wself.activityIndicator];
+    
     
     DownloadGifOperation * operation = [[DownloadGifOperation alloc] initWithUrlString:url callback:^(id data) {
         if (!wself) return;
@@ -73,7 +79,11 @@ static char operationKey;
                 //                                    animations:^{
                 wself.gifView.animatedImage = image;
                 //                                    } completion:nil];
-         
+                
+                DDLogDebug(@"removing activity indicator for url: %@", self.url);
+                
+                [wself.activityIndicator stopAnimating];
+                [wself.activityIndicator removeFromSuperview];
                 [[[SharedCacheAndQueueManager sharedInstance] gifCache] setObject:image forKey:url];
             }
             
@@ -89,7 +99,7 @@ static char operationKey;
     
     objc_setAssociatedObject(self, &operationKey, operation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [[[SharedCacheAndQueueManager sharedInstance] downloadQueue] addOperation:operation];
-
+    
 }
 
 
@@ -109,6 +119,11 @@ static char operationKey;
 
 - (void)cancelCurrentImageLoad
 {
+    DDLogDebug(@"cancel current image load removing activity indicator for url: %@", self.url);
+    
+    [self.activityIndicator stopAnimating];
+    [self.activityIndicator removeFromSuperview];
+    self.gifView.animatedImage = nil;
     // Cancel in progress downloader from queue
     DownloadGifOperation * operation = objc_getAssociatedObject(self, &operationKey);
     if (operation)
