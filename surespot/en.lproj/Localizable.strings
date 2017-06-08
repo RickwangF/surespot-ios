@@ -373,5 +373,6 @@ If you elect to backup your identity on Google Drive you will be storing a copy 
 "export_identity"="backup identity...";
 "no_gifs_found"="No GIFs found.";
 "no_recently_used_gifs"="No recently used GIFs.";
+"search"="Search";
 
 

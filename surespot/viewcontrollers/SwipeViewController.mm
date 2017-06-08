@@ -110,7 +110,7 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (strong, nonatomic) IBOutlet UIButton *qrButton;
 @property (nonatomic, strong) GiphyView * gifView;
 @property (nonatomic, strong) GalleryView * galleryView;
-@property (strong, nonatomic) IBOutlet UITextView *giphySearchTextView;
+@property (strong, nonatomic) IBOutlet HPGrowingTextView *giphySearchTextView;
 @property (strong, nonatomic) IBOutlet UIImageView *giphyImage;
 @property (strong, nonatomic) IBOutlet UIButton *expandButton;
 @property (nonatomic, assign) NSInteger gifOffsets;
@@ -230,6 +230,7 @@ const Float32 voiceRecordDelay = 0.3;
     [_giphySearchTextView.layer setBorderWidth:0.5];
     [_giphySearchTextView setBackgroundColor:[UIColor clearColor]];
     _giphySearchTextView.layer.cornerRadius = 5;
+    [_giphySearchTextView setMaxNumberOfLines:1];
     
     UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(messageTextViewTapped:)];
     gestureRecognizer.numberOfTapsRequired = 1;
@@ -2953,6 +2954,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         [_messageTextView setPlaceholder:NSLocalizedString(@"message_hint", nil)];
     }
     [[NSUserDefaults standardUserDefaults] setInteger:tbHintCount forKey:@"tbHintCount"];
+    [_giphySearchTextView setPlaceholder:NSLocalizedString(@"search", nil)];
 }
 
 
