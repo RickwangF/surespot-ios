@@ -50,6 +50,7 @@
         _errorStatus = [coder decodeIntegerForKey:@"errorStatus"];
         _dataSize = [coder decodeIntegerForKey:@"dataSize"];
         _voicePlayed = [coder decodeBoolForKey:@"voicePlayed"];
+        _downloadGif = [coder decodeBoolForKey:@"downloadGif"];
         
     }
     return self;
@@ -65,6 +66,7 @@
     _mimeType = [dictionary objectForKey:@"mimeType"];
     _shareable = [[dictionary objectForKey:@"shareable"] boolValue];
     _hashed = [[dictionary objectForKey:@"hashed"] boolValue];
+    _downloadGif = [[dictionary objectForKey:@"downloadGif"] boolValue];
     _dataSize = [[dictionary objectForKey:@"dataSize"] integerValue];
     
     id dateTime = [dictionary objectForKey:@"datetime"];
@@ -122,6 +124,7 @@
     [encoder encodeBool:_shareable forKey:@"shareable"];
     [encoder encodeBool:_hashed forKey:@"hashed"];
     [encoder encodeBool:_voicePlayed forKey:@"voicePlayed"];
+    [encoder encodeBool:_downloadGif forKey:@"downloadGif"];
     
     if (_dateTime) {
         [encoder encodeObject:_dateTime forKey:@"datetime"];
@@ -188,6 +191,7 @@
     message.hashed = self.hashed;
     message.voicePlayed = self.voicePlayed;
     message.playVoice = self.playVoice;
+    message.downloadGif = self.downloadGif;
     return message;
 }
 
@@ -218,6 +222,7 @@
     [d appendFormat:@"\nmessage shareable: %@", [NSNumber numberWithBool: self.shareable]];
     [d appendFormat:@"\nmessage voicePlayed: %@",[NSNumber numberWithBool:  self.voicePlayed]];
     [d appendFormat:@"\nmessage playVoice: %@\n", [NSNumber numberWithBool: self.playVoice]];
+    [d appendFormat:@"\nmessage downloadGif: %@\n", [NSNumber numberWithBool: self.downloadGif]];
     return d;
 }
 

@@ -15,6 +15,17 @@
 			<string>IASKUITextAlignmentLeft</string>
 		</dict>
         <dict>
+            <key>Type</key>
+            <string>PSToggleSwitchSpecifier</string>
+            <key>Title</key>
+            <string>pref_title_download_gifs</string>
+            <key>Key</key>
+            <string>_user_pref_download_gifs</string>
+            <key>DefaultValue</key>
+            <false/>
+        </dict>
+
+        <dict>
 			<key>Title</key>
 			<string>pref_title_confirmations</string>
 			<key>Type</key>

@@ -54,25 +54,23 @@ static char operationKey;
             wself.messageStatusLabel.text = message.formattedDate;
         }
         
+        if (!message.downloadGif) return;
+        
         //See if it's already loaded
         __block FLAnimatedImage * image = [[[SharedCacheAndQueueManager sharedInstance] gifCache] objectForKey:message.iv];
         if (!wself) return;
         if (image) {
-//            [UIView transitionWithView:wself.imageView
-//                              duration:1.0f
-//                               options:UIViewAnimationOptionTransitionCrossDissolve
-//                            animations:^{
-                                wself.gifView.realImageView.animatedImage = image;
-                           // } completion:nil];
-            
-            
+            //            [UIView transitionWithView:wself.imageView
+            //                              duration:1.0f
+            //                               options:UIViewAnimationOptionTransitionCrossDissolve
+            //                            animations:^{
+            wself.gifView.realImageView.animatedImage = image;
+            // } completion:nil];
             
             [self setContentModeImage:image imageView:wself.gifView];
             return;
             
         }
-        
-        
         
         DownloadGifOperation * operation = [[DownloadGifOperation alloc] initWithUrlString:message.plainData callback:^(id data) {
             if (!wself) return;
@@ -89,10 +87,12 @@ static char operationKey;
                     //                                    } completion:nil];
                     [self setContentModeImage:image imageView:wself.gifView];
                     [[[SharedCacheAndQueueManager sharedInstance] gifCache] setObject:image forKey:message.iv];
+                    message.downloadGif = YES;
                 }
                 if (message.formattedDate) {
                     wself.messageStatusLabel.text = message.formattedDate;
                 }
+                
             }
             else {
                 //retry
@@ -112,16 +112,16 @@ static char operationKey;
 }
 
 -(void) setContentModeImage: (FLAnimatedImage *) image imageView: (GifImageViewAligned *) imageView {
-//    double imageViewRatio = imageView.bounds.size.height / imageView.bounds.size.width;
-//    double imageRatio = image.size.height/image.size.width;
-//    DDLogDebug(@"imageViewRatio %f, imageRatio: %f", imageViewRatio, imageRatio);
-//    if (imageViewRatio > imageRatio) {
-        [imageView setContentMode:UIViewContentModeScaleAspectFit];
-//    }
-//    else {
-//        [imageView setContentMode:UIViewContentModeScaleAspectFill];
-//    }
-
+    //    double imageViewRatio = imageView.bounds.size.height / imageView.bounds.size.width;
+    //    double imageRatio = image.size.height/image.size.width;
+    //    DDLogDebug(@"imageViewRatio %f, imageRatio: %f", imageViewRatio, imageRatio);
+    //    if (imageViewRatio > imageRatio) {
+    [imageView setContentMode:UIViewContentModeScaleAspectFit];
+    //    }
+    //    else {
+    //        [imageView setContentMode:UIViewContentModeScaleAspectFill];
+    //    }
+    
 }
 
 
@@ -134,7 +134,7 @@ static char operationKey;
     DDLogInfo(@"no data downloaded, retrying attempt: %ld, in %f seconds", (long)retryAttempt+1, timerInterval);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timerInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self setMessage:message ourUsername: ourUsername  callback:callback retryAttempt:retryAttempt+1];
+        [self setMessage:message ourUsername: ourUsername callback:callback retryAttempt:retryAttempt+1];
     });
     
 }

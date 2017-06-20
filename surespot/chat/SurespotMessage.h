@@ -35,6 +35,7 @@
 @property (nonatomic, assign) BOOL hashed;
 @property (nonatomic, assign) BOOL voicePlayed;
 @property (nonatomic, assign) BOOL playVoice;
+@property (nonatomic, assign) BOOL downloadGif;
 
 
 - (NSString *) getOtherUser: (NSString *) ourUsername;

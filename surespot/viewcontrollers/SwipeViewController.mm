@@ -1268,7 +1268,28 @@ shouldChangeTextInRange:(NSRange)range
                         cell.shareableView.hidden = NO;
                         cell.messageLabel.hidden = YES;
                         cell.uiImageView.hidden = YES;
+                        
+                        
+                        cell.gifView.realImageView.image = nil;
                         cell.gifView.realImageView.animatedImage = nil;
+                        
+                        //download it if we sent it
+                        message.downloadGif = ours || message.downloadGif;
+
+                        //otherwise check option
+                        if (!message.downloadGif) {
+                            bool downloadGifs = [UIUtils getBoolPrefWithDefaultNoForUser:_username key:@"_user_pref_download_gifs"];
+                            if (!downloadGifs) {
+                                UIImage * playGif = [UIImage imageNamed:([UIUtils isBlackTheme] ? @"play_circle_outline_light" : @"play_circle_outline_dark")];
+                                
+                                [cell.gifView.realImageView setContentMode:UIViewContentModeCenter];
+                                cell.gifView.realImageView.image = playGif;
+                            }
+                            else {
+                                message.downloadGif = YES;
+                            }
+                        }
+           
                         //    cell.gifView.alignTop = YES;
                         cell.gifView.alignLeft = YES;
                         cell.gifView.hidden = NO;
@@ -1425,6 +1446,19 @@ shouldChangeTextInRange:(NSRange)range
                     MessageView * cell = (MessageView *) [tableView cellForRowAtIndexPath: indexPath];
                     
                     [_voiceDelegate playVoiceMessage: message cell:cell];
+                }
+                else {
+                    if ([message.mimeType isEqualToString: MIME_TYPE_GIF_LINK]) {
+                        
+                        bool downloadGifs = [UIUtils getBoolPrefWithDefaultNoForUser:_username key:@"_user_pref_download_gifs"];
+                        if (!downloadGifs) {
+                            message.downloadGif = YES;
+                            MessageView * cell = (MessageView *) [tableView cellForRowAtIndexPath: indexPath];
+                            [cell setMessage:message ourUsername:_username callback:nil retryAttempt:0];
+                            
+                        }
+                    }
+                    
                 }
             }
         }
@@ -1735,16 +1769,16 @@ shouldChangeTextInRange:(NSRange)range
                     _expandButton.hidden = YES;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
-            
-          //          [self setButtonTintColor:_expandButton selected:NO];
-                //    [self setButtonTintColor:_gifButton selected:NO];
-              //      [self setButtonTintColor:_galleryButton selected:NO];
+                    
+                    //          [self setButtonTintColor:_expandButton selected:NO];
+                    //    [self setButtonTintColor:_gifButton selected:NO];
+                    //      [self setButtonTintColor:_galleryButton selected:NO];
                     
                     _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
                     _galleryButton.hidden = NO;
                     _galleryButton.selected = NO;
-
+                    
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
@@ -1753,16 +1787,16 @@ shouldChangeTextInRange:(NSRange)range
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = NO;
                     _expandButton.selected = YES;
-               //    [self setButtonTintColor:_expandButton selected:YES];
-                //    [self setButtonTintColor:_gifButton selected:NO];
-                //    [self setButtonTintColor:_galleryButton selected:NO];
+                    //    [self setButtonTintColor:_expandButton selected:YES];
+                    //    [self setButtonTintColor:_gifButton selected:NO];
+                    //    [self setButtonTintColor:_galleryButton selected:NO];
                     _gifButton.selected = NO;
                     _qrButton.hidden = YES;
                     _gifButton.hidden = YES;
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
                     _galleryButton.selected = NO;
-
+                    
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
@@ -1774,9 +1808,9 @@ shouldChangeTextInRange:(NSRange)range
                     _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = YES;
-             //       [self setButtonTintColor:_expandButton selected:NO];
-                  //  [self setButtonTintColor:_gifButton selected:YES];
-             //       [self setButtonTintColor:_galleryButton selected:NO];
+                    //       [self setButtonTintColor:_expandButton selected:NO];
+                    //  [self setButtonTintColor:_gifButton selected:YES];
+                    //       [self setButtonTintColor:_galleryButton selected:NO];
                     
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
@@ -1786,9 +1820,9 @@ shouldChangeTextInRange:(NSRange)range
                     _theButton.hidden = YES;
                     break;
                 case MessageModeGallery:
-            //        [self setButtonTintColor:_expandButton selected:NO];
-                 //   [self setButtonTintColor:_gifButton selected:NO];
-                //    [self setButtonTintColor:_galleryButton selected:YES];
+                    //        [self setButtonTintColor:_expandButton selected:NO];
+                    //   [self setButtonTintColor:_gifButton selected:NO];
+                    //    [self setButtonTintColor:_galleryButton selected:YES];
                     
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
