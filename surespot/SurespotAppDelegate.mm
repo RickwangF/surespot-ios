@@ -116,6 +116,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"cacheCleared13"];
     }
     
+    [UIUtils ensureGiphyLang];
     
     //get reachability started
     [ChatManager sharedInstance];

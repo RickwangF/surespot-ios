@@ -57,6 +57,7 @@
                     controller: (UIViewController *) controller
                       callback: (CallbackBlock) callback;
 +(UIColor*) getTextColor;
++(NSString *) ensureGiphyLang;
 @end
 
 

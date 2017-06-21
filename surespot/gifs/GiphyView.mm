@@ -13,6 +13,7 @@
 #import "GifSearchView.h"
 #import "GifSearchView+GifCache.h"
 #import "UIUtils.h"
+#import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -47,7 +48,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) searchGifs: (NSString *) query {
     [self setPreSearchBackground];
-    [[[NetworkManager sharedInstance] getNetworkController:nil] searchGiphy:query callback:^(id result) {
+    [[[NetworkManager sharedInstance] getNetworkController:nil] searchGiphy:query
+                                                                       lang: [UIUtils ensureGiphyLang]
+                                                                   callback:^(id result) {
         _gifs = [[NSMutableArray alloc] init];
         
         for (NSDictionary * o : [result objectForKey:@"data"]) {

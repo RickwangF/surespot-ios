@@ -464,6 +464,43 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
 }
 
++(NSString *) ensureGiphyLang {
+    NSString * giphyLang = [[NSUserDefaults standardUserDefaults] objectForKey:@"pref_giphy_lang"];
+    if (!giphyLang) {
+        
+        NSArray *preferredLanguagesIncDefault = [NSLocale preferredLanguages];
+        NSString * preferredLanguage = [preferredLanguagesIncDefault objectAtIndex:0];
+        NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:preferredLanguage];
+        NSString * desiredLang = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
+     
+        NSString *settingsBundle = [[NSBundle mainBundle] pathForResource:@"InAppSettings" ofType:@"bundle"];
+        if(!settingsBundle) {
+            NSLog(@"Could not find Settings.bundle");
+            return nil;
+        }
+
+        NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:[settingsBundle stringByAppendingPathComponent:@"global_options.plist"]];
+        NSArray *preferences = [settings objectForKey:@"PreferenceSpecifiers"];
+        for(NSDictionary *prefSpecification in preferences) {
+            NSString *key = [prefSpecification objectForKey:@"Key"];
+            if([key isEqualToString:@"pref_giphy_lang"]) {
+                NSArray * values = [prefSpecification objectForKey:@"Values"];
+                if ([values containsObject:desiredLang]) {
+                    giphyLang = desiredLang;
+                    break;
+                }
+            }
+        }
+        
+        if (!giphyLang) {
+            giphyLang = @"en";
+        }
+        
+        [[NSUserDefaults standardUserDefaults] setObject:giphyLang forKey:@"pref_giphy_lang"];
+    }
+    return giphyLang;
+}
+
 +(BOOL) isBlackTheme {
     NSNumber * value = [[NSUserDefaults standardUserDefaults] objectForKey:@"pref_black_theme"];
     if (!value) return YES;
