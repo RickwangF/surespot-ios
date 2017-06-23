@@ -37,7 +37,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(ChatDataSource*)initWithTheirUsername:(NSString *) theirUsername ourUsername: (NSString * ) ourUsername availableId:(NSInteger)availableId availableControlId:( NSInteger) availableControlId callback:(CallbackBlock) initCallback {
     
-    // DDLogInfo(@"username: %@, ourUsername: %@, availableid: %ld, availableControlId: %ld", username, ourUsername, (long)availableId, (long)availableControlId);
+    DDLogInfo(@"ourUsername: %@, theirUsername: %@, availableid: %ld, availableControlId: %ld", ourUsername, theirUsername, (long)availableId, (long)availableControlId);
     //call super init
     self = [super init];
     
@@ -72,7 +72,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 });
                 
                 
-                DDLogDebug(@"getting messageData latestHttpMessageId: %ld, latestMessageId: %ld, latestControlId: %ld", (long) _latestHttpMessageId, (long)_latestMessageId ,(long)_latestControlMessageId);
+                DDLogDebug(@"getting messageData for friend: %@, latestHttpMessageId: %ld, latestMessageId: %ld, latestControlId: %ld", _theirUsername, (long) _latestHttpMessageId, (long)_latestMessageId ,(long)_latestControlMessageId);
                 //load message data
                 //   DDLogInfo(@"startProgress: %@", username);
                 
