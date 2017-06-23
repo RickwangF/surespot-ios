@@ -332,6 +332,23 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (BOOL) growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *) string
 {
+    if (growingTextView == _giphySearchTextView) {
+        if ([growingTextView.text isEqualToString:@""] && [string isEqualToString:@"\n"]) {
+            [self disableMessageModeShowKeyboard:YES setResponders:YES];
+            return NO;
+        }
+        
+        if ([string containsString:@"\n"]) {
+            [self searchGifs];
+            return NO;
+        }
+        
+        return YES;
+
+    }
+    
+    
+    
     if ([string containsString:@"\n"]) {
         if (growingTextView != _messageTextView || [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_return_sends_message"]) {
             [self handleTextAction];
@@ -360,23 +377,6 @@ const Float32 voiceRecordDelay = 0.3;
     return YES;
 }
 
-- (BOOL)textView:(UITextView *)textView
-shouldChangeTextInRange:(NSRange)range
- replacementText:(NSString *)text {
-    
-    //Exit gif mode on empty string return
-    if ([textView.text isEqualToString:@""] && [text isEqualToString:@"\n"]) {
-        [self disableMessageModeShowKeyboard:YES setResponders:YES];
-        return NO;
-    }
-    
-    if ([text containsString:@"\n"]) {
-        [self searchGifs];
-        return NO;
-    }
-    
-    return YES;
-}
 
 -(void) searchGifs {
     if ([_giphySearchTextView.text length] > 0) {
