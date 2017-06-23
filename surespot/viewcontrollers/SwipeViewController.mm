@@ -1742,6 +1742,7 @@ const Float32 voiceRecordDelay = 0.3;
         _gifButton.hidden = YES;
         _cameraButton.hidden = YES;
         _galleryButton.hidden = YES;
+        _expandButton.hidden = YES;
         
         _giphySearchTextView.hidden = YES;
         _giphyImage.hidden = YES;
@@ -1761,6 +1762,7 @@ const Float32 voiceRecordDelay = 0.3;
             _giphySearchTextView.hidden = YES;
             _giphyImage.hidden = YES;
             _theButton.hidden = NO;
+            _expandButton.hidden = YES;
         }
         else {
             switch (_currentMode) {
