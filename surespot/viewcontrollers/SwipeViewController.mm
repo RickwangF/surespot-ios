@@ -1769,7 +1769,7 @@ const Float32 voiceRecordDelay = 0.3;
                 case MessageModeNone:
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
-                    _qrButton.hidden = YES;
+                 //   _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     
                     //          [self setButtonTintColor:_expandButton selected:NO];
@@ -1793,7 +1793,7 @@ const Float32 voiceRecordDelay = 0.3;
                     //    [self setButtonTintColor:_gifButton selected:NO];
                     //    [self setButtonTintColor:_galleryButton selected:NO];
                     _gifButton.selected = NO;
-                    _qrButton.hidden = YES;
+                  //  _qrButton.hidden = YES;
                     _gifButton.hidden = YES;
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
@@ -1807,7 +1807,7 @@ const Float32 voiceRecordDelay = 0.3;
                 case MessageModeGIF:
                     _messageTextView.hidden = YES;
                     _expandButton.hidden = YES;
-                    _qrButton.hidden = YES;
+             //       _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = YES;
                     //       [self setButtonTintColor:_expandButton selected:NO];
@@ -1828,7 +1828,7 @@ const Float32 voiceRecordDelay = 0.3;
                     
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
-                    _qrButton.hidden = YES;
+                //    _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
