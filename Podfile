@@ -1,6 +1,6 @@
 use_frameworks!
 
-platform :ios, '8.2'
+platform :ios, '10.0'
 
 target 'surespot' do
   pod 'AFNetworking','~> 3.1'

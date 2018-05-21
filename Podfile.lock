@@ -19,11 +19,11 @@ PODS:
   - CHTCollectionViewWaterfallLayout (0.9.5):
     - CHTCollectionViewWaterfallLayout/ObjC (= 0.9.5)
   - CHTCollectionViewWaterfallLayout/ObjC (0.9.5)
-  - CocoaLumberjack (3.2.0):
-    - CocoaLumberjack/Default (= 3.2.0)
-    - CocoaLumberjack/Extensions (= 3.2.0)
-  - CocoaLumberjack/Default (3.2.0)
-  - CocoaLumberjack/Extensions (3.2.0):
+  - CocoaLumberjack (3.4.2):
+    - CocoaLumberjack/Default (= 3.4.2)
+    - CocoaLumberjack/Extensions (= 3.4.2)
+  - CocoaLumberjack/Default (3.4.2)
+  - CocoaLumberjack/Extensions (3.4.2):
     - CocoaLumberjack/Default
   - DACircularProgress (2.3.1)
   - FLAnimatedImage (1.0.12)
@@ -49,7 +49,7 @@ PODS:
   - MWPhotoBrowser (2.1.2):
     - DACircularProgress (~> 2.3)
     - MBProgressHUD (~> 0.9)
-    - SDWebImage (!= 3.7.2, ~> 3.7)
+    - "SDWebImage (!= 3.7.2, ~> 3.7)"
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
@@ -63,40 +63,61 @@ DEPENDENCIES:
   - AFNetworking (~> 3.1)
   - AGWindowView
   - CHTCollectionViewWaterfallLayout
-  - CocoaLumberjack
+  - CocoaLumberjack (~> 3.4.2)
   - FLAnimatedImage (~> 1.0)
   - GoogleAPIClientForREST
   - GoogleAPIClientForREST/Drive
   - GTMAppAuth
   - HPGrowingTextView
   - InAppSettingsKit
-  - MWPhotoBrowser (from `git@github.com:surespot/MWPhotoBrowser.git`)
-  - SideMenu (from `git@github.com:surespot/SideMenu.git`)
+  - "MWPhotoBrowser (from `git@github.com:surespot/MWPhotoBrowser.git`)"
+  - "SideMenu (from `git@github.com:surespot/SideMenu.git`)"
   - Socket.IO-Client-Swift (~> 8.3.0)
   - SVPullToRefresh
   - TTTAttributedLabel
   - UIImageViewAligned
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AFNetworking
+    - AGWindowView
+    - AppAuth
+    - CHTCollectionViewWaterfallLayout
+    - CocoaLumberjack
+    - DACircularProgress
+    - FLAnimatedImage
+    - GoogleAPIClientForREST
+    - GTMAppAuth
+    - GTMSessionFetcher
+    - HPGrowingTextView
+    - InAppSettingsKit
+    - MBProgressHUD
+    - SDWebImage
+    - Socket.IO-Client-Swift
+    - SVPullToRefresh
+    - TTTAttributedLabel
+    - UIImageViewAligned
+
 EXTERNAL SOURCES:
   MWPhotoBrowser:
-    :git: git@github.com:surespot/MWPhotoBrowser.git
+    :git: "git@github.com:surespot/MWPhotoBrowser.git"
   SideMenu:
-    :git: git@github.com:surespot/SideMenu.git
+    :git: "git@github.com:surespot/SideMenu.git"
 
 CHECKOUT OPTIONS:
   MWPhotoBrowser:
     :commit: 228e958fd23eed2f9617b95ea1f9b7f80ff60963
-    :git: git@github.com:surespot/MWPhotoBrowser.git
+    :git: "git@github.com:surespot/MWPhotoBrowser.git"
   SideMenu:
     :commit: 26c096a478b8b5d2fd45f28b68cc7422035f9607
-    :git: git@github.com:surespot/SideMenu.git
+    :git: "git@github.com:surespot/SideMenu.git"
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   AGWindowView: 08dc8d448b8c96430e78b3945a9c2cf5b0fde754
   AppAuth: c56d352b0d50bb34dbb302d7ba50b20aa6b6ae89
   CHTCollectionViewWaterfallLayout: 775ff73f48cfc13859b62d8bceb96e772e4a0318
-  CocoaLumberjack: 9b4aed7073d242f29cc2f62068d995faf67f703a
+  CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
@@ -113,6 +134,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: bd777576b6419e6b78eb7f9e1d98a1e83a533ada
+PODFILE CHECKSUM: 3dc844b47da30c10f91e9d111fe6ad848583a166
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.5.2
