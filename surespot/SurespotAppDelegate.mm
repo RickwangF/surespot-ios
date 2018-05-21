@@ -23,6 +23,8 @@
 #import "NSBundle+FallbackLanguage.h"
 #import "NetworkManager.h"
 #import "SideMenu-Swift.h"
+#import <UserNotifications/UserNotifications.h>
+#import "ChatUtils.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -42,8 +44,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     
     // in our case, show the surespot logo centered on a black background
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1)
-    {
+   
         UIView *colorView = [[UIView alloc] initWithFrame:self.window.frame];
         colorView.tag = 9999;
         colorView.backgroundColor = [UIColor blackColor];
@@ -54,31 +55,46 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [colorView addSubview:_imageView];
         [self.window addSubview:colorView];
         [self.window bringSubviewToFront:colorView];
-    }
+    
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // remove the surespot logo centered on a black background
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1)
-    {
+
         UIView *colorView = [self.window viewWithTag:9999];
         if(_imageView != nil) {
             [_imageView removeFromSuperview];
             _imageView = nil;
         }
         [colorView removeFromSuperview];
-    }
+    
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     _lastUsers = [[NSMutableDictionary alloc] init];
     
-    // iOS 8 Notifications
-    [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    center.delegate = self;
+    [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error)
+     {
+         if( !error )
+         {
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [[UIApplication sharedApplication] registerForRemoteNotifications];
+                 // required to get the app to do anything at all about push notifications
+             });
+             DDLogDebug( @"Push registration success." );
+         }
+         else
+         {
+             DDLogDebug( @"Push registration FAILED" );
+             DDLogDebug( @"ERROR: %@ - %@", error.localizedFailureReason, error.localizedDescription );
+             DDLogDebug( @"SUGGESTIONS: %@ - %@", error.localizedRecoveryOptions, error.localizedRecoverySuggestion );
+         }
+     }];
     
-    [application registerForRemoteNotifications];
     
     if  (launchOptions) {
         DDLogVerbose(@"received launch options: %@", launchOptions);
@@ -120,7 +136,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     //get reachability started
     [ChatManager sharedInstance];
-
+    
     
     //if we were launched from a notification use that logic to set the view controller
     NSDictionary* userInfo = [launchOptions valueForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
@@ -177,7 +193,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 [[NSUserDefaults standardUserDefaults] setObject: autoinvites forKey: @"autoinvites"];
                 //fire event
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"autoinvites" object:nil ];
-                  return YES;
+                return YES;
             }
         }
         
@@ -188,8 +204,23 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         _currentAuthorizationFlow = nil;
         return YES;
     }
-  
+    
     return NO;
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification  withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler{
+    DDLogDebug( @"for handling push in foreground" );
+    // Your code
+    DDLogDebug(@"%@", notification.request.content.userInfo); //for getting response payload data
+   // completionHandler(UNUserNot);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response  withCompletionHandler:(void (^)())completionHandler   {
+    DDLogDebug( @"for handling push in background" );
+    // Your code
+    DDLogDebug(@"%@", response.notification.request.content.userInfo); //for getting response payload data
+    completionHandler();
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
@@ -308,7 +339,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
         
         DDLogDebug(@"userSwitch restoring last chat: %@ for user: %@", from, to);
-    }        
+    }
     
     //set the session
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
@@ -320,7 +351,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
         transition.type = kCATransitionFade;
         [navController.view.layer addAnimation:transition forKey:nil];
-            [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: NO completion:nil];
+        [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: NO completion:nil];
         UIViewController * c =[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"];
         [navController setViewControllers:@[c] animated:NO];
     }
@@ -345,6 +376,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 - (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
+    DDLogDebug(@"didRegisterToken: %@", [ChatUtils hexFromData:devToken]);
     
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:devToken forKey:@"apnToken"];
@@ -353,7 +385,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
-    DDLogVerbose(@"Error in registration. Error: %@", err);
+    DDLogDebug(@"Error in registration. Error: %@", err);
 }
 
 - (BOOL)application:(UIApplication *)app

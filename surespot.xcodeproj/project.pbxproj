@@ -45,6 +45,9 @@
 		662CA5A31873496F00684790 /* PurchaseDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 662CA5A21873496F00684790 /* PurchaseDelegate.m */; };
 		662CA5AA18734E9500684790 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 662CA5A918734E9500684790 /* StoreKit.framework */; };
 		6637012D187A33A6006D17CA /* PWYLView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6637012C187A33A6006D17CA /* PWYLView.xib */; };
+		663D504920B3753400C3F74B /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 663D504820B3753400C3F74B /* UserNotifications.framework */; };
+		663D505220B382D800C3F74B /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 663D505120B382D800C3F74B /* NotificationService.m */; };
+		663D505620B382D800C3F74B /* ServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 663D504E20B382D800C3F74B /* ServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		664135741EAFBC4F005A4957 /* SurespotQueueMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 664135731EAFBC4F005A4957 /* SurespotQueueMessage.m */; };
 		664135781EB0EFC5005A4957 /* SendMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 664135771EB0EFC5005A4957 /* SendMessageOperation.mm */; };
 		6641357C1EB0FE55005A4957 /* SendImageMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6641357B1EB0FE55005A4957 /* SendImageMessageOperation.mm */; };
@@ -197,6 +200,30 @@
 		6761F09264FD201A9C63491D /* Pods_surespot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		663D505420B382D800C3F74B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6604A2B317626B9E0072216A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 663D504D20B382D800C3F74B;
+			remoteInfo = ServiceExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		663D505A20B382D800C3F74B /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				663D505620B382D800C3F74B /* ServiceExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_surespot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A4EF5CC1BC5AB1B0000D3F3 /* AfterBackupIdentityHelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AfterBackupIdentityHelpViewController.h; sourceTree = "<group>"; };
@@ -262,6 +289,11 @@
 		662CA5A21873496F00684790 /* PurchaseDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = PurchaseDelegate.m; path = purchases/PurchaseDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		662CA5A918734E9500684790 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		6637012C187A33A6006D17CA /* PWYLView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PWYLView.xib; path = purchases/PWYLView.xib; sourceTree = "<group>"; };
+		663D504820B3753400C3F74B /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		663D504E20B382D800C3F74B /* ServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		663D505020B382D800C3F74B /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
+		663D505120B382D800C3F74B /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
+		663D505320B382D800C3F74B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		664135731EAFBC4F005A4957 /* SurespotQueueMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotQueueMessage.m; sourceTree = "<group>"; };
 		664135751EAFBC60005A4957 /* SurespotQueueMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotQueueMessage.h; sourceTree = "<group>"; };
 		664135761EB0EFB8005A4957 /* SendMessageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SendMessageOperation.h; sourceTree = "<group>"; };
@@ -665,6 +697,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				663D504920B3753400C3F74B /* UserNotifications.framework in Frameworks */,
 				66649E8A1ED0C66200288620 /* Photos.framework in Frameworks */,
 				666FE5601E8CB6DE00F16569 /* QuartzCore.framework in Frameworks */,
 				666FE55F1E8CB69300F16569 /* CoreImage.framework in Frameworks */,
@@ -701,6 +734,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		663D504B20B382D800C3F74B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -718,6 +758,7 @@
 			children = (
 				661C2ED21763CB56000649E7 /* libz.dylib */,
 				6604A2C417626B9E0072216A /* surespot */,
+				663D504F20B382D800C3F74B /* ServiceExtension */,
 				6604A2BD17626B9E0072216A /* Frameworks */,
 				6604A2BC17626B9E0072216A /* Products */,
 				35CF04B71FB8167246067B8E /* Pods */,
@@ -728,6 +769,7 @@
 			isa = PBXGroup;
 			children = (
 				6604A2BB17626B9E0072216A /* surespot.app */,
+				663D504E20B382D800C3F74B /* ServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -735,6 +777,7 @@
 		6604A2BD17626B9E0072216A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				663D504820B3753400C3F74B /* UserNotifications.framework */,
 				66649E891ED0C66200288620 /* Photos.framework */,
 				666FE55E1E8CB69300F16569 /* CoreImage.framework */,
 				668707C91E6FCBF20029A06B /* AFNetworking.framework */,
@@ -855,6 +898,16 @@
 				6652F2A91875F16D00E023A7 /* PwylViewController.m */,
 			);
 			name = purchases;
+			sourceTree = "<group>";
+		};
+		663D504F20B382D800C3F74B /* ServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				663D505020B382D800C3F74B /* NotificationService.h */,
+				663D505120B382D800C3F74B /* NotificationService.m */,
+				663D505320B382D800C3F74B /* Info.plist */,
+			);
+			path = ServiceExtension;
 			sourceTree = "<group>";
 		};
 		6654441017F37A3F00F62F7F /* SwipeView */ = {
@@ -1426,15 +1479,34 @@
 				6604A2B817626B9E0072216A /* Frameworks */,
 				81FC303E59D981020C170791 /* [CP] Embed Pods Frameworks */,
 				6604A2B917626B9E0072216A /* Resources */,
+				663D505A20B382D800C3F74B /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				663D505520B382D800C3F74B /* PBXTargetDependency */,
 			);
 			name = surespot;
 			productName = surespot;
 			productReference = 6604A2BB17626B9E0072216A /* surespot.app */;
 			productType = "com.apple.product-type.application";
+		};
+		663D504D20B382D800C3F74B /* ServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 663D505720B382D800C3F74B /* Build configuration list for PBXNativeTarget "ServiceExtension" */;
+			buildPhases = (
+				663D504A20B382D800C3F74B /* Sources */,
+				663D504B20B382D800C3F74B /* Frameworks */,
+				663D504C20B382D800C3F74B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ServiceExtension;
+			productName = ServiceExtension;
+			productReference = 663D504E20B382D800C3F74B /* ServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -1450,7 +1522,7 @@
 					6604A2BA17626B9E0072216A = {
 						DevelopmentTeam = 2QFPK9DJY9;
 						LastSwiftMigration = 0800;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.DataProtection = {
 								enabled = 0;
@@ -1468,6 +1540,11 @@
 								enabled = 0;
 							};
 						};
+					};
+					663D504D20B382D800C3F74B = {
+						CreatedOnToolsVersion = 9.3.1;
+						DevelopmentTeam = 2QFPK9DJY9;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -1489,6 +1566,7 @@
 			projectRoot = "";
 			targets = (
 				6604A2BA17626B9E0072216A /* surespot */,
+				663D504D20B382D800C3F74B /* ServiceExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -1532,6 +1610,13 @@
 				661F469A1864C0B2004A71B0 /* GenerateKeysView.xib in Resources */,
 				661F46A81865EDC3004A71B0 /* ChangePasswordView.xib in Resources */,
 				66649E801ECD0F2600288620 /* GalleryView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		663D504C20B382D800C3F74B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1742,7 +1827,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		663D504A20B382D800C3F74B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				663D505220B382D800C3F74B /* NotificationService.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		663D505520B382D800C3F74B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 663D504D20B382D800C3F74B /* ServiceExtension */;
+			targetProxy = 663D505420B382D800C3F74B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		6604A2D617626B9E0072216A /* MainStoryboard.storyboard */ = {
@@ -1884,7 +1985,8 @@
 				CODE_SIGN_ENTITLEMENTS = surespot/surespot.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 2QFPK9DJY9;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_INPUT_FILETYPE = automatic;
@@ -1907,9 +2009,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.twofours.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "6b43a2e2-0cb7-4fcd-a892-51ecba3f0bec";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = dev;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1932,7 +2034,8 @@
 				CODE_SIGN_ENTITLEMENTS = surespot/surespot.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 2QFPK9DJY9;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_INPUT_FILETYPE = automatic;
@@ -1955,15 +2058,103 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.twofours.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "6b43a2e2-0cb7-4fcd-a892-51ecba3f0bec";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = dev;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/surespot/libs/google-api-objectivec-client-read-only/** $(SRCROOT)/surespot/libs/QR-Code-Encoder-for-Objective-C/QRCodeEncoderObjectiveCAtGithub";
 				VALID_ARCHS = "arm64 armv7 armv7s";
 				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		663D505820B382D800C3F74B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 2QFPK9DJY9;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = ServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofours.surespot.pushServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "94e8885d-c246-4b8b-bb08-80278ce4b742";
+				PROVISIONING_PROFILE_SPECIFIER = "service extension";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s";
+			};
+			name = Debug;
+		};
+		663D505920B382D800C3F74B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 2QFPK9DJY9;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = ServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofours.surespot.pushServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "94e8885d-c246-4b8b-bb08-80278ce4b742";
+				PROVISIONING_PROFILE_SPECIFIER = "service extension";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Release;
 		};
@@ -1984,6 +2175,15 @@
 			buildConfigurations = (
 				6604A2F717626B9E0072216A /* Debug */,
 				6604A2F817626B9E0072216A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		663D505720B382D800C3F74B /* Build configuration list for PBXNativeTarget "ServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				663D505820B382D800C3F74B /* Debug */,
+				663D505920B382D800C3F74B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
