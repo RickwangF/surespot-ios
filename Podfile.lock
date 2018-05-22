@@ -54,17 +54,19 @@ PODS:
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SideMenu (2.3.0)
-  - Socket.IO-Client-Swift (8.3.3)
+  - Socket.IO-Client-Swift (13.2.0):
+    - Starscream (~> 3.0.2)
+  - Starscream (3.0.5)
   - SVPullToRefresh (0.4.1)
   - TTTAttributedLabel (2.0.0)
   - UIImageViewAligned (0.0.1)
 
 DEPENDENCIES:
-  - AFNetworking (~> 3.1)
+  - AFNetworking
   - AGWindowView
   - CHTCollectionViewWaterfallLayout
   - CocoaLumberjack
-  - FLAnimatedImage (~> 1.0)
+  - FLAnimatedImage
   - GoogleAPIClientForREST
   - GoogleAPIClientForREST/Drive
   - GTMAppAuth
@@ -72,7 +74,7 @@ DEPENDENCIES:
   - InAppSettingsKit
   - "MWPhotoBrowser (from `git@github.com:surespot/MWPhotoBrowser.git`)"
   - "SideMenu (from `git@github.com:surespot/SideMenu.git`)"
-  - Socket.IO-Client-Swift (~> 8.3.0)
+  - Socket.IO-Client-Swift
   - SVPullToRefresh
   - TTTAttributedLabel
   - UIImageViewAligned
@@ -94,6 +96,7 @@ SPEC REPOS:
     - MBProgressHUD
     - SDWebImage
     - Socket.IO-Client-Swift
+    - Starscream
     - SVPullToRefresh
     - TTTAttributedLabel
     - UIImageViewAligned
@@ -129,11 +132,12 @@ SPEC CHECKSUMS:
   MWPhotoBrowser: 5836d7aa041dc05a13de380c246826578adc5ea5
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: 49b8a20e2e5be4488966445850455254344cb826
-  Socket.IO-Client-Swift: a2faffdbde89c63aebc5d631041530c1068b02b8
+  Socket.IO-Client-Swift: 4698ea9eb2955eecf7fdf06c487ff1597e4cd779
+  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SVPullToRefresh: ba2e718695a43253d8bea6852d2960097dc15d8c
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: d67f832cc773d991f84a20795d6af50caac3be65
+PODFILE CHECKSUM: c6c9034a55003cc8de91ab0b6a3bf4a87ee59e25
 
 COCOAPODS: 1.5.2

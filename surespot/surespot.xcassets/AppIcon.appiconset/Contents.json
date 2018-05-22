@@ -136,6 +136,11 @@
       "idiom" : "ipad",
       "filename" : "surespot_app_icon152px-1.png",
       "scale" : "2x"
+    },
+    {
+      "idiom" : "ios-marketing",
+      "size" : "1024x1024",
+      "scale" : "1x"
     }
   ],
   "info" : {
