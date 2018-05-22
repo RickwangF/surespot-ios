@@ -46,7 +46,7 @@ static const int MAX_REAUTH_RETRIES = 1;
 @property (assign, atomic) NSInteger connectionRetries;
 @property (strong, atomic) NSTimer * reconnectTimer;
 @property (strong, nonatomic) NSMutableArray * messageBuffer;
-@property (strong, nonatomic) SocketIOClient * socket;
+@property (strong, nonatomic) SocketManager * socket;
 @property (assign, atomic) BOOL reauthing;
 @property (strong, atomic) NSOperationQueue * messageSendQueue;
 @property (assign, atomic) UIBackgroundTaskIdentifier bgSocketTaskId;
@@ -80,7 +80,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     //        DDLogInfo(@"socket event: %@, with items: %@",event.event, event.items);
     //    }];
     
-    [self.socket on:@"connect" callback:^(NSArray * data, SocketAckEmitter * ack) {
+    [self.socket.defaultSocket on:@"connect" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket connect");
         _reauthing = NO;
         _connectionRetries = 0;
@@ -92,12 +92,13 @@ static const int MAX_REAUTH_RETRIES = 1;
         [self getData];
     }];
     
-    [self.socket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
+    [self.socket.defaultSocket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket disconnect, data: %@", data);
         [[UIApplication sharedApplication] endBackgroundTask:_bgSocketTaskId];
+        [self reconnect];
     }];
     
-    [self.socket on:@"error" callback:^(NSArray * data, SocketAckEmitter * ack) {
+    [self.socket.defaultSocket on:@"error" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket error");
         
         BOOL reAuthing = NO;
@@ -145,7 +146,7 @@ static const int MAX_REAUTH_RETRIES = 1;
         
     }];
     
-    [self.socket on:@"message" callback:^(NSArray * data, SocketAckEmitter * ack) {
+    [self.socket.defaultSocket on:@"message" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogDebug(@"socket message");
         NSDictionary * jsonMessage = [data objectAtIndex:0];
         SurespotMessage * message = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
@@ -160,14 +161,14 @@ static const int MAX_REAUTH_RETRIES = 1;
         [self processNextMessage];
     }];
     
-    [self.socket on:@"control" callback:^(NSArray * data, SocketAckEmitter * ack) {
+    [self.socket.defaultSocket on:@"control" callback:^(NSArray * data, SocketAckEmitter * ack) {
         NSDictionary * jsonControlMessage = [data objectAtIndex:0];
         SurespotControlMessage * message = [[SurespotControlMessage alloc] initWithDictionary:jsonControlMessage];
         [self handleControlMessage: message];
         [self processNextMessage];
     }];
     
-    [self.socket on:@"messageError" callback:^(NSArray * data, SocketAckEmitter * ack) {
+    [self.socket.defaultSocket on:@"messageError" callback:^(NSArray * data, SocketAckEmitter * ack) {
         SurespotErrorMessage * message = [[SurespotErrorMessage alloc] initWithDictionary:[data objectAtIndex:0]];
         [self handleErrorMessage:message];
         [self processNextMessage];
@@ -231,6 +232,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
     [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
     [opts setObject:[NSNumber numberWithBool:NO] forKey:@"reconnects"];
+//    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"compress"];
     
     //#ifdef DEBUG
     //       [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
@@ -239,18 +241,20 @@ static const int MAX_REAUTH_RETRIES = 1;
     if (self.socket) {
         DDLogDebug(@"removing all handlers");
         
-        [self.socket removeAllHandlers];
+        [self.socket.defaultSocket removeAllHandlers];
         [self.socket disconnect];
     }
     
     DDLogDebug(@"initing new socket");
-    self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:[[SurespotConfiguration sharedInstance] baseUrl]] config: opts];
+    SocketManager* manager = [[SocketManager alloc] initWithSocketURL:[NSURL URLWithString:[[SurespotConfiguration sharedInstance] baseUrl]] config: opts];
+//    self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:[[SurespotConfiguration sharedInstance] baseUrl]] config: opts];
+    self.socket = manager;
     [self addHandlers];
-    [self.socket connect];
+    [self.socket.defaultSocket connect];
 }
 
 -(BOOL) isConnected {
-    return [self.socket status] == SocketIOClientStatusConnected;
+    return [self.socket status] == SocketIOStatusConnected;
 }
 
 -(void) resume {

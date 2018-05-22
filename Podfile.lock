@@ -1,24 +1,24 @@
 PODS:
-  - AFNetworking (3.1.0):
-    - AFNetworking/NSURLSession (= 3.1.0)
-    - AFNetworking/Reachability (= 3.1.0)
-    - AFNetworking/Security (= 3.1.0)
-    - AFNetworking/Serialization (= 3.1.0)
-    - AFNetworking/UIKit (= 3.1.0)
-  - AFNetworking/NSURLSession (3.1.0):
+  - AFNetworking (3.2.1):
+    - AFNetworking/NSURLSession (= 3.2.1)
+    - AFNetworking/Reachability (= 3.2.1)
+    - AFNetworking/Security (= 3.2.1)
+    - AFNetworking/Serialization (= 3.2.1)
+    - AFNetworking/UIKit (= 3.2.1)
+  - AFNetworking/NSURLSession (3.2.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (3.1.0)
-  - AFNetworking/Security (3.1.0)
-  - AFNetworking/Serialization (3.1.0)
-  - AFNetworking/UIKit (3.1.0):
+  - AFNetworking/Reachability (3.2.1)
+  - AFNetworking/Security (3.2.1)
+  - AFNetworking/Serialization (3.2.1)
+  - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
   - AGWindowView (0.1.9)
-  - AppAuth (0.7.1)
-  - CHTCollectionViewWaterfallLayout (0.9.5):
-    - CHTCollectionViewWaterfallLayout/ObjC (= 0.9.5)
-  - CHTCollectionViewWaterfallLayout/ObjC (0.9.5)
+  - AppAuth (0.92.0)
+  - CHTCollectionViewWaterfallLayout (0.9.7):
+    - CHTCollectionViewWaterfallLayout/ObjC (= 0.9.7)
+  - CHTCollectionViewWaterfallLayout/ObjC (0.9.7)
   - CocoaLumberjack (3.4.2):
     - CocoaLumberjack/Default (= 3.4.2)
     - CocoaLumberjack/Extensions (= 3.4.2)
@@ -27,24 +27,24 @@ PODS:
     - CocoaLumberjack/Default
   - DACircularProgress (2.3.1)
   - FLAnimatedImage (1.0.12)
-  - GoogleAPIClientForREST (1.2.1):
-    - GoogleAPIClientForREST/Core (= 1.2.1)
+  - GoogleAPIClientForREST (1.3.4):
+    - GoogleAPIClientForREST/Core (= 1.3.4)
     - GTMSessionFetcher (>= 1.1.7)
-  - GoogleAPIClientForREST/Core (1.2.1):
+  - GoogleAPIClientForREST/Core (1.3.4):
     - GTMSessionFetcher (>= 1.1.7)
-  - GoogleAPIClientForREST/Drive (1.2.1):
+  - GoogleAPIClientForREST/Drive (1.3.4):
     - GoogleAPIClientForREST/Core
     - GTMSessionFetcher (>= 1.1.7)
-  - GTMAppAuth (0.5.0):
-    - AppAuth (~> 0.7.0)
+  - GTMAppAuth (0.7.0):
+    - AppAuth (~> 0.92.0)
     - GTMSessionFetcher (~> 1.1)
-  - GTMSessionFetcher (1.1.9):
-    - GTMSessionFetcher/Full (= 1.1.9)
-  - GTMSessionFetcher/Core (1.1.9)
-  - GTMSessionFetcher/Full (1.1.9):
-    - GTMSessionFetcher/Core (= 1.1.9)
+  - GTMSessionFetcher (1.1.15):
+    - GTMSessionFetcher/Full (= 1.1.15)
+  - GTMSessionFetcher/Core (1.1.15)
+  - GTMSessionFetcher/Full (1.1.15):
+    - GTMSessionFetcher/Core (= 1.1.15)
   - HPGrowingTextView (1.1)
-  - InAppSettingsKit (2.8.1)
+  - InAppSettingsKit (2.9)
   - MBProgressHUD (0.9.2)
   - MWPhotoBrowser (2.1.2):
     - DACircularProgress (~> 2.3)
@@ -54,17 +54,19 @@ PODS:
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SideMenu (2.3.0)
-  - Socket.IO-Client-Swift (8.3.3)
+  - Socket.IO-Client-Swift (13.2.0):
+    - Starscream (~> 3.0.2)
+  - Starscream (3.0.5)
   - SVPullToRefresh (0.4.1)
   - TTTAttributedLabel (2.0.0)
   - UIImageViewAligned (0.0.1)
 
 DEPENDENCIES:
-  - AFNetworking (~> 3.1)
+  - AFNetworking
   - AGWindowView
   - CHTCollectionViewWaterfallLayout
-  - CocoaLumberjack (~> 3.4.2)
-  - FLAnimatedImage (~> 1.0)
+  - CocoaLumberjack
+  - FLAnimatedImage
   - GoogleAPIClientForREST
   - GoogleAPIClientForREST/Drive
   - GTMAppAuth
@@ -72,7 +74,7 @@ DEPENDENCIES:
   - InAppSettingsKit
   - "MWPhotoBrowser (from `git@github.com:surespot/MWPhotoBrowser.git`)"
   - "SideMenu (from `git@github.com:surespot/SideMenu.git`)"
-  - Socket.IO-Client-Swift (~> 8.3.0)
+  - Socket.IO-Client-Swift
   - SVPullToRefresh
   - TTTAttributedLabel
   - UIImageViewAligned
@@ -94,6 +96,7 @@ SPEC REPOS:
     - MBProgressHUD
     - SDWebImage
     - Socket.IO-Client-Swift
+    - Starscream
     - SVPullToRefresh
     - TTTAttributedLabel
     - UIImageViewAligned
@@ -113,27 +116,28 @@ CHECKOUT OPTIONS:
     :git: "git@github.com:surespot/SideMenu.git"
 
 SPEC CHECKSUMS:
-  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
   AGWindowView: 08dc8d448b8c96430e78b3945a9c2cf5b0fde754
-  AppAuth: c56d352b0d50bb34dbb302d7ba50b20aa6b6ae89
-  CHTCollectionViewWaterfallLayout: 775ff73f48cfc13859b62d8bceb96e772e4a0318
+  AppAuth: 3f4f1d6d85ad631d0bbf15ffcdc10c447face97a
+  CHTCollectionViewWaterfallLayout: 9d11068fafecac106695bb5a5d6d0f738483b598
   CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
-  GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
-  GTMAppAuth: 4b7bdc1fefdf6a49f3d9fc1aa6123f0c7e9b6660
-  GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
+  GoogleAPIClientForREST: f7951c455df271bc6259b3ddb4073d0026475ccf
+  GTMAppAuth: 8d724be29ab8f2f6d35b2bf929d76340c9d1f1b1
+  GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
   HPGrowingTextView: 88a716d97fb853bcb08a4a08e4727da17efc9b19
-  InAppSettingsKit: 94d2fba3ccd700fc4e32c6d09fabcc0af2426744
+  InAppSettingsKit: fc3dea21846535b76b8289b119dbfdbe2505b2b2
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   MWPhotoBrowser: 5836d7aa041dc05a13de380c246826578adc5ea5
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SideMenu: 49b8a20e2e5be4488966445850455254344cb826
-  Socket.IO-Client-Swift: a2faffdbde89c63aebc5d631041530c1068b02b8
+  Socket.IO-Client-Swift: 4698ea9eb2955eecf7fdf06c487ff1597e4cd779
+  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SVPullToRefresh: ba2e718695a43253d8bea6852d2960097dc15d8c
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: 3dc844b47da30c10f91e9d111fe6ad848583a166
+PODFILE CHECKSUM: eaa28bf9a6d8aac1edfd37574705eac138db25e1
 
 COCOAPODS: 1.5.2
