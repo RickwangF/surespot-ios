@@ -28,7 +28,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @implementation NotificationService
 
 - (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
-        
+    
     NSUserDefaults * sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.twofours.surespot"];
     NSInteger badge = [sharedDefaults integerForKey:@"badge"];
     badge++;
@@ -37,12 +37,29 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     self.contentHandler = contentHandler;
     self.bestAttemptContent = [request.content mutableCopy];
     DDLogDebug(@"NotificationService, %@", self.bestAttemptContent.userInfo);
-    // Modify the notification content here...
-    //TODO get the unread message count
-    self.bestAttemptContent.badge = [NSNumber numberWithInteger: badge];
-  //  self.bestAttemptContent.title = [NSString stringWithFormat:@"%@ [modified]",
-    //self.bestAttemptContent.title];
-    self.contentHandler(self.bestAttemptContent);
+    
+    NSString * notificationType =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-key" ] ;
+    if ([notificationType isEqualToString:@"notification_message"] ||
+        [notificationType isEqualToString:@"notification_invite"]  ||
+        [notificationType isEqualToString:@"notification_invite_accept"]) {
+        //if we're not logged in as the user add a local notifcation and show a toast
+        
+        NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
+        NSString * to =[locArgs objectAtIndex:0];
+      //  NSString * from =[locArgs objectAtIndex:1];
+        
+      //  self.bestAttemptContent.subtitle = [NSString stringWithFormat: NSLocalizedString(notificationType, nil), to];
+        self.bestAttemptContent.body = [NSString stringWithFormat: NSLocalizedString(notificationType, nil), to];
+       // self.bestAttemptContent.title = NSLocalizedString(@"notification_title", nil);
+        
+        
+        // Modify the notification content here...
+        //TODO get the unread message count
+        self.bestAttemptContent.badge = [NSNumber numberWithInteger: badge];
+        //  self.bestAttemptContent.title = [NSString stringWithFormat:@"%@ [modified]",
+        //self.bestAttemptContent.title];
+        self.contentHandler(self.bestAttemptContent);
+    }
 }
 
 - (void)serviceExtensionTimeWillExpire {
