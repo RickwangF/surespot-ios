@@ -10,6 +10,7 @@
 #import "CocoaLumberjack.h"
 #import "DDTTYLogger.h"
 
+
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
@@ -27,14 +28,20 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @implementation NotificationService
 
 - (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
+        
+    NSUserDefaults * sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.twofours.surespot"];
+    NSInteger badge = [sharedDefaults integerForKey:@"badge"];
+    badge++;
+    [sharedDefaults setInteger:badge forKey:@"badge"];
+    
     self.contentHandler = contentHandler;
     self.bestAttemptContent = [request.content mutableCopy];
     DDLogDebug(@"NotificationService, %@", self.bestAttemptContent.userInfo);
     // Modify the notification content here...
     //TODO get the unread message count
-    self.bestAttemptContent.badge = [NSNumber numberWithInteger:1];
-    self.bestAttemptContent.title = [NSString stringWithFormat:@"%@ [modified]", self.bestAttemptContent.title];
-    
+    self.bestAttemptContent.badge = [NSNumber numberWithInteger: badge];
+  //  self.bestAttemptContent.title = [NSString stringWithFormat:@"%@ [modified]",
+    //self.bestAttemptContent.title];
     self.contentHandler(self.bestAttemptContent);
 }
 

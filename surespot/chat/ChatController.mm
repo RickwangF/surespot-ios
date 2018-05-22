@@ -29,6 +29,7 @@
 #import "SendImageMessageOperation.h"
 #import "SendTextMessageOperation.h"
 #import "SurespotQueueMessage.h"
+#import <UserNotifications/UserNotifications.h>
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -247,7 +248,6 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     DDLogDebug(@"initing new socket");
     SocketManager* manager = [[SocketManager alloc] initWithSocketURL:[NSURL URLWithString:[[SurespotConfiguration sharedInstance] baseUrl]] config: opts];
-//    self.socket = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:[[SurespotConfiguration sharedInstance] baseUrl]] config: opts];
     self.socket = manager;
     [self addHandlers];
     [self.socket.defaultSocket connect];
@@ -517,9 +517,12 @@ static const int MAX_REAUTH_RETRIES = 1;
         }
         
         //clear notifications and badges
-        [[UIApplication sharedApplication] cancelAllLocalNotifications];
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber: 1];
+        [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
+        NSUserDefaults * sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.twofours.surespot"];
+        [sharedDefaults removeObjectForKey:@"badge"];
+        //        [[UIApplication sharedApplication] cancelAllLocalNotifications];
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber: 0];
+        //        [[UIApplication sharedApplication] setApplicationIconBadgeNumber: 0];
         
         
         //handle autoinvites
