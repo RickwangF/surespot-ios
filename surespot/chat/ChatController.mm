@@ -232,7 +232,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     [opts setObject:[NSNumber numberWithBool:YES] forKey:@"forceWebsockets"];
     [opts setObject:[NSNumber numberWithBool:socketLog] forKey:@"log"];
     [opts setObject:[NSNumber numberWithBool:NO] forKey:@"reconnects"];
-//    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"compress"];
+    [opts setObject:[NSNumber numberWithBool:YES] forKey:@"compress"];
     
     //#ifdef DEBUG
     //       [opts setObject:[NSNumber numberWithBool:YES] forKey:@"selfSigned"];
