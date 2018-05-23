@@ -30,6 +30,7 @@
 #import "SendTextMessageOperation.h"
 #import "SurespotQueueMessage.h"
 #import <UserNotifications/UserNotifications.h>
+#import "SharedUtils.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -518,12 +519,9 @@ static const int MAX_REAUTH_RETRIES = 1;
         
         //clear notifications and badges
         [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
-        NSUserDefaults * sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.twofours.surespot"];
-        [sharedDefaults removeObjectForKey:@"badge"];
-        //        [[UIApplication sharedApplication] cancelAllLocalNotifications];
+        [SharedUtils clearBadgeCount];
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber: 0];
-        //        [[UIApplication sharedApplication] setApplicationIconBadgeNumber: 0];
-        
+        [SharedUtils setActive:YES];
         
         //handle autoinvites
         [self handleAutoinvites];
@@ -870,24 +868,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     DDLogInfo(@"hasNewMessages: %d", afriend.hasNewMessages);
     
     //if we have new message let anyone who cares know
-    if (afriend.hasNewMessages) {
-        //show toast and make sound if we're not on the tab
-        NSString * currentChat = [self getCurrentChat];
-        if (![message.from isEqualToString: currentChat] &&
-            [[[IdentityController sharedInstance] getIdentityNames] containsObject:message.to]) {
-            
-            //get alias
-            Friend * thefriend = [_homeDataSource getFriendByName:message.from];
-            
-            if (thefriend) {
-                
-                [UIUtils showToastMessage:[NSString stringWithFormat:NSLocalizedString(@"notification_message_from", nil), message.to,thefriend.nameOrAlias] duration:1];
-                
-                //play notification sound
-                [[SoundController sharedInstance] playNewMessageSoundForUser: message.to];
-            }
-        }
-        
+    if (afriend.hasNewMessages) {        
         [[NSNotificationCenter defaultCenter] postNotificationName:@"newMessage" object: message];
     }
 }
@@ -1251,7 +1232,6 @@ static const int MAX_REAUTH_RETRIES = 1;
 
 - (void) setCurrentChat: (NSString *) username {
     [_homeDataSource setCurrentChat: username];
-    
     //here is where we would set message read stuff
     
 }

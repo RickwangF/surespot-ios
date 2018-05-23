@@ -12,6 +12,7 @@
 #import "CocoaLumberjack.h"
 #import "SDWebImageManager.h"
 #import "IdentityController.h"
+#import "SharedUtils.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
@@ -47,8 +48,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             _latestUserControlId = [[homeData objectForKey:@"userControlId"] integerValue];
             _friends = [homeData objectForKey:@"friends"];
         }
-        
-        
+                
         if (!_friends) {
             _friends = [NSMutableArray new];
         }
@@ -229,6 +229,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         DDLogInfo(@"setCurrentChat: %@", username);
         self.cChat = username;
+        [SharedUtils setCurrentTab:username];
     }
 }
 

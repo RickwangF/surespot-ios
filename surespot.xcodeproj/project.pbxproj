@@ -138,6 +138,12 @@
 		66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */; };
 		66BB5A49187C7672007B5C47 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A48187C7672007B5C47 /* HelpViewController.m */; };
 		66D2B6E720B4D24400D984E6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6621BB861762704D00BC2850 /* Localizable.strings */; };
+		66D2B6F620B616FA00D984E6 /* shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 66D2B6F420B616FA00D984E6 /* shared.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		66D2B6F920B616FA00D984E6 /* shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66D2B6F220B616FA00D984E6 /* shared.framework */; };
+		66D2B6FA20B616FA00D984E6 /* shared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 66D2B6F220B616FA00D984E6 /* shared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		66D2B70320B617C400D984E6 /* SharedUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 66D2B70120B617C400D984E6 /* SharedUtils.h */; };
+		66D2B70420B617C400D984E6 /* SharedUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 66D2B70220B617C400D984E6 /* SharedUtils.m */; };
+		66D2B70520B617E800D984E6 /* shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66D2B6F220B616FA00D984E6 /* shared.framework */; };
 		66D3B04F182EAB4200B37A6C /* surespot.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D3B04E182EAB4200B37A6C /* surespot.xcassets */; };
 		66DAB60D186CBE91006C262F /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66DAB60C186CBE91006C262F /* Twitter.framework */; };
 		66DAB618186CBF59006C262F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66DAB617186CBF59006C262F /* CoreLocation.framework */; };
@@ -197,7 +203,6 @@
 		66F831FF185B9EB500ADD2F1 /* OurMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66EBDF171855C96F00F2452D /* OurMessageCell.xib */; };
 		66FC1F821EAAFDCA00D1DC11 /* SendTextMessageOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66FC1F811EAAFDCA00D1DC11 /* SendTextMessageOperation.mm */; };
 		6761F09264FD201A9C63491D /* Pods_surespot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */; };
-		B135788A0A33407ACD5A40E0 /* Pods_ServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15446F3D09320A58F00F9F37 /* Pods_ServiceExtension.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -207,6 +212,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 663D504D20B382D800C3F74B;
 			remoteInfo = ServiceExtension;
+		};
+		66D2B6F720B616FA00D984E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6604A2B317626B9E0072216A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 66D2B6F120B616FA00D984E6;
+			remoteInfo = shared;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -222,12 +234,21 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		66D2B6FE20B616FA00D984E6 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				66D2B6FA20B616FA00D984E6 /* shared.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		08E5741B929AABD10752F271 /* Pods-ServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ServiceExtension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ServiceExtension/Pods-ServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		15446F3D09320A58F00F9F37 /* Pods_ServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3F98BBF2F056B56B84CFE35A /* Pods-ServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ServiceExtension.release.xcconfig"; path = "Pods/Target Support Files/Pods-ServiceExtension/Pods-ServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		4F43275FA45A75A41DB1B8C8 /* Pods_surespot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_surespot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A4EF5CC1BC5AB1B0000D3F3 /* AfterBackupIdentityHelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AfterBackupIdentityHelpViewController.h; sourceTree = "<group>"; };
 		5A4EF5CD1BC5AB620000D3F3 /* AfterBackupIdentityHelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AfterBackupIdentityHelpViewController.m; sourceTree = "<group>"; };
@@ -451,6 +472,11 @@
 		66BB5A48187C7672007B5C47 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HelpViewController.m; path = viewcontrollers/HelpViewController.m; sourceTree = "<group>"; };
 		66BFDF091A3F7A9F00498240 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		66D2B6E620B4B5BE00D984E6 /* ServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ServiceExtension.entitlements; sourceTree = "<group>"; };
+		66D2B6F220B616FA00D984E6 /* shared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = shared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		66D2B6F420B616FA00D984E6 /* shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shared.h; sourceTree = "<group>"; };
+		66D2B6F520B616FA00D984E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		66D2B70120B617C400D984E6 /* SharedUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedUtils.h; sourceTree = "<group>"; };
+		66D2B70220B617C400D984E6 /* SharedUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedUtils.m; sourceTree = "<group>"; };
 		66D3B04E182EAB4200B37A6C /* surespot.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = surespot.xcassets; sourceTree = "<group>"; };
 		66DAB60C186CBE91006C262F /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		66DAB617186CBF59006C262F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -725,6 +751,7 @@
 				661C2ED31763CB57000649E7 /* libz.dylib in Frameworks */,
 				66E4F5C417629B6400596E6B /* Security.framework in Frameworks */,
 				66E4F5C017629B4500596E6B /* CFNetwork.framework in Frameworks */,
+				66D2B6F920B616FA00D984E6 /* shared.framework in Frameworks */,
 				6604A2C117626B9E0072216A /* Foundation.framework in Frameworks */,
 				66E4F5B6176298CB00596E6B /* libcryptopp.a in Frameworks */,
 				6761F09264FD201A9C63491D /* Pods_surespot.framework in Frameworks */,
@@ -735,7 +762,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B135788A0A33407ACD5A40E0 /* Pods_ServiceExtension.framework in Frameworks */,
+				66D2B70520B617E800D984E6 /* shared.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66D2B6EE20B616FA00D984E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -747,8 +781,6 @@
 			children = (
 				7B53B5F6E4E57EE43909DCFB /* Pods-surespot.debug.xcconfig */,
 				ECFAFC1095B845ABD0054564 /* Pods-surespot.release.xcconfig */,
-				08E5741B929AABD10752F271 /* Pods-ServiceExtension.debug.xcconfig */,
-				3F98BBF2F056B56B84CFE35A /* Pods-ServiceExtension.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -759,6 +791,7 @@
 				661C2ED21763CB56000649E7 /* libz.dylib */,
 				6604A2C417626B9E0072216A /* surespot */,
 				663D504F20B382D800C3F74B /* ServiceExtension */,
+				66D2B6F320B616FA00D984E6 /* shared */,
 				6604A2BD17626B9E0072216A /* Frameworks */,
 				6604A2BC17626B9E0072216A /* Products */,
 				35CF04B71FB8167246067B8E /* Pods */,
@@ -770,6 +803,7 @@
 			children = (
 				6604A2BB17626B9E0072216A /* surespot.app */,
 				663D504E20B382D800C3F74B /* ServiceExtension.appex */,
+				66D2B6F220B616FA00D984E6 /* shared.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1018,6 +1052,25 @@
 				668D2501186A373A0096D155 /* QRInviteViewController.mm */,
 			);
 			name = qr;
+			sourceTree = "<group>";
+		};
+		66D2B6F320B616FA00D984E6 /* shared */ = {
+			isa = PBXGroup;
+			children = (
+				66D2B70020B617C400D984E6 /* utilities */,
+				66D2B6F420B616FA00D984E6 /* shared.h */,
+				66D2B6F520B616FA00D984E6 /* Info.plist */,
+			);
+			path = shared;
+			sourceTree = "<group>";
+		};
+		66D2B70020B617C400D984E6 /* utilities */ = {
+			isa = PBXGroup;
+			children = (
+				66D2B70120B617C400D984E6 /* SharedUtils.h */,
+				66D2B70220B617C400D984E6 /* SharedUtils.m */,
+			);
+			path = utilities;
 			sourceTree = "<group>";
 		};
 		66DAB62B186DEEDC006C262F /* voice */ = {
@@ -1466,6 +1519,18 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		66D2B6EF20B616FA00D984E6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66D2B6F620B616FA00D984E6 /* shared.h in Headers */,
+				66D2B70320B617C400D984E6 /* SharedUtils.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		6604A2BA17626B9E0072216A /* surespot */ = {
 			isa = PBXNativeTarget;
@@ -1477,11 +1542,13 @@
 				81FC303E59D981020C170791 /* [CP] Embed Pods Frameworks */,
 				6604A2B917626B9E0072216A /* Resources */,
 				663D505A20B382D800C3F74B /* Embed App Extensions */,
+				66D2B6FE20B616FA00D984E6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				663D505520B382D800C3F74B /* PBXTargetDependency */,
+				66D2B6F820B616FA00D984E6 /* PBXTargetDependency */,
 			);
 			name = surespot;
 			productName = surespot;
@@ -1492,7 +1559,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 663D505720B382D800C3F74B /* Build configuration list for PBXNativeTarget "ServiceExtension" */;
 			buildPhases = (
-				D4D7A3B210237BC23C68850E /* [CP] Check Pods Manifest.lock */,
 				663D504A20B382D800C3F74B /* Sources */,
 				663D504B20B382D800C3F74B /* Frameworks */,
 				663D504C20B382D800C3F74B /* Resources */,
@@ -1505,6 +1571,24 @@
 			productName = ServiceExtension;
 			productReference = 663D504E20B382D800C3F74B /* ServiceExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
+		};
+		66D2B6F120B616FA00D984E6 /* shared */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66D2B6FB20B616FA00D984E6 /* Build configuration list for PBXNativeTarget "shared" */;
+			buildPhases = (
+				66D2B6ED20B616FA00D984E6 /* Sources */,
+				66D2B6EE20B616FA00D984E6 /* Frameworks */,
+				66D2B6EF20B616FA00D984E6 /* Headers */,
+				66D2B6F020B616FA00D984E6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = shared;
+			productName = shared;
+			productReference = 66D2B6F220B616FA00D984E6 /* shared.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -1552,6 +1636,11 @@
 							};
 						};
 					};
+					66D2B6F120B616FA00D984E6 = {
+						CreatedOnToolsVersion = 9.3.1;
+						DevelopmentTeam = 2QFPK9DJY9;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 6604A2B617626B9E0072216A /* Build configuration list for PBXProject "surespot" */;
@@ -1573,6 +1662,7 @@
 			targets = (
 				6604A2BA17626B9E0072216A /* surespot */,
 				663D504D20B382D800C3F74B /* ServiceExtension */,
+				66D2B6F120B616FA00D984E6 /* shared */,
 			);
 		};
 /* End PBXProject section */
@@ -1624,6 +1714,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				66D2B6E720B4D24400D984E6 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66D2B6F020B616FA00D984E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1686,24 +1783,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-surespot/Pods-surespot-frameworks.sh\"\n";
-		};
-		D4D7A3B210237BC23C68850E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ServiceExtension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
 		};
 		F7EF9889C0E2581E1EA98DFB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1862,6 +1941,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		66D2B6ED20B616FA00D984E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66D2B70420B617C400D984E6 /* SharedUtils.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1869,6 +1956,11 @@
 			isa = PBXTargetDependency;
 			target = 663D504D20B382D800C3F74B /* ServiceExtension */;
 			targetProxy = 663D505420B382D800C3F74B /* PBXContainerItemProxy */;
+		};
+		66D2B6F820B616FA00D984E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 66D2B6F120B616FA00D984E6 /* shared */;
+			targetProxy = 66D2B6F720B616FA00D984E6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2099,7 +2191,6 @@
 		};
 		663D505820B382D800C3F74B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 08E5741B929AABD10752F271 /* Pods-ServiceExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -2144,7 +2235,6 @@
 		};
 		663D505920B382D800C3F74B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3F98BBF2F056B56B84CFE35A /* Pods-ServiceExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -2189,6 +2279,109 @@
 			};
 			name = Release;
 		};
+		66D2B6FC20B616FA00D984E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 2QFPK9DJY9;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = shared/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.surespot.shared;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s arm64";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		66D2B6FD20B616FA00D984E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 2QFPK9DJY9;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = shared/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.surespot.shared;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s arm64";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2215,6 +2408,15 @@
 			buildConfigurations = (
 				663D505820B382D800C3F74B /* Debug */,
 				663D505920B382D800C3F74B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		66D2B6FB20B616FA00D984E6 /* Build configuration list for PBXNativeTarget "shared" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66D2B6FC20B616FA00D984E6 /* Debug */,
+				66D2B6FD20B616FA00D984E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

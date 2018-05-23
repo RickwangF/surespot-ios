@@ -20,7 +20,3 @@ target 'surespot' do
     pod 'FLAnimatedImage'
     pod 'CHTCollectionViewWaterfallLayout'
 end
-
-target 'ServiceExtension' do
-    pod 'CocoaLumberjack'
-end
