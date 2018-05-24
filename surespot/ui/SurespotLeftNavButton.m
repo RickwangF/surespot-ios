@@ -41,6 +41,7 @@
 - (UIEdgeInsets)alignmentRectInsets {
     //ios 11 jacks insets
     if (@available(iOS 11, *)) {
+          return  UIEdgeInsetsMake(0, _inset, 0, -_inset);
     }
     else {
         return  UIEdgeInsetsMake(0, _inset, 0, 0);

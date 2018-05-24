@@ -3099,7 +3099,14 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 -(void) setBackButtonIcon {
     
     if (!_backImageView) {
-        SurespotLeftNavButton *backButton = [[SurespotLeftNavButton alloc] initWithDimen: 36.0f inset:10];
+        //iOS 11 fucks insets: http://www.matrixprojects.net/p/uibarbuttonitem-ios11/
+        SurespotLeftNavButton *backButton;
+        if (@available(iOS 11, *)) {
+            backButton = [[SurespotLeftNavButton alloc] initWithDimen: 36.0f inset:26];
+        }
+        else {
+            backButton = [[SurespotLeftNavButton alloc] initWithDimen: 36.0f inset:10];
+        }
         [backButton addTarget:self action:@selector(backPressed) forControlEvents:UIControlEventTouchUpInside];
         _backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
         
