@@ -121,7 +121,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 -(void) setBackButtonIcon {
     if (self.navigationController.viewControllers.count == 1) {
-        SurespotLeftNavButton *backButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0, 36.0f, 36.0f) inset:2];
+        SurespotLeftNavButton *backButton = [[SurespotLeftNavButton alloc] initWithDimen: 36.0f inset:2];
         UIBarButtonItem * backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
         UIImage * backImage = [UIImage imageNamed:@"surespot_logo"];
         [backButton setBackgroundImage:backImage  forState:UIControlStateNormal];

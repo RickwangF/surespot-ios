@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface SurespotLeftNavButton : UIButton
-- (instancetype)initWithFrame:(CGRect)frame inset: (CGFloat) inset;
+    -(instancetype)initWithDimen:(CGFloat) dimen inset: (CGFloat) inset;
 @end

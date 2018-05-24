@@ -3099,7 +3099,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 -(void) setBackButtonIcon {
     
     if (!_backImageView) {
-        SurespotLeftNavButton *backButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0, 36.0f, 36.0f) inset:10];
+        SurespotLeftNavButton *backButton = [[SurespotLeftNavButton alloc] initWithDimen: 36.0f inset:10];
         [backButton addTarget:self action:@selector(backPressed) forControlEvents:UIControlEventTouchUpInside];
         _backButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
         
@@ -3118,7 +3118,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (!_homeBackButtons) {
             //hamburgler
             UIImage * hamburgerImage = [UIImage imageNamed:@"drawer"];
-            SurespotLeftNavButton * hamButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0.0f, 16.0f, 16.0f) inset:16];
+            SurespotLeftNavButton * hamButton = [[SurespotLeftNavButton alloc] initWithDimen: 16.0f inset:16];
             [hamButton setBackgroundImage:hamburgerImage forState:UIControlStateNormal];
             [hamButton setContentMode:UIViewContentModeCenter];
             UIBarButtonItem * hamItem = [[UIBarButtonItem alloc] initWithCustomView:hamButton];
@@ -3131,7 +3131,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (!_chatBackButtons) {
             //hamburgler
             UIImage * backImage = [UIImage imageNamed:@"back"];
-            SurespotLeftNavButton * backButton = [[SurespotLeftNavButton alloc] initWithFrame: CGRectMake(0, 0, 16.0f, 16.0f) inset:16];
+            SurespotLeftNavButton * backButton = [[SurespotLeftNavButton alloc] initWithDimen: 16.0f inset:16];
             [backButton setBackgroundImage:backImage forState:UIControlStateNormal];
             [backButton setContentMode:UIViewContentModeCenter];
             UIBarButtonItem * backItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
