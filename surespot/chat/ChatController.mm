@@ -97,7 +97,12 @@ static const int MAX_REAUTH_RETRIES = 1;
     [self.socket.defaultSocket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
         DDLogInfo(@"socket disconnect, data: %@", data);
         [[UIApplication sharedApplication] endBackgroundTask:_bgSocketTaskId];
-        [self reconnect];
+        //server disconnect seems to yield data of "Socket Disconnected" vs client with "Disconnect" so only attempt reconnect when server disconnects
+        id object0 = [data objectAtIndex:0];
+        if ([object0 isEqualToString:@"Socket Disconnected"]) {
+            DDLogInfo(@"Socket Disconnected (server)");
+            [self reconnect];
+        }
     }];
     
     [self.socket.defaultSocket on:@"error" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -868,7 +873,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     DDLogInfo(@"hasNewMessages: %d", afriend.hasNewMessages);
     
     //if we have new message let anyone who cares know
-    if (afriend.hasNewMessages) {        
+    if (afriend.hasNewMessages) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"newMessage" object: message];
     }
 }
