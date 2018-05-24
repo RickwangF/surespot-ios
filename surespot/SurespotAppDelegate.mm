@@ -23,6 +23,9 @@
 #import "NSBundle+FallbackLanguage.h"
 #import "NetworkManager.h"
 #import "SideMenu-Swift.h"
+#import <UserNotifications/UserNotifications.h>
+#import "ChatUtils.h"
+#import "SharedUtils.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -42,43 +45,55 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     
     // in our case, show the surespot logo centered on a black background
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1)
-    {
-        UIView *colorView = [[UIView alloc] initWithFrame:self.window.frame];
-        colorView.tag = 9999;
-        colorView.backgroundColor = [UIColor blackColor];
-        _imageView = [[UIImageView alloc]initWithFrame:[colorView frame]];
-        UIImage * image =[UIImage imageNamed:@"surespotlauncher512.png"];
-        _imageView.contentMode = UIViewContentModeScaleAspectFit;
-        [_imageView setImage:image];
-        [colorView addSubview:_imageView];
-        [self.window addSubview:colorView];
-        [self.window bringSubviewToFront:colorView];
-    }
+    
+    UIView *colorView = [[UIView alloc] initWithFrame:self.window.frame];
+    colorView.tag = 9999;
+    colorView.backgroundColor = [UIColor blackColor];
+    _imageView = [[UIImageView alloc]initWithFrame:[colorView frame]];
+    UIImage * image =[UIImage imageNamed:@"surespotlauncher512.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [_imageView setImage:image];
+    [colorView addSubview:_imageView];
+    [self.window addSubview:colorView];
+    [self.window bringSubviewToFront:colorView];
+    
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // remove the surespot logo centered on a black background
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1)
-    {
-        UIView *colorView = [self.window viewWithTag:9999];
-        if(_imageView != nil) {
-            [_imageView removeFromSuperview];
-            _imageView = nil;
-        }
-        [colorView removeFromSuperview];
+    UIView *colorView = [self.window viewWithTag:9999];
+    if(_imageView != nil) {
+        [_imageView removeFromSuperview];
+        _imageView = nil;
     }
+    [colorView removeFromSuperview];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     _lastUsers = [[NSMutableDictionary alloc] init];
     
-    // iOS 8 Notifications
-    [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    center.delegate = self;
+    [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error)
+     {
+         if( !error )
+         {
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [[UIApplication sharedApplication] registerForRemoteNotifications];
+                 // required to get the app to do anything at all about push notifications
+             });
+             DDLogDebug( @"Push registration success." );
+         }
+         else
+         {
+             DDLogDebug( @"Push registration FAILED" );
+             DDLogDebug( @"ERROR: %@ - %@", error.localizedFailureReason, error.localizedDescription );
+             DDLogDebug( @"SUGGESTIONS: %@ - %@", error.localizedRecoveryOptions, error.localizedRecoverySuggestion );
+         }
+     }];
     
-    [application registerForRemoteNotifications];
     
     if  (launchOptions) {
         DDLogVerbose(@"received launch options: %@", launchOptions);
@@ -120,36 +135,28 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     //get reachability started
     [ChatManager sharedInstance];
-
+    NSString * lastUser = [[IdentityController sharedInstance] getLastLoggedInUser];
     
-    //if we were launched from a notification use that logic to set the view controller
-    NSDictionary* userInfo = [launchOptions valueForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
-    if (![self handleNotificationApplication:application userInfo:userInfo local:YES]) {
-        
-        NSString * lastUser = [[IdentityController sharedInstance] getLastLoggedInUser];
-        
-        //see if we have a last user
-        BOOL setSession = NO;
-        
-        if (lastUser) {
-            setSession = [[CredentialCachingController sharedInstance] setSessionForUsername:lastUser];
-        }
-        
-        if (setSession) {
-            [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"]]];
-        }
-        
-        else {
-            //show create if we don't have any identities, otherwise login
-            if ([[[IdentityController sharedInstance] getIdentityNames ] count] == 0 ) {
-                [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"signupViewController"]]];
-            }
-            else {
-                [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
-            }
-        }
+    //see if we have a last user
+    BOOL setSession = NO;
+    
+    if (lastUser) {
+        setSession = [[CredentialCachingController sharedInstance] setSessionForUsername:lastUser];
     }
     
+    if (setSession) {
+        [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"]]];
+    }
+    
+    else {
+        //show create if we don't have any identities, otherwise login
+        if ([[[IdentityController sharedInstance] getIdentityNames ] count] == 0 ) {
+            [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"signupViewController"]]];
+        }
+        else {
+            [rootViewController setViewControllers:@[[storyboard instantiateViewControllerWithIdentifier:@"loginViewController"]]];
+        }
+    }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fastUserSwitch:) name:@"fastUserSwitch" object:nil];
     return YES;
@@ -177,99 +184,114 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 [[NSUserDefaults standardUserDefaults] setObject: autoinvites forKey: @"autoinvites"];
                 //fire event
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"autoinvites" object:nil ];
-                  return YES;
+                return YES;
             }
         }
-        
-        
     }
     
     if ([_currentAuthorizationFlow resumeAuthorizationFlowWithURL:url]) {
         _currentAuthorizationFlow = nil;
         return YES;
     }
-  
-    return NO;
-}
-
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    DDLogInfo(@"received remote notification: %@, applicationstate: %ld", userInfo, (long)[application applicationState]);
-    [self handleNotificationApplication:application userInfo:userInfo local:NO];
-}
-//
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
-{
-    DDLogInfo(@"received local notification, applicationstate: %ld", (long)[application applicationState]);
-    [self handleNotificationApplication:application userInfo:notification.userInfo local:YES];
-}
-
--(BOOL) handleNotificationApplication: (UIApplication *) application userInfo: (NSDictionary *) userInfo local: (BOOL) local {
-    NSString * notificationType =[userInfo valueForKeyPath:@"aps.alert.loc-key" ] ;
-    if ([notificationType isEqualToString:@"notification_message"] ||
-        [notificationType isEqualToString:@"notification_invite"]  ||
-        [notificationType isEqualToString:@"notification_invite_accept"]) {
-        //if we're not logged in as the user add a local notifcation and show a toast
-        
-        NSArray * locArgs =[userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
-        NSString * to =[locArgs objectAtIndex:0];
-        NSString * from =[locArgs objectAtIndex:1];
-        
-        //todo download and add the message or just move to tab and tell it to load
-        switch ([application applicationState]) {
-            case UIApplicationStateActive:
-                
-                //application was running when we received
-                //if we're not on the tab, show notification
-                if (!local &&
-                    ![to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]] &&
-                    [[[IdentityController sharedInstance] getIdentityNames] containsObject:to]) {
-                    
-                    
-                    [UIUtils showToastMessage:[NSString stringWithFormat:NSLocalizedString(notificationType, nil), to] duration:1];
-                    
-                    UILocalNotification* localNotification = [[UILocalNotification alloc] init];
-                    localNotification.fireDate = nil;
-                    localNotification.alertBody = [NSString stringWithFormat: NSLocalizedString(notificationType, nil), to];
-                    localNotification.alertAction = NSLocalizedString(@"notification_title", nil);
-                    localNotification.userInfo = userInfo;
-                    //this doesn't seem to play anything when app is foregrounded so play it manually
-                    //                    localNotification.soundName = [userInfo valueForKeyPath:@"aps.sound"];
-                    
-                    [[SoundController sharedInstance] playSoundNamed:[userInfo valueForKeyPath:@"aps.sound"] forUser:to];
-                    [application scheduleLocalNotification:localNotification];
-                    
-                }
-                break;
-                
-            case UIApplicationStateInactive:
-            case UIApplicationStateBackground:
-                //started application from notification, move to correct tab
-                
-                //set user default so we can move to the right tab
-                if ([notificationType isEqualToString:@"notification_invite"] || [notificationType isEqualToString:@"notification_invite_accept"]) {
-                    [[NSUserDefaults standardUserDefaults] setObject:@"invite" forKey:@"notificationType"];
-                    [[NSUserDefaults standardUserDefaults] setObject:to forKey:@"notificationTo"];
-                }
-                else {
-                    if ([notificationType isEqualToString:@"notification_message"]) {
-                        [[NSUserDefaults standardUserDefaults] setObject:@"message" forKey:@"notificationType"];
-                        [[NSUserDefaults standardUserDefaults] setObject:to forKey:@"notificationTo"];
-                        [[NSUserDefaults standardUserDefaults] setObject:from forKey:@"notificationFrom"];
-                    }
-                }
-                
-                //if it's the same user fire notification
-                if ([to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]]) {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:@"openedFromNotification" object:nil ];
-                }
-                else {
-                    [self userSwitch:to fromNotification:YES];
-                }
-        }
-        return YES;
-    }
     
     return NO;
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification  withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler{
+    DDLogDebug( @"received notification while in foreground" );
+    NSDictionary * userInfo = [NSMutableDictionary dictionaryWithDictionary: notification.request.content.userInfo];
+    DDLogDebug(@"%@", notification.request.content);
+    
+    //if we created the notification locally just show it
+    if ([userInfo valueForKey:@"local"] != nil) {
+        completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge);
+    }
+    else {
+        //push notification, figure out badge count
+        NSString * notificationType =[userInfo valueForKeyPath:@"aps.alert.loc-key" ] ;
+        if ([notificationType isEqualToString:@"notification_message"] ||
+            [notificationType isEqualToString:@"notification_invite"]  ||
+            [notificationType isEqualToString:@"notification_invite_accept"]) {
+            
+            NSArray * locArgs =[userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
+            NSString * to = [locArgs objectAtIndex:0];
+            NSString * from = [locArgs objectAtIndex:1];
+            NSString * messageId = [userInfo valueForKey:@"id"];
+            
+            [userInfo setValue:@"surespotRulez" forKey:@"local"];
+            //application was running when we received
+            //if we're not on the tab, show notification
+            if ([to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]] &&
+                [[[IdentityController sharedInstance] getIdentityNames] containsObject:to]) {
+                
+                ChatController * cc = [[ChatManager sharedInstance] getChatControllerIfPresent: to];
+                //if we're not currently on the tab
+                if (![[cc getCurrentChat] isEqualToString:from]) {
+                    //get alias
+                    Friend * thefriend = [[cc getHomeDataSource] getFriendByName: from];
+                    NSString * body;
+                    if (thefriend) {
+                        body = [NSString stringWithFormat:NSLocalizedString(@"notification_message_from", nil), to,thefriend.nameOrAlias];
+                    }
+                    else {
+                        body = [NSString stringWithFormat: NSLocalizedString(notificationType, nil), to];
+                    }
+                    
+                    UNMutableNotificationContent * content = [[UNMutableNotificationContent alloc] init];
+                    [content setBody:body];
+                    [content setUserInfo:userInfo];
+                    
+                    //badge count incremented by extension
+                    [content setBadge:[NSNumber numberWithInteger: [SharedUtils getBadgeCount]]];
+                    
+                    //TODO allow user to choose surespot or system sounds
+                    [content setSound: [UNNotificationSound soundNamed:@"message.caf"]];
+                    //           [content setBadge: [SharedUtils incrementBadgeCount]];
+                    NSString * requestId = [[NSUUID  UUID] UUIDString];
+                    // [NSString stringWithFormat:@"%@:%@", to,from];
+                    
+                    UNNotificationTrigger * trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:.0001 repeats:NO];
+                    UNNotificationRequest * request = [UNNotificationRequest requestWithIdentifier:requestId content:content trigger:trigger];
+                    
+                    [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:nil];
+                    completionHandler(UNNotificationPresentationOptionNone);
+                }
+            }
+        }
+    }
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response  withCompletionHandler:(void (^)())completionHandler   {
+    DDLogDebug( @"opened from notification" );
+    NSDictionary * userInfo = response.notification.request.content.userInfo;
+    DDLogDebug(@"%@", userInfo);
+    NSArray * locArgs =[userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
+    NSString * to = [locArgs objectAtIndex:0];
+    NSString * from = [locArgs objectAtIndex:1];
+    
+    
+    NSString * notificationType =[userInfo valueForKeyPath:@"aps.alert.loc-key" ] ;
+    if ([notificationType isEqualToString:@"notification_invite"] || [notificationType isEqualToString:@"notification_invite_accept"]) {
+        [[NSUserDefaults standardUserDefaults] setObject:@"invite" forKey:@"notificationType"];
+        [[NSUserDefaults standardUserDefaults] setObject:to forKey:@"notificationTo"];
+    }
+    else {
+        if ([notificationType isEqualToString:@"notification_message"]) {
+            [[NSUserDefaults standardUserDefaults] setObject:@"message" forKey:@"notificationType"];
+            [[NSUserDefaults standardUserDefaults] setObject:to forKey:@"notificationTo"];
+            [[NSUserDefaults standardUserDefaults] setObject:from forKey:@"notificationFrom"];
+        }
+    }
+    
+    //if it's the same user fire notification
+    if ([to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"openedFromNotification" object:nil ];
+    }
+    else {
+        [self userSwitch:to fromNotification:YES];
+    }
+    completionHandler();
 }
 
 -(void) fastUserSwitch: (NSNotification *) notification {
@@ -308,7 +330,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
         
         DDLogDebug(@"userSwitch restoring last chat: %@ for user: %@", from, to);
-    }        
+    }
     
     //set the session
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
@@ -320,7 +342,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
         transition.type = kCATransitionFade;
         [navController.view.layer addAnimation:transition forKey:nil];
-            [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: NO completion:nil];
+        [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: NO completion:nil];
         UIViewController * c =[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"];
         [navController setViewControllers:@[c] animated:NO];
     }
@@ -332,6 +354,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
+    //clear badge count
+ //   [SharedUtils setCurrentTab:nil];
+    [SharedUtils setActive:NO];
+  //  [SharedUtils clearBadgeCount];
+   // [[UIApplication sharedApplication] setApplicationIconBadgeNumber: [SharedUtils getBadgeCount]];
+    
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     
@@ -345,6 +373,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 - (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
+    DDLogDebug(@"didRegisterToken: %@", [ChatUtils hexFromData:devToken]);
     
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:devToken forKey:@"apnToken"];
@@ -353,7 +382,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
-    DDLogVerbose(@"Error in registration. Error: %@", err);
+    DDLogDebug(@"Error in registration. Error: %@", err);
 }
 
 - (BOOL)application:(UIApplication *)app
