@@ -72,8 +72,8 @@ DEPENDENCIES:
   - GTMAppAuth
   - HPGrowingTextView
   - InAppSettingsKit
-  - "MWPhotoBrowser (from `git@github.com:surespot/MWPhotoBrowser.git`)"
-  - "SideMenu (from `git@github.com:surespot/SideMenu.git`)"
+  - MWPhotoBrowser (from `https://github.com/surespot/MWPhotoBrowser.git`)
+  - SideMenu (from `https://github.com/surespot/SideMenu.git`)
   - Socket.IO-Client-Swift
   - SVPullToRefresh
   - TTTAttributedLabel
@@ -103,17 +103,17 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   MWPhotoBrowser:
-    :git: "git@github.com:surespot/MWPhotoBrowser.git"
+    :git: https://github.com/surespot/MWPhotoBrowser.git
   SideMenu:
-    :git: "git@github.com:surespot/SideMenu.git"
+    :git: https://github.com/surespot/SideMenu.git
 
 CHECKOUT OPTIONS:
   MWPhotoBrowser:
     :commit: 228e958fd23eed2f9617b95ea1f9b7f80ff60963
-    :git: "git@github.com:surespot/MWPhotoBrowser.git"
+    :git: https://github.com/surespot/MWPhotoBrowser.git
   SideMenu:
     :commit: 26c096a478b8b5d2fd45f28b68cc7422035f9607
-    :git: "git@github.com:surespot/SideMenu.git"
+    :git: https://github.com/surespot/SideMenu.git
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
@@ -138,6 +138,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: eaa28bf9a6d8aac1edfd37574705eac138db25e1
+PODFILE CHECKSUM: f16d54482d818c4fe4435b04a689305ca1bbd215
 
 COCOAPODS: 1.5.2

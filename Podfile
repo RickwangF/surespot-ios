@@ -6,7 +6,7 @@ target 'surespot' do
     pod 'AFNetworking'
     pod 'Socket.IO-Client-Swift'
     pod 'TTTAttributedLabel'
-    pod 'SideMenu', :git => 'git@github.com:surespot/SideMenu.git'
+    pod 'SideMenu', :git => 'https://github.com/surespot/SideMenu.git'
     pod 'GTMAppAuth'
     pod 'GoogleAPIClientForREST'
     pod 'GoogleAPIClientForREST/Drive'
@@ -16,7 +16,7 @@ target 'surespot' do
     pod 'SVPullToRefresh'
     pod 'UIImageViewAligned'
     pod 'HPGrowingTextView'
-    pod 'MWPhotoBrowser', :git => 'git@github.com:surespot/MWPhotoBrowser.git'
+    pod 'MWPhotoBrowser', :git => 'https://github.com/surespot/MWPhotoBrowser.git'
     pod 'FLAnimatedImage'
     pod 'CHTCollectionViewWaterfallLayout'
 end
