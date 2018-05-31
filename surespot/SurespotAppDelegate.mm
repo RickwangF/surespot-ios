@@ -162,10 +162,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return YES;
 }
 
+
 //launch from smart banner or url
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<NSString *, id> *)options {
     if (!url) {  return NO; }
-    
     
     DDLogInfo(@"url %@", url);
     
@@ -384,21 +386,5 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
     DDLogDebug(@"Error in registration. Error: %@", err);
 }
-
-- (BOOL)application:(UIApplication *)app
-            openURL:(NSURL *)url
-            options:(NSDictionary<NSString *, id> *)options {
-    // Sends the URL to the current authorization flow (if any) which will
-    // process it if it relates to an authorization response.
-    if ([_currentAuthorizationFlow resumeAuthorizationFlowWithURL:url]) {
-        _currentAuthorizationFlow = nil;
-        return YES;
-    }
-    
-    // Your additional URL handling (if any) goes here.
-    
-    return NO;
-}
-
 
 @end
