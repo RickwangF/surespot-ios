@@ -17,7 +17,6 @@
 #import "ChatDataSource.h"
 #import "NetworkManager.h"
 #import "AudioUnit/AudioUnit.h"
-#import "CAXException.h"
 #import "SurespotAppDelegate.h"
 #import "SurespotMessage.h"
 #import "SDWebImageManager.h"
@@ -31,14 +30,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
-
-
 @interface VoiceDelegate()
 @property (nonatomic, strong) NSString * username;
 @property (nonatomic, strong) NSString * theirUsername;
 @property (nonatomic, strong) NSString * ourVersion;
-@property (nonatomic, strong) AVAudioRecorder *recorder;
-@property (nonatomic, strong) AVAudioPlayer *player;
 @property (nonatomic, strong) UIView * countdownView;
 @property (nonatomic, strong) UITextField * countdownTextField;
 @property (nonatomic, strong) NSTimer * countdownTimer;
@@ -52,15 +47,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @end
 
 @implementation VoiceDelegate
-
-@synthesize view;
-@synthesize rioUnit;
-@synthesize unitIsRunning;
-@synthesize unitHasBeenCreated;
-@synthesize inputProc;
-
 const NSInteger SEND_THRESHOLD = 25;
-
 
 - (BOOL) hasPermissionForMic {
     // this will only work with iOS 8+
@@ -126,36 +113,12 @@ const NSInteger SEND_THRESHOLD = 25;
                                              selector:@selector(applicationWillResignActive:)
                                                  name:UIApplicationWillResignActiveNotification
                                                object:nil];
-
+    
     return self;
 }
 
-- (BOOL)isRecording
-{
-    return [_recorder isRecording];
-}
-
 -(void) prepareRecording {
-    NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString] ;
-    NSString *uniqueFileName = [NSString stringWithFormat:@"%@.m4a", guid];
-    _outputPath = [[FileController getCacheDir] stringByAppendingPathComponent: uniqueFileName];
-    DDLogInfo(@"recording to %@", _outputPath);
-    NSURL *outputFileURL = [NSURL fileURLWithPath:_outputPath];
     
-    // Define the recorder setting
-    NSMutableDictionary *recordSetting = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                          [NSNumber numberWithInt:kAudioFormatMPEG4AAC] , AVFormatIDKey,
-                                          [NSNumber numberWithInteger: 12000], AVEncoderBitRateKey,
-                                          [NSNumber numberWithFloat: 12000],AVSampleRateKey,
-                                          [NSNumber numberWithInt:1],AVNumberOfChannelsKey, nil];
-    
-    // Initiate and prepare the recorder
-    _recorder = [[AVAudioRecorder alloc] initWithURL:outputFileURL settings:recordSetting error:nil];
-    _recorder.delegate = self;
-    _recorder.meteringEnabled = YES;
-    [_recorder prepareToRecord];
-    
-    [self initScope];
     
 }
 
@@ -215,7 +178,7 @@ const NSInteger SEND_THRESHOLD = 25;
 
 -(void) playMessageData: (NSData *) data message: (SurespotMessage *) message {
     
-    _player = [[AVAudioPlayer alloc] initWithData: data error:nil];
+    // _player = [[AVAudioPlayer alloc] initWithData: data error:nil];
     if ([_player duration] > 0) {
         _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
         _cell.audioSlider.maximumValue = [_player duration];
@@ -259,9 +222,9 @@ const NSInteger SEND_THRESHOLD = 25;
 }
 
 -(void) stopPlayingDeactivateSession: (BOOL) deactivateSession {
-    if (_player.playing) {
-        [_player stop];
-    }
+    //    if (_player.playing) {
+    //        [_player stop];
+    //    }
     [_playLock lock];
     [_playTimer invalidate];
     _playTimer = nil;
@@ -291,62 +254,113 @@ const NSInteger SEND_THRESHOLD = 25;
 
 -(void) startRecordingUsername: (NSString *) username {
     DDLogInfo(@"start recording");
-    [self stopPlayingDeactivateSession:NO];
     
-    if (!_recorder.recording) {
-        
-        if (![self hasPermissionForMic]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Use of microphone disabled"
-                                                            message:@"This device is not configured to allow Surespot to access your microphone."
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
-            [alert show];
-            return;
-        }
-        [self prepareRecording];
-        
-        _theirUsername = username;
-        
-        XThrowIfError(AudioOutputUnitStart(rioUnit), "couldn't start remote i/o unit");
-        
-        unitIsRunning = 1;
-        
-        DDLogInfo(@"activating audio session");
-        AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-        [audioSession setActive:YES error:nil];
-        
-        _max = 0;
-        _timeRemaining = 10;
-        _countdownTextField.text = @"10";
-        
-        //(re)set the open gl view frame
-        _scopeRect = [self getScopeRect];
-        drawBufferLen = _scopeRect.size.width;
-        resetOscilLine = YES;
-        [view setFrame: _scopeRect];
-        
-        //position the countdown view
-        [_countdownView setFrame:CGRectMake(10, _scopeRect.origin.y+10, 44, 44)];
-        
-        AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
-        CGRect frame = overlayView.frame;
-        
-        _backgroundView = [[UIView alloc] initWithFrame:frame];
-        _backgroundView.backgroundColor = [UIUtils surespotTransparentGrey];
-        _backgroundView.opaque = NO;
-        
-        [overlayView addSubview:_backgroundView];
-        
-        
-        [overlayView addSubview:view];
-        [overlayView addSubview:_countdownView];
-        [_countdownTextField setFrame:CGRectMake(0, 0, 44, 44)];
-        
-        [_recorder record];
-        [view startAnimation];
-        _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countdownTimerFired:) userInfo:nil repeats:YES];
+    if (![self hasPermissionForMic]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Use of microphone disabled"
+                                                        message:@"This device is not configured to allow Surespot to access your microphone."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        return;
     }
+    
+    _isRecording = YES;
+    //
+    // Setup the AVAudioSession. EZMicrophone will not work properly on iOS
+    // if you don't do this!
+    //
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    NSError *error;
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+    if (error)
+    {
+        NSLog(@"Error setting up audio session category: %@", error.localizedDescription);
+    }
+    [session setActive:YES error:&error];
+    if (error)
+    {
+        NSLog(@"Error setting up audio session active: %@", error.localizedDescription);
+    }
+    
+    
+    NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString] ;
+    NSString *uniqueFileName = [NSString stringWithFormat:@"%@.m4a", guid];
+    _outputPath = [[FileController getCacheDir] stringByAppendingPathComponent: uniqueFileName];
+    DDLogInfo(@"recording to %@", _outputPath);
+    NSURL *outputFileURL = [NSURL fileURLWithPath:_outputPath];
+    
+    // Define the recorder setting
+    NSMutableDictionary *recordSetting = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                          [NSNumber numberWithInt:kAudioFormatMPEG4AAC] , AVFormatIDKey,
+                                          [NSNumber numberWithInteger: 12000], AVEncoderBitRateKey,
+                                          [NSNumber numberWithFloat: 12000],AVSampleRateKey,
+                                          [NSNumber numberWithInt:1],AVNumberOfChannelsKey, nil];
+    
+    
+    //    [self.view addSubview:audioPlot];
+    // Create an instance of the microphone and tell it to use this view controller instance as the delegate
+    self.microphone = [EZMicrophone microphoneWithDelegate:self];
+    self.player = [EZAudioPlayer audioPlayerWithDelegate:self];
+    
+    //
+    // Override the output to the speaker. Do this after creating the EZAudioPlayer
+    // to make sure the EZAudioDevice does not reset this.
+    //
+    [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
+    if (error)
+    {
+        NSLog(@"Error overriding output to the speaker: %@", error.localizedDescription);
+    }
+    
+    // if (!_recorder.recording) {
+    [self.player pause];
+    
+    //
+    // Start the microphone
+    //
+    [self.microphone startFetchingAudio];
+    
+    self.recorder = [EZRecorder recorderWithURL:outputFileURL
+                                   clientFormat:[self.microphone audioStreamBasicDescription]
+                                       fileType:EZRecorderFileTypeM4A
+                                       delegate:self];
+    _theirUsername = username;
+    
+    _max = 0;
+    _timeRemaining = 10;
+    _countdownTextField.text = @"10";
+    
+    //(re)set the open gl view frame
+    _scopeRect = [self getScopeRect];
+    
+    //position the countdown view
+    [_countdownView setFrame:CGRectMake(10, _scopeRect.origin.y+10, 44, 44)];
+    
+    _overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
+    CGRect frame = _overlayView.frame;
+    
+    _backgroundView = [[UIView alloc] initWithFrame:frame];
+    _backgroundView.backgroundColor = [UIUtils surespotTransparentGrey];
+    _backgroundView.opaque = NO;
+    
+    [_overlayView addSubview:_backgroundView];
+    
+    // Programmatically create an audio plot
+    _recordingAudioPlot = [[EZAudioPlotGL alloc] initWithFrame:_scopeRect];
+    self.recordingAudioPlot.backgroundColor = [UIColor colorWithRed: 0.984 green: 0.71 blue: 0.365 alpha: 1];
+    self.recordingAudioPlot.color           = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    self.recordingAudioPlot.plotType        = EZPlotTypeRolling;
+    self.recordingAudioPlot.shouldFill      = YES;
+    self.recordingAudioPlot.shouldMirror    = YES;
+    
+    [_overlayView addSubview:_recordingAudioPlot];
+    [_overlayView addSubview:_countdownView];
+    [_countdownTextField setFrame:CGRectMake(0, 0, 44, 44)];
+    
+    
+    _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countdownTimerFired:) userInfo:nil repeats:YES];
+    //   }
 }
 
 -(CGRect) getScopeRect {
@@ -368,6 +382,50 @@ const NSInteger SEND_THRESHOLD = 25;
     
 }
 
+
+//------------------------------------------------------------------------------
+
+- (void)setupNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerDidChangePlayState:)
+                                                 name:EZAudioPlayerDidChangePlayStateNotification
+                                               object:self.player];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerDidReachEndOfFile:)
+                                                 name:EZAudioPlayerDidReachEndOfFileNotification
+                                               object:self.player];
+}
+
+//------------------------------------------------------------------------------
+#pragma mark - Notifications
+//------------------------------------------------------------------------------
+
+- (void)playerDidChangePlayState:(NSNotification *)notification
+{
+    __weak typeof (self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        EZAudioPlayer *player = [notification object];
+        BOOL isPlaying = [player isPlaying];
+        if (isPlaying)
+        {
+            weakSelf.recorder.delegate = nil;
+        }
+        weakSelf.playingAudioPlot.hidden = !isPlaying;
+    });
+}
+
+//------------------------------------------------------------------------------
+
+- (void)playerDidReachEndOfFile:(NSNotification *)notification
+{
+    __weak typeof (self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf.playingAudioPlot clear];
+    });
+}
+
+
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     DDLogInfo(@"finished playing, successfully?: %@", flag ? @"YES" : @"NO");
     [self stopPlayingDeactivateSession:YES];
@@ -380,358 +438,176 @@ const NSInteger SEND_THRESHOLD = 25;
 
 -(void) stopRecordingSendInternal: (NSNumber*) send {
     DDLogInfo(@"stop recording");
-    if (_recorder.recording) {
+    if (_isRecording) {
+        //  if (_recorder.recording) {
         
         [_countdownTimer invalidate];
-        [_recorder stop];
+        [_microphone stopFetchingAudio];
+        [_recorder closeAudioFile];
         
-        [view stopAnimation];
         
-        [[AGWindowView activeWindowViewContainingView:view] removeFromSuperview];
-        [view removeFromSuperview];
+        //  [view stopAnimation];
+        
+        [_overlayView removeFromSuperview];
+        [_recordingAudioPlot removeFromSuperview];
         [_countdownView removeFromSuperview];
         [_backgroundView removeFromSuperview];
         _backgroundView = nil;
         
-        AudioOutputUnitStop(rioUnit);
         
         DDLogInfo(@"deactivating audio session");
         AVAudioSession *audioSession = [AVAudioSession sharedInstance];
         [audioSession setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
         
         if ([send boolValue]) {
-            [self uploadVoiceUrl:_recorder.url];
+            [self uploadVoiceUrl:[NSURL fileURLWithPath:_outputPath]];
         }
         else {
             [[NSFileManager defaultManager] removeItemAtPath:_outputPath error:nil];
         }
-        
+        _isRecording = NO;
     }
 }
 
 
+
 -(void) uploadVoiceUrl: (NSURL *) url {
     
-    if (!url || _max < SEND_THRESHOLD) {
-        
-        [UIUtils showToastKey:@"no_audio_detected" duration:1.5];
-        [[NSFileManager defaultManager] removeItemAtPath:_outputPath error:nil];
-        return;
-    }
+    //    if (!url || _max < SEND_THRESHOLD) {
+    //
+    //        [UIUtils showToastKey:@"no_audio_detected" duration:1.5];
+    //        [[NSFileManager defaultManager] removeItemAtPath:_outputPath error:nil];
+    //        return;
+    //    }
     
     [[[ChatManager sharedInstance] getChatController:_username] sendVoiceMessage:url to:_theirUsername];
 }
 
 
+//------------------------------------------------------------------------------
+#pragma mark - EZMicrophoneDelegate
+//------------------------------------------------------------------------------
 
-#pragma mark-
-
-void cycleOscilloscopeLines()
+- (void)microphone:(EZMicrophone *)microphone changedPlayingState:(BOOL)isPlaying
 {
-    // Cycle the lines in our draw buffer so that they age and fade. The oldest line is discarded.
-    int drawBuffer_i;
-    for (drawBuffer_i=(kNumDrawBuffers - 2); drawBuffer_i>=0; drawBuffer_i--)
-        memmove(drawBuffers[drawBuffer_i + 1], drawBuffers[drawBuffer_i], drawBufferLen);
 }
 
-#pragma mark -Audio Session Interruption Listener
+//------------------------------------------------------------------------------
 
-void rioInterruptionListener(void *inClientData, UInt32 inInterruption)
+#warning Thread Safety
+//
+// Note that any callback that provides streamed audio data (like streaming
+// microphone input) happens on a separate audio thread that should not be
+// blocked. When we feed audio data into any of the UI components we need to
+// explicity create a GCD block on the main thread to properly get the UI to
+// work.
+- (void)   microphone:(EZMicrophone *)microphone
+     hasAudioReceived:(float **)buffer
+       withBufferSize:(UInt32)bufferSize
+ withNumberOfChannels:(UInt32)numberOfChannels
 {
-    try {
-        printf("Session interrupted! --- %s ---", inInterruption == kAudioSessionBeginInterruption ? "Begin Interruption" : "End Interruption");
-        
-        VoiceDelegate *THIS = (__bridge VoiceDelegate*)inClientData;
-        
-        if (inInterruption == kAudioSessionBeginInterruption) {
-            XThrowIfError(AudioOutputUnitStop(THIS->rioUnit), "couldn't stop unit");
-        }
-    } catch (CAXException e) {
-        char buf[256];
-        fprintf(stderr, "Error: %s (%s)\n", e.mOperation, e.FormatError(buf));
-    }
+    // Getting audio data as an array of float buffer arrays. What does that
+    // mean? Because the audio is coming in as a stereo signal the data is split
+    // into a left and right channel. So buffer[0] corresponds to the float* data
+    // for the left channel while buffer[1] corresponds to the float* data for
+    // the right channel.
+    
+    //
+    // See the Thread Safety warning above, but in a nutshell these callbacks
+    // happen on a separate audio thread. We wrap any UI updating in a GCD block
+    // on the main thread to avoid blocking that audio flow.
+    //
+    __weak typeof (self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //
+        // All the audio plot needs is the buffer data (float*) and the size.
+        // Internally the audio plot will handle all the drawing related code,
+        // history management, and freeing its own resources. Hence, one badass
+        // line of code gets you a pretty plot :)
+        //
+        [weakSelf.recordingAudioPlot updateBuffer:buffer[0]
+                                   withBufferSize:bufferSize];
+    });
 }
 
+//------------------------------------------------------------------------------
 
-#pragma mark -RIO Input Callback
-
-static OSStatus	PerformThru(
-                            void						*inRefCon,
-                            AudioUnitRenderActionFlags 	*ioActionFlags,
-                            const AudioTimeStamp 		*inTimeStamp,
-                            UInt32 						inBusNumber,
-                            UInt32 						inNumberFrames,
-                            AudioBufferList 			*ioData)
+- (void)   microphone:(EZMicrophone *)microphone
+        hasBufferList:(AudioBufferList *)bufferList
+       withBufferSize:(UInt32)bufferSize
+ withNumberOfChannels:(UInt32)numberOfChannels
 {
-    AudioBufferList * bufferList = new AudioBufferList();
-    
-    SInt32 samples[inNumberFrames];
-    memset (&samples, 0, sizeof (samples));
-    
-    bufferList->mNumberBuffers = 1;
-    bufferList->mBuffers[0].mData = samples;
-    bufferList->mBuffers[0].mNumberChannels = 1;
-    bufferList->mBuffers[0].mDataByteSize = inNumberFrames*sizeof(SInt32);
-    
-    
-    // DDLogInfo(@"performThru");
-    VoiceDelegate *THIS = (__bridge VoiceDelegate *)inRefCon;
-    OSStatus err = AudioUnitRender(THIS->rioUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, bufferList);
-    if (err) { printf("PerformThru: error %d\n", (int)err); return err; }
-    
-    // Remove DC component
-    for(int i = 0; i < bufferList->mNumberBuffers; ++i)
-        THIS->dcFilter[i].InplaceFilter((Float32*)(bufferList->mBuffers[i].mData), inNumberFrames);
-    
-    // The draw buffer is used to hold a copy of the most recent PCM data to be drawn on the oscilloscope
-    if (drawBufferLen != drawBufferLen_alloced)
+    //
+    // Getting audio data as a buffer list that can be directly fed into the
+    // EZRecorder. This is happening on the audio thread - any UI updating needs
+    // a GCD main queue block. This will keep appending data to the tail of the
+    // audio file.
+    //
+    if (self.isRecording)
     {
-        int drawBuffer_i;
-        
-        // Allocate our draw buffer if needed
-        if (drawBufferLen_alloced == 0)
-            for (drawBuffer_i=0; drawBuffer_i<kNumDrawBuffers; drawBuffer_i++)
-                drawBuffers[drawBuffer_i] = NULL;
-        
-        // Fill the first element in the draw buffer with PCM data
-        for (drawBuffer_i=0; drawBuffer_i<kNumDrawBuffers; drawBuffer_i++)
-        {
-            drawBuffers[drawBuffer_i] = (SInt8 *)realloc(drawBuffers[drawBuffer_i], drawBufferLen);
-            bzero(drawBuffers[drawBuffer_i], drawBufferLen);
-        }
-        
-        drawBufferLen_alloced = drawBufferLen;
+        [self.recorder appendDataFromBufferList:bufferList
+                                 withBufferSize:bufferSize];
     }
-    
-    int i;
-    
-    //Convert the floating point audio data to integer (Q7.24)
-    err = AudioConverterConvertComplexBuffer(THIS->audioConverter, inNumberFrames, bufferList, THIS->drawABL);
-    if (err) { printf("AudioConverterConvertComplexBuffer: error %d\n", (int)err); return err; }
-    
-    SInt8 *data_ptr = (SInt8 *)(THIS->drawABL->mBuffers[0].mData);
-    for (i=0; i<inNumberFrames; i++)
-    {
-        if ((i+drawBufferIdx) >= drawBufferLen)
-        {
-            cycleOscilloscopeLines();
-            drawBufferIdx = -i;
-        }
-        
-        drawBuffers[0][i + drawBufferIdx] = data_ptr[2];
-        
-        if (data_ptr[2] > THIS.max) THIS.max = data_ptr[2];
-        data_ptr += 4;
-    }
-    
-    drawBufferIdx += inNumberFrames;
-    
-    delete bufferList;
-    return err;
 }
 
-#pragma mark-
+//------------------------------------------------------------------------------
+#pragma mark - EZRecorderDelegate
+//------------------------------------------------------------------------------
 
-- (void)initScope
+- (void)recorderDidClose:(EZRecorder *)recorder
 {
-    // Turn off the idle timer, since this app doesn't rely on constant touch input
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
-    
-    // Initialize our remote i/o unit
-    
-    inputProc.inputProc = PerformThru;
-    inputProc.inputProcRefCon = (__bridge void *) self;
-    
-    try {
-        [[AVAudioSession sharedInstance] setActive:YES error:nil];
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-        [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
-        [[AVAudioSession sharedInstance] setPreferredIOBufferDuration:0.005 error:nil];
-        hwSampleRate = [[AVAudioSession sharedInstance] sampleRate];
-        [[AVAudioSession sharedInstance] setPreferredSampleRate:hwSampleRate error:nil];
-        
-        XThrowIfError(SetupRemoteIO(rioUnit, hwSampleRate, inputProc, thruFormat), "couldn't setup remote i/o unit");
-        unitHasBeenCreated = true;
-        
-        
-        UInt32 size = sizeof(thruFormat);
-        XThrowIfError(AudioUnitGetProperty(rioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &thruFormat, &size), "couldn't get the remote I/O unit's output client format");
-        
-        drawFormat.SetAUCanonical(2, false);
-        drawFormat.mSampleRate = 44100;
-        XThrowIfError(AudioConverterNew(&thruFormat, &drawFormat, &audioConverter), "couldn't setup AudioConverter");
-        
-        dcFilter = new DCRejectionFilter[thruFormat.NumberChannels()];
-        
-        UInt32 maxFPS;
-        size = sizeof(maxFPS);
-        XThrowIfError(AudioUnitGetProperty(rioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maxFPS, &size), "couldn't get the remote I/O unit's max frames per slice");
-        
-        drawABL = (AudioBufferList*) malloc(sizeof(AudioBufferList) + sizeof(AudioBuffer));
-        drawABL->mNumberBuffers = 2;
-        for (UInt32 i=0; i<drawABL->mNumberBuffers; ++i)
-        {
-            drawABL->mBuffers[i].mData = (SInt32*) calloc(maxFPS, sizeof(SInt32));
-            drawABL->mBuffers[i].mDataByteSize = maxFPS * sizeof(SInt32);
-            drawABL->mBuffers[i].mNumberChannels = 1;
-        }
-        
-        oscilLine = (GLfloat*)malloc(drawBufferLen * 2 * sizeof(GLfloat));
-    }
-    catch (CAXException &e) {
-        char buf[256];
-        
-        DDLogError(@"Error: %s (%s)\n", e.mOperation, e.FormatError(buf));
-        unitIsRunning = 0;
-        if (dcFilter) delete[] dcFilter;
-        if (drawABL)
-        {
-            for (UInt32 i=0; i<drawABL->mNumberBuffers; ++i)
-                free(drawABL->mBuffers[i].mData);
-            free(drawABL);
-            drawABL = NULL;
-        }
-        [UIUtils showToastMessage:[NSString stringWithCString: e.FormatError(buf) encoding:NSUTF8StringEncoding ] duration:2];
-    }
-    catch (...) {
-        DDLogError(@"An unknown error occurred\n");
-        unitIsRunning = 0;
-        if (dcFilter) delete[] dcFilter;
-        if (drawABL)
-        {
-            for (UInt32 i=0; i<drawABL->mNumberBuffers; ++i)
-                free(drawABL->mBuffers[i].mData);
-            free(drawABL);
-            drawABL = NULL;
-        }
-        [UIUtils showToastMessage:@"could_not_initialize_voice" duration:2];
-    }
-    
-    
-    if (!view) {
-        view = [[EAGLView alloc] initWithFrame: CGRectMake(0, 0, 1,1) ];
-        // Set ourself as the delegate for the EAGLView so that we get drawing and touch events
-        view.delegate = self;
-        
-        // Set up the view to refresh at 20 hz
-        [view setAnimationInterval:1./20.];
-    }
+    recorder.delegate = nil;
 }
 
+//------------------------------------------------------------------------------
 
-- (void)dealloc
+- (void)recorderUpdatedCurrentTime:(EZRecorder *)recorder
 {
-    delete[] dcFilter;
-    if (drawABL)
-    {
-        for (UInt32 i=0; i<drawABL->mNumberBuffers; ++i)
-            free(drawABL->mBuffers[i].mData);
-        free(drawABL);
-        drawABL = NULL;
-    }
-    
-    
-    free(oscilLine);
-    
-    AudioComponentInstanceDispose(rioUnit);
-    unitHasBeenCreated = false;
-    unitIsRunning = false;
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    __weak typeof (self) weakSelf = self;
+    NSString *formattedCurrentTime = [recorder formattedCurrentTime];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //weakSelf.currentTimeLabel.text = formattedCurrentTime;
+    });
 }
 
+//------------------------------------------------------------------------------
+#pragma mark - EZAudioPlayerDelegate
+//------------------------------------------------------------------------------
 
-
-
-- (void)drawOscilloscope
+- (void) audioPlayer:(EZAudioPlayer *)audioPlayer
+         playedAudio:(float **)buffer
+      withBufferSize:(UInt32)bufferSize
+withNumberOfChannels:(UInt32)numberOfChannels
+         inAudioFile:(EZAudioFile *)audioFile
 {
-    // DDLogInfo(@"drawOscilliscope");
-    // Clear the view
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    
-    glColor4f(0., 0., 0., 1.);
-    
-    glPushMatrix();
-    
-    
-    GLfloat *oscilLine_ptr;
-    GLfloat max = drawBufferLen;
-    SInt8 *drawBuffer_ptr;
-    
-    // Alloc an array for our oscilloscope line vertices
-    if (resetOscilLine) {
-        oscilLine = (GLfloat*)realloc(oscilLine, drawBufferLen * 2 * sizeof(GLfloat));
-        resetOscilLine = NO;
-    }
-    
-    
-    
-    
-    // Translate to the left side and vertical center of the screen, and scale so that the screen coordinates
-    // go from 0 to 1 along the X, and -1 to 1 along the Y
-    glTranslatef(0, _scopeRect.size.height/2, 0.);
-    glScalef(_scopeRect.size.width, _scopeRect.size.height/2, 1.);
-    
-    // Set up some GL state for our oscilloscope lines
-    glDisable(GL_TEXTURE_2D);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisable(GL_LINE_SMOOTH);
-    glLineWidth(1.);
-    
-    int drawBuffer_i;
-    // Draw a line for each stored line in our buffer (the lines are stored and fade over time)
-    for (drawBuffer_i=0; drawBuffer_i<kNumDrawBuffers; drawBuffer_i++)
-    {
-        if (!drawBuffers[drawBuffer_i]) continue;
-        
-        oscilLine_ptr = oscilLine;
-        drawBuffer_ptr = drawBuffers[drawBuffer_i];
-        
-        GLfloat i;
-        // Fill our vertex array with points
-        for (i=0.; i<max; i=i+1.)
-        {
-            *oscilLine_ptr++ = i/max;
-            *oscilLine_ptr++ = (Float32)(*drawBuffer_ptr++) / 128.;
-        }
-        
-        // If we're drawing the newest line, draw it in solid blue. Otherwise, draw it in a faded blue.
-        if (drawBuffer_i == 0)
-            
-            glColor4f(0.2, 0.71, 0.898, 1.);
-        else
-            glColor4f(0.2, 0.71, 0.898, (.24 * (1. - ((GLfloat)drawBuffer_i / (GLfloat)kNumDrawBuffers))));
-        
-        // Set up vertex pointer,
-        glVertexPointer(2, GL_FLOAT, 0, oscilLine);
-        
-        // and draw the line.
-        glDrawArrays(GL_LINE_STRIP, 0, drawBufferLen);
-        
-    }
-    
-    glPopMatrix();
+    __weak typeof (self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf.playingAudioPlot updateBuffer:buffer[0]
+                                 withBufferSize:bufferSize];
+    });
 }
 
+//------------------------------------------------------------------------------
 
-- (void)drawView:(id)sender forTime:(NSTimeInterval)time
+- (void)audioPlayer:(EZAudioPlayer *)audioPlayer
+    updatedPosition:(SInt64)framePosition
+        inAudioFile:(EZAudioFile *)audioFile
 {
-    [self drawOscilloscope];
-    
+    __weak typeof (self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //    weakSelf.currentTimeLabel.text = [audioPlayer formattedCurrentTime];
+    });
 }
+
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
-    view.applicationResignedActive = NO;
+    // view.applicationResignedActive = NO;
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {
     //stop animation before going into background
     [self stopRecordingSendInternal:[NSNumber numberWithBool:NO]];
-    view.applicationResignedActive = YES;
+    // view.applicationResignedActive = YES;
 }
 
 @end

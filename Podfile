@@ -19,4 +19,5 @@ target 'surespot' do
     pod 'MWPhotoBrowser', :git => 'https://github.com/surespot/MWPhotoBrowser.git'
     pod 'FLAnimatedImage'
     pod 'CHTCollectionViewWaterfallLayout'
+    pod 'EZAudio', '~> 1.1.5'
 end

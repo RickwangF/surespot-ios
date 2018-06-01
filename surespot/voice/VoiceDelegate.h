@@ -10,76 +10,88 @@
 #import <AVFoundation/AVFoundation.h>
 
 #import <UIKit/UIKit.h>
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/ES1/gl.h>
-#import <OpenGLES/ES1/glext.h>
-#include <libkern/OSAtomic.h>
-#include <CoreFoundation/CFURL.h>
 
-#import "EAGLView.h"
-#import "aurio_helper.h"
-#import "CAStreamBasicDescription.h"
-
+#include <EZAudio/EZAudio.h>
 #import "SurespotMessage.h"
 #import "MessageView.h"
 
+@interface VoiceDelegate : NSObject<EZAudioPlayerDelegate, EZMicrophoneDelegate, EZRecorderDelegate>
 
-#ifndef CLAMP
-#define CLAMP(min,x,max) (x < min ? min : (x > max ? max : x))
-#endif
+//------------------------------------------------------------------------------
+#pragma mark - Properties
+//------------------------------------------------------------------------------
+//
+// Use a OpenGL based plot to visualize the data coming in
+//
+@property (nonatomic, strong) EZAudioPlotGL *recordingAudioPlot;
 
-inline double linearInterp(double valA, double valB, double fract)
-{
-	return valA + ((valB - valA) * fract);
-}
+//------------------------------------------------------------------------------
 
-@interface VoiceDelegate : NSObject<AVAudioRecorderDelegate, AVAudioPlayerDelegate, EAGLViewDelegate>
-{
-	IBOutlet EAGLView*			view;
-			
-	AudioUnit					rioUnit;
-	BOOL						unitIsRunning;
-	BOOL						unitHasBeenCreated;
-	
-	UInt32*						texBitBuffer;
-	
-	GLuint						bgTexture;
+//
+// A flag indicating whether we are recording or not
+//
+@property (nonatomic, assign) BOOL isRecording;
 
-	
+//------------------------------------------------------------------------------
 
-	DCRejectionFilter*			dcFilter;
-	CAStreamBasicDescription	thruFormat;
-    CAStreamBasicDescription    drawFormat;
-    AudioBufferList*            drawABL;
-	Float64						hwSampleRate;
-    
-    AudioConverterRef           audioConverter;
-	
-	UIEvent*					pinchEvent;
-	CGFloat						lastPinchDist;
-	
-	AURenderCallbackStruct		inputProc;
-    
-	SystemSoundID				buttonPressSound;
-	
-	int32_t*					l_fftData;
-    
-	GLfloat*					oscilLine;
-	BOOL						resetOscilLine;
-}
+//
+// The microphone component
+//
+@property (nonatomic, strong) EZMicrophone *microphone;
 
-@property (nonatomic, strong)	EAGLView*				view;
-@property (nonatomic, assign)	AudioUnit				rioUnit;
-@property (nonatomic, assign)	BOOL					unitIsRunning;
-@property (nonatomic, assign)	BOOL					unitHasBeenCreated;
-@property (nonatomic, assign)	BOOL					mute;
-@property (nonatomic, assign)	AURenderCallbackStruct	inputProc;
-@property (nonatomic, assign)   NSInteger               max;
+//------------------------------------------------------------------------------
+
+//
+// The audio player that will play the recorded file
+//
+@property (nonatomic, strong) EZAudioPlayer *player;
+
+//------------------------------------------------------------------------------
+
+//
+// The recorder component
+//
+@property (nonatomic, strong) EZRecorder *recorder;
+
+//------------------------------------------------------------------------------
+
+//
+// The second audio plot used on the top right to display the current playing audio
+//
+@property (nonatomic, weak) EZAudioPlot *playingAudioPlot;
+
+//------------------------------------------------------------------------------
+
+#pragma mark - Actions
+//------------------------------------------------------------------------------
+
+//
+// Stops the recorder and starts playing whatever has been recorded.
+//
+- (IBAction)playFile:(id)sender;
+
+//------------------------------------------------------------------------------
+
+//
+// Toggles the microphone on and off. When the microphone is on it will send its
+// delegate (aka this view controller) the audio data in various ways (check out
+// the EZMicrophoneDelegate documentation for more details);
+//
+- (IBAction)toggleMicrophone:(id)sender;
+
+//------------------------------------------------------------------------------
+
+//
+// Toggles the recording mode on and off.
+//
+- (IBAction)toggleRecording:(id)sender;
+
+@property (nonatomic, assign)   NSInteger max;
 @property (nonatomic, strong)   UIView * backgroundView;
+@property (nonatomic, strong)   UIView * overlayView;
 
 - (id) initWithUsername: (NSString *) username
              ourVersion:(NSString *) ourVersion;
-
 
 -(void) playVoiceMessage: (SurespotMessage *) message cell: (MessageView *) cell;
 -(void) prepareRecording;

@@ -92,12 +92,6 @@
 		666659A31DD338CF0099B284 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6604A2CA17626B9E0072216A /* main.m */; };
 		666D3364187F69AD00B73F69 /* invite-accept.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D335E187F69AD00B73F69 /* invite-accept.caf */; };
 		666D3368187F69AD00B73F69 /* message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D3362187F69AD00B73F69 /* message.caf */; };
-		666D3378188476B100B73F69 /* aurio_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 666D336A188476B100B73F69 /* aurio_helper.cpp */; };
-		666D3379188476B100B73F69 /* CADebugMacros.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 666D336D188476B100B73F69 /* CADebugMacros.cpp */; };
-		666D337A188476B100B73F69 /* CADebugPrintf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 666D336F188476B100B73F69 /* CADebugPrintf.cpp */; };
-		666D337B188476B100B73F69 /* CAStreamBasicDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 666D3372188476B100B73F69 /* CAStreamBasicDescription.cpp */; };
-		666D337C188476B100B73F69 /* CAXException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 666D3374188476B100B73F69 /* CAXException.cpp */; };
-		666D337D188476B100B73F69 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 666D3377188476B100B73F69 /* EAGLView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		666D338118847B5000B73F69 /* surespot-invite.caf in Resources */ = {isa = PBXBuildFile; fileRef = 666D338018847B5000B73F69 /* surespot-invite.caf */; };
 		666D33861884805600B73F69 /* SoundController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 666D33851884805600B73F69 /* SoundController.mm */; };
 		666FE55F1E8CB69300F16569 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 666FE55E1E8CB69300F16569 /* CoreImage.framework */; };
@@ -391,20 +385,6 @@
 		66649E891ED0C66200288620 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		666D335E187F69AD00B73F69 /* invite-accept.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "invite-accept.caf"; sourceTree = "<group>"; };
 		666D3362187F69AD00B73F69 /* message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = message.caf; sourceTree = "<group>"; };
-		666D336A188476B100B73F69 /* aurio_helper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = aurio_helper.cpp; path = voice/aurio_helper.cpp; sourceTree = "<group>"; };
-		666D336B188476B100B73F69 /* aurio_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aurio_helper.h; path = voice/aurio_helper.h; sourceTree = "<group>"; };
-		666D336C188476B100B73F69 /* CABitOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CABitOperations.h; path = voice/CABitOperations.h; sourceTree = "<group>"; };
-		666D336D188476B100B73F69 /* CADebugMacros.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CADebugMacros.cpp; path = voice/CADebugMacros.cpp; sourceTree = "<group>"; };
-		666D336E188476B100B73F69 /* CADebugMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CADebugMacros.h; path = voice/CADebugMacros.h; sourceTree = "<group>"; };
-		666D336F188476B100B73F69 /* CADebugPrintf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CADebugPrintf.cpp; path = voice/CADebugPrintf.cpp; sourceTree = "<group>"; };
-		666D3370188476B100B73F69 /* CADebugPrintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CADebugPrintf.h; path = voice/CADebugPrintf.h; sourceTree = "<group>"; };
-		666D3371188476B100B73F69 /* CAMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAMath.h; path = voice/CAMath.h; sourceTree = "<group>"; };
-		666D3372188476B100B73F69 /* CAStreamBasicDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CAStreamBasicDescription.cpp; path = voice/CAStreamBasicDescription.cpp; sourceTree = "<group>"; };
-		666D3373188476B100B73F69 /* CAStreamBasicDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAStreamBasicDescription.h; path = voice/CAStreamBasicDescription.h; sourceTree = "<group>"; };
-		666D3374188476B100B73F69 /* CAXException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CAXException.cpp; path = voice/CAXException.cpp; sourceTree = "<group>"; };
-		666D3375188476B100B73F69 /* CAXException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAXException.h; path = voice/CAXException.h; sourceTree = "<group>"; };
-		666D3376188476B100B73F69 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EAGLView.h; path = voice/EAGLView.h; sourceTree = "<group>"; };
-		666D3377188476B100B73F69 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = EAGLView.m; path = voice/EAGLView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		666D338018847B5000B73F69 /* surespot-invite.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "surespot-invite.caf"; sourceTree = "<group>"; };
 		666D33841884805600B73F69 /* SoundController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundController.h; sourceTree = "<group>"; };
 		666D33851884805600B73F69 /* SoundController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundController.mm; sourceTree = "<group>"; };
@@ -1076,20 +1056,6 @@
 		66DAB62B186DEEDC006C262F /* voice */ = {
 			isa = PBXGroup;
 			children = (
-				666D336A188476B100B73F69 /* aurio_helper.cpp */,
-				666D336B188476B100B73F69 /* aurio_helper.h */,
-				666D336C188476B100B73F69 /* CABitOperations.h */,
-				666D336D188476B100B73F69 /* CADebugMacros.cpp */,
-				666D336E188476B100B73F69 /* CADebugMacros.h */,
-				666D336F188476B100B73F69 /* CADebugPrintf.cpp */,
-				666D3370188476B100B73F69 /* CADebugPrintf.h */,
-				666D3371188476B100B73F69 /* CAMath.h */,
-				666D3372188476B100B73F69 /* CAStreamBasicDescription.cpp */,
-				666D3373188476B100B73F69 /* CAStreamBasicDescription.h */,
-				666D3374188476B100B73F69 /* CAXException.cpp */,
-				666D3375188476B100B73F69 /* CAXException.h */,
-				666D3376188476B100B73F69 /* EAGLView.h */,
-				666D3377188476B100B73F69 /* EAGLView.m */,
 				66DAB62C186DEEFC006C262F /* VoiceDelegate.h */,
 				66DAB62D186DEEFC006C262F /* VoiceDelegate.mm */,
 				6641357D1EB15892005A4957 /* SendVoiceMessageOperation.h */,
@@ -1740,6 +1706,7 @@
 				"${BUILT_PRODUCTS_DIR}/CHTCollectionViewWaterfallLayout/CHTCollectionViewWaterfallLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${BUILT_PRODUCTS_DIR}/DACircularProgress/DACircularProgress.framework",
+				"${BUILT_PRODUCTS_DIR}/EZAudio/EZAudio.framework",
 				"${BUILT_PRODUCTS_DIR}/FLAnimatedImage/FLAnimatedImage.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMAppAuth/GTMAppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
@@ -1753,6 +1720,7 @@
 				"${BUILT_PRODUCTS_DIR}/SideMenu/SideMenu.framework",
 				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
+				"${BUILT_PRODUCTS_DIR}/TPCircularBuffer/TPCircularBuffer.framework",
 				"${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/UIImageViewAligned/UIImageViewAligned.framework",
 			);
@@ -1764,6 +1732,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CHTCollectionViewWaterfallLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DACircularProgress.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/EZAudio.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FLAnimatedImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMAppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
@@ -1777,6 +1746,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SideMenu.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TPCircularBuffer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TTTAttributedLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIImageViewAligned.framework",
 			);
@@ -1844,7 +1814,6 @@
 				66EBE0BC1855C97100F2452D /* ChatDataSource.mm in Sources */,
 				6646AE2C185CB08200CBACDE /* SurespotPhoto.m in Sources */,
 				660F0A9B18D789E900FD8C4D /* RestoreIdentitiesViewController.m in Sources */,
-				666D337D188476B100B73F69 /* EAGLView.m in Sources */,
 				665CA9A91E9186E10045EEDD /* ChatManager.mm in Sources */,
 				66EBE1381855C97100F2452D /* NSString+Sensitivize.m in Sources */,
 				66EBE1361855C97100F2452D /* FileController.mm in Sources */,
@@ -1863,9 +1832,7 @@
 				66DEA49318DA6E5A00AAF24C /* UsernameAliasMap.m in Sources */,
 				66EBE0BE1855C97100F2452D /* FilledRectView.m in Sources */,
 				662CA5A31873496F00684790 /* PurchaseDelegate.m in Sources */,
-				666D337A188476B100B73F69 /* CADebugPrintf.cpp in Sources */,
 				665180FF1EC54B9C000CBB44 /* GifSearchView+GifCache.m in Sources */,
-				666D337B188476B100B73F69 /* CAStreamBasicDescription.cpp in Sources */,
 				661F3B8118689A19003C7AE3 /* KeyFingerprintViewController.mm in Sources */,
 				6674480C1EA1ACB500DF292A /* SurespotSettingsViewController.m in Sources */,
 				66EBE0C51855C97100F2452D /* SurespotErrorMessage.m in Sources */,
@@ -1894,15 +1861,12 @@
 				669BC199187DC1CB00C3C752 /* AboutViewController.m in Sources */,
 				66866266185B6A2E001491B1 /* SDWebImageDecoder.m in Sources */,
 				66866264185B6A2E001491B1 /* SDImageCache.mm in Sources */,
-				666D337C188476B100B73F69 /* CAXException.cpp in Sources */,
 				66EBE0D51855C97100F2452D /* NetworkController.mm in Sources */,
 				666D33861884805600B73F69 /* SoundController.mm in Sources */,
 				66536BEE1E79BEF400520131 /* FastUserSwitchController.mm in Sources */,
 				66EBE0D31855C97100F2452D /* ImageDelegate.mm in Sources */,
 				66BB5A49187C7672007B5C47 /* HelpViewController.m in Sources */,
 				66EBE1371855C97100F2452D /* NSData+Base64.m in Sources */,
-				666D3378188476B100B73F69 /* aurio_helper.cpp in Sources */,
-				666D3379188476B100B73F69 /* CADebugMacros.cpp in Sources */,
 				669C4D671EE7885300AA47EC /* GifImageViewAligned.m in Sources */,
 				66EBE0D21855C97100F2452D /* RestoreIdentityDriveViewController.mm in Sources */,
 				66EBE0B11855C97100F2452D /* CredentialCachingController.mm in Sources */,
