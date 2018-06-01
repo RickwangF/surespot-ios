@@ -103,23 +103,12 @@ const NSInteger SEND_THRESHOLD = 25;
     _countdownTextField.font = [UIFont boldSystemFontOfSize:24];
     
     [_countdownView addSubview:_countdownTextField];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationDidBecomeActive:)
-                                                 name:UIApplicationDidBecomeActiveNotification
-                                               object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationWillResignActive:)
                                                  name:UIApplicationWillResignActiveNotification
                                                object:nil];
     
     return self;
-}
-
--(void) prepareRecording {
-    
-    
 }
 
 -(void) playVoiceMessage: (SurespotMessage *) message cell: (MessageView *) cell {
@@ -178,7 +167,18 @@ const NSInteger SEND_THRESHOLD = 25;
 
 -(void) playMessageData: (NSData *) data message: (SurespotMessage *) message {
     
-    // _player = [[AVAudioPlayer alloc] initWithData: data error:nil];
+    _player = [[AVAudioPlayer alloc] initWithData: data error:nil];
+    //
+    // Override the output to the speaker. Do this after creating the EZAudioPlayer
+    // to make sure the EZAudioDevice does not reset this.
+    //
+    NSError * error;
+    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
+    if (error)
+    {
+        DDLogError(@"Error overriding output to the speaker: %@", error.localizedDescription);
+    }
+    
     if ([_player duration] > 0) {
         _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
         _cell.audioSlider.maximumValue = [_player duration];
@@ -222,9 +222,9 @@ const NSInteger SEND_THRESHOLD = 25;
 }
 
 -(void) stopPlayingDeactivateSession: (BOOL) deactivateSession {
-    //    if (_player.playing) {
-    //        [_player stop];
-    //    }
+    if (_player.playing) {
+        [_player stop];
+    }
     [_playLock lock];
     [_playTimer invalidate];
     _playTimer = nil;
@@ -254,113 +254,96 @@ const NSInteger SEND_THRESHOLD = 25;
 
 -(void) startRecordingUsername: (NSString *) username {
     DDLogInfo(@"start recording");
-    
-    if (![self hasPermissionForMic]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Use of microphone disabled"
-                                                        message:@"This device is not configured to allow Surespot to access your microphone."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
-        return;
+    [self stopPlayingDeactivateSession:NO];
+    if (!_isRecording) {
+        _isRecording = YES;
+        
+        
+        if (![self hasPermissionForMic]) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Use of microphone disabled"
+                                                            message:@"This device is not configured to allow Surespot to access your microphone."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+            _isRecording = NO;
+            return;
+        }                
+        
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        NSError *error;
+        [session setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+        if (error)
+        {
+            DDLogError(@"Error setting up audio session category: %@", error.localizedDescription);
+            _isRecording = NO;
+            return;
+        }
+        [session setActive:YES error:&error];
+        if (error)
+        {
+            DDLogError(@"Error setting up audio session active: %@", error.localizedDescription);
+            _isRecording = NO;
+            return;
+        }
+        
+        NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString] ;
+        NSString *uniqueFileName = [NSString stringWithFormat:@"%@.m4a", guid];
+        _outputPath = [[FileController getCacheDir] stringByAppendingPathComponent: uniqueFileName];
+        DDLogInfo(@"recording to %@", _outputPath);
+        NSURL *outputFileURL = [NSURL fileURLWithPath:_outputPath];
+        
+        // Define the recorder setting
+        NSMutableDictionary *recordSetting = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                              [NSNumber numberWithInt:kAudioFormatMPEG4AAC] , AVFormatIDKey,
+                                              [NSNumber numberWithInteger: 12000], AVEncoderBitRateKey,
+                                              [NSNumber numberWithFloat: 12000],AVSampleRateKey,
+                                              [NSNumber numberWithInt:1],AVNumberOfChannelsKey, nil];
+        
+        
+        self.microphone = [EZMicrophone microphoneWithDelegate:self];
+        [self.microphone startFetchingAudio];
+        
+        self.recorder = [EZRecorder recorderWithURL:outputFileURL
+                                       clientFormat:[self.microphone audioStreamBasicDescription]
+                                           fileType:EZRecorderFileTypeM4A
+                                           delegate:self];
+        _theirUsername = username;
+        
+        _max = 0;
+        _timeRemaining = 10;
+        _countdownTextField.text = @"10";
+        
+        //(re)set the open gl view frame
+        _scopeRect = [self getScopeRect];
+        
+        //position the countdown view
+        [_countdownView setFrame:CGRectMake(10, _scopeRect.origin.y+10, 44, 44)];
+        
+        _overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
+        CGRect frame = _overlayView.frame;
+        
+        _backgroundView = [[UIView alloc] initWithFrame:frame];
+        _backgroundView.backgroundColor = [UIUtils surespotTransparentGrey];
+        _backgroundView.opaque = NO;
+        
+        [_overlayView addSubview:_backgroundView];
+        
+        // Programmatically create an audio plot
+        _recordingAudioPlot = [[EZAudioPlotGL alloc] initWithFrame:_scopeRect];
+        self.recordingAudioPlot.backgroundColor = [UIColor colorWithRed: 0.984 green: 0.71 blue: 0.365 alpha: 1];
+        self.recordingAudioPlot.color           = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+        self.recordingAudioPlot.plotType        = EZPlotTypeRolling;
+        self.recordingAudioPlot.shouldFill      = YES;
+        self.recordingAudioPlot.shouldMirror    = YES;
+        
+        [_overlayView addSubview:_recordingAudioPlot];
+        [_overlayView addSubview:_countdownView];
+        [_countdownTextField setFrame:CGRectMake(0, 0, 44, 44)];
+        
+        
+        _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countdownTimerFired:) userInfo:nil repeats:YES];
     }
-    
-    _isRecording = YES;
-    //
-    // Setup the AVAudioSession. EZMicrophone will not work properly on iOS
-    // if you don't do this!
-    //
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    NSError *error;
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
-    if (error)
-    {
-        NSLog(@"Error setting up audio session category: %@", error.localizedDescription);
-    }
-    [session setActive:YES error:&error];
-    if (error)
-    {
-        NSLog(@"Error setting up audio session active: %@", error.localizedDescription);
-    }
-    
-    
-    NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString] ;
-    NSString *uniqueFileName = [NSString stringWithFormat:@"%@.m4a", guid];
-    _outputPath = [[FileController getCacheDir] stringByAppendingPathComponent: uniqueFileName];
-    DDLogInfo(@"recording to %@", _outputPath);
-    NSURL *outputFileURL = [NSURL fileURLWithPath:_outputPath];
-    
-    // Define the recorder setting
-    NSMutableDictionary *recordSetting = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                          [NSNumber numberWithInt:kAudioFormatMPEG4AAC] , AVFormatIDKey,
-                                          [NSNumber numberWithInteger: 12000], AVEncoderBitRateKey,
-                                          [NSNumber numberWithFloat: 12000],AVSampleRateKey,
-                                          [NSNumber numberWithInt:1],AVNumberOfChannelsKey, nil];
-    
-    
-    //    [self.view addSubview:audioPlot];
-    // Create an instance of the microphone and tell it to use this view controller instance as the delegate
-    self.microphone = [EZMicrophone microphoneWithDelegate:self];
-    self.player = [EZAudioPlayer audioPlayerWithDelegate:self];
-    
-    //
-    // Override the output to the speaker. Do this after creating the EZAudioPlayer
-    // to make sure the EZAudioDevice does not reset this.
-    //
-    [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
-    if (error)
-    {
-        NSLog(@"Error overriding output to the speaker: %@", error.localizedDescription);
-    }
-    
-    // if (!_recorder.recording) {
-    [self.player pause];
-    
-    //
-    // Start the microphone
-    //
-    [self.microphone startFetchingAudio];
-    
-    self.recorder = [EZRecorder recorderWithURL:outputFileURL
-                                   clientFormat:[self.microphone audioStreamBasicDescription]
-                                       fileType:EZRecorderFileTypeM4A
-                                       delegate:self];
-    _theirUsername = username;
-    
-    _max = 0;
-    _timeRemaining = 10;
-    _countdownTextField.text = @"10";
-    
-    //(re)set the open gl view frame
-    _scopeRect = [self getScopeRect];
-    
-    //position the countdown view
-    [_countdownView setFrame:CGRectMake(10, _scopeRect.origin.y+10, 44, 44)];
-    
-    _overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
-    CGRect frame = _overlayView.frame;
-    
-    _backgroundView = [[UIView alloc] initWithFrame:frame];
-    _backgroundView.backgroundColor = [UIUtils surespotTransparentGrey];
-    _backgroundView.opaque = NO;
-    
-    [_overlayView addSubview:_backgroundView];
-    
-    // Programmatically create an audio plot
-    _recordingAudioPlot = [[EZAudioPlotGL alloc] initWithFrame:_scopeRect];
-    self.recordingAudioPlot.backgroundColor = [UIColor colorWithRed: 0.984 green: 0.71 blue: 0.365 alpha: 1];
-    self.recordingAudioPlot.color           = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
-    self.recordingAudioPlot.plotType        = EZPlotTypeRolling;
-    self.recordingAudioPlot.shouldFill      = YES;
-    self.recordingAudioPlot.shouldMirror    = YES;
-    
-    [_overlayView addSubview:_recordingAudioPlot];
-    [_overlayView addSubview:_countdownView];
-    [_countdownTextField setFrame:CGRectMake(0, 0, 44, 44)];
-    
-    
-    _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countdownTimerFired:) userInfo:nil repeats:YES];
-    //   }
 }
 
 -(CGRect) getScopeRect {
@@ -379,52 +362,7 @@ const NSInteger SEND_THRESHOLD = 25;
             [self stopRecordingSend:[NSNumber numberWithBool:YES]];
         }
     });
-    
 }
-
-
-//------------------------------------------------------------------------------
-
-- (void)setupNotifications
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(playerDidChangePlayState:)
-                                                 name:EZAudioPlayerDidChangePlayStateNotification
-                                               object:self.player];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(playerDidReachEndOfFile:)
-                                                 name:EZAudioPlayerDidReachEndOfFileNotification
-                                               object:self.player];
-}
-
-//------------------------------------------------------------------------------
-#pragma mark - Notifications
-//------------------------------------------------------------------------------
-
-- (void)playerDidChangePlayState:(NSNotification *)notification
-{
-    __weak typeof (self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        EZAudioPlayer *player = [notification object];
-        BOOL isPlaying = [player isPlaying];
-        if (isPlaying)
-        {
-            weakSelf.recorder.delegate = nil;
-        }
-        weakSelf.playingAudioPlot.hidden = !isPlaying;
-    });
-}
-
-//------------------------------------------------------------------------------
-
-- (void)playerDidReachEndOfFile:(NSNotification *)notification
-{
-    __weak typeof (self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.playingAudioPlot clear];
-    });
-}
-
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     DDLogInfo(@"finished playing, successfully?: %@", flag ? @"YES" : @"NO");
@@ -439,14 +377,9 @@ const NSInteger SEND_THRESHOLD = 25;
 -(void) stopRecordingSendInternal: (NSNumber*) send {
     DDLogInfo(@"stop recording");
     if (_isRecording) {
-        //  if (_recorder.recording) {
-        
         [_countdownTimer invalidate];
         [_microphone stopFetchingAudio];
         [_recorder closeAudioFile];
-        
-        
-        //  [view stopAnimation];
         
         [_overlayView removeFromSuperview];
         [_recordingAudioPlot removeFromSuperview];
@@ -483,18 +416,7 @@ const NSInteger SEND_THRESHOLD = 25;
     [[[ChatManager sharedInstance] getChatController:_username] sendVoiceMessage:url to:_theirUsername];
 }
 
-
-//------------------------------------------------------------------------------
-#pragma mark - EZMicrophoneDelegate
-//------------------------------------------------------------------------------
-
-- (void)microphone:(EZMicrophone *)microphone changedPlayingState:(BOOL)isPlaying
-{
-}
-
-//------------------------------------------------------------------------------
-
-#warning Thread Safety
+// Thread Safety
 //
 // Note that any callback that provides streamed audio data (like streaming
 // microphone input) happens on a separate audio thread that should not be
@@ -550,64 +472,14 @@ const NSInteger SEND_THRESHOLD = 25;
     }
 }
 
-//------------------------------------------------------------------------------
-#pragma mark - EZRecorderDelegate
-//------------------------------------------------------------------------------
-
 - (void)recorderDidClose:(EZRecorder *)recorder
 {
     recorder.delegate = nil;
 }
 
-//------------------------------------------------------------------------------
-
-- (void)recorderUpdatedCurrentTime:(EZRecorder *)recorder
-{
-    __weak typeof (self) weakSelf = self;
-    NSString *formattedCurrentTime = [recorder formattedCurrentTime];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //weakSelf.currentTimeLabel.text = formattedCurrentTime;
-    });
-}
-
-//------------------------------------------------------------------------------
-#pragma mark - EZAudioPlayerDelegate
-//------------------------------------------------------------------------------
-
-- (void) audioPlayer:(EZAudioPlayer *)audioPlayer
-         playedAudio:(float **)buffer
-      withBufferSize:(UInt32)bufferSize
-withNumberOfChannels:(UInt32)numberOfChannels
-         inAudioFile:(EZAudioFile *)audioFile
-{
-    __weak typeof (self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.playingAudioPlot updateBuffer:buffer[0]
-                                 withBufferSize:bufferSize];
-    });
-}
-
-//------------------------------------------------------------------------------
-
-- (void)audioPlayer:(EZAudioPlayer *)audioPlayer
-    updatedPosition:(SInt64)framePosition
-        inAudioFile:(EZAudioFile *)audioFile
-{
-    __weak typeof (self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //    weakSelf.currentTimeLabel.text = [audioPlayer formattedCurrentTime];
-    });
-}
-
-
-- (void)applicationDidBecomeActive:(NSNotification *)notification {
-    // view.applicationResignedActive = NO;
-}
-
 - (void)applicationWillResignActive:(NSNotification *)notification {
-    //stop animation before going into background
+    //stop recording
     [self stopRecordingSendInternal:[NSNumber numberWithBool:NO]];
-    // view.applicationResignedActive = YES;
 }
 
 @end
