@@ -172,12 +172,23 @@ const NSInteger SEND_THRESHOLD = 25;
     // Override the output to the speaker. Do this after creating the EZAudioPlayer
     // to make sure the EZAudioDevice does not reset this.
     //
-    NSError * error;
-    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    NSError *error;
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
     if (error)
     {
-        DDLogError(@"Error overriding output to the speaker: %@", error.localizedDescription);
+        DDLogError(@"Error setting up audio session category: %@", error.localizedDescription);
+        [self stopPlayingDeactivateSession:YES];
+        return;
     }
+    [session setActive:YES error:&error];
+    if (error)
+    {
+        DDLogError(@"Error setting up audio session active: %@", error.localizedDescription);
+        [self stopPlayingDeactivateSession:YES];
+        return;
+    }
+   
     
     if ([_player duration] > 0) {
         _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
@@ -268,7 +279,7 @@ const NSInteger SEND_THRESHOLD = 25;
             [alert show];
             _isRecording = NO;
             return;
-        }                
+        }
         
         AVAudioSession *session = [AVAudioSession sharedInstance];
         NSError *error;
@@ -294,6 +305,7 @@ const NSInteger SEND_THRESHOLD = 25;
         NSURL *outputFileURL = [NSURL fileURLWithPath:_outputPath];
         
         // Define the recorder setting
+      //  AudioStreamBasicDescription * desc = [AudioStreamBasicDescription alloc] init
         NSMutableDictionary *recordSetting = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                               [NSNumber numberWithInt:kAudioFormatMPEG4AAC] , AVFormatIDKey,
                                               [NSNumber numberWithInteger: 12000], AVEncoderBitRateKey,
@@ -331,9 +343,13 @@ const NSInteger SEND_THRESHOLD = 25;
         
         // Programmatically create an audio plot
         _recordingAudioPlot = [[EZAudioPlotGL alloc] initWithFrame:_scopeRect];
-        self.recordingAudioPlot.backgroundColor = [UIColor colorWithRed: 0.984 green: 0.71 blue: 0.365 alpha: 1];
-        self.recordingAudioPlot.color           = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+        self.recordingAudioPlot.backgroundColor =// [UIColor blackColor];
+        [UIColor colorWithRed: 0.0 green: 0.0 blue: 0.0 alpha: 1];
+        self.recordingAudioPlot.color           = [UIUtils surespotBlue];
         self.recordingAudioPlot.plotType        = EZPlotTypeRolling;
+        self.recordingAudioPlot.gain = 2.0f;
+        [self.recordingAudioPlot setRollingHistoryLength: 256];
+
         self.recordingAudioPlot.shouldFill      = YES;
         self.recordingAudioPlot.shouldMirror    = YES;
         
@@ -373,7 +389,6 @@ const NSInteger SEND_THRESHOLD = 25;
     //give em like another 0.5
     [self performSelector:@selector(stopRecordingSendInternal:) withObject:send afterDelay:.2];
 }
-
 -(void) stopRecordingSendInternal: (NSNumber*) send {
     DDLogInfo(@"stop recording");
     if (_isRecording) {
@@ -385,7 +400,9 @@ const NSInteger SEND_THRESHOLD = 25;
         [_recordingAudioPlot removeFromSuperview];
         [_countdownView removeFromSuperview];
         [_backgroundView removeFromSuperview];
+        _recordingAudioPlot = nil;
         _backgroundView = nil;
+        _overlayView = nil;
         
         
         DDLogInfo(@"deactivating audio session");
@@ -480,6 +497,7 @@ const NSInteger SEND_THRESHOLD = 25;
 - (void)applicationWillResignActive:(NSNotification *)notification {
     //stop recording
     [self stopRecordingSendInternal:[NSNumber numberWithBool:NO]];
+    [self stopPlayingDeactivateSession:YES];
 }
 
 @end
