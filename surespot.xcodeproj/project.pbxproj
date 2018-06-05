@@ -451,6 +451,7 @@
 		66BB5A47187C7672007B5C47 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HelpViewController.h; path = viewcontrollers/HelpViewController.h; sourceTree = "<group>"; };
 		66BB5A48187C7672007B5C47 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HelpViewController.m; path = viewcontrollers/HelpViewController.m; sourceTree = "<group>"; };
 		66BFDF091A3F7A9F00498240 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		66C147C120C71ED9007BD4C6 /* VoiceMessagePlayedDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VoiceMessagePlayedDelegate.h; path = voice/VoiceMessagePlayedDelegate.h; sourceTree = "<group>"; };
 		66D2B6E620B4B5BE00D984E6 /* ServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ServiceExtension.entitlements; sourceTree = "<group>"; };
 		66D2B6F220B616FA00D984E6 /* shared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = shared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D2B6F420B616FA00D984E6 /* shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shared.h; sourceTree = "<group>"; };
@@ -1060,6 +1061,7 @@
 				66DAB62D186DEEFC006C262F /* VoiceDelegate.mm */,
 				6641357D1EB15892005A4957 /* SendVoiceMessageOperation.h */,
 				6641357E1EB158A0005A4957 /* SendVoiceMessageOperation.mm */,
+				66C147C120C71ED9007BD4C6 /* VoiceMessagePlayedDelegate.h */,
 			);
 			name = voice;
 			sourceTree = "<group>";

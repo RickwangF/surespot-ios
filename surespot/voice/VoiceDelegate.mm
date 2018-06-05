@@ -25,7 +25,7 @@
 #import "NSBundle+FallbackLanguage.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelInfo;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -50,27 +50,24 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 const NSInteger SEND_THRESHOLD = 25;
 
 - (BOOL) hasPermissionForMic {
-    // this will only work with iOS 8+
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1)
-    {
-        switch ([[AVAudioSession sharedInstance] recordPermission]) {
-            case AVAudioSessionRecordPermissionGranted:
-                return YES;
-                break;
-            case AVAudioSessionRecordPermissionDenied:
-                return NO;
-                break;
-            case AVAudioSessionRecordPermissionUndetermined:
-                // This is the initial state before a user has made any choice
-                // You can use this spot to request permission here if you want
-                return YES;
-                break;
-            default:
-                return YES;
-                break;
-        }
+    
+    switch ([[AVAudioSession sharedInstance] recordPermission]) {
+        case AVAudioSessionRecordPermissionGranted:
+            return YES;
+            break;
+        case AVAudioSessionRecordPermissionDenied:
+            return NO;
+            break;
+        case AVAudioSessionRecordPermissionUndetermined:
+            // This is the initial state before a user has made any choice
+            // You can use this spot to request permission here if you want
+            return YES;
+            break;
+        default:
+            return YES;
+            break;
     }
-    return YES;
+    
 }
 
 - (id) initWithUsername: (NSString *) username
@@ -255,7 +252,7 @@ const NSInteger SEND_THRESHOLD = 25;
 - (void)updateTime:(NSTimer *)timer {
     //if the cell is still pointing to the same message set the slider value
     if (_cell && _message && [[_cell message] isEqual:_message]) {
-        DDLogVerbose(@"setting slider value");
+      //  DDLogVerbose(@"setting slider value");
         dispatch_async(dispatch_get_main_queue(), ^{
             _cell.audioSlider.value = [_player currentTime];
             _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
@@ -316,8 +313,8 @@ const NSInteger SEND_THRESHOLD = 25;
         _theirUsername = username;
         
         _max = 0;
-        _timeRemaining = 10;
-        _countdownTextField.text = @"10";
+        _timeRemaining = 30;
+        _countdownTextField.text = @"30";
         
         //(re)set the open gl view frame
         _scopeRect = [self getScopeRect];
@@ -375,7 +372,11 @@ const NSInteger SEND_THRESHOLD = 25;
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     DDLogInfo(@"finished playing, successfully?: %@", flag ? @"YES" : @"NO");
+    SurespotMessage * message = _message;
     [self stopPlayingDeactivateSession:YES];
+    if (self.delegate && [self.delegate conformsToProtocol:@protocol(VoiceMessagePlayedDelegate)]) {
+        [self.delegate voiceMessagePlayed:message];
+    }
 }
 
 -(void) stopRecordingSend: (NSNumber*) send {
@@ -491,6 +492,10 @@ const NSInteger SEND_THRESHOLD = 25;
     //stop recording
     [self stopRecordingSendInternal:[NSNumber numberWithBool:NO]];
     [self stopPlayingDeactivateSession:YES];
+}
+
+-(BOOL) isPlaying {
+    return [_player isPlaying];
 }
 
 @end

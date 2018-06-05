@@ -18,6 +18,7 @@
 #import "ALAssetsLibrary+CustomPhotoAlbum.h"
 #import "TTTAttributedLabel.h"
 #import "HPGrowingTextView.h"
+#import "VoiceMessagePlayedDelegate.h"
 
 @interface SwipeViewController : UIViewController
 <
@@ -33,6 +34,7 @@
     TTTAttributedLabelDelegate,
     HPGrowingTextViewDelegate,
     UITextViewDelegate,
-    UIGestureRecognizerDelegate
+    UIGestureRecognizerDelegate,
+    VoiceMessagePlayedDelegate
 >
 @end

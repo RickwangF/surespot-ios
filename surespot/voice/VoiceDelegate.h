@@ -14,6 +14,7 @@
 #include <EZAudio/EZAudio.h>
 #import "SurespotMessage.h"
 #import "MessageView.h"
+#import "VoiceMessagePlayedDelegate.h"
 
 @interface VoiceDelegate : NSObject<AVAudioPlayerDelegate, EZMicrophoneDelegate, EZRecorderDelegate>
 
@@ -25,6 +26,7 @@
 @property (nonatomic, assign)   NSInteger max;
 @property (nonatomic, strong)   UIView * backgroundView;
 @property (nonatomic, strong)   UIView * overlayView;
+@property (nullable, nonatomic, weak) id <VoiceMessagePlayedDelegate> delegate;
 
 - (id) initWithUsername: (NSString *) username
              ourVersion:(NSString *) ourVersion;
@@ -32,5 +34,6 @@
 -(void) startRecordingUsername: (NSString *) username;
 -(void) stopRecordingSend: (NSNumber *) send;
 -(void) attachCell: (MessageView *) cell;
--(BOOL) isRecording;
+//-(BOOL) isRecording;
+-(BOOL) isPlaying;
 @end

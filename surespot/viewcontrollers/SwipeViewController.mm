@@ -344,7 +344,7 @@ const Float32 voiceRecordDelay = 0.3;
         }
         
         return YES;
-
+        
     }
     
     
@@ -1275,7 +1275,7 @@ const Float32 voiceRecordDelay = 0.3;
                         
                         //download it if we sent it
                         message.downloadGif = ours || message.downloadGif;
-
+                        
                         //otherwise check option
                         if (!message.downloadGif) {
                             bool downloadGifs = [UIUtils getBoolPrefWithDefaultNoForUser:_username key:@"_user_pref_download_gifs"];
@@ -1289,7 +1289,7 @@ const Float32 voiceRecordDelay = 0.3;
                                 message.downloadGif = YES;
                             }
                         }
-           
+                        
                         //    cell.gifView.alignTop = YES;
                         cell.gifView.alignLeft = YES;
                         cell.gifView.hidden = NO;
@@ -1358,7 +1358,9 @@ const Float32 voiceRecordDelay = 0.3;
                             
                             if (message.playVoice && [username isEqualToString: [self getCurrentTabName]]) {
                                 [self ensureVoiceDelegate];
-                                [_voiceDelegate playVoiceMessage:message cell:cell];
+                                if (![_voiceDelegate isPlaying]) {
+                                    [_voiceDelegate playVoiceMessage:message cell:cell];
+                                }
                             }
                             else {
                                 [cell setMessage:message
@@ -1769,7 +1771,7 @@ const Float32 voiceRecordDelay = 0.3;
                 case MessageModeNone:
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
-                 //   _qrButton.hidden = YES;
+                    //   _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     
                     //          [self setButtonTintColor:_expandButton selected:NO];
@@ -1793,7 +1795,7 @@ const Float32 voiceRecordDelay = 0.3;
                     //    [self setButtonTintColor:_gifButton selected:NO];
                     //    [self setButtonTintColor:_galleryButton selected:NO];
                     _gifButton.selected = NO;
-                  //  _qrButton.hidden = YES;
+                    //  _qrButton.hidden = YES;
                     _gifButton.hidden = YES;
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
@@ -1807,7 +1809,7 @@ const Float32 voiceRecordDelay = 0.3;
                 case MessageModeGIF:
                     _messageTextView.hidden = YES;
                     _expandButton.hidden = YES;
-             //       _qrButton.hidden = YES;
+                    //       _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = YES;
                     //       [self setButtonTintColor:_expandButton selected:NO];
@@ -1828,7 +1830,7 @@ const Float32 voiceRecordDelay = 0.3;
                     
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
-                //    _qrButton.hidden = YES;
+                    //    _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
@@ -2655,6 +2657,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     if (!_voiceDelegate) {
         _voiceDelegate = [[VoiceDelegate alloc] initWithUsername:_username ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]];
+        _voiceDelegate.delegate = self;
     }
 }
 
@@ -3681,6 +3684,41 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 -(BOOL) shouldExpand {
     return [self getCurrentTabName] && (_currentMode != MessageModeKeyboard);
+}
+
+
+-(void) voiceMessagePlayed: (SurespotMessage *) message {
+    DDLogVerbose(@"voiceMessagePlayed: %@", message);
+    //if we're on the same tab play next unplayed voice message
+    NSString * currentTab = [self getCurrentTabName];
+    if ([message.from isEqualToString: currentTab]) {
+        NSInteger lastPlayedId = message.serverid;
+        ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname: currentTab];
+        
+        
+        //get visible cells
+        UITableView * tableView = [self.chats objectForKey:currentTab];
+        NSArray * visibleCells = tableView.visibleCells;
+        MessageView * messageView = nil;
+        //iterate through messages, get next received voice message and play it
+        for (SurespotMessage * chatMessage in cds.messages) {
+            if ([[chatMessage from] isEqualToString:currentTab] && [[chatMessage mimeType] isEqualToString: MIME_TYPE_M4A]) {
+                if ([chatMessage serverid] > lastPlayedId && ![chatMessage voicePlayed]) {
+                    //get visible cell for this message
+                    for (id tableViewCell in visibleCells) {
+                        if ([[tableViewCell message] isEqual:chatMessage]) {
+                            messageView = tableViewCell;
+                            break;
+                        }
+                    }
+                    
+                    [_voiceDelegate playVoiceMessage:chatMessage cell:messageView];
+             //       [_voiceDelegate attachCell: messageView];
+                    break;
+                }
+            }
+        }
+    }
 }
 
 @end
