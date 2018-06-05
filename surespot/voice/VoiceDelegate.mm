@@ -188,7 +188,7 @@ const NSInteger SEND_THRESHOLD = 25;
         [self stopPlayingDeactivateSession:YES];
         return;
     }
-   
+    
     
     if ([_player duration] > 0) {
         _cell.audioIcon.image = [UIImage imageNamed:@"ic_media_previous"];
@@ -304,21 +304,14 @@ const NSInteger SEND_THRESHOLD = 25;
         DDLogInfo(@"recording to %@", _outputPath);
         NSURL *outputFileURL = [NSURL fileURLWithPath:_outputPath];
         
-        // Define the recorder setting
-      //  AudioStreamBasicDescription * desc = [AudioStreamBasicDescription alloc] init
-        NSMutableDictionary *recordSetting = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                              [NSNumber numberWithInt:kAudioFormatMPEG4AAC] , AVFormatIDKey,
-                                              [NSNumber numberWithInteger: 12000], AVEncoderBitRateKey,
-                                              [NSNumber numberWithFloat: 12000],AVSampleRateKey,
-                                              [NSNumber numberWithInt:1],AVNumberOfChannelsKey, nil];
-        
-        
         self.microphone = [EZMicrophone microphoneWithDelegate:self];
         [self.microphone startFetchingAudio];
         
+        AudioStreamBasicDescription outputFileDescription = [EZAudioUtilities M4AFormatWithNumberOfChannels:1 sampleRate:12000];
         self.recorder = [EZRecorder recorderWithURL:outputFileURL
                                        clientFormat:[self.microphone audioStreamBasicDescription]
-                                           fileType:EZRecorderFileTypeM4A
+                                         fileFormat:outputFileDescription
+                                    audioFileTypeID:kAudioFileM4AType
                                            delegate:self];
         _theirUsername = username;
         
@@ -349,7 +342,7 @@ const NSInteger SEND_THRESHOLD = 25;
         self.recordingAudioPlot.plotType        = EZPlotTypeRolling;
         self.recordingAudioPlot.gain = 2.0f;
         [self.recordingAudioPlot setRollingHistoryLength: 256];
-
+        
         self.recordingAudioPlot.shouldFill      = YES;
         self.recordingAudioPlot.shouldMirror    = YES;
         
