@@ -127,12 +127,9 @@ static const int MAX_REAUTH_RETRIES = 1;
             //login again then try reconnecting
             reAuthing = [[[NetworkManager sharedInstance] getNetworkController:_username] reloginSuccessBlock:^(NSURLSessionTask *task, id JSON) {
                 DDLogInfo(@"relogin success");
-                _reauthing = YES;
-                [self reconnect];
-                
+                _reauthing = YES;                
             } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
                 _reauthing = YES;
-                [self reconnect];
             }];
             
             if (!reAuthing) {
@@ -144,6 +141,7 @@ static const int MAX_REAUTH_RETRIES = 1;
                 return;
             }
             
+            [self reconnect];
             return;
         }
         
