@@ -1358,7 +1358,7 @@ const Float32 voiceRecordDelay = 0.3;
                             
                             if (message.playVoice && [username isEqualToString: [self getCurrentTabName]]) {
                                 [self ensureVoiceDelegate];
-                                if (![_voiceDelegate isPlaying]) {
+                                if (![_voiceDelegate isPlaying] && ![_voiceDelegate isRecording]) {
                                     [_voiceDelegate playVoiceMessage:message cell:cell];
                                 }
                             }
