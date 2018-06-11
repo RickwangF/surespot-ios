@@ -171,7 +171,7 @@ const NSInteger SEND_THRESHOLD = 25;
     //
     AVAudioSession *session = [AVAudioSession sharedInstance];
     NSError *error;
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionAllowBluetooth|AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
     if (error)
     {
         DDLogError(@"Error setting up audio session category: %@", error.localizedDescription);
@@ -280,7 +280,7 @@ const NSInteger SEND_THRESHOLD = 25;
         
         AVAudioSession *session = [AVAudioSession sharedInstance];
         NSError *error;
-        [session setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+        [session setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionAllowBluetooth|AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
         if (error)
         {
             DDLogError(@"Error setting up audio session category: %@", error.localizedDescription);
