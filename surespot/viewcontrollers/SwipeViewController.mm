@@ -1586,10 +1586,14 @@ const Float32 voiceRecordDelay = 0.3;
                 [_chats setObject:chatView forKey:username];
                 [_tabLoading removeObjectForKey:username];
                 [_swipeView loadViewAtIndex:index];
-                
-                [self scrollTableViewToBottom:chatView animated:NO];
+                [chatView reloadData];
+                [self scrollTableViewToBottom:chatView animated: NO];
+                //  @synchronized (_needsScroll) {
+                //     DDLogVerbose(@"setting needs scroll for %@", username);
+                //  [_needsScroll setObject:@"yourmama" forKey:username];
+                //    [_bottomIndexPaths removeObjectForKey:username];
+              //  }
             });
-            
         }];
     }
     
