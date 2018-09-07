@@ -30,9 +30,9 @@
         [notificationType isEqualToString:@"notification_invite_accept"]) {
         //if we're not logged in as the user add a local notifcation and show a toast
         
-        NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
-        NSString * to =[locArgs objectAtIndex:0];
-        NSString * from =[locArgs objectAtIndex:1];
+       // NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
+       // NSString * to =[locArgs objectAtIndex:0];
+       // NSString * from =[locArgs objectAtIndex:1];
         
         //if the app is not active increment the badge count
         if (![SharedUtils isActive]) {

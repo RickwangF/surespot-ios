@@ -219,17 +219,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             NSArray * locArgs =[userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
             NSString * to = [locArgs objectAtIndex:0];
             NSString * from = [locArgs objectAtIndex:1];
-            NSString * messageId = [userInfo valueForKey:@"id"];
+            //NSString * messageId = [userInfo valueForKey:@"id"];
             
             [userInfo setValue:@"surespotRulez" forKey:@"local"];
             //application was running when we received
             //if we're not on the tab, show notification
-            if ([to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]] &&
-                [[[IdentityController sharedInstance] getIdentityNames] containsObject:to]) {
+            if ([[[IdentityController sharedInstance] getIdentityNames] containsObject:to]) {
                 
                 ChatController * cc = [[ChatManager sharedInstance] getChatControllerIfPresent: to];
-                //if we're not currently on the tab
-                if (![[cc getCurrentChat] isEqualToString:from]) {
+                //if we're not currently on the tab or a non active user has been sent to
+                if (![to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]] ||
+                    ![[cc getCurrentChat] isEqualToString:from]) {
                     //get alias
                     Friend * thefriend = [[cc getHomeDataSource] getFriendByName: from];
                     NSString * body;
