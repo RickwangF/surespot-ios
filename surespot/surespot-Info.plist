@@ -53,6 +53,8 @@
 	<string>To send voice messages.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To select photos.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>To save photos.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIMainStoryboardFile</key>
