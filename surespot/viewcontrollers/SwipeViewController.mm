@@ -2376,7 +2376,7 @@ const Float32 voiceRecordDelay = 0.3;
     NSMutableArray * menuItems = [NSMutableArray new];
     
     //copy
-    if (([message.mimeType isEqualToString:MIME_TYPE_TEXT] || [message.mimeType isEqualToString:MIME_TYPE_GIF_LINK]) && message.plainData) {
+    if ([message.mimeType isEqualToString:MIME_TYPE_TEXT] && message.plainData) {
         REMenuItem * copyItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_copy", nil) image:[UIImage imageNamed:@"ic_menu_copy"] highlightedImage:nil action:^(REMenuItem * item){
             
             [[UIPasteboard generalPasteboard]  setString: message.plainData];
