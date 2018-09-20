@@ -233,7 +233,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     //get alias
                     Friend * thefriend = [[cc getHomeDataSource] getFriendByName: from];
                     NSString * body;
-                    if (thefriend) {
+                    if ([notificationType isEqualToString:@"notification_message"] && thefriend) {
                         body = [NSString stringWithFormat:NSLocalizedString(@"notification_message_from", nil), to,thefriend.nameOrAlias];
                     }
                     else {
