@@ -40,6 +40,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (strong, nonatomic) IBOutlet UILabel *helpLabel;
 @property (strong, readwrite, nonatomic) REMenu *menu;
 @property (nonatomic, strong) UIPopoverController * popover;
+@property (atomic) BOOL signingUp;
 @end
 
 @implementation SignupViewController
@@ -167,7 +168,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         return;
     }
     
+    if (!_signingUp) {
+        _signingUp = YES;
+    }
+    else {
+        return;
+    }
     _progressView = [LoadingView showViewKey:@"create_user_progress"];
+    
     
     dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     
@@ -219,6 +227,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
              [self.navigationController setViewControllers:controllers animated:YES];
              [_progressView removeView];
              _progressView = nil;
+             _signingUp = NO;
          }
          failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
              
@@ -226,6 +235,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
              
              [_progressView removeView];
              _progressView = nil;
+             _signingUp = NO;
              
              switch ([(NSHTTPURLResponse*)operation.response statusCode]) {
                  case 429:
@@ -555,7 +565,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 -(BOOL) shouldAutorotate {
-    return _progressView == nil;
+    return _progressView == nil && !_signingUp;
 }
 
 
