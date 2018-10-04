@@ -33,8 +33,14 @@
         self.tintColor = [UIUtils isBlackTheme] ? [UIUtils surespotForegroundGrey] : [UIUtils surespotGrey];
     }
     
-        [super setSelected:selected];
+    [super setSelected:selected];
 }
 
-
+//button smaller so make hit area bigger
+//https://stackoverflow.com/questions/31056703/how-can-i-increase-the-tap-area-for-uibutton
+-(BOOL) pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    NSInteger padding = 10;
+    CGRect newArea = CGRectMake(self.bounds.origin.x - padding, self.bounds.origin.y - padding, self.bounds.size.width + padding*2, self.bounds.size.height + padding*2);
+    return CGRectContainsPoint(newArea, point);
+}
 @end
