@@ -1592,7 +1592,7 @@ const Float32 voiceRecordDelay = 0.3;
                 //     DDLogVerbose(@"setting needs scroll for %@", username);
                 //  [_needsScroll setObject:@"yourmama" forKey:username];
                 //    [_bottomIndexPaths removeObjectForKey:username];
-              //  }
+                //  }
             });
         }];
     }
@@ -2065,6 +2065,14 @@ const Float32 voiceRecordDelay = 0.3;
         }];
         
         [menuItems addObject:deleteAllItem];
+    }
+    else {
+        //close all tabs only appears on home tab
+        REMenuItem * closeAllTabsItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_close_all_tabs", nil) image:[UIImage imageNamed:@"ic_menu_end_conversation"] highlightedImage:nil action:^(REMenuItem * item){
+            [self closeAllTabs];
+        }];
+        
+        [menuItems addObject: closeAllTabsItem];
     }
     
     REMenuItem * shareItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"share_invite_link", nil) image:[UIImage imageNamed:@"blue_heart"] highlightedImage:nil action:^(REMenuItem * menuitem){
@@ -2611,6 +2619,23 @@ const Float32 voiceRecordDelay = 0.3;
 
 -(void) closeTab {
     [self closeTabName: [self getCurrentTabName]];
+}
+
+-(void) closeAllTabs {
+    NSInteger count = [_swipeView numberOfPages]-1;
+    for (NSInteger page = count; page > 0; page--) {
+        NSString * name = [self nameForPage:page];
+        
+        [[[ChatManager sharedInstance] getChatController: _username] destroyDataSourceForFriendname: name];
+        [[[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:name] setChatActive:NO];
+        @synchronized (_chats) {
+            [_chats removeObjectForKey:name];
+        }
+    }
+    
+    [_swipeView reloadData];
+    [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] setCurrentChat:nil];
+    [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] postRefresh];
 }
 
 -(void) logout {
@@ -3460,7 +3485,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                           if (buttonIndex == [alertView cancelButtonIndex]) {
                                               DDLogVerbose(@"image send cancelled");
                                           } else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:okString]) {
-                                                [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+                                              [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
                                           };
                                           
                                       }];
@@ -3737,7 +3762,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                     }
                     
                     [_voiceDelegate playVoiceMessage:chatMessage cell:messageView];
-             //       [_voiceDelegate attachCell: messageView];
+                    //       [_voiceDelegate attachCell: messageView];
                     break;
                 }
             }
