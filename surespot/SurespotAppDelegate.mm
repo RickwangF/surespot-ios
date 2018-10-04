@@ -216,6 +216,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             [notificationType isEqualToString:@"notification_invite"]  ||
             [notificationType isEqualToString:@"notification_invite_accept"]) {
             
+            BOOL isMessage = [notificationType isEqualToString:@"notification_message"];
+            
             NSArray * locArgs =[userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
             NSString * to = [locArgs objectAtIndex:0];
             NSString * from = [locArgs objectAtIndex:1];
@@ -227,9 +229,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             if ([[[IdentityController sharedInstance] getIdentityNames] containsObject:to]) {
                 
                 ChatController * cc = [[ChatManager sharedInstance] getChatControllerIfPresent: to];
-                //if we're not currently on the tab or a non active user has been sent to
+                //if we're not currently on the tab or a non active user has been sent a message to, or it's an invite
+                //show the notification
                 if (![to isEqualToString:[[IdentityController sharedInstance] getLoggedInUser]] ||
-                    ![[cc getCurrentChat] isEqualToString:from]) {
+                    (isMessage && ![[cc getCurrentChat] isEqualToString:from]) ||
+                    !isMessage) {
                     //get alias
                     Friend * thefriend = [[cc getHomeDataSource] getFriendByName: from];
                     NSString * body;
@@ -248,11 +252,19 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     [content setBadge:[NSNumber numberWithInteger: [SharedUtils getBadgeCount]]];
                     
                     //TODO allow user to choose surespot or system sounds
-                    [content setSound: [UNNotificationSound soundNamed:@"message.caf"]];
-                    //           [content setBadge: [SharedUtils incrementBadgeCount]];
-                    NSString * requestId = [[NSUUID  UUID] UUIDString];
-                    // [NSString stringWithFormat:@"%@:%@", to,from];
+                    if (isMessage) {
+                        [content setSound: [UNNotificationSound soundNamed:@"message.caf"]];
+                    }
+                    else {
+                        if ([notificationType isEqualToString:@"notification_invite"]) {
+                            [content setSound: [UNNotificationSound soundNamed:@"surespot-invite.caf"]];
+                        }
+                        else {
+                            [content setSound: [UNNotificationSound soundNamed:@"invite-accept.caf"]];
+                        }
+                    }
                     
+                    NSString * requestId = [[NSUUID  UUID] UUIDString];                    
                     UNNotificationTrigger * trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:.0001 repeats:NO];
                     UNNotificationRequest * request = [UNNotificationRequest requestWithIdentifier:requestId content:content trigger:trigger];
                     
@@ -357,10 +369,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     //clear badge count
- //   [SharedUtils setCurrentTab:nil];
+    //   [SharedUtils setCurrentTab:nil];
     [SharedUtils setActive:NO];
-  //  [SharedUtils clearBadgeCount];
-   // [[UIApplication sharedApplication] setApplicationIconBadgeNumber: [SharedUtils getBadgeCount]];
+    //  [SharedUtils clearBadgeCount];
+    // [[UIApplication sharedApplication] setApplicationIconBadgeNumber: [SharedUtils getBadgeCount]];
     
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.

@@ -989,8 +989,8 @@ static const int MAX_REAUTH_RETRIES = 1;
             else {
                 if ([message.action isEqualToString:@"invite"]) {
                     user = message.data;
-                    
-                    [[SoundController sharedInstance] playInviteSoundForUser: _username];
+                    //notification will play sound
+                    //[[SoundController sharedInstance] playInviteSoundForUser: _username];
                     [_homeDataSource addFriendInviter: user ];
                 }
                 else {
