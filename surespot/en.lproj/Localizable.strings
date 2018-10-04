@@ -374,5 +374,5 @@ If you elect to backup your identity on Google Drive you will be storing a copy 
 "no_gifs_found"="No GIFs found.";
 "no_recently_used_gifs"="No recently used GIFs.";
 "search"="Search";
-
+"confirm_image_send"="Are you sure you wish to send this image to %@?";
 

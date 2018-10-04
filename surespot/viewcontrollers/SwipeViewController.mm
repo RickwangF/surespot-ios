@@ -3447,7 +3447,27 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [view setBackgroundColor:[UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor]];
             _galleryView = view;
             [view setCallback:^(id result) {
-                [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+                BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_confirm_image_send"];
+                if (confirm) {
+                    NSString * friendname = [self getCurrentTabName];
+                    Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName: friendname];
+                    NSString * okString = NSLocalizedString(@"ok", nil);
+                    [UIAlertView showWithTitle:NSLocalizedString(@"send", nil)
+                                       message:[NSString stringWithFormat: NSLocalizedString(@"confirm_image_send", nil), [afriend nameOrAlias]]
+                             cancelButtonTitle:NSLocalizedString(@"cancel", nil)
+                             otherButtonTitles:@[okString]
+                                      tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                                          if (buttonIndex == [alertView cancelButtonIndex]) {
+                                              DDLogVerbose(@"image send cancelled");
+                                          } else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:okString]) {
+                                                [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+                                          };
+                                          
+                                      }];
+                }
+                else {
+                    [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+                }
             }];
             
             DDLogInfo(@"No view currently set so setting gallery frame offscreen.");

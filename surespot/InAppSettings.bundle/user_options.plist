@@ -71,6 +71,16 @@
 			<key>DefaultValue</key>
 			<true/>
 		</dict>
+        <dict>
+            <key>Type</key>
+            <string>PSToggleSwitchSpecifier</string>
+            <key>Title</key>
+            <string>pref_title_confirm_image_send</string>
+            <key>Key</key>
+            <string>_user_pref_confirm_image_send</string>
+            <key>DefaultValue</key>
+            <true/>
+        </dict>
 		<dict>
 			<key>Title</key>
 			<string>notifications_title</string>
