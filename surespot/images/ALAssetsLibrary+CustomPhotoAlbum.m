@@ -57,7 +57,8 @@
                                           completionBlock(error, nil);
                                       }];
 
-                                //album was found, bail out of the method
+                                //album was found stop enumerating and bail out of the method
+                                *stop = YES;
                                 return;
                             }
                             
@@ -89,6 +90,7 @@
                                                       }];
 
                                 //should be the last iteration anyway, but just in case
+                                *stop = YES;
                                 return;
                             }
                             
