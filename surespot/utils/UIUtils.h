@@ -32,6 +32,7 @@
 +(void) stopSpinAnimation: (UIView *) view;
 +(void) startPulseAnimation: (UIView *) view;
 +(void) stopPulseAnimation: (UIView *) view;
++(void) showAlertController: (UIAlertController *) controller window: (UIWindow *) window;
 +(void) showToastMessage: (NSString *) message duration: (CGFloat) duration;
 +(NSString *) getMessageErrorText: (NSInteger) errorStatus mimeType: (NSString *) mimeType;
 +(REMenu *) createMenu: (NSArray *) menuItems closeCompletionHandler: (void (^)(void))completionHandler;

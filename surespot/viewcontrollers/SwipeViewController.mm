@@ -3471,29 +3471,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             GalleryView * view = [[[NSBundle mainBundle] loadNibNamed:@"GalleryView" owner:self options:nil] firstObject];
             [view setBackgroundColor:[UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor]];
             _galleryView = view;
-            [view setCallback:^(id result) {
-                BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_confirm_image_send"];
-                if (confirm) {
-                    NSString * friendname = [self getCurrentTabName];
-                    Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName: friendname];
-                    NSString * okString = NSLocalizedString(@"ok", nil);
-                    [UIAlertView showWithTitle:NSLocalizedString(@"send", nil)
-                                       message:[NSString stringWithFormat: NSLocalizedString(@"confirm_image_send", nil), [afriend nameOrAlias]]
-                             cancelButtonTitle:NSLocalizedString(@"cancel", nil)
-                             otherButtonTitles:@[okString]
-                                      tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
-                                          if (buttonIndex == [alertView cancelButtonIndex]) {
-                                              DDLogVerbose(@"image send cancelled");
-                                          } else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:okString]) {
-                                              [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
-                                          };
-                                          
-                                      }];
-                }
-                else {
-                    [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
-                }
-            }];
+            
             
             DDLogInfo(@"No view currently set so setting gallery frame offscreen.");
             
@@ -3503,10 +3481,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
             DDLogInfo(@"showGalleryView, keyboard height: %f",_messageBarState.keyboardHeight);
             
-            
-            //get the topmost window
+            //get the topmost window which should be the keyboard window
             UIWindow * theWindowWeWillUse;
-            
             UIWindowLevel theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = 0;
             for (UIWindow * window in [UIApplication sharedApplication].windows) {
                 DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ hidden = %d class = %@\n",
@@ -3518,6 +3494,33 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                     DDLogDebug(@"This is the window we shall use");
                 }
             }
+            
+            [view setCallback:^(id result) {
+                BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_confirm_image_send"];
+                if (confirm) {
+                    NSString * friendname = [self getCurrentTabName];
+                    Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName: friendname];
+                    NSString * okString = NSLocalizedString(@"ok", nil);
+                    
+                    UIAlertController * alert = [UIAlertController
+                                                 alertControllerWithTitle:NSLocalizedString(@"send", nil)
+                                                 message:[NSString stringWithFormat: NSLocalizedString(@"confirm_image_send", nil), [afriend nameOrAlias]]
+                                                 preferredStyle:UIAlertControllerStyleAlert];
+                    
+                    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"cancel", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+                        DDLogVerbose(@"image send cancelled");
+                    }];
+                    [alert addAction:cancelAction];
+                    UIAlertAction *okAction = [UIAlertAction actionWithTitle:okString style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+                        [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+                    }];
+                    [alert addAction:okAction];
+                    [UIUtils showAlertController:alert window: theWindowWeWillUse];
+                }
+                else {
+                    [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+                }
+            }];
             
             __block NSInteger yDelta = GALLERY_VIEW_OFFSET;
             [UIView animateWithDuration:0.5
@@ -3552,7 +3555,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             [theWindowWeWillUse addSubview: _galleryView];
             [view fetchAssets];
-            
             break;
         }
         case MessageModeCamera:

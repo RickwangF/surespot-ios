@@ -60,7 +60,14 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return [UIColor colorWithRed:180/255.0f green:180/255.0f blue:180/255.0f alpha:0.2f];
 }
 
-
++(void)showAlertController: (UIAlertController *) controller window: (UIWindow *) window
+{
+    UIWindow * alertWindow = [[UIWindow alloc] initWithFrame: [UIScreen mainScreen].bounds];
+    alertWindow.rootViewController = [UIViewController new];
+    alertWindow.windowLevel = window.windowLevel + 1;
+    [alertWindow makeKeyAndVisible];
+    [alertWindow.rootViewController presentViewController: controller animated: YES completion: nil];
+}
 
 +(void) showToastMessage: (NSString *) message duration: (CGFloat) duration {
     AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
