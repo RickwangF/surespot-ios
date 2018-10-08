@@ -1939,12 +1939,23 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 - (void) scrollTableViewToBottom: (UITableView *) tableView animated: (BOOL) animated {
-    [tableView index]
+    //array of visible paths.
+    NSArray *visiblePaths = [tableView indexPathsForVisibleRows];
+    
+    //last visible object's index path.
+    NSIndexPath *bottomPath = [visiblePaths lastObject];
+    
+    BOOL isScrolledToBottom =  tableView.contentOffset.y >= (tableView.contentSize.height - tableView.frame.size.height);
+    
+    DDLogVerbose(@"scrollTableViewToBottom, scrolledToBottom: %d, visible bottom row: %ld",  isScrolledToBottom, (long)bottomPath.row);
     NSInteger numRows = [tableView numberOfRowsInSection:0];
     if (numRows > 0) {
-        DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld, animated: %d", (long)numRows, animated);
+        DDLogVerbose(@"scrollTableViewToBottom request scroll to row: %ld, animated: %d", (long)numRows - 1, animated);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
-        if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
+        DDLogVerbose(@"scrollTableViewToBottom actual bottom row: %ld", (long)scrollIndexPath.row);
+        if (!isScrolledToBottom && [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
+            DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld, animated: %d", (long)numRows, animated);
+
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
         }
     }

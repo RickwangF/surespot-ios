@@ -7,7 +7,7 @@
 	<key>bitly_token</key>
 	<string>4d80112e45e7c6c32d055e2ea9e0ceb87c593374</string>
 	<key>base_url</key>
-	<string>http://192.168.10.116:8080</string>
+	<string>https://lb2.surespot.me:443</string>
 	<key>google_client_id</key>
 	<string>428168563991-kjkqs31gov2lmgh05ajbhcpi7bkpuop7.apps.googleusercontent.com</string>
 	<key>google_client_secret</key>
