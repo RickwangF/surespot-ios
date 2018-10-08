@@ -52,7 +52,7 @@
 #import "GalleryView.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelDebug;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -761,7 +761,7 @@ const Float32 voiceRecordDelay = 0.3;
                         @synchronized (_needsScroll ) {
                             id needsit = [_needsScroll  objectForKey:map.username];
                             if (needsit) {
-                                DDLogVerbose(@"scrolling %@ to bottom",map.username);
+                                DDLogVerbose(@"swipeViewCurrentItemIndexDidChange scrolling %@ to bottom",map.username);
                                 [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableview afterDelay:0.5];
                                 [_needsScroll removeObjectForKey:map.username];
                             }
@@ -1587,6 +1587,7 @@ const Float32 voiceRecordDelay = 0.3;
                 [_tabLoading removeObjectForKey:username];
                 [_swipeView loadViewAtIndex:index];
                 [chatView reloadData];
+                DDLogVerbose(@"loadChat scrolling table view to bottom for username: %@", username);
                 [self scrollTableViewToBottom:chatView animated: NO];
                 //  @synchronized (_needsScroll) {
                 //     DDLogVerbose(@"setting needs scroll for %@", username);
@@ -1899,7 +1900,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
-    DDLogVerbose(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
+    DDLogVerbose(@"refreshMessages, username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
     
     UITableView * tableView;
     @synchronized (_chats) {
@@ -1917,12 +1918,13 @@ const Float32 voiceRecordDelay = 0.3;
             }
             
             if (tableView) {
+                DDLogVerbose(@"refreshMessages calling scrollTableViewToBottom");
                 [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableView afterDelay:0.5];
             }
         }
         else {
             @synchronized (_needsScroll) {
-                DDLogVerbose(@"setting needs scroll for %@", username);
+                DDLogVerbose(@"refreshMessages setting needs scroll for %@", username);
                 [_needsScroll setObject:@"yourmama" forKey:username];
                 [_bottomIndexPaths removeObjectForKey:username];
             }
@@ -1937,10 +1939,10 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 - (void) scrollTableViewToBottom: (UITableView *) tableView animated: (BOOL) animated {
-    
-    NSInteger numRows =[tableView numberOfRowsInSection:0];
+    [tableView index]
+    NSInteger numRows = [tableView numberOfRowsInSection:0];
     if (numRows > 0) {
-        DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
+        DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld, animated: %d", (long)numRows, animated);
         NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
         if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];

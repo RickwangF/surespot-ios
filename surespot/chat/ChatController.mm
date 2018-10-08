@@ -427,6 +427,7 @@ static const int MAX_REAUTH_RETRIES = 1;
                         NSString * friendname = [sm getOtherUser:_username];
                         ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
                         [dataSource addMessage: sm refresh:NO];
+                        DDLogVerbose(@"calling postRefresh to scroll");
                         [dataSource postRefresh];
                         
                         [self enqueueMessage:sm];
@@ -579,6 +580,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
+    DDLogVerbose(@"calling postRefresh to scroll");
     [dataSource postRefresh];
     
     [self enqueueMessage:sm];
@@ -609,6 +611,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
+    DDLogVerbose(@"calling postRefresh to scroll");
     [dataSource postRefresh];
     
     [self enqueueMessage:sm];
@@ -638,6 +641,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
+    DDLogVerbose(@"calling postRefresh to scroll");
     [dataSource postRefresh];
     
     [self enqueueMessage:sm];
@@ -665,6 +669,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
+    DDLogVerbose(@"calling postRefresh to scroll");
     [dataSource postRefresh];
     
     [self enqueueMessage:sm];
@@ -916,6 +921,7 @@ static const int MAX_REAUTH_RETRIES = 1;
             }
         }
         
+            DDLogVerbose(@"calling postRefresh to scroll");
         [cds postRefresh];
     }
 }
