@@ -52,7 +52,7 @@
 #import "GalleryView.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelDebug;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -2948,6 +2948,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 -(void) resignAllResponders {
+    DDLogVerbose(@"resignAllResponders");
     [_messageTextView resignFirstResponder];
     [_inviteTextView resignFirstResponder];
     [_giphySearchTextView resignFirstResponder];

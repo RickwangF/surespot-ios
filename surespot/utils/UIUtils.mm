@@ -20,6 +20,8 @@
 #import "NSBundle+FallbackLanguage.h"
 #import "IdentityController.h"
 #import "UIImage+Scale.h"
+#import "DisablesAutomaticKeyboardDismissalViewController.h"
+#import "UIAnyLevelWindow.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -62,9 +64,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 +(void)showAlertController: (UIAlertController *) controller window: (UIWindow *) window
 {
-    UIWindow * alertWindow = [[UIWindow alloc] initWithFrame: [UIScreen mainScreen].bounds];
-    alertWindow.rootViewController = [UIViewController new];
-    alertWindow.windowLevel = window.windowLevel + 1;
+    UIWindow * alertWindow = [[UIAnyLevelWindow alloc] initWithFrame: [UIScreen mainScreen].bounds];
+    alertWindow.rootViewController = [DisablesAutomaticKeyboardDismissalViewController new];
+  //  alertWindow.windowLevel = window.windowLevel + 1;
+    DDLogDebug(@"window level set to %f", alertWindow.windowLevel);
     [alertWindow makeKeyAndVisible];
     [alertWindow.rootViewController presentViewController: controller animated: YES completion: nil];
 }

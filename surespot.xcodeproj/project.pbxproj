@@ -128,6 +128,8 @@
 		669C4D671EE7885300AA47EC /* GifImageViewAligned.m in Sources */ = {isa = PBXBuildFile; fileRef = 669C4D661EE7885300AA47EC /* GifImageViewAligned.m */; };
 		66A2D919183A7A7F00785270 /* SurespotConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A2D918183A7A7F00785270 /* SurespotConstants.m */; };
 		66AC20AB18690CBD004E58E1 /* KeyFingerprintLoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */; };
+		66B0756F21681989003C55C1 /* DisablesAutomaticKeyboardDismissalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B0756E21681989003C55C1 /* DisablesAutomaticKeyboardDismissalViewController.m */; };
+		66B0757221681D92003C55C1 /* UIAnyLevelWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B0757121681D92003C55C1 /* UIAnyLevelWindow.m */; };
 		66B836111CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */; };
 		66BB5A3A187B7EE9007B5C47 /* SurespotSettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A39187B7EE9007B5C47 /* SurespotSettingsStore.m */; };
 		66BB5A49187C7672007B5C47 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66BB5A48187C7672007B5C47 /* HelpViewController.m */; };
@@ -444,6 +446,10 @@
 		66A2D917183A7A7F00785270 /* SurespotConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotConstants.h; sourceTree = "<group>"; };
 		66A2D918183A7A7F00785270 /* SurespotConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurespotConstants.m; sourceTree = "<group>"; };
 		66AC20AA18690CBD004E58E1 /* KeyFingerprintLoadingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeyFingerprintLoadingView.xib; sourceTree = "<group>"; };
+		66B0756D21681989003C55C1 /* DisablesAutomaticKeyboardDismissalViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisablesAutomaticKeyboardDismissalViewController.h; sourceTree = "<group>"; };
+		66B0756E21681989003C55C1 /* DisablesAutomaticKeyboardDismissalViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DisablesAutomaticKeyboardDismissalViewController.m; sourceTree = "<group>"; };
+		66B0757021681D92003C55C1 /* UIAnyLevelWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIAnyLevelWindow.h; sourceTree = "<group>"; };
+		66B0757121681D92003C55C1 /* UIAnyLevelWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIAnyLevelWindow.m; sourceTree = "<group>"; };
 		66B8360F1CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+FallbackLanguage.h"; sourceTree = "<group>"; };
 		66B836101CB9AE6D00FA7B6B /* NSBundle+FallbackLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+FallbackLanguage.m"; sourceTree = "<group>"; };
 		66BB5A38187B7EE9007B5C47 /* SurespotSettingsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurespotSettingsStore.h; sourceTree = "<group>"; };
@@ -1355,6 +1361,10 @@
 				66EBDF2E1855C96F00F2452D /* UIViewPager.m */,
 				664DFA761EA534A100565D8D /* SurespotLeftNavButton.h */,
 				664DFA771EA534A100565D8D /* SurespotLeftNavButton.m */,
+				66B0756D21681989003C55C1 /* DisablesAutomaticKeyboardDismissalViewController.h */,
+				66B0756E21681989003C55C1 /* DisablesAutomaticKeyboardDismissalViewController.m */,
+				66B0757021681D92003C55C1 /* UIAnyLevelWindow.h */,
+				66B0757121681D92003C55C1 /* UIAnyLevelWindow.m */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -1825,6 +1835,7 @@
 				66EBE13A1855C97100F2452D /* SurespotLogFormatter.m in Sources */,
 				665180F11EC4FB5A000CBB44 /* MessageView+GifCache.m in Sources */,
 				6614EEB8185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */,
+				66B0757221681D92003C55C1 /* UIAnyLevelWindow.m in Sources */,
 				66DAB62E186DEEFC006C262F /* VoiceDelegate.mm in Sources */,
 				5AF842511B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm in Sources */,
 				66EBE0CB1855C97100F2452D /* MessageBarState.m in Sources */,
@@ -1849,6 +1860,7 @@
 				66EBE0B41855C97100F2452D /* GetPublicKeysOperation.mm in Sources */,
 				6652F2AA1875F16D00E023A7 /* PwylViewController.m in Sources */,
 				66866268185B6A2E001491B1 /* SDWebImageDownloaderOperation.mm in Sources */,
+				66B0756F21681989003C55C1 /* DisablesAutomaticKeyboardDismissalViewController.m in Sources */,
 				66EBE13D1855C97100F2452D /* HomeCell.m in Sources */,
 				665CA9AB1E918E4C0045EEDD /* NetworkManager.mm in Sources */,
 				665180F71EC51427000CBB44 /* SharedCacheAndQueueManager.m in Sources */,
