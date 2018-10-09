@@ -115,6 +115,8 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (strong, nonatomic) IBOutlet UIButton *expandButton;
 @property (nonatomic, assign) NSInteger gifOffsets;
 @property (nonatomic, assign) BOOL collapsed;
+@property (atomic, assign) BOOL scrolling;
+@property (atomic, strong) NSObject * scrollMutex;
 @end
 @implementation SwipeViewController
 
@@ -1900,7 +1902,9 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
-    DDLogVerbose(@"refreshMessages, username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
+    BOOL delay = YES;
+    delay = [[notification.object objectForKey:@"delay"] boolValue];
+    DDLogVerbose(@"refreshMessages, username: %@, currentchat: %@, scroll: %d, delay: %d", username, [self getCurrentTabName], scroll, delay);
     
     UITableView * tableView;
     @synchronized (_chats) {
@@ -1939,24 +1943,32 @@ const Float32 voiceRecordDelay = 0.3;
 
 
 - (void) scrollTableViewToBottom: (UITableView *) tableView animated: (BOOL) animated {
-    //array of visible paths.
-    NSArray *visiblePaths = [tableView indexPathsForVisibleRows];
-    
-    //last visible object's index path.
-    NSIndexPath *bottomPath = [visiblePaths lastObject];
-    
-    BOOL isScrolledToBottom =  tableView.contentOffset.y >= (tableView.contentSize.height - tableView.frame.size.height);
-    
-    DDLogVerbose(@"scrollTableViewToBottom, scrolledToBottom: %d, visible bottom row: %ld",  isScrolledToBottom, (long)bottomPath.row);
-    NSInteger numRows = [tableView numberOfRowsInSection:0];
-    if (numRows > 0) {
-        DDLogVerbose(@"scrollTableViewToBottom request scroll to row: %ld, animated: %d", (long)numRows - 1, animated);
-        NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
-        DDLogVerbose(@"scrollTableViewToBottom actual bottom row: %ld", (long)scrollIndexPath.row);
-        if (!isScrolledToBottom && [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
-            DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld, animated: %d", (long)numRows, animated);
-
-            [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+    @synchronized (_scrollMutex) {
+        if (!_scrolling) {
+            _scrolling = YES;
+            //array of visible paths.
+            NSArray *visiblePaths = [tableView indexPathsForVisibleRows];
+            
+            //last visible object's index path.
+            NSIndexPath *bottomPath = [visiblePaths lastObject];
+            DDLogVerbose(@"scrollTableViewToBottom, delta: %g, tableView.contentOffset.y: %f, (tableView.contentSize.height - tableView.frame.size.height): %f", tableView.contentOffset.y - (tableView.contentSize.height - tableView.frame.size.height), tableView.contentOffset.y, (tableView.contentSize.height - tableView.frame.size.height));
+            
+            BOOL isScrolledToBottom =  tableView.contentOffset.y >= (tableView.contentSize.height - tableView.frame.size.height);
+            
+            DDLogVerbose(@"scrollTableViewToBottom, visible bottom row: %ld", (long)bottomPath.row);
+            NSInteger numRows = [tableView numberOfRowsInSection:0] - 1;
+            DDLogVerbose(@"scrollTableViewToBottom, numRows: %ld", (long)numRows);
+            
+            if (numRows > 0) {
+                DDLogVerbose(@"scrollTableViewToBottom request scroll to row: %ld, animated: %d", (long)numRows, animated);
+                NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:numRows inSection:0];
+                DDLogVerbose(@"scrollTableViewToBottom actual bottom row: %ld", (long)scrollIndexPath.row);
+                if ([tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
+                    DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld, animated: %d", (long)numRows, animated);
+                    [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+                }
+            }
+            _scrolling = NO;
         }
     }
 }

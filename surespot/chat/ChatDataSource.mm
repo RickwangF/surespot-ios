@@ -347,7 +347,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshMessages"
                                                             object:[NSDictionary dictionaryWithObjectsAndKeys:
                                                                     _theirUsername, @"username",
-                                                                    [NSNumber numberWithBool:scroll],  @"scroll",
+                                                                    [NSNumber numberWithBool:scroll], @"scroll",
                                                                     nil] ];
     });
 }
@@ -418,7 +418,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             if([obj serverid] == serverId) {
                 [_messages removeObjectAtIndex:idx];
                 DDLogVerbose(@"deleteMessageById calling postRefresh to scroll");
-                [self postRefreshScroll:NO];
+                [self postRefreshScroll:NO ];
                 *stop = YES;
             }
         }];
@@ -536,7 +536,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     
                     if (dMessage) {
                         [dMessage setShareable:[message.action isEqualToString:@"shareable"] ? YES : NO];
-                        [self postRefreshScroll:NO];
+                        [self postRefreshScroll:NO ];
                     }
                 }
             }
