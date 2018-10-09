@@ -1948,7 +1948,7 @@ const Float32 voiceRecordDelay = 0.3;
     if (numRows > 0) {
         //helps with the scroll stutter
         @synchronized (_scrollMutex) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.3*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.1*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 DDLogVerbose(@"scrollTableViewToBottom request scroll to row: %ld, animated: %d", (long)numRows, animated);
                 NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:numRows inSection:0];
                 DDLogVerbose(@"scrollTableViewToBottom actual bottom row: %ld", (long)scrollIndexPath.row);
