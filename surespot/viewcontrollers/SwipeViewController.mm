@@ -115,7 +115,6 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (strong, nonatomic) IBOutlet UIButton *expandButton;
 @property (nonatomic, assign) NSInteger gifOffsets;
 @property (nonatomic, assign) BOOL collapsed;
-@property (atomic, assign) BOOL scrolling;
 @property (atomic, strong) NSObject * scrollMutex;
 @end
 @implementation SwipeViewController
@@ -136,7 +135,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     _tabLoading = [NSMutableDictionary new];
     _needsScroll = [NSMutableDictionary new];
-    
+
     _dateFormatQueue = dispatch_queue_create("date format queue", NULL);
     _dateFormatter = [[NSDateFormatter alloc]init];
     [_dateFormatter setDateStyle:NSDateFormatterShortStyle];
@@ -1902,9 +1901,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
-    BOOL delay = YES;
-    delay = [[notification.object objectForKey:@"delay"] boolValue];
-    DDLogVerbose(@"refreshMessages, username: %@, currentchat: %@, scroll: %d, delay: %d", username, [self getCurrentTabName], scroll, delay);
+    DDLogVerbose(@"refreshMessages, username: %@, currentchat: %@, scroll: %d", username, [self getCurrentTabName], scroll);
     
     UITableView * tableView;
     @synchronized (_chats) {
@@ -1923,7 +1920,7 @@ const Float32 voiceRecordDelay = 0.3;
             
             if (tableView) {
                 DDLogVerbose(@"refreshMessages calling scrollTableViewToBottom");
-                [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableView afterDelay:0.5];
+                [self scrollTableViewToBottom: tableView];
             }
         }
         else {
@@ -1936,30 +1933,22 @@ const Float32 voiceRecordDelay = 0.3;
     }
 }
 
-
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
     [self scrollTableViewToBottom:tableView animated:YES];
 }
 
-
 - (void) scrollTableViewToBottom: (UITableView *) tableView animated: (BOOL) animated {
-    @synchronized (_scrollMutex) {
-        if (!_scrolling) {
-            _scrolling = YES;
-            //array of visible paths.
-            NSArray *visiblePaths = [tableView indexPathsForVisibleRows];
-            
-            //last visible object's index path.
-            NSIndexPath *bottomPath = [visiblePaths lastObject];
-            DDLogVerbose(@"scrollTableViewToBottom, delta: %g, tableView.contentOffset.y: %f, (tableView.contentSize.height - tableView.frame.size.height): %f", tableView.contentOffset.y - (tableView.contentSize.height - tableView.frame.size.height), tableView.contentOffset.y, (tableView.contentSize.height - tableView.frame.size.height));
-            
-            BOOL isScrolledToBottom =  tableView.contentOffset.y >= (tableView.contentSize.height - tableView.frame.size.height);
-            
-            DDLogVerbose(@"scrollTableViewToBottom, visible bottom row: %ld", (long)bottomPath.row);
-            NSInteger numRows = [tableView numberOfRowsInSection:0] - 1;
-            DDLogVerbose(@"scrollTableViewToBottom, numRows: %ld", (long)numRows);
-            
-            if (numRows > 0) {
+    DDLogVerbose(@"scrollTableViewToBottom, delta: %g, tableView.contentOffset.y: %f, (tableView.contentSize.height - tableView.frame.size.height): %f", tableView.contentOffset.y - (tableView.contentSize.height - tableView.frame.size.height), tableView.contentOffset.y, (tableView.contentSize.height - tableView.frame.size.height));
+    
+    NSInteger numRows = [tableView numberOfRowsInSection:0] - 1;
+    DDLogVerbose(@"scrollTableViewToBottom, numRows: %ld", (long)numRows);
+    
+    [tableView layoutIfNeeded];
+    
+    if (numRows > 0) {
+        //helps with the scroll stutter
+        @synchronized (_scrollMutex) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.3*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 DDLogVerbose(@"scrollTableViewToBottom request scroll to row: %ld, animated: %d", (long)numRows, animated);
                 NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:numRows inSection:0];
                 DDLogVerbose(@"scrollTableViewToBottom actual bottom row: %ld", (long)scrollIndexPath.row);
@@ -1967,19 +1956,16 @@ const Float32 voiceRecordDelay = 0.3;
                     DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld, animated: %d", (long)numRows, animated);
                     [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
                 }
-            }
-            _scrolling = NO;
+            });
         }
     }
 }
-
 
 - (void) scrollTableViewToCell: (UITableView *) tableView  indexPath: (NSIndexPath *) indexPath {
     DDLogVerbose(@"scrolling to cell: %@", indexPath);
     if ( [tableView numberOfSections] > indexPath.section && [tableView numberOfRowsInSection:0] > indexPath.row ) {
         [tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
-    
 }
 
 - (void)refreshHome:(NSNotification *)notification
