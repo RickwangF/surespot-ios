@@ -127,7 +127,7 @@ static const int MAX_REAUTH_RETRIES = 1;
             //login again then try reconnecting
             reAuthing = [[[NetworkManager sharedInstance] getNetworkController:_username] reloginSuccessBlock:^(NSURLSessionTask *task, id JSON) {
                 DDLogInfo(@"relogin success");
-                _reauthing = YES;                
+                _reauthing = YES;
             } failureBlock:^(NSURLSessionTask *operation, NSError *Error) {
                 _reauthing = YES;
             }];
@@ -730,17 +730,17 @@ static const int MAX_REAUTH_RETRIES = 1;
                 if ([qm.mimeType isEqualToString:MIME_TYPE_IMAGE]) {
                     DDLogVerbose(@"Creating send image message operation for %@", qm.iv);
                     [_messageSendQueue addOperation: [[SendImageMessageOperation alloc] initWithMessage:qm callback:^(SurespotMessage * message) {
-                        if (message) {
-                            [self removeMessageFromBuffer:message];
-                            [self processNextMessage];
-                        }
-                        
-                        else {
+                        if (!message) {
                             //no message, error message queue
                             //when queue loads again it will recreate the operations
                             //todo show notification, can't do it till ios 10
                             DDLogDebug(@"Message send image operation finished with no message");
                             [_messageSendQueue cancelAllOperations];
+                        }
+                        else {
+                            [self removeMessageFromBuffer:message];
+                            [self processNextMessage];
+                            
                         }
                     }]];
                 }
@@ -921,7 +921,7 @@ static const int MAX_REAUTH_RETRIES = 1;
             }
         }
         
-            DDLogVerbose(@"calling postRefresh to scroll");
+        DDLogVerbose(@"calling postRefresh to scroll");
         [cds postRefresh];
     }
 }

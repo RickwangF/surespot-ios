@@ -84,7 +84,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }];
             }
             else {
-                [self finish:nil];
+                //error
+                [self.message setErrorStatus:400];
+                ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
+                [cds addMessage:self.message refresh:YES];
+                [self finish: self.message];
             }
         }];
     }
