@@ -49,6 +49,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 -(void) fetchAssets {
     PHFetchOptions * options = [[PHFetchOptions alloc] init];
     options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"modificationDate" ascending:NO]];
+    options.predicate = [NSPredicate predicateWithFormat:@"mediaType = %d",PHAssetMediaTypeImage];
     _photos = [PHAsset fetchAssetsWithOptions:options];
     [_galleryPreview reloadData];
 }
