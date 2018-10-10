@@ -20,7 +20,6 @@
 		660F0A9B18D789E900FD8C4D /* RestoreIdentitiesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F0A9A18D789E900FD8C4D /* RestoreIdentitiesViewController.m */; };
 		6611BE991BC84F530035C86B /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE981BC84F530035C86B /* NSData+SRB64Additions.m */; };
 		6611BE9D1BC852C40035C86B /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 6611BE9B1BC852C40035C86B /* base64.c */; };
-		6614EEB8185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = 6614EEB7185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m */; };
 		6614EEBF185F5BBF00A65CDE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6614EEBE185F5BBF00A65CDE /* AssetsLibrary.framework */; };
 		661C2ED31763CB57000649E7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 661C2ED21763CB56000649E7 /* libz.dylib */; };
 		661C2ED61763D4B9000649E7 /* NSData+Gunzip.m in Sources */ = {isa = PBXBuildFile; fileRef = 661C2ED51763D4B9000649E7 /* NSData+Gunzip.m */; };
@@ -267,8 +266,6 @@
 		6611BE981BC84F530035C86B /* NSData+SRB64Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SRB64Additions.m"; sourceTree = "<group>"; };
 		6611BE9B1BC852C40035C86B /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
 		6611BE9C1BC852C40035C86B /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
-		6614EEB7185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAssetsLibrary+CustomPhotoAlbum.m"; sourceTree = "<group>"; };
-		6614EEBD185F5A0200A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALAssetsLibrary+CustomPhotoAlbum.h"; sourceTree = "<group>"; };
 		6614EEBE185F5BBF00A65CDE /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		661C2ED21763CB56000649E7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		661C2ED41763D493000649E7 /* NSData+Gunzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Gunzip.h"; sourceTree = "<group>"; };
@@ -1395,8 +1392,6 @@
 				66649E7F1ECD0F2600288620 /* GalleryView.xib */,
 				66649E831ECD0F6600288620 /* GalleryView.h */,
 				66649E811ECD0F5600288620 /* GalleryView.mm */,
-				6614EEBD185F5A0200A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.h */,
-				6614EEB7185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m */,
 				66EBDF391855C96F00F2452D /* ImageDelegate.h */,
 				66EBDF3A1855C96F00F2452D /* ImageDelegate.mm */,
 				66EBDF3B1855C96F00F2452D /* UIImage+Scale.h */,
@@ -1824,7 +1819,6 @@
 				6686626C185B6A2E001491B1 /* UIImage+GIF.m in Sources */,
 				66EBE13A1855C97100F2452D /* SurespotLogFormatter.m in Sources */,
 				665180F11EC4FB5A000CBB44 /* MessageView+GifCache.m in Sources */,
-				6614EEB8185F59F700A65CDE /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */,
 				66DAB62E186DEEFC006C262F /* VoiceDelegate.mm in Sources */,
 				5AF842511B910FD7009BC037 /* RemoveIdentityFromDeviceViewController.mm in Sources */,
 				66EBE0CB1855C97100F2452D /* MessageBarState.m in Sources */,

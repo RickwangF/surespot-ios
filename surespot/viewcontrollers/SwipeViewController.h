@@ -14,8 +14,6 @@
 #import "UIViewPager.h"
 #import "IASKAppSettingsViewController.h"
 #import "MWPhotoBrowser.h"
-#import <AssetsLibrary/AssetsLibrary.h>
-#import "ALAssetsLibrary+CustomPhotoAlbum.h"
 #import "TTTAttributedLabel.h"
 #import "HPGrowingTextView.h"
 #import "VoiceMessagePlayedDelegate.h"

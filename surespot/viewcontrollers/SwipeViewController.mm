@@ -95,7 +95,6 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (strong, nonatomic) IBOutlet UIButton *theButton;
 - (IBAction)buttonTouchUpInside:(id)sender;
 @property (strong, nonatomic) IBOutlet UIView *textFieldContainer;
-@property (atomic, strong) ALAssetsLibrary * assetLibrary;
 @property (atomic, strong) LoadingView * progressView;
 @property (atomic, strong) NSMutableArray *sideMenuGestures;
 @property (atomic, strong) NSString * username;
@@ -131,7 +130,6 @@ const Float32 voiceRecordDelay = 0.3;
     _currentMode = MessageModeNone;
     
     _username = [[IdentityController sharedInstance] getLoggedInUser];
-    _assetLibrary = [ALAssetsLibrary new];
     
     _tabLoading = [NSMutableDictionary new];
     _needsScroll = [NSMutableDictionary new];
@@ -2280,8 +2278,7 @@ const Float32 voiceRecordDelay = 0.3;
                                                     _imageDelegate = [[ImageDelegate alloc]
                                                                       initWithUsername:_username
                                                                       ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-                                                                      theirUsername:thefriend.name
-                                                                      assetLibrary:nil];
+                                                                      theirUsername:thefriend.name];
                                                     
                                                     [ImageDelegate startFriendImageSelectControllerFromViewController:self usingDelegate:_imageDelegate];
                                                     
@@ -2444,12 +2441,13 @@ const Float32 voiceRecordDelay = 0.3;
                                                              options: (SDWebImageOptions) 0
                                                             progress:nil completed:^(id data, NSString * mimeType, NSError *error, SDImageCacheType cacheType, BOOL finished)
                      {
+                         
                          if (error) {
                              [UIUtils showToastKey:@"error_saving_image_to_photos"];
                          }
                          else {
-                             [_assetLibrary saveImage:data toAlbum:@"surespot" withCompletionBlock:^(NSError *error, NSURL * url) {
-                                 if (error) {
+                             [UIUtils saveImage:data completionHandler:^(NSString *localIdentifier) {
+                                 if (!localIdentifier) {
                                      [UIUtils showToastKey:@"error_saving_image_to_photos" duration:2];
                                  }
                                  else {
@@ -2910,8 +2908,7 @@ const Float32 voiceRecordDelay = 0.3;
             _imageDelegate = [[ImageDelegate alloc]
                               initWithUsername:_username
                               ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-                              theirUsername:_username
-                              assetLibrary:_assetLibrary];
+                              theirUsername:_username];
             [ImageDelegate startBackgroundImageSelectControllerFromViewController:sender usingDelegate:_imageDelegate];
         }
         return;
@@ -3577,8 +3574,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 _imageDelegate = [[ImageDelegate alloc]
                                   initWithUsername:_username
                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-                                  theirUsername:theirUsername
-                                  assetLibrary:_assetLibrary];
+                                  theirUsername:theirUsername];
                 [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
                 //pull the gif view immediately coz it looks janky just scroling down
                 [_gifView removeFromSuperview];

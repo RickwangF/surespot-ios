@@ -13,7 +13,6 @@
 #import "NetworkManager.h"
 #import "SurespotConstants.h"
 #import "IdentityController.h"
-#import "ALAssetsLibrary+CustomPhotoAlbum.h"
 #import "SwipeViewController.h"
 #import "SurespotMessage.h"
 #import "FileController.h"
@@ -37,12 +36,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (nonatomic, strong) NSString * username;
 @property (nonatomic, strong) NSString * theirUsername;
 @property (nonatomic, strong) NSString * ourVersion;
-@property (nonatomic, weak) ALAssetsLibrary * assetsLibrary;
 @property (nonatomic, weak) UIViewController* controller;
 @property (nonatomic, strong) NSURL * selectedImageUrl;
 @property (nonatomic, strong) UIImage * selectedImage;
 @end
-
 
 @implementation ImageDelegate
 
@@ -50,7 +47,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 - (id) initWithUsername: (NSString *) username
              ourVersion:(NSString *) ourVersion
           theirUsername:(NSString *) theirUsername
-           assetLibrary: (ALAssetsLibrary *) library
 {
     // Call superclass's initializer
     self = [super init];
@@ -58,11 +54,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     _username = username;
     _ourVersion = ourVersion;
     _theirUsername = theirUsername;
-    _assetsLibrary = library;
     return self;
 }
-
-
 
 // For responding to the user tapping Cancel.
 - (void) imagePickerControllerDidCancel: (UIImagePickerController *) picker {
@@ -103,9 +96,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         switch (_mode) {
             case kSurespotImageDelegateModeCapture:
             {
-                [_assetsLibrary saveImage:imageToSave toAlbum:@"surespot" withCompletionBlock:^(NSError *error, NSURL * url) {
-                    _assetsLibrary = nil;
-                    [self uploadImage:url];
+                [UIUtils saveImage:imageToSave completionHandler:^(NSString *localIdentifier) {
+                    [self uploadImage:[NSURL URLWithString:localIdentifier]];
                 }];
                 break;
             }
@@ -113,7 +105,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             {
                 _selectedImage = imageToSave;
                 _selectedImageUrl = imageUrl;
-                _assetsLibrary = nil;
                 
                 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
                 
@@ -134,7 +125,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
             }
                 break;
             case kSurespotImageDelegateModeFriendImage:
-                _assetsLibrary = nil;
                 [self uploadFriendImage:imageToSave];
                 break;
             case kSurespotImageDelegateModeBackgroundImage:
@@ -408,7 +398,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 
 +(UIImage *) scaleImage: (UIImage *) image {
-    return [image imageScaledToMaxWidth:100.0 maxHeight:100.0];    
+    return [image imageScaledToMaxWidth:100.0 maxHeight:100.0];
 }
 
 - (void)orientationChanged

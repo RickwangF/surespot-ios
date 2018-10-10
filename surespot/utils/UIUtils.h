@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Photos/Photos.h>
 #import "SurespotConstants.h"
 #import "SurespotMessage.h"
 #import "REMenu.h"
@@ -53,6 +54,7 @@
 +(BOOL) confirmLogout;
 +(double) generateIntervalK: (double) k maxInterval: (double) maxInterval;
 +(void) getLocalImageFromAssetUrlOrId: (NSString *) url callback:(CallbackBlock) callback;
++(void) saveImage: (UIImage *) image completionHandler:(void (^)(NSString * localIdentifier)) completionHandler;
 +(void) showPasswordAlertTitle: (NSString *) title
                        message: (NSString *) message
                     controller: (UIViewController *) controller

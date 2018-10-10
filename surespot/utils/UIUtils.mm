@@ -8,7 +8,6 @@
 
 
 #import <AssetsLibrary/AssetsLibrary.h>
-#import <Photos/Photos.h>
 #import "UIUtils.h"
 #import "Toast+UIView.h"
 #import "ChatUtils.h"
@@ -70,24 +69,29 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 +(void) showToastMessage: (NSString *) message duration: (CGFloat) duration {
-    AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
-    [overlayView setUserInteractionEnabled:NO];
-    [overlayView  makeToast:message
-                   duration: duration
-                   position:@"center"
-     ];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
+        [overlayView setUserInteractionEnabled:NO];
+        [overlayView  makeToast:message
+                       duration: duration
+                       position:@"center"
+         ];
+    });
 }
 
 +(void) showToastKey: (NSString *) key {
     [self showToastKey:key duration:2.0];
 }
+
 +(void) showToastKey: (NSString *) key duration: (CGFloat) duration {
-    AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
-    [overlayView setUserInteractionEnabled:NO];
-    [overlayView  makeToast:NSLocalizedString(key, nil)
-                   duration: duration
-                   position:@"center"
-     ];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        AGWindowView * overlayView = [[AGWindowView alloc] initAndAddToKeyWindow];
+        [overlayView setUserInteractionEnabled:NO];
+        [overlayView  makeToast:NSLocalizedString(key, nil)
+                       duration: duration
+                       position:@"center"
+         ];
+    });
 }
 
 + (CGSize)threadSafeSizeString: (NSString *) string WithFont:(UIFont *)font constrainedToSize:(CGSize)size {
@@ -479,13 +483,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         NSString * preferredLanguage = [preferredLanguagesIncDefault objectAtIndex:0];
         NSDictionary *languageDic = [NSLocale componentsFromLocaleIdentifier:preferredLanguage];
         NSString * desiredLang = [languageDic objectForKey:@"kCFLocaleLanguageCodeKey"];
-     
+        
         NSString *settingsBundle = [[NSBundle mainBundle] pathForResource:@"InAppSettings" ofType:@"bundle"];
         if(!settingsBundle) {
             NSLog(@"Could not find Settings.bundle");
             return nil;
         }
-
+        
         NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:[settingsBundle stringByAppendingPathComponent:@"global_options.plist"]];
         NSArray *preferences = [settings objectForKey:@"PreferenceSpecifiers"];
         for(NSDictionary *prefSpecification in preferences) {
@@ -575,6 +579,76 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }];
     }
 }
+
++(void) ensureSurespotAssetCollectionCompletionHandler:(void (^)(PHAssetCollection * collection)) completionHandler {
+    PHFetchOptions *fetchOptions = [[PHFetchOptions alloc] init];
+    fetchOptions.predicate = [NSPredicate predicateWithFormat:@"title = %@", @"surespot"];
+    __block PHAssetCollection * collection = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeAlbum
+                                                                                      subtype:PHAssetCollectionSubtypeAny
+                                                                                      options:fetchOptions].firstObject;
+    
+    // Create the album
+    if (!collection)
+    {
+        __block PHObjectPlaceholder *placeHolder;
+        [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+            PHAssetCollectionChangeRequest *createAlbum = [PHAssetCollectionChangeRequest creationRequestForAssetCollectionWithTitle:@"surespot"];
+            placeHolder = [createAlbum placeholderForCreatedAssetCollection];
+        } completionHandler:^(BOOL success, NSError *error) {
+            if (success)
+            {
+                PHFetchResult *collectionFetchResult = [PHAssetCollection fetchAssetCollectionsWithLocalIdentifiers:@[placeHolder.localIdentifier]
+                                                                                                            options:nil];
+                collection = collectionFetchResult.firstObject;
+            }
+            
+            if (completionHandler) {
+                completionHandler(collection);
+            }
+        }];
+    }
+    else {
+        if (completionHandler) {
+            completionHandler(collection);
+        }
+    }
+}
+
++(void) saveImage: (UIImage *) image completionHandler:(void (^)(NSString * localIdentifier)) completionHandler {
+    [self ensureSurespotAssetCollectionCompletionHandler:^(PHAssetCollection *collection) {
+        if (collection) {
+            __block PHObjectPlaceholder *placeHolder;
+            [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+                PHAssetChangeRequest *assetRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+                placeHolder = [assetRequest placeholderForCreatedAsset];
+                PHFetchResult *photosAsset = [PHAsset fetchAssetsInAssetCollection:collection options:nil];
+                PHAssetCollectionChangeRequest *albumChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:collection
+                                                                                                                              assets:photosAsset];
+                [albumChangeRequest addAssets:@[placeHolder]];
+            } completionHandler:^(BOOL success, NSError *error) {
+                if (success)
+                {
+                    if (completionHandler) {
+                        completionHandler(placeHolder.localIdentifier);
+                    }
+                }
+                else
+                {
+                    if (completionHandler) {
+                        completionHandler(nil);
+                    }
+                }
+            }];
+        }
+        else {
+            if (completionHandler) {
+                completionHandler(nil);
+            }
+        }
+    }];
+}
+
+
 
 +(void) showPasswordAlertTitle: (NSString *) title
                        message: (NSString *) message
