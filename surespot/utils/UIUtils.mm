@@ -574,7 +574,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     else {
         //local id from PHAsset
         PHFetchResult * result = [PHAsset fetchAssetsWithLocalIdentifiers:@[urlOrId] options:nil];
-        [[result firstObject] requestContentEditingInputWithOptions:nil completionHandler:^(PHContentEditingInput * _Nullable contentEditingInput, NSDictionary * _Nonnull info) {
+        PHContentEditingInputRequestOptions * options = [PHContentEditingInputRequestOptions new];
+        options.networkAccessAllowed = YES;
+        [[result firstObject] requestContentEditingInputWithOptions:options completionHandler:^(PHContentEditingInput * _Nullable contentEditingInput, NSDictionary * _Nonnull info) {
             callback([[contentEditingInput displaySizeImage] imageScaledToMaxWidth:400 maxHeight:400]);
         }];
     }

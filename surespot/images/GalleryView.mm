@@ -13,6 +13,7 @@
 #import "GalleryItemView.h"
 #import <Photos/Photos.h>
 #import "CHTCollectionViewWaterfallLayout.h"
+#import "UIUtils.h"
 
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
@@ -90,18 +91,29 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     
     PHImageRequestOptions *requestOptions = [[PHImageRequestOptions alloc] init];
     requestOptions.resizeMode   = PHImageRequestOptionsResizeModeFast;
-    requestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeFastFormat;
-    requestOptions.synchronous = true;
+    requestOptions.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    requestOptions.networkAccessAllowed = YES;
+    requestOptions.synchronous = NO;
+    
+    UIActivityIndicatorView * activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:([UIUtils isBlackTheme] ?  UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray)];
+    activityIndicator.center = newCell.center;
+    [activityIndicator startAnimating];
+    [newCell addSubview:activityIndicator];
     
     
-    [[PHCachingImageManager defaultManager] requestImageForAsset:asset
-                                                      targetSize:CGSizeMake( width, height)
-                                                     contentMode:PHImageContentModeAspectFit
-                                                         options:requestOptions
-                                                   resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-                                                       DDLogDebug(@"Loaded asset");
-                                                       newCell.galleryView.image = result;
-                                                   }];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [[PHCachingImageManager defaultManager] requestImageForAsset:asset
+                                                          targetSize:CGSizeMake( width, height)
+                                                         contentMode:PHImageContentModeAspectFit
+                                                             options:requestOptions
+                                                       resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                                                           DDLogDebug(@"Loaded asset: %@", info);
+                                                           dispatch_async(dispatch_get_main_queue(), ^{
+                                                               newCell.galleryView.image = result;
+                                                               [activityIndicator removeFromSuperview];
+                                                           });
+                                                       }];
+    });
     
     return newCell;
 }
