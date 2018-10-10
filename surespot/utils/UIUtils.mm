@@ -559,6 +559,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     UIImage * scaledImage = [image imageScaledToMaxWidth:400 maxHeight:400];
                     callback(scaledImage);
                 }
+                else {
+                    callback(nil);
+                }
             }
         } failureBlock:^(NSError *error) {
             callback(nil);
