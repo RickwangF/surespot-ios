@@ -11,7 +11,7 @@
 #import "SurespotConstants.h"
 #import "SurespotMessage.h"
 #import "REMenu.h"
-#import "TTTAttributedLabel.h"
+#import "ActiveLabel-Swift.h"
 
 @interface UIUtils : NSObject
 + (void) showToastKey: (NSString *) key;
@@ -37,7 +37,7 @@
 +(void) showToastMessage: (NSString *) message duration: (CGFloat) duration;
 +(NSString *) getMessageErrorText: (NSInteger) errorStatus mimeType: (NSString *) mimeType;
 +(REMenu *) createMenu: (NSArray *) menuItems closeCompletionHandler: (void (^)(void))completionHandler;
-+(void) setLinkLabel:(TTTAttributedLabel *) label
++(void) setLinkLabel:(ActiveLabel *) label
             delegate: (id) delegate
            labelText: (NSString *) labelText
       linkMatchTexts: (NSArray *) linkMatchTexts

@@ -1,4 +1,5 @@
 PODS:
+  - ActiveLabel (0.9.0)
   - AFNetworking (3.2.1):
     - AFNetworking/NSURLSession (= 3.2.1)
     - AFNetworking/Reachability (= 3.2.1)
@@ -69,6 +70,7 @@ PODS:
   - UIImageViewAligned (0.0.1)
 
 DEPENDENCIES:
+  - ActiveLabel
   - AFNetworking
   - AGWindowView
   - CHTCollectionViewWaterfallLayout
@@ -89,6 +91,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - ActiveLabel
     - AFNetworking
     - AGWindowView
     - AppAuth
@@ -126,6 +129,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/surespot/SideMenu.git
 
 SPEC CHECKSUMS:
+  ActiveLabel: c4fdd14a288483e98b5a3dff0ab214699aeee74a
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
   AGWindowView: 08dc8d448b8c96430e78b3945a9c2cf5b0fde754
   AppAuth: 3f4f1d6d85ad631d0bbf15ffcdc10c447face97a
@@ -150,6 +154,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIImageViewAligned: 73030dd085400e1ae7641203b5cc1546fa0495a8
 
-PODFILE CHECKSUM: d308d0cd929be7e5426b86868fb57f342cc8e782
+PODFILE CHECKSUM: 3a230af3b0784b7bbb34a666b7cded6ff50332dd
 
 COCOAPODS: 1.5.2

@@ -20,4 +20,5 @@ target 'surespot' do
     pod 'FLAnimatedImage'
     pod 'CHTCollectionViewWaterfallLayout'
     pod 'EZAudio', '~> 1.1.5'
+    pod 'ActiveLabel'
 end
