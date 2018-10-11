@@ -20,8 +20,7 @@
 @property (nonatomic, strong)  UIPopoverController* popover;
 - (id) initWithUsername: (NSString *) username
              ourVersion:(NSString *) ourVersion
-          theirUsername:(NSString *) theirUsername
-           assetLibrary: (ALAssetsLibrary *) library;
+          theirUsername:(NSString *) theirUsername;
 
 +(BOOL) startCameraControllerFromViewController: (UIViewController*) controller
                                   usingDelegate: (ImageDelegate *) delegate;

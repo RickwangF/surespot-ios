@@ -84,7 +84,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 }];
             }
             else {
-                [self finish:nil];
+                //error
+                [self.message setErrorStatus:400];
+                ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
+                [cds addMessage:self.message refresh:YES];
+                [self finish: self.message];
             }
         }];
     }
@@ -141,11 +145,22 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
          long statusCode = [(NSHTTPURLResponse *) operation statusCode];
          DDLogInfo(@"uploaded image %@ to server failed, statuscode: %ld", self.message.data, statusCode);
          
-         if (statusCode == 401) {
-             [self finish:nil];
-         }
-         else {
-             [self scheduleRetrySend];
+         switch (statusCode) {
+             case 401: {
+                 [self finish:nil];
+                 break;
+             }
+             case 409: {
+                 [self.message setErrorStatus:400];
+                 ChatDataSource * cds = [[[ChatManager sharedInstance] getChatController: self.message.from] getDataSourceForFriendname:self.message.to];
+                 [cds addMessage:self.message refresh:YES];
+                 [self finish: self.message];
+                 break;
+             }
+             default: {                 
+                 [self scheduleRetrySend];
+                 break;
+             }
          }
      }];
     

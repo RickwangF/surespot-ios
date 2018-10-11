@@ -10,8 +10,8 @@
 #import "FilledRectView.h"
 #import "UIImageViewAligned.h"
 #import "SurespotMessage.h"
-#import "TTTAttributedLabel.h"
 #import "GifImageViewAligned.h"
+#import "TTTAttributedLabel.h"
 
 @interface MessageView : UITableViewCell
 @property (strong, nonatomic) IBOutlet FilledRectView *messageSentView;

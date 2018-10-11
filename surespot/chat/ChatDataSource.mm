@@ -19,7 +19,7 @@
 #import "ChatManager.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelDebug;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -196,6 +196,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                                                    completionCallback:^(SurespotMessage  * message){
                                                        if (blockRefresh) {
                                                            if ([_decryptionQueue operationCount] == 0) {
+                                                               DDLogVerbose(@"calling postRefresh to scroll");
                                                                [self postRefresh];
                                                            }
                                                        }
@@ -346,7 +347,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshMessages"
                                                             object:[NSDictionary dictionaryWithObjectsAndKeys:
                                                                     _theirUsername, @"username",
-                                                                    [NSNumber numberWithBool:scroll],  @"scroll",
+                                                                    [NSNumber numberWithBool:scroll], @"scroll",
                                                                     nil] ];
     });
 }
@@ -416,7 +417,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [_messages enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             if([obj serverid] == serverId) {
                 [_messages removeObjectAtIndex:idx];
-                [self postRefreshScroll:NO];
+                DDLogVerbose(@"deleteMessageById calling postRefresh to scroll");
+                [self postRefreshScroll:NO ];
                 *stop = YES;
             }
         }];
@@ -445,6 +447,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         lastMessage = [[SurespotMessage alloc] initWithDictionary:jsonMessage];
         BOOL isNew = [self addMessage:lastMessage refresh:NO callback:^(id result) {
             if ([weakSelf.decryptionQueue operationCount] == 0) {
+                DDLogVerbose(@"calling postRefresh to scroll");
                 [weakSelf postRefresh];
             }
         }];
@@ -533,7 +536,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     
                     if (dMessage) {
                         [dMessage setShareable:[message.action isEqualToString:@"shareable"] ? YES : NO];
-                        [self postRefreshScroll:NO];
+                        [self postRefreshScroll:NO ];
                     }
                 }
             }
@@ -572,6 +575,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     }
     
     [self writeToDisk];
+    DDLogVerbose(@"deleteTheirMessagesUTAI calling postRefresh to scroll");
     [self postRefresh];
 }
 

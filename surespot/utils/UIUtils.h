@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Photos/Photos.h>
 #import "SurespotConstants.h"
 #import "SurespotMessage.h"
 #import "REMenu.h"
@@ -25,9 +26,9 @@
 +(UIColor *) surespotGrey;
 +(UIColor *) surespotForegroundGrey;
 +(UIColor *) surespotTransparentGrey;
-+(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername;
-+(void) setImageMessageHeights: (SurespotMessage *)  message size: (CGSize) size;
-+(void) setVoiceMessageHeights: (SurespotMessage *)  message size: (CGSize) size;
+//+(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername;
++(void) setImageMessageHeights: (SurespotMessage *) message;
++(void) setVoiceMessageHeights: (SurespotMessage *) message;
 +(void) startSpinAnimation: (UIView *) view;
 +(void) stopSpinAnimation: (UIView *) view;
 +(void) startPulseAnimation: (UIView *) view;
@@ -53,6 +54,7 @@
 +(BOOL) confirmLogout;
 +(double) generateIntervalK: (double) k maxInterval: (double) maxInterval;
 +(void) getLocalImageFromAssetUrlOrId: (NSString *) url callback:(CallbackBlock) callback;
++(void) saveImage: (UIImage *) image completionHandler:(void (^)(NSString * localIdentifier)) completionHandler;
 +(void) showPasswordAlertTitle: (NSString *) title
                        message: (NSString *) message
                     controller: (UIViewController *) controller

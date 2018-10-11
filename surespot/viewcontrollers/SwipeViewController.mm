@@ -95,7 +95,6 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (strong, nonatomic) IBOutlet UIButton *theButton;
 - (IBAction)buttonTouchUpInside:(id)sender;
 @property (strong, nonatomic) IBOutlet UIView *textFieldContainer;
-@property (atomic, strong) ALAssetsLibrary * assetLibrary;
 @property (atomic, strong) LoadingView * progressView;
 @property (atomic, strong) NSMutableArray *sideMenuGestures;
 @property (atomic, strong) NSString * username;
@@ -115,9 +114,10 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (strong, nonatomic) IBOutlet UIButton *expandButton;
 @property (nonatomic, assign) NSInteger gifOffsets;
 @property (nonatomic, assign) BOOL collapsed;
+@property (nonatomic, strong) MessageView *ourPrototypeCell;
+@property (nonatomic, strong) MessageView *theirPrototypeCell;
 @end
 @implementation SwipeViewController
-
 
 const NSInteger GALLERY_VIEW_OFFSET = 253;
 const Float32 voiceRecordDelay = 0.3;
@@ -130,7 +130,6 @@ const Float32 voiceRecordDelay = 0.3;
     _currentMode = MessageModeNone;
     
     _username = [[IdentityController sharedInstance] getLoggedInUser];
-    _assetLibrary = [ALAssetsLibrary new];
     
     _tabLoading = [NSMutableDictionary new];
     _needsScroll = [NSMutableDictionary new];
@@ -761,8 +760,12 @@ const Float32 voiceRecordDelay = 0.3;
                         @synchronized (_needsScroll ) {
                             id needsit = [_needsScroll  objectForKey:map.username];
                             if (needsit) {
-                                DDLogVerbose(@"scrolling %@ to bottom",map.username);
-                                [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableview afterDelay:0.5];
+                                DDLogVerbose(@"swipeViewCurrentItemIndexDidChange scrolling %@ to bottom",map.username);
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    [self scrollTableViewToBottom:tableview];
+                                });
+                                
                                 [_needsScroll removeObjectForKey:map.username];
                             }
                         }
@@ -856,30 +859,48 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     return 1;
-    
 }
 
+-(double) textCellHeightTableView: (UITableView *) tableView  message: (SurespotMessage *) message {
+    MessageView * cell;
+    
+    if ([ChatUtils isOurMessage:message ourUsername: _username]) {
+        if (!_ourPrototypeCell) {
+            _ourPrototypeCell = [tableView dequeueReusableCellWithIdentifier:@"OurMessageView"];
+        }
+        cell = _ourPrototypeCell;
+    }
+    else {
+        if (!_theirPrototypeCell) {
+            _theirPrototypeCell = [tableView dequeueReusableCellWithIdentifier:@"TheirMessageView"];
+        }
+        cell = _theirPrototypeCell;
+    }
+    
+    [cell.messageLabel setText:[message plainData]];
+    CGSize size = [cell.contentView systemLayoutSizeFittingSize:tableView.frame.size withHorizontalFittingPriority:1000 verticalFittingPriority:1 ];
+    return size.height+1;
+}
 
+//needs to be implemented for UITableView autolayout to return correct sizes.
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [self tableView:tableView heightForRowAtIndexPath:indexPath];
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     NSInteger index = [self indexForTableView:tableView];
     
     if (index == NSNotFound) {
         index = [_swipeView indexOfItemViewOrSubview:tableView];
     }
     
-    //  DDLogVerbose(@"height for row, index: %d, indexPath: %@", index, indexPath);
     if (index == NSNotFound) {
         return 0;
     }
     
-    
-    
-    
     if (index == 0) {
         
-        NSInteger count =[[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource].friends count];
+        NSInteger count = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource].friends count];
         //if count is 0 we returned 1 for 0 rows so make the single row take up the whole height
         if (count == 0) {
             return tableView.frame.size.height;
@@ -897,10 +918,10 @@ const Float32 voiceRecordDelay = 0.3;
         @synchronized (_chats) {
             
             NSArray *keys = [self sortedAliasedChats];
-            UsernameAliasMap  * map = [keys objectAtIndex:index -1];
+            UsernameAliasMap * map = [keys objectAtIndex:index -1];
             
             NSString * username = map.username;
-            NSArray * messages =[[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname: username].messages;
+            NSArray * messages = [[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname: username].messages;
             
             
             //if count is 0 we returned 1 for 0 rows so
@@ -908,32 +929,64 @@ const Float32 voiceRecordDelay = 0.3;
                 return tableView.frame.size.height;
             }
             
-            
             if (messages.count > 0 && (indexPath.row < messages.count)) {
-                SurespotMessage * message =[messages objectAtIndex:indexPath.row];
+                SurespotMessage * message = [messages objectAtIndex:indexPath.row];
                 UIInterfaceOrientation  orientation = [[UIApplication sharedApplication] statusBarOrientation];
-                NSInteger height = 44;
+                double height = 0;
+                
+                //used cached values if we have them
                 if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
                     height = message.rowLandscapeHeight;
                 }
                 else {
-                    height  = message.rowPortraitHeight;
+                    height = message.rowPortraitHeight;
                 }
                 
-                if (height > 0) {
-                    return height;
+                //if height not cached
+                if (height == 0) {
+                    //fixed height for voice message
+                    if ([message.mimeType isEqualToString: MIME_TYPE_M4A]) {
+                        [UIUtils setVoiceMessageHeights:message];
+                    }
+                    else {
+                        //fixed height for gifs and images
+                        if ([message.mimeType isEqualToString: MIME_TYPE_IMAGE] || [message.mimeType isEqualToString: MIME_TYPE_GIF_LINK]) {
+                            [UIUtils setImageMessageHeights:message];
+                        }
+                        else {
+                            //if we have the text, cache the row height
+                            if (![UIUtils stringIsNilOrEmpty:message.plainData]) {
+                                height = [self textCellHeightTableView:tableView message:message];
+                                
+                                if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
+                                    message.rowLandscapeHeight = height;
+                                }
+                                else {
+                                    message.rowPortraitHeight = height;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
+                        height = message.rowLandscapeHeight;
+                    }
+                    else {
+                        height = message.rowPortraitHeight;
+                    }
                 }
                 
-                else {
-                    return 44;
+                if (height == 0) {
+                    height = 56;
                 }
+                
+                return height;
             }
             else {
                 return 0;
             }
         }
     }
-    
 }
 
 -(UIColor *) getThemeForegroundColor {
@@ -942,8 +995,6 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
     NSInteger index = [self indexForTableView:tableView];
     
     if (index == NSNotFound) {
@@ -1134,8 +1185,6 @@ const Float32 voiceRecordDelay = 0.3;
             cell.messageSize.textColor = [self getThemeForegroundColor];
             cell.messageStatusLabel.textColor = [self getThemeForegroundColor];
             
-            cell.messageLabel.lineBreakMode = NSLineBreakByWordWrapping;
-            
             cell.message = message;
             cell.messageLabel.text = plainData;
             
@@ -1146,7 +1195,6 @@ const Float32 voiceRecordDelay = 0.3;
             DDLogVerbose(@"message text x position: %f, width: %f", cell.messageLabel.frame.origin.x, cell.messageLabel.frame.size.width);
             
             if (message.errorStatus > 0) {
-                
                 NSString * errorText = [UIUtils getMessageErrorText: message.errorStatus mimeType:message.mimeType];
                 DDLogVerbose(@"setting error status %@", errorText);
                 [cell.messageStatusLabel setText: errorText];
@@ -1547,6 +1595,7 @@ const Float32 voiceRecordDelay = 0.3;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 UITableView * chatView = [[UITableView alloc] initWithFrame:_swipeView.frame];
+                
                 [chatView setDelegate:self];
                 [chatView setDataSource: self];
                 [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
@@ -1587,6 +1636,7 @@ const Float32 voiceRecordDelay = 0.3;
                 [_tabLoading removeObjectForKey:username];
                 [_swipeView loadViewAtIndex:index];
                 [chatView reloadData];
+                DDLogVerbose(@"loadChat scrolling table view to bottom for username: %@", username);
                 [self scrollTableViewToBottom:chatView animated: NO];
                 //  @synchronized (_needsScroll) {
                 //     DDLogVerbose(@"setting needs scroll for %@", username);
@@ -1873,22 +1923,20 @@ const Float32 voiceRecordDelay = 0.3;
 
 -(void) updateTableView: (UITableView *) tableView withNewRowCount : (int) rowCount
 {
-    if ([tableView respondsToSelector:@selector(contentOffset)]) {
-        //Save the tableview content offset
-        CGPoint tableViewOffset = [tableView contentOffset];
-        
-        //compute the height change
-        int heightForNewRows = 0;
-        
-        for (NSInteger i = 0; i < rowCount; i++) {
-            NSIndexPath *tempIndexPath = [NSIndexPath indexPathForRow:i inSection:0];
-            heightForNewRows += [self tableView:tableView heightForRowAtIndexPath: tempIndexPath];
-        }
-        
-        tableViewOffset.y += heightForNewRows;
-        [tableView reloadData];
-        [tableView setContentOffset:tableViewOffset animated:NO];
+    //Save the tableview content offset
+    CGPoint tableViewOffset = [tableView contentOffset];
+    
+    //compute the height change
+    int heightForNewRows = 0;
+    
+    for (NSInteger i = 0; i < rowCount; i++) {
+        NSIndexPath *tempIndexPath = [NSIndexPath indexPathForRow:i inSection:0];
+        heightForNewRows += [self tableView:tableView heightForRowAtIndexPath: tempIndexPath];
     }
+    
+    tableViewOffset.y += heightForNewRows;
+    [tableView reloadData];
+    [tableView setContentOffset:tableViewOffset animated:NO];
 }
 
 
@@ -1899,7 +1947,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     BOOL scroll = [[notification.object objectForKey:@"scroll"] boolValue];
-    DDLogVerbose(@"username: %@, currentchat: %@, scroll: %hhd", username, [self getCurrentTabName], (char)scroll);
+    DDLogVerbose(@"refreshMessages, username: %@, currentchat: %@, scroll: %d", username, [self getCurrentTabName], scroll);
     
     UITableView * tableView;
     @synchronized (_chats) {
@@ -1917,12 +1965,13 @@ const Float32 voiceRecordDelay = 0.3;
             }
             
             if (tableView) {
-                [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableView afterDelay:0.5];
+                DDLogVerbose(@"refreshMessages calling scrollTableViewToBottom");
+                [self scrollTableViewToBottom: tableView];
             }
         }
         else {
             @synchronized (_needsScroll) {
-                DDLogVerbose(@"setting needs scroll for %@", username);
+                DDLogVerbose(@"refreshMessages setting needs scroll for %@", username);
                 [_needsScroll setObject:@"yourmama" forKey:username];
                 [_bottomIndexPaths removeObjectForKey:username];
             }
@@ -1930,31 +1979,32 @@ const Float32 voiceRecordDelay = 0.3;
     }
 }
 
-
 - (void) scrollTableViewToBottom: (UITableView *) tableView {
     [self scrollTableViewToBottom:tableView animated:YES];
 }
 
-
 - (void) scrollTableViewToBottom: (UITableView *) tableView animated: (BOOL) animated {
+    DDLogVerbose(@"scrollTableViewToBottom, delta: %g, tableView.contentOffset.y: %f, (tableView.contentSize.height - tableView.frame.size.height): %f", tableView.contentOffset.y - (tableView.contentSize.height - tableView.frame.size.height), tableView.contentOffset.y, (tableView.contentSize.height - tableView.frame.size.height));
     
-    NSInteger numRows =[tableView numberOfRowsInSection:0];
+    NSInteger numRows = [tableView numberOfRowsInSection:0] - 1;
+    DDLogVerbose(@"scrollTableViewToBottom, numRows: %ld", (long)numRows);
+    
     if (numRows > 0) {
-        DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld", (long)numRows);
-        NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:(numRows - 1) inSection:0];
-        if ( [tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
+        DDLogVerbose(@"scrollTableViewToBottom request scroll to row: %ld, animated: %d", (long)numRows, animated);
+        NSIndexPath *scrollIndexPath = [NSIndexPath indexPathForRow:numRows inSection:0];
+        DDLogVerbose(@"scrollTableViewToBottom actual bottom row: %ld", (long)scrollIndexPath.row);
+        if ([tableView numberOfSections] > scrollIndexPath.section && [tableView numberOfRowsInSection:0] > scrollIndexPath.row ) {
+            DDLogVerbose(@"scrollTableViewToBottom scrolling to row: %ld, animated: %d", (long)numRows, animated);
             [tableView scrollToRowAtIndexPath:scrollIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
         }
     }
 }
-
 
 - (void) scrollTableViewToCell: (UITableView *) tableView  indexPath: (NSIndexPath *) indexPath {
     DDLogVerbose(@"scrolling to cell: %@", indexPath);
     if ( [tableView numberOfSections] > indexPath.section && [tableView numberOfRowsInSection:0] > indexPath.row ) {
         [tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
-    
 }
 
 - (void)refreshHome:(NSNotification *)notification
@@ -2269,8 +2319,7 @@ const Float32 voiceRecordDelay = 0.3;
                                                     _imageDelegate = [[ImageDelegate alloc]
                                                                       initWithUsername:_username
                                                                       ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-                                                                      theirUsername:thefriend.name
-                                                                      assetLibrary:nil];
+                                                                      theirUsername:thefriend.name];
                                                     
                                                     [ImageDelegate startFriendImageSelectControllerFromViewController:self usingDelegate:_imageDelegate];
                                                     
@@ -2433,12 +2482,13 @@ const Float32 voiceRecordDelay = 0.3;
                                                              options: (SDWebImageOptions) 0
                                                             progress:nil completed:^(id data, NSString * mimeType, NSError *error, SDImageCacheType cacheType, BOOL finished)
                      {
+                         
                          if (error) {
                              [UIUtils showToastKey:@"error_saving_image_to_photos"];
                          }
                          else {
-                             [_assetLibrary saveImage:data toAlbum:@"surespot" withCompletionBlock:^(NSError *error, NSURL * url) {
-                                 if (error) {
+                             [UIUtils saveImage:data completionHandler:^(NSString *localIdentifier) {
+                                 if (!localIdentifier) {
                                      [UIUtils showToastKey:@"error_saving_image_to_photos" duration:2];
                                  }
                                  else {
@@ -2899,8 +2949,7 @@ const Float32 voiceRecordDelay = 0.3;
             _imageDelegate = [[ImageDelegate alloc]
                               initWithUsername:_username
                               ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-                              theirUsername:_username
-                              assetLibrary:_assetLibrary];
+                              theirUsername:_username];
             [ImageDelegate startBackgroundImageSelectControllerFromViewController:sender usingDelegate:_imageDelegate];
         }
         return;
@@ -3567,8 +3616,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 _imageDelegate = [[ImageDelegate alloc]
                                   initWithUsername:_username
                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-                                  theirUsername:theirUsername
-                                  assetLibrary:_assetLibrary];
+                                  theirUsername:theirUsername];
                 [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
                 //pull the gif view immediately coz it looks janky just scroling down
                 [_gifView removeFromSuperview];
@@ -3728,10 +3776,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          } completion:^(BOOL finished) {
                              
                          }];
-        
     }
-    
-    
 }
 
 -(BOOL) shouldExpand {
