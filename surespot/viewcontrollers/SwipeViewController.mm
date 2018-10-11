@@ -52,7 +52,7 @@
 #import "GalleryView.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelDebug;
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -858,10 +858,13 @@ const Float32 voiceRecordDelay = 0.3;
     
 }
 
-
+- (CGFloat) tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+//DDLogDebug(@"estimatedHeightForRowAtIndexPath");
+    return [self tableView:tableView heightForRowAtIndexPath:indexPath];
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+//    DDLogDebug(@"heightForRowAtIndexPath");
     NSInteger index = [self indexForTableView:tableView];
     
     if (index == NSNotFound) {
@@ -1546,6 +1549,7 @@ const Float32 voiceRecordDelay = 0.3;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 UITableView * chatView = [[UITableView alloc] initWithFrame:_swipeView.frame];
+
                 [chatView setDelegate:self];
                 [chatView setDataSource: self];
                 [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
@@ -1553,6 +1557,8 @@ const Float32 voiceRecordDelay = 0.3;
                 [chatView setBackgroundColor:[UIColor clearColor]];
                 [chatView setScrollsToTop:NO];
                 [chatView setDirectionalLockEnabled:YES];
+                chatView.rowHeight = UITableViewAutomaticDimension;
+                chatView.estimatedRowHeight = 56;
                 [chatView setSeparatorColor: [UIUtils surespotSeparatorGrey]];
                 [chatView setSeparatorInset:UIEdgeInsetsZero];
                 [self addLongPressGestureRecognizer:chatView];
