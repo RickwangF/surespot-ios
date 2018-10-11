@@ -26,9 +26,9 @@
 +(UIColor *) surespotGrey;
 +(UIColor *) surespotForegroundGrey;
 +(UIColor *) surespotTransparentGrey;
-+(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername;
-+(void) setImageMessageHeights: (SurespotMessage *)  message size: (CGSize) size;
-+(void) setVoiceMessageHeights: (SurespotMessage *)  message size: (CGSize) size;
+//+(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername;
++(void) setImageMessageHeights: (SurespotMessage *) message;
++(void) setVoiceMessageHeights: (SurespotMessage *) message;
 +(void) startSpinAnimation: (UIView *) view;
 +(void) stopSpinAnimation: (UIView *) view;
 +(void) startPulseAnimation: (UIView *) view;

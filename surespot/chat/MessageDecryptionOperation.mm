@@ -37,11 +37,8 @@
     _isExecuting = YES;
     [self didChangeValueForKey:@"isExecuting"];
     
-    
     if ([_message.mimeType isEqualToString: MIME_TYPE_TEXT] || [_message.mimeType isEqualToString: MIME_TYPE_GIF_LINK]) {
-        
         if ([_message data]) {
-            
             [EncryptionController symmetricDecryptString:[_message data]
                                              ourUsername: _ourUsername
                                               ourVersion:[_message getOurVersion: _ourUsername]
@@ -53,52 +50,43 @@
                                                     
                                                     //figure out message height for both orientations
                                                     if (![UIUtils stringIsNilOrEmpty:plaintext]){
-                                                        
-                                                        
-                                                        
                                                         _message.plainData = plaintext;
                                                         
                                                         if ([_message.mimeType isEqualToString:MIME_TYPE_GIF_LINK]) {
-                                                                        [UIUtils setImageMessageHeights:_message size:_size];
+                                                            [UIUtils setImageMessageHeights:_message];
                                                         }
-                                                        
-                                                        
                                                     }
                                                     else {
                                                         //todo more granular error messages
                                                         _message.plainData = NSLocalizedString(@"message_error_decrypting_message",nil);
                                                     }
                                                     
-                                                    [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
+                                                   // [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
                                                     [self finish];
-                                                    
                                                 }];
-            
-            
         }
         else {
             [self finish];
         }
-    }
-    
+    }    
     else {
         if ([_message.mimeType isEqualToString: MIME_TYPE_IMAGE]) {
-            [UIUtils setImageMessageHeights:_message size:_size];
+            [UIUtils setImageMessageHeights:_message ];
         }
         else {
             if ([_message.mimeType isEqualToString: MIME_TYPE_M4A]) {
-                [UIUtils setVoiceMessageHeights:_message size:_size];
+                [UIUtils setVoiceMessageHeights:_message];
             }
             else {
                 if ([_message.mimeType isEqualToString: MIME_TYPE_FILE]) {
                     NSString * plainData = NSLocalizedString(@"file_transfer_not_yet_supported",nil);
                     [_message setPlainData:plainData];
-                    [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
+            //        [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
                 }
                 else { 
                     NSString * plainData = NSLocalizedString(@"unsupported_message_type",nil);
                     [_message setPlainData:plainData];
-                    [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
+                  //  [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
                 }
             }
         }

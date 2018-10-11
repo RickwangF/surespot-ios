@@ -52,7 +52,7 @@
 #import "GalleryView.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -115,6 +115,8 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, assign) NSInteger gifOffsets;
 @property (nonatomic, assign) BOOL collapsed;
 @property (atomic, strong) NSObject * scrollMutex;
+@property (nonatomic, strong) MessageView *ourPrototypeCell;
+@property (nonatomic, strong) MessageView *theirPrototypeCell;
 @end
 @implementation SwipeViewController
 
@@ -133,7 +135,7 @@ const Float32 voiceRecordDelay = 0.3;
     
     _tabLoading = [NSMutableDictionary new];
     _needsScroll = [NSMutableDictionary new];
-
+    
     _dateFormatQueue = dispatch_queue_create("date format queue", NULL);
     _dateFormatter = [[NSDateFormatter alloc]init];
     [_dateFormatter setDateStyle:NSDateFormatterShortStyle];
@@ -855,39 +857,48 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     return 1;
-    
 }
 
-- (CGFloat) tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-////DDLogDebug(@"estimatedHeightForRowAtIndexPath");
-    return [self tableView:tableView heightForRowAtIndexPath:indexPath estimated:YES];
+-(double) textCellHeightTableView: (UITableView *) tableView  message: (SurespotMessage *) message {
+    MessageView * cell;
+    
+    if ([ChatUtils isOurMessage:message ourUsername: _username]) {
+        if (!_ourPrototypeCell) {
+            _ourPrototypeCell = [tableView dequeueReusableCellWithIdentifier:@"OurMessageView"];
+        }
+        cell = _ourPrototypeCell;
+    }
+    else {
+        if (!_theirPrototypeCell) {
+            _theirPrototypeCell = [tableView dequeueReusableCellWithIdentifier:@"TheirMessageView"];
+        }
+        cell = _theirPrototypeCell;
+    }
+    
+    [cell.messageLabel setText:[message plainData]];
+    CGSize size = [cell.contentView systemLayoutSizeFittingSize:tableView.frame.size withHorizontalFittingPriority:1000 verticalFittingPriority:1 ];
+    return size.height+1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    DDLogDebug(@"heightForRowAtIndexPath");
-    return [self tableView:tableView heightForRowAtIndexPath:indexPath estimated:NO];
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath estimated: (BOOL) estimated {
     NSInteger index = [self indexForTableView:tableView];
-
+    
     if (index == NSNotFound) {
         index = [_swipeView indexOfItemViewOrSubview:tableView];
     }
-
-    //  DDLogVerbose(@"height for row, index: %d, indexPath: %@", index, indexPath);
+    
     if (index == NSNotFound) {
         return 0;
     }
-
+    
     if (index == 0) {
-
-        NSInteger count =[[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource].friends count];
+        
+        NSInteger count = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource].friends count];
         //if count is 0 we returned 1 for 0 rows so make the single row take up the whole height
         if (count == 0) {
             return tableView.frame.size.height;
         }
-
+        
         Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource].friends objectAtIndex:indexPath.row];
         if ([afriend isInviter] ) {
             return 70;
@@ -898,48 +909,77 @@ const Float32 voiceRecordDelay = 0.3;
     }
     else {
         @synchronized (_chats) {
-
+            
             NSArray *keys = [self sortedAliasedChats];
-            UsernameAliasMap  * map = [keys objectAtIndex:index -1];
-
+            UsernameAliasMap * map = [keys objectAtIndex:index -1];
+            
             NSString * username = map.username;
-            NSArray * messages =[[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname: username].messages;
-
-
+            NSArray * messages = [[[ChatManager sharedInstance] getChatController: _username] getDataSourceForFriendname: username].messages;
+            
+            
             //if count is 0 we returned 1 for 0 rows so
             if (messages.count == 0) {
                 return tableView.frame.size.height;
             }
-
-
+            
             if (messages.count > 0 && (indexPath.row < messages.count)) {
-                SurespotMessage * message =[messages objectAtIndex:indexPath.row];
-                if (estimated && [message.mimeType isEqualToString: MIME_TYPE_TEXT]) {
-                    return UITableViewAutomaticDimension;
-                }
+                SurespotMessage * message = [messages objectAtIndex:indexPath.row];
                 UIInterfaceOrientation  orientation = [[UIApplication sharedApplication] statusBarOrientation];
-                NSInteger height = 44;
+                double height = 0;
+                
+                //used cached values if we have them
                 if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
                     height = message.rowLandscapeHeight;
                 }
                 else {
-                    height  = message.rowPortraitHeight;
+                    height = message.rowPortraitHeight;
                 }
-
-                if (height > 0) {
-                    return height;
+                
+                //if height not cached
+                if (height == 0) {
+                    //fixed height for voice message
+                    if ([message.mimeType isEqualToString: MIME_TYPE_M4A]) {
+                        [UIUtils setVoiceMessageHeights:message];
+                    }
+                    else {
+                        //fixed height for gifs and images
+                        if ([message.mimeType isEqualToString: MIME_TYPE_IMAGE] || [message.mimeType isEqualToString: MIME_TYPE_GIF_LINK]) {
+                            [UIUtils setImageMessageHeights:message];
+                        }
+                        else {
+                            //if we have the text, cache the row height
+                            if (![UIUtils stringIsNilOrEmpty:message.plainData]) {
+                                height = [self textCellHeightTableView:tableView message:message];
+                                DDLogDebug(@"computed height: %f, for message text: %@", height, message.plainData);
+                                if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
+                                    message.rowLandscapeHeight = height;
+                                }
+                                else {
+                                    message.rowPortraitHeight = height;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
+                        height = message.rowLandscapeHeight;
+                    }
+                    else {
+                        height = message.rowPortraitHeight;
+                    }
                 }
-
-                else {
-                    return 44;
+                
+                if (height == 0) {
+                    height = 56;
                 }
+                
+                return height;
             }
             else {
                 return 0;
             }
         }
     }
-
 }
 
 -(UIColor *) getThemeForegroundColor {
@@ -1132,8 +1172,8 @@ const Float32 voiceRecordDelay = 0.3;
             
             cell.messageLabel.linkAttributes = linkAttributes;
             cell.messageLabel.delegate = self;
-
-
+            
+            
             cell.messageLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink//phone number seems flaky..we have copy so not the end of teh world
             | NSTextCheckingTypePhoneNumber;
             
@@ -1149,7 +1189,7 @@ const Float32 voiceRecordDelay = 0.3;
             cell.selectedBackgroundView = bgColorView;
             DDLogVerbose(@"message text x position: %f, width: %f", cell.messageLabel.frame.origin.x, cell.messageLabel.frame.size.width);
             
-            if (message.errorStatus > 0) {                
+            if (message.errorStatus > 0) {
                 NSString * errorText = [UIUtils getMessageErrorText: message.errorStatus mimeType:message.mimeType];
                 DDLogVerbose(@"setting error status %@", errorText);
                 [cell.messageStatusLabel setText: errorText];
@@ -1550,7 +1590,7 @@ const Float32 voiceRecordDelay = 0.3;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 UITableView * chatView = [[UITableView alloc] initWithFrame:_swipeView.frame];
-
+                
                 [chatView setDelegate:self];
                 [chatView setDataSource: self];
                 [chatView registerNib:[UINib nibWithNibName:@"OurMessageCell" bundle:nil] forCellReuseIdentifier:@"OurMessageView"];
@@ -1889,7 +1929,7 @@ const Float32 voiceRecordDelay = 0.3;
         
         for (NSInteger i = 0; i < rowCount; i++) {
             NSIndexPath *tempIndexPath = [NSIndexPath indexPathForRow:i inSection:0];
-            heightForNewRows += [self tableView:tableView heightForRowAtIndexPath: tempIndexPath estimated:NO];
+            heightForNewRows += [self tableView:tableView heightForRowAtIndexPath: tempIndexPath];
         }
         
         tableViewOffset.y += heightForNewRows;
@@ -3741,10 +3781,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          } completion:^(BOOL finished) {
                              
                          }];
-        
     }
-    
-    
 }
 
 -(BOOL) shouldExpand {

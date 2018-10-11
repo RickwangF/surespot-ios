@@ -572,11 +572,11 @@ static const int MAX_REAUTH_RETRIES = 1;
     [dict setObject:MIME_TYPE_TEXT forKey:@"mimeType"];
     [dict setObject:[NSNumber numberWithBool:YES] forKey:@"hashed"];
     
-    SurespotMessage * sm =[[SurespotMessage alloc] initWithDictionary: dict];
+    SurespotMessage * sm = [[SurespotMessage alloc] initWithDictionary: dict];
     
     //cache the plain data locally
     sm.plainData = message;
-    [UIUtils setTextMessageHeights:sm size:[UIScreen mainScreen].bounds.size ourUsername:_username];
+//    [UIUtils setTextMessageHeights:sm size:[UIScreen mainScreen].bounds.size ourUsername:_username];
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
@@ -607,7 +607,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     //cache the plain data locally
     sm.plainData = url;
-    [UIUtils setImageMessageHeights:sm size:[UIScreen mainScreen].bounds.size];
+    [UIUtils setImageMessageHeights:sm];
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
@@ -637,7 +637,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     DDLogDebug(@"sendImageMessage adding local image message, url: %@", sm.plainData);
     
-    [UIUtils setImageMessageHeights:sm size:[UIScreen mainScreen].bounds.size];
+    [UIUtils setImageMessageHeights:sm];
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
@@ -665,7 +665,7 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     DDLogDebug(@"sendVoiceMessage adding local voice message, url: %@", sm.plainData);
     
-    [UIUtils setVoiceMessageHeights: sm size:[UIScreen mainScreen].bounds.size];
+    [UIUtils setVoiceMessageHeights: sm];
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];

@@ -198,17 +198,16 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 
-+(void) setImageMessageHeights: (SurespotMessage *)  message size: (CGSize) size {
++(void) setImageMessageHeights: (SurespotMessage *)  message {
     NSInteger height = [self getDefaultImageMessageHeight];
     
     [message setRowPortraitHeight: height];
     [message setRowLandscapeHeight: height];
-    DDLogVerbose(@"setting image row height portrait %ld landscape %ld", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight);
-    
+    DDLogVerbose(@"setting image row height portrait %ld landscape %ld", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight);    
 }
 
 +(NSInteger) getDefaultImageMessageHeight {
-    if ([[UIDevice currentDevice]       userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         return 448;
     }
     else {
@@ -258,11 +257,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 
-+(void) setVoiceMessageHeights: (SurespotMessage *)  message size: (CGSize) size {
++(void) setVoiceMessageHeights: (SurespotMessage *) message {
     [message setRowPortraitHeight: 64];
     [message setRowLandscapeHeight: 64];
     DDLogVerbose(@"setting voice row height portrait %ld landscape %ld", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight);
-    
 }
 
 
