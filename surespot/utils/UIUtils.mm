@@ -97,27 +97,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     });
 }
 
-+ (CGSize)threadSafeSizeString: (NSString *) string WithFont:(UIFont *)font constrainedToSize:(CGSize)size {
-    
-    if (string) {
-        // http://stackoverflow.com/questions/12744558/uistringdrawing-methods-dont-seem-to-be-thread-safe-in-ios-6
-        NSAttributedString *attributedText =
-        [[NSAttributedString alloc]
-         initWithString:string
-         attributes:@
-         {
-         NSFontAttributeName: font
-         }];
-        CGRect rect = [attributedText boundingRectWithSize:size
-                                                   options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
-                                                   context:nil];
-        return rect.size;
-    }
-    else {
-        return CGSizeZero;
-    }
-}
-
 + (void)setAppAppearances {
     [[UINavigationBar appearance] setBarTintColor: [self surespotGrey]];
     
@@ -138,54 +117,6 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return !(aString && aString.length);
 }
 
-+(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) screenSize ourUsername: (NSString *) ourUsername {
-    if (message.rowPortraitHeight > 0 && message.rowLandscapeHeight > 0) {
-        return;
-    }
-    
-    CGSize size = [self sizeAdjustedForOrientation:screenSize];
-    
-    //figure out message height for both orientations
-    NSString * plaintext = message.plainData;
-    if (plaintext){
-        NSInteger offset = 0;
-        NSInteger heightAdj = 35;
-        BOOL ours = [ChatUtils isOurMessage:message ourUsername:ourUsername];
-        if (ours) {
-            offset = 40;
-        }
-        else {
-            offset = 80;
-        }
-        //http://stackoverflow.com/questions/12744558/uistringdrawing-methods-dont-seem-to-be-thread-safe-in-ios-6
-        
-        UIFont *cellFont = [UIFont systemFontOfSize:17.0];
-        
-        //portrait
-        CGSize constraintSize = CGSizeMake(size.width - offset, MAXFLOAT);
-        
-        DDLogVerbose(@"computing portrait size for message: %@ for size width: %f, height: %f, constraint width: %f", message.iv, size.width,size.height, constraintSize.width);
-        
-        CGSize labelSize = [self threadSafeSizeString:plaintext WithFont:cellFont constrainedToSize:constraintSize];
-        CGFloat height = ceilf(labelSize.height);
-        DDLogVerbose(@"computed portrait width %f, height: %f", labelSize.width, height);
-        [message setRowPortraitHeight:(int) (height + heightAdj > 44 ? height + heightAdj : 44) ];
-        
-        //landscape
-        constraintSize = CGSizeMake(size.height-offset, MAXFLOAT);
-        DDLogVerbose(@"computing landscape size for message: %@ for constraint width: %f", message.iv, constraintSize.width);
-        labelSize = [UIUtils threadSafeSizeString:plaintext WithFont:cellFont constrainedToSize:constraintSize];
-        height = ceilf(labelSize.height);
-        
-        DDLogVerbose(@"computed landscape width %f, height: %f", labelSize.width, height);
-        [message setRowLandscapeHeight:(int) (height + heightAdj > 44 ? height + heightAdj: 44) ];
-        
-        DDLogVerbose(@"computed row height - portrait: %ld, landscape: %ld, for iv: %@", (long)message.rowPortraitHeight, (long)message.rowLandscapeHeight, message.iv);
-    }
-    else {
-        DDLogVerbose(@"No plaintext yet for message iv: %@", message.iv);
-    }
-}
 
 +(CGSize) sizeAdjustedForOrientation: (CGSize) size {
     UIInterfaceOrientation  orientation = [[UIApplication sharedApplication] statusBarOrientation];
