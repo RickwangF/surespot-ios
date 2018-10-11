@@ -1130,22 +1130,18 @@ const Float32 voiceRecordDelay = 0.3;
             [linkAttributes setValue:[NSNumber numberWithBool:YES] forKey:(NSString *)kCTUnderlineStyleAttributeName];
             [linkAttributes setValue:(__bridge id)[[UIUtils surespotBlue] CGColor] forKey:(NSString *)kCTForegroundColorAttributeName];
             
-//            cell.messageLabel.linkAttributes = linkAttributes;
-//            cell.messageLabel.delegate = self;
-//
-//
-//            cell.messageLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink//phone number seems flaky..we have copy so not the end of teh world
-//            | NSTextCheckingTypePhoneNumber;
+            cell.messageLabel.linkAttributes = linkAttributes;
+            cell.messageLabel.delegate = self;
+
+
+            cell.messageLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink//phone number seems flaky..we have copy so not the end of teh world
+            | NSTextCheckingTypePhoneNumber;
             
             cell.messageSize.textColor = [self getThemeForegroundColor];
             cell.messageStatusLabel.textColor = [self getThemeForegroundColor];
             
-          //  cell.messageLabel.lineBreakMode = NSLineBreakByWordWrapping;
-          //  cell.messageLabel.numberOfLines = 0;
-            
             cell.message = message;
             cell.messageLabel.text = plainData;
-      
             
             UIView *bgColorView = [[UIView alloc] init];
             bgColorView.backgroundColor = [UIUtils surespotSelectionBlue];
@@ -1153,8 +1149,7 @@ const Float32 voiceRecordDelay = 0.3;
             cell.selectedBackgroundView = bgColorView;
             DDLogVerbose(@"message text x position: %f, width: %f", cell.messageLabel.frame.origin.x, cell.messageLabel.frame.size.width);
             
-            if (message.errorStatus > 0) {
-                
+            if (message.errorStatus > 0) {                
                 NSString * errorText = [UIUtils getMessageErrorText: message.errorStatus mimeType:message.mimeType];
                 DDLogVerbose(@"setting error status %@", errorText);
                 [cell.messageStatusLabel setText: errorText];

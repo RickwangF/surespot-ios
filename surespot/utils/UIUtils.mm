@@ -349,7 +349,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return menu;
 }
 
-+(void) setLinkLabel:(ActiveLabel *) label
++(void) setLinkLabel:(TTTAttributedLabel *) label
             delegate: (id) delegate
            labelText: (NSString *) labelText
       linkMatchTexts: (NSArray *) linkMatchTexts
