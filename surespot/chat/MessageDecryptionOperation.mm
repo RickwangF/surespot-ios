@@ -61,7 +61,6 @@
                                                         _message.plainData = NSLocalizedString(@"message_error_decrypting_message",nil);
                                                     }
                                                     
-                                                   // [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
                                                     [self finish];
                                                 }];
         }
@@ -81,12 +80,10 @@
                 if ([_message.mimeType isEqualToString: MIME_TYPE_FILE]) {
                     NSString * plainData = NSLocalizedString(@"file_transfer_not_yet_supported",nil);
                     [_message setPlainData:plainData];
-            //        [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
                 }
                 else { 
                     NSString * plainData = NSLocalizedString(@"unsupported_message_type",nil);
                     [_message setPlainData:plainData];
-                  //  [UIUtils setTextMessageHeights:_message size:_size ourUsername:_ourUsername];
                 }
             }
         }

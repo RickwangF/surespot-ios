@@ -16,7 +16,6 @@
 @interface UIUtils : NSObject
 + (void) showToastKey: (NSString *) key;
 + (void) showToastKey: (NSString *) key duration: (CGFloat) duration;
-+ (CGSize)threadSafeSizeString: (NSString *) string WithFont:(UIFont *)font constrainedToSize:(CGSize)size;
 + (UIColor *) surespotBlue;
 +(UIColor *) surespotSelectionBlue;
 +(UIColor *) surespotSeparatorGrey;
@@ -26,7 +25,6 @@
 +(UIColor *) surespotGrey;
 +(UIColor *) surespotForegroundGrey;
 +(UIColor *) surespotTransparentGrey;
-//+(void) setTextMessageHeights: (SurespotMessage *)  message size: (CGSize) size ourUsername: (NSString *) ourUsername;
 +(void) setImageMessageHeights: (SurespotMessage *) message;
 +(void) setVoiceMessageHeights: (SurespotMessage *) message;
 +(void) startSpinAnimation: (UIView *) view;

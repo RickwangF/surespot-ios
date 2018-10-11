@@ -576,7 +576,6 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     //cache the plain data locally
     sm.plainData = message;
-//    [UIUtils setTextMessageHeights:sm size:[UIScreen mainScreen].bounds.size ourUsername:_username];
     
     ChatDataSource * dataSource = [self getDataSourceForFriendname: friendname];
     [dataSource addMessage: sm refresh:NO];
