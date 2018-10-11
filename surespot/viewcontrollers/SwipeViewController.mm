@@ -761,7 +761,11 @@ const Float32 voiceRecordDelay = 0.3;
                             id needsit = [_needsScroll  objectForKey:map.username];
                             if (needsit) {
                                 DDLogVerbose(@"swipeViewCurrentItemIndexDidChange scrolling %@ to bottom",map.username);
-                                [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableview afterDelay:0.5];
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    [self scrollTableViewToBottom:tableview];
+                                });
+                                
                                 [_needsScroll removeObjectForKey:map.username];
                             }
                         }
