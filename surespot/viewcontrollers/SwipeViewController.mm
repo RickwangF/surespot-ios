@@ -880,6 +880,10 @@ const Float32 voiceRecordDelay = 0.3;
     return size.height+1;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [self tableView:tableView heightForRowAtIndexPath:indexPath];
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger index = [self indexForTableView:tableView];
     
@@ -950,7 +954,7 @@ const Float32 voiceRecordDelay = 0.3;
                             //if we have the text, cache the row height
                             if (![UIUtils stringIsNilOrEmpty:message.plainData]) {
                                 height = [self textCellHeightTableView:tableView message:message];
-                                DDLogDebug(@"computed height: %f, for message text: %@", height, message.plainData);
+                                
                                 if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
                                     message.rowLandscapeHeight = height;
                                 }
@@ -988,8 +992,6 @@ const Float32 voiceRecordDelay = 0.3;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
     NSInteger index = [self indexForTableView:tableView];
     
     if (index == NSNotFound) {
@@ -1598,8 +1600,6 @@ const Float32 voiceRecordDelay = 0.3;
                 [chatView setBackgroundColor:[UIColor clearColor]];
                 [chatView setScrollsToTop:NO];
                 [chatView setDirectionalLockEnabled:YES];
-                chatView.rowHeight = UITableViewAutomaticDimension;
-                chatView.estimatedRowHeight = 56;
                 [chatView setSeparatorColor: [UIUtils surespotSeparatorGrey]];
                 [chatView setSeparatorInset:UIEdgeInsetsZero];
                 [self addLongPressGestureRecognizer:chatView];
@@ -1920,22 +1920,20 @@ const Float32 voiceRecordDelay = 0.3;
 
 -(void) updateTableView: (UITableView *) tableView withNewRowCount : (int) rowCount
 {
-    if ([tableView respondsToSelector:@selector(contentOffset)]) {
-        //Save the tableview content offset
-        CGPoint tableViewOffset = [tableView contentOffset];
-        
-        //compute the height change
-        int heightForNewRows = 0;
-        
-        for (NSInteger i = 0; i < rowCount; i++) {
-            NSIndexPath *tempIndexPath = [NSIndexPath indexPathForRow:i inSection:0];
-            heightForNewRows += [self tableView:tableView heightForRowAtIndexPath: tempIndexPath];
-        }
-        
-        tableViewOffset.y += heightForNewRows;
-        [tableView reloadData];
-        [tableView setContentOffset:tableViewOffset animated:NO];
+    //Save the tableview content offset
+    CGPoint tableViewOffset = [tableView contentOffset];
+
+    //compute the height change
+    int heightForNewRows = 0;
+    
+    for (NSInteger i = 0; i < rowCount; i++) {
+        NSIndexPath *tempIndexPath = [NSIndexPath indexPathForRow:i inSection:0];
+        heightForNewRows += [self tableView:tableView heightForRowAtIndexPath: tempIndexPath];
     }
+    
+    tableViewOffset.y += heightForNewRows;
+    [tableView reloadData];
+    [tableView setContentOffset:tableViewOffset animated:NO];
 }
 
 
