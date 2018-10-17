@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIAnyLevelWindow : UIWindow
-
+-(id)initWithFrame:(CGRect)frame window: (UIWindow *) window;
 @end
 
 NS_ASSUME_NONNULL_END

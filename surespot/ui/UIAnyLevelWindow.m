@@ -8,18 +8,27 @@
 
 #import "UIAnyLevelWindow.h"
 
+@interface UIAnyLevelWindow ()
+@property (nonatomic, assign) UIWindowLevel anyWindowLevel;
+@end
+
 @implementation UIAnyLevelWindow
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
+-  (id)initWithFrame:(CGRect)frame window: (UIWindow *) window
+{
+    self = [super initWithFrame:frame];
+    
+    if (self)
+    {
+        self.anyWindowLevel = [window windowLevel]+1;
+    }
+    
+    return self;
 }
-*/
+
 
 - (UIWindowLevel) windowLevel {
-    return 20000000.000;
+    return _anyWindowLevel;
 }
 
 @end
