@@ -116,6 +116,7 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, assign) BOOL collapsed;
 @property (nonatomic, strong) MessageView *ourPrototypeCell;
 @property (nonatomic, strong) MessageView *theirPrototypeCell;
+@property (nonatomic, strong) UIAlertController * alertController;
 @end
 @implementation SwipeViewController
 
@@ -2579,7 +2580,7 @@ const Float32 voiceRecordDelay = 0.3;
     if (!_menu) {
         _menu = [self createMenuMenu];
         if (_menu) {
-            [self resignAllResponders];
+            [self disableMessageModeShowKeyboard:NO setResponders:YES];
             _swipeView.userInteractionEnabled = NO;
             [self setBackButtonEnabled:NO];
             [_menu showSensiblyInView:self.view];
@@ -2611,7 +2612,7 @@ const Float32 voiceRecordDelay = 0.3;
         }
         
         if (_menu) {
-            [self resignAllResponders];
+            [self disableMessageModeShowKeyboard:NO setResponders:YES];
             _swipeView.userInteractionEnabled = NO;
             [self setBackButtonEnabled:NO];
             [_menu showSensiblyInView:self.view];
@@ -3125,7 +3126,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     [_swipeView removeFromSuperview];
-    [self resignAllResponders];
+    [self disableMessageModeShowKeyboard:NO setResponders:YES];
     _swipeView = nil;
     
     //remove gestures
@@ -3541,7 +3542,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                     Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName: friendname];
                     NSString * okString = NSLocalizedString(@"ok", nil);
                     
-                    UIAlertController * alert = [UIAlertController
+                    _alertController = [UIAlertController
                                                  alertControllerWithTitle:NSLocalizedString(@"send", nil)
                                                  message:[NSString stringWithFormat: NSLocalizedString(@"confirm_image_send", nil), [afriend nameOrAlias]]
                                                  preferredStyle:UIAlertControllerStyleAlert];
@@ -3549,12 +3550,12 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"cancel", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
                         DDLogVerbose(@"image send cancelled");
                     }];
-                    [alert addAction:cancelAction];
+                    [_alertController addAction:cancelAction];
                     UIAlertAction *okAction = [UIAlertAction actionWithTitle:okString style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
                         [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
                     }];
-                    [alert addAction:okAction];
-                    [UIUtils showAlertController:alert window: theWindowWeWillUse];
+                    [_alertController addAction:okAction];
+                    [UIUtils showAlertController:_alertController window: theWindowWeWillUse];
                 }
                 else {
                     [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
@@ -3664,6 +3665,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         
     }
     _currentMode = MessageModeNone;
+    [_alertController dismissViewControllerAnimated:YES completion:nil];
     [self updateTabChangeUI];
 }
 
