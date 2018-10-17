@@ -26,7 +26,7 @@
 #import <UserNotifications/UserNotifications.h>
 #import "ChatUtils.h"
 #import "SharedUtils.h"
-
+#import "UIAnyLevelWindow.h"
 #ifdef DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
@@ -35,6 +35,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 @interface SurespotAppDelegate()
 @property NSMutableDictionary * lastUsers;
+@property (strong, nonatomic) UIWindow * _Nonnull logoWindow;
 @end
 
 @implementation SurespotAppDelegate
@@ -45,29 +46,22 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     
     // in our case, show the surespot logo centered on a black background
-    
-    UIView *colorView = [[UIView alloc] initWithFrame:self.window.frame];
-    colorView.tag = 9999;
-    colorView.backgroundColor = [UIColor blackColor];
-    _imageView = [[UIImageView alloc]initWithFrame:[colorView frame]];
+    UIView * logoView = [[UIView alloc] initWithFrame:self.window.frame];
+    logoView.backgroundColor = [UIColor blackColor];
+    UIImageView * imageView = [[UIImageView alloc]initWithFrame:[logoView frame]];
     UIImage * image =[UIImage imageNamed:@"surespotlauncher512.png"];
-    _imageView.contentMode = UIViewContentModeScaleAspectFit;
-    [_imageView setImage:image];
-    [colorView addSubview:_imageView];
-    [self.window addSubview:colorView];
-    [self.window bringSubviewToFront:colorView];
-    
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [imageView setImage:image];
+    [logoView addSubview: imageView];
+    _logoWindow = [[UIAnyLevelWindow alloc] initWithFrame:self.window.frame window:[UIUtils getHighestLevelWindow]];
+    [_logoWindow addSubview:logoView];
+    [_logoWindow bringSubviewToFront:logoView];
+    [_logoWindow setHidden:NO];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    // remove the surespot logo centered on a black background
-    UIView *colorView = [self.window viewWithTag:9999];
-    if(_imageView != nil) {
-        [_imageView removeFromSuperview];
-        _imageView = nil;
-    }
-    [colorView removeFromSuperview];
+    [_logoWindow setHidden:YES];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions

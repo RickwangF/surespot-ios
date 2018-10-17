@@ -14,7 +14,6 @@
 @interface SurespotAppDelegate : UIResponder <UIApplicationDelegate, UNUserNotificationCenterDelegate>
 
 @property (strong, nonatomic) UIWindow * _Nonnull window;
-@property (strong, nonatomic) UIImageView * _Nullable imageView;
 @property(nonatomic, nullable) id<OIDAuthorizationFlowSession> currentAuthorizationFlow;
 
 @end

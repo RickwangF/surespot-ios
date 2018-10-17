@@ -60,6 +60,24 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return [UIColor colorWithRed:180/255.0f green:180/255.0f blue:180/255.0f alpha:0.2f];
 }
 
+
++(UIWindow *) getHighestLevelWindow {
+    UIWindow * theWindowWeWillUse;
+    UIWindowLevel theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = 0;
+    for (UIWindow * window in [UIApplication sharedApplication].windows) {
+        DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ hidden = %d class = %@\n",
+                   window.isKeyWindow, window.windowLevel,
+                   NSStringFromCGRect(window.frame),window.hidden, window.class.description);
+        if (window.windowLevel>=theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn && !window.hidden) {
+            theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = window.windowLevel;
+            theWindowWeWillUse = window;
+            DDLogDebug(@"This is the window we shall use");
+        }
+    }
+    
+    return theWindowWeWillUse;
+}
+
 +(void)showAlertController: (UIAlertController *) controller window: (UIWindow *) window
 {
     UIWindow * alertWindow = [[UIAnyLevelWindow alloc] initWithFrame: [UIScreen mainScreen].bounds window: window];

@@ -3532,18 +3532,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             DDLogInfo(@"showGalleryView, keyboard height: %f",_messageBarState.keyboardHeight);
             
             //get the topmost window which should be the keyboard window
-            UIWindow * theWindowWeWillUse;
-            UIWindowLevel theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = 0;
-            for (UIWindow * window in [UIApplication sharedApplication].windows) {
-                DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ hidden = %d class = %@\n",
-                           window.isKeyWindow, window.windowLevel,
-                           NSStringFromCGRect(window.frame),window.hidden, window.class.description);
-                if (window.windowLevel>=theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn && !window.hidden) {
-                    theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = window.windowLevel;
-                    theWindowWeWillUse = window;
-                    DDLogDebug(@"This is the window we shall use");
-                }
-            }
+            UIWindow * theWindowWeWillUse = [UIUtils getHighestLevelWindow];
             
             [view setCallback:^(id result) {
                 BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_confirm_image_send"];
