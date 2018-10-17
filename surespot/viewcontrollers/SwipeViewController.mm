@@ -452,7 +452,7 @@ const Float32 voiceRecordDelay = 0.3;
                                 duration:(NSTimeInterval)duration
 {
     DDLogInfo(@"will rotate");
-    [self resignAllResponders];
+    [self disableMessageModeShowKeyboard:NO setResponders:YES];
     _messageBarState.keyboardHeight = 0;
     
     
