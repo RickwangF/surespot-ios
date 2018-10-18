@@ -274,16 +274,16 @@ const Float32 voiceRecordDelay = 0.3;
     sideC.leftSide = YES;
     
     
-    [SideMenuManager setMenuLeftNavigationController:sideC];
+    [[SideMenuManager defaultManager] setMenuLeftNavigationController:sideC];
     _sideMenuGestures = [[NSMutableArray alloc]init];
-    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
-    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
-    [_sideMenuGestures addObjectsFromArray: [SideMenuManager menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
-    SideMenuManager.MenuPushStyle = MenuPushStyleSubMenu;
-    SideMenuManager.menuPresentMode = MenuPresentModeMenuSlideIn;
-    SideMenuManager.menuAnimationFadeStrength = 0.9;
-    SideMenuManager.menuAnimationTransformScaleFactor = 0.9;
-    SideMenuManager.menuFadeStatusBar = NO;
+    [_sideMenuGestures addObjectsFromArray: [[SideMenuManager defaultManager] menuAddScreenEdgePanGesturesToPresentToView:self.view forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray: [[SideMenuManager defaultManager] menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
+    [_sideMenuGestures addObjectsFromArray: [[SideMenuManager defaultManager] menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
+    [SideMenuManager defaultManager].MenuPushStyle = MenuPushStyleSubMenu;
+        [SideMenuManager defaultManager].menuPresentMode = MenuPresentModeMenuSlideIn;
+        [SideMenuManager defaultManager].menuAnimationFadeStrength = 0.9;
+        [SideMenuManager defaultManager].menuAnimationTransformScaleFactor = 0.9;
+        [SideMenuManager defaultManager].menuFadeStatusBar = NO;
     //set gesture recognizer priority
     
     for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
@@ -413,6 +413,10 @@ const Float32 voiceRecordDelay = 0.3;
 -(void) viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     [self unregisterKeyboardNotifications];
+}
+
+- (void)sideMenuWillAppearWithMenu:(UISideMenuNavigationController * _Nonnull)menu animated:(BOOL)animated {
+    [self disableMessageModeShowKeyboard:NO setResponders:YES];
 }
 
 
@@ -762,11 +766,7 @@ const Float32 voiceRecordDelay = 0.3;
                             id needsit = [_needsScroll  objectForKey:map.username];
                             if (needsit) {
                                 DDLogVerbose(@"swipeViewCurrentItemIndexDidChange scrolling %@ to bottom",map.username);
-                                
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                    [self scrollTableViewToBottom:tableview];
-                                });
-                                
+                                [self performSelector:@selector(scrollTableViewToBottom:) withObject:tableview afterDelay:0.5];
                                 [_needsScroll removeObjectForKey:map.username];
                             }
                         }
@@ -2822,7 +2822,7 @@ const Float32 voiceRecordDelay = 0.3;
 - (void) backPressed {
     [self scrollHome];
     if (_swipeView.currentPage == 0) {
-        [self presentViewController:[SideMenuManager menuLeftNavigationController] animated:YES completion:nil];
+        [self presentViewController:[[SideMenuManager defaultManager] menuLeftNavigationController] animated:YES completion:nil];
     }
 }
 

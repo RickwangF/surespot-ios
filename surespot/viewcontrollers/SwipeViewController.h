@@ -17,6 +17,7 @@
 #import "TTTAttributedLabel.h"
 #import "HPGrowingTextView.h"
 #import "VoiceMessagePlayedDelegate.h"
+#import "SideMenu-Swift.h"
 
 @interface SwipeViewController : UIViewController
 <
@@ -33,6 +34,7 @@
     HPGrowingTextViewDelegate,
     UITextViewDelegate,
     UIGestureRecognizerDelegate,
-    VoiceMessagePlayedDelegate
+    VoiceMessagePlayedDelegate,
+    UISideMenuNavigationControllerDelegate
 >
 @end

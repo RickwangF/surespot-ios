@@ -350,7 +350,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
         transition.type = kCATransitionFade;
         [navController.view.layer addAnimation:transition forKey:nil];
-        [[SideMenuManager menuLeftNavigationController] dismissViewControllerAnimated: NO completion:nil];
+        [[[SideMenuManager defaultManager] menuLeftNavigationController] dismissViewControllerAnimated: NO completion:nil];
         UIViewController * c =[storyboard instantiateViewControllerWithIdentifier:@"swipeViewController"];
         [navController setViewControllers:@[c] animated:NO];
     }
