@@ -20,4 +20,7 @@
 +(NSString *) getCurrentTab;
 +(BOOL) isActive;
 +(void) setActive: (BOOL) isActive;
++(void) setMute: (BOOL) mute forUsername: (NSString *) username friendName: (NSString *) friendname;
++(BOOL) getMuteForUsername: (NSString *) username friendName: (NSString *) friendname;
+
 @end

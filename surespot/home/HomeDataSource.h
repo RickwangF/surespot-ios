@@ -34,4 +34,6 @@
 -(void) removeFriendAlias: (NSString *) friendname;
 -(void) removeFriendImage: (NSString *) friendname;
 -(void) closeAllChats;
+- (void)muteFriendName:(NSString *) friendname;
+- (void)unmuteFriendName:(NSString *) friendname;
 @end

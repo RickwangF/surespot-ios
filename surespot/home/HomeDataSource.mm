@@ -102,9 +102,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 - (Friend *) addFriend: (NSString *) name {
-    Friend *    theFriend = [Friend new];
+    Friend * theFriend = [Friend new];
     theFriend.name =name;
     @synchronized (_friends) {
+        [SharedUtils setMute:NO forUsername:_ourUsername friendName: name];
         [_friends addObject:theFriend];
     }
     return theFriend;
@@ -144,6 +145,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     DDLogInfo(@"name: %@", afriend.name);
     @synchronized (_friends) {
         [_friends removeObject:afriend];
+        [SharedUtils setMute:NO forUsername:_ourUsername friendName:[afriend name]];
     }
     if (refresh) {
         [self postRefresh];
@@ -340,6 +342,28 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         for (Friend * f : _friends) {
             [f setChatActive:NO];
         }
+    }
+}
+
+- (void)muteFriendName:(NSString *) friendname
+{
+    DDLogVerbose(@"mute friend");
+    Friend * theFriend = [self getFriendByName:friendname];
+    if (theFriend) {
+        [theFriend setMuted:YES];
+        [SharedUtils setMute:YES forUsername:_ourUsername friendName:friendname];
+        [self postRefresh];
+    }
+}
+
+- (void)unmuteFriendName:(NSString *) friendname
+{
+    DDLogVerbose(@"unmute friend");
+    Friend * theFriend = [self getFriendByName:friendname];
+    if (theFriend) {
+        [theFriend setMuted:NO];
+        [SharedUtils setMute:NO forUsername:_ourUsername friendName:friendname];
+        [self postRefresh];
     }
 }
 

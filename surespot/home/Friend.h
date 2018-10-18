@@ -24,7 +24,8 @@
 @property (atomic, assign) NSInteger lastReceivedMessageId;
 @property (atomic, assign) NSInteger availableMessageId;
 @property (atomic, assign) NSInteger availableMessageControlId;
-@property  ( getter = hasNewMessages, setter = setNewMessages:) BOOL hasNewMessages ;
+@property ( getter = hasNewMessages, setter = setNewMessages:) BOOL hasNewMessages ;
+@property (atomic) BOOL muted;
 
 -(void) setFriend;
 
@@ -44,7 +45,5 @@
 -(BOOL) hasFriendAliasAssigned;
 -(NSString *) nameOrAlias;
 -(void) decryptAlias;
-
-
 
 @end

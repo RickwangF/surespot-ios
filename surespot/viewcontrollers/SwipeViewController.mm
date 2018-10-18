@@ -280,10 +280,10 @@ const Float32 voiceRecordDelay = 0.3;
     [_sideMenuGestures addObjectsFromArray: [[SideMenuManager defaultManager] menuAddScreenEdgePanGesturesToPresentToView:self.navigationController.view forMenu:UIRectEdgeLeft]];
     [_sideMenuGestures addObjectsFromArray: [[SideMenuManager defaultManager] menuAddScreenEdgePanGesturesToPresentToView:self.swipeView.scrollView forMenu:UIRectEdgeLeft]];
     [SideMenuManager defaultManager].MenuPushStyle = MenuPushStyleSubMenu;
-        [SideMenuManager defaultManager].menuPresentMode = MenuPresentModeMenuSlideIn;
-        [SideMenuManager defaultManager].menuAnimationFadeStrength = 0.9;
-        [SideMenuManager defaultManager].menuAnimationTransformScaleFactor = 0.9;
-        [SideMenuManager defaultManager].menuFadeStatusBar = NO;
+    [SideMenuManager defaultManager].menuPresentMode = MenuPresentModeMenuSlideIn;
+    [SideMenuManager defaultManager].menuAnimationFadeStrength = 0.9;
+    [SideMenuManager defaultManager].menuAnimationTransformScaleFactor = 0.9;
+    [SideMenuManager defaultManager].menuFadeStatusBar = NO;
     //set gesture recognizer priority
     
     for (UIGestureRecognizer *gesture in _swipeView.scrollView.gestureRecognizers) {
@@ -1107,6 +1107,27 @@ const Float32 voiceRecordDelay = 0.3;
             DDLogVerbose(@"no friend image for %@", afriend.name);
             cell.friendImage.image = [UIImage imageNamed:@"surespot_logo"];
             [cell.friendImage setAlpha:.5];
+        }
+        
+        //muting
+        if ([afriend muted]) {
+            if ([afriend hasFriendImageAssigned]) {
+                [cell.friendImage setAlpha:.5];
+            }
+            else {
+                [cell.friendImage setAlpha:0.25];
+            }
+            cell.muteImage.hidden = NO;
+        }
+        else {
+            if ([afriend hasFriendImageAssigned]) {
+                [cell.friendImage setAlpha:1.0];
+            }
+            else {
+                [cell.friendImage setAlpha:.5];
+            }
+            
+            cell.muteImage.hidden = YES;
         }
         
         return cell;
@@ -2253,6 +2274,19 @@ const Float32 voiceRecordDelay = 0.3;
     
     if ([thefriend isFriend]) {
         
+        if ([thefriend muted]) {
+            REMenuItem * unmuteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"unmute", nil) image:[UIImage imageNamed:@"ic_volume_on"] highlightedImage:nil action:^(REMenuItem * item){
+                [[[ChatManager sharedInstance] getChatController: _username] unmute: thefriend];
+            }];
+            [menuItems addObject:unmuteItem];
+            
+        }
+        else {
+            REMenuItem * muteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"mute", nil) image:[UIImage imageNamed:@"ic_volume_off"] highlightedImage:nil action:^(REMenuItem * item){
+                [[[ChatManager sharedInstance] getChatController: _username] mute: thefriend];
+            }];
+            [menuItems addObject:muteItem];
+        }
         
         if ([thefriend isChatActive]) {
             REMenuItem * closeTabHomeItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_close_tab", nil) image:[UIImage imageNamed:@"ic_menu_end_conversation"] highlightedImage:nil action:^(REMenuItem * item){
@@ -3539,20 +3573,20 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [view setCallback:^(id result) {
                 BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_confirm_image_send"];
                 if (confirm) {
-
+                    
                     Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName: friendname];
                     NSString * okString = NSLocalizedString(@"ok", nil);
                     
                     _alertController = [UIAlertController
-                                                 alertControllerWithTitle:NSLocalizedString(@"send", nil)
-                                                 message:[NSString stringWithFormat: NSLocalizedString(@"confirm_image_send", nil), [afriend nameOrAlias]]
-                                                 preferredStyle:UIAlertControllerStyleAlert];
+                                        alertControllerWithTitle:NSLocalizedString(@"send", nil)
+                                        message:[NSString stringWithFormat: NSLocalizedString(@"confirm_image_send", nil), [afriend nameOrAlias]]
+                                        preferredStyle:UIAlertControllerStyleAlert];
                     
                     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"cancel", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
                         DDLogVerbose(@"image send cancelled");
                     }];
                     [_alertController addAction:cancelAction];
-
+                    
                     UIAlertAction *okAction = [UIAlertAction actionWithTitle:okString style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
                         [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: friendname];
                     }];

@@ -374,4 +374,5 @@ If you elect to backup your identity on Google Drive you will be storing a copy 
 "search"="Search";
 "confirm_image_send"="Are you sure you wish to send an image to %@?";
 "menu_close_all_tabs"="Close all tabs";
-
+"mute"="Mute";
+"unmute"="Unmute";

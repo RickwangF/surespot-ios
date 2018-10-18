@@ -13,6 +13,7 @@
 
 @interface HomeCell : UITableViewCell
 @property (strong, nonatomic) IBOutlet UIImageView *friendImage;
+@property (strong, nonatomic) IBOutlet UIImageView *muteImage;
 @property (strong, nonatomic) IBOutlet FilledRectView *activeStatus;
 @property (strong, nonatomic) IBOutlet UIButton *blockButton;
 @property (strong, nonatomic) IBOutlet UIButton *ignoreButton;

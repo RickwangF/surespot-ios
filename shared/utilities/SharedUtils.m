@@ -58,4 +58,22 @@
     [sharedDefaults setBool:isActive forKey:@"isActive"];
 }
 
++(void) setMute: (BOOL) mute forUsername: (NSString *) username friendName: (NSString *) friendname {
+    NSUserDefaults * sharedDefaults = [self getSharedDefaults];
+    NSString * key = [NSString stringWithFormat:@"%@:%@", username, friendname];
+    if (mute) {
+        [sharedDefaults setBool:YES forKey: key];
+    }
+    else {
+        [sharedDefaults removeObjectForKey:key];
+    }
+}
+
++(BOOL) getMuteForUsername: (NSString *) username friendName: (NSString *) friendname {
+    NSUserDefaults * sharedDefaults = [self getSharedDefaults];
+    NSString * key = [NSString stringWithFormat:@"%@:%@", username, friendname];
+    return [sharedDefaults boolForKey:key];
+}
+
+
 @end

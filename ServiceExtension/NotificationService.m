@@ -28,11 +28,16 @@
     if ([notificationType isEqualToString:@"notification_message"] ||
         [notificationType isEqualToString:@"notification_invite"]  ||
         [notificationType isEqualToString:@"notification_invite_accept"]) {
-        //if we're not logged in as the user add a local notifcation and show a toast
         
-       // NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
-       // NSString * to =[locArgs objectAtIndex:0];
-       // NSString * from =[locArgs objectAtIndex:1];
+        
+        NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
+        NSString * to = [locArgs objectAtIndex:0];
+        NSString * from = [locArgs objectAtIndex:1];
+        
+        //if muted do nothing
+        if ([SharedUtils getMuteForUsername:to friendName:from]) {
+            return;
+        }
         
         //if the app is not active increment the badge count
         if (![SharedUtils isActive]) {
@@ -57,7 +62,7 @@
 - (void)serviceExtensionTimeWillExpire {
     // Called just before the extension will be terminated by the system.
     // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
-    self.contentHandler(self.bestAttemptContent);
+//    self.contentHandler(self.bestAttemptContent);
 }
 
 @end

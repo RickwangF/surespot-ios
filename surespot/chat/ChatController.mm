@@ -1495,4 +1495,12 @@ static const int MAX_REAUTH_RETRIES = 1;
      }];
 }
 
+- (void) mute: (Friend *) thefriend {
+    [_homeDataSource muteFriendName: [thefriend name]];
+}
+
+- (void) unmute: (Friend *) thefriend {
+    [_homeDataSource unmuteFriendName: [thefriend name]];
+}
+
 @end

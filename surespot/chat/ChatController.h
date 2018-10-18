@@ -52,4 +52,8 @@
 -(void) sendGifLinkUrl: (NSURL*) url to: (NSString *) friendname;
 
 -(void) handleAutoinvites;
+
+- (void) mute: (Friend *) thefriend;
+- (void) unmute: (Friend *) thefriend;
+
 @end

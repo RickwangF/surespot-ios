@@ -60,6 +60,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         _aliasVersion = [coder decodeObjectForKey:@"aliasVersion"];
         _aliasHashed = [coder decodeBoolForKey:@"aliasHashed"];
         _imageHashed = [coder decodeBoolForKey:@"imageHashed"];
+        _muted = [coder decodeBoolForKey:@"muted"];
         [self decryptAlias];
     }
     return self;
@@ -96,7 +97,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [encoder encodeObject:_aliasIv forKey:@"aliasIv"];
     [encoder encodeBool:_aliasHashed forKey:@"aliasHashed"];
     [encoder encodeBool:_imageHashed forKey:@"imageHashed"];
-    
+    [encoder encodeBool:_muted forKey:@"muted"];
 }
 
 -(void) decryptAlias {
