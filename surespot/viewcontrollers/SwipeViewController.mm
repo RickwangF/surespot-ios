@@ -3534,11 +3534,12 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             //get the topmost window which should be the keyboard window
             UIWindow * theWindowWeWillUse = [UIUtils getHighestLevelWindow];
+            NSString * friendname = [self getCurrentTabName];
             
             [view setCallback:^(id result) {
                 BOOL confirm = [UIUtils getBoolPrefWithDefaultYesForUser:_username key:@"_user_pref_confirm_image_send"];
                 if (confirm) {
-                    NSString * friendname = [self getCurrentTabName];
+
                     Friend * afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName: friendname];
                     NSString * okString = NSLocalizedString(@"ok", nil);
                     
@@ -3551,14 +3552,15 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                         DDLogVerbose(@"image send cancelled");
                     }];
                     [_alertController addAction:cancelAction];
+
                     UIAlertAction *okAction = [UIAlertAction actionWithTitle:okString style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
-                        [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+                        [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: friendname];
                     }];
                     [_alertController addAction:okAction];
                     [UIUtils showAlertController:_alertController window: theWindowWeWillUse];
                 }
                 else {
-                    [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: [self getCurrentTabName]];
+                    [[[ChatManager sharedInstance] getChatController: _username ]  sendImageMessage: result to: friendname];
                 }
             }];
             
