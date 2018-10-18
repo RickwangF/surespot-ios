@@ -37,7 +37,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [_galleryPreview setDataSource:self];
     [_galleryPreview registerNib:[UINib nibWithNibName:@"GalleryItemView" bundle:nil] forCellWithReuseIdentifier:@"GalleryCell"];
     CHTCollectionViewWaterfallLayout *layout = [[CHTCollectionViewWaterfallLayout alloc] init];
-    layout.columnCount = 2;
+    layout.columnCount = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) ? 4 : 2;
     layout.minimumInteritemSpacing = 2;
     layout.minimumColumnSpacing = 2;
     [_galleryPreview setCollectionViewLayout:layout];
