@@ -321,7 +321,12 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void)growingTextViewDidChange:(HPGrowingTextView *)growingTextView {
-    [self updateTabChangeUI];
+    if (_collapsed) {
+        CGRect frame = _messageBarState.origTextMessageFrame;
+        frame.size.height = growingTextView.frame.size.height;
+        frame.origin.y = growingTextView.frame.origin.y;
+        _messageBarState.origTextMessageFrame = frame;
+    }    [self updateTabChangeUI];
 }
 
 /*
