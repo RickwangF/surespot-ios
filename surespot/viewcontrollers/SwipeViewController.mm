@@ -304,6 +304,14 @@ const Float32 voiceRecordDelay = 0.3;
     containerRect.origin.y += diff;
     _textFieldContainer.frame = containerRect;
     
+    CGRect inviteRect = _inviteTextView.frame;
+    inviteRect.origin.y -= diff;
+    _inviteTextView.frame = inviteRect;
+    
+    CGRect gifRect = _giphySearchTextView.frame;
+    gifRect.origin.y -= diff;
+    _giphySearchTextView.frame = gifRect;
+    
     [self adjustTableViewHeight:-diff];
 }
 
@@ -326,7 +334,8 @@ const Float32 voiceRecordDelay = 0.3;
         frame.size.height = growingTextView.frame.size.height;
         frame.origin.y = growingTextView.frame.origin.y;
         _messageBarState.origTextMessageFrame = frame;
-    }    [self updateTabChangeUI];
+    }
+    [self updateTabChangeUI];
 }
 
 /*
