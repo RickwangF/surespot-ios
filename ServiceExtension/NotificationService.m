@@ -30,14 +30,16 @@
         [notificationType isEqualToString:@"notification_invite_accept"]) {
         
         
-        NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
-        NSString * to = [locArgs objectAtIndex:0];
-        NSString * from = [locArgs objectAtIndex:1];
+//        NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
+//        NSString * to = [locArgs objectAtIndex:0];
+//        NSString * from = [locArgs objectAtIndex:1];
         
         //if muted do nothing
-        if ([SharedUtils getMuteForUsername:to friendName:from]) {
-            return;
-        }
+        //can't prevent notification being showing
+//        if ([SharedUtils getMuteForUsername:to friendName:from]) {
+//              self.contentHandler(self.bestAttemptContent);
+//            return;
+//        }
         
         //if the app is not active increment the badge count
         if (![SharedUtils isActive]) {
@@ -62,7 +64,7 @@
 - (void)serviceExtensionTimeWillExpire {
     // Called just before the extension will be terminated by the system.
     // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
-//    self.contentHandler(self.bestAttemptContent);
+    self.contentHandler(self.bestAttemptContent);
 }
 
 @end

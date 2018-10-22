@@ -1110,25 +1110,25 @@ const Float32 voiceRecordDelay = 0.3;
         }
         
         //muting
-        if ([afriend muted]) {
-            if ([afriend hasFriendImageAssigned]) {
-                [cell.friendImage setAlpha:.5];
-            }
-            else {
-                [cell.friendImage setAlpha:0.25];
-            }
-            cell.muteImage.hidden = NO;
-        }
-        else {
-            if ([afriend hasFriendImageAssigned]) {
-                [cell.friendImage setAlpha:1.0];
-            }
-            else {
-                [cell.friendImage setAlpha:.5];
-            }
-            
-            cell.muteImage.hidden = YES;
-        }
+//        if ([afriend muted]) {
+//            if ([afriend hasFriendImageAssigned]) {
+//                [cell.friendImage setAlpha:.5];
+//            }
+//            else {
+//                [cell.friendImage setAlpha:0.25];
+//            }
+//            cell.muteImage.hidden = NO;
+//        }
+//        else {
+//            if ([afriend hasFriendImageAssigned]) {
+//                [cell.friendImage setAlpha:1.0];
+//            }
+//            else {
+//                [cell.friendImage setAlpha:.5];
+//            }
+//
+//            cell.muteImage.hidden = YES;
+//        }
         
         return cell;
     }
@@ -2273,21 +2273,21 @@ const Float32 voiceRecordDelay = 0.3;
     [menuItems addObject:titleItem];
     
     if ([thefriend isFriend]) {
-        
-        if ([thefriend muted]) {
-            REMenuItem * unmuteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"unmute", nil) image:[UIImage imageNamed:@"ic_volume_on"] highlightedImage:nil action:^(REMenuItem * item){
-                [[[ChatManager sharedInstance] getChatController: _username] unmute: thefriend];
-            }];
-            [menuItems addObject:unmuteItem];
-            
-        }
-        else {
-            REMenuItem * muteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"mute", nil) image:[UIImage imageNamed:@"ic_volume_off"] highlightedImage:nil action:^(REMenuItem * item){
-                [[[ChatManager sharedInstance] getChatController: _username] mute: thefriend];
-            }];
-            [menuItems addObject:muteItem];
-        }
-        
+        //can't prevent notification showing in service extension so comment this out until or if one day we can
+//        if ([thefriend muted]) {
+//            REMenuItem * unmuteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"unmute", nil) image:[UIImage imageNamed:@"ic_volume_on"] highlightedImage:nil action:^(REMenuItem * item){
+//                [[[ChatManager sharedInstance] getChatController: _username] unmute: thefriend];
+//            }];
+//            [menuItems addObject:unmuteItem];
+//
+//        }
+//        else {
+//            REMenuItem * muteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"mute", nil) image:[UIImage imageNamed:@"ic_volume_off"] highlightedImage:nil action:^(REMenuItem * item){
+//                [[[ChatManager sharedInstance] getChatController: _username] mute: thefriend];
+//            }];
+//            [menuItems addObject:muteItem];
+//        }
+//
         if ([thefriend isChatActive]) {
             REMenuItem * closeTabHomeItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_close_tab", nil) image:[UIImage imageNamed:@"ic_menu_end_conversation"] highlightedImage:nil action:^(REMenuItem * item){
                 [self closeTabName: thefriend.name];
