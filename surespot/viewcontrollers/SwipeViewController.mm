@@ -2925,7 +2925,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void) invite: (NSNotification *) notification {
-    Friend * thefriend = notification.object;
+  //  Friend * thefriend = notification.object;
     NSString * currentChat = [self getCurrentTabName];
     //Don't show the toast anymore as we display notification
     //show toast if we're not on the tab or home page, and pulse if we're logged in as the user

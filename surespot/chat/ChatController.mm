@@ -1116,8 +1116,9 @@ static const int MAX_REAUTH_RETRIES = 1;
     
     //if i'm not the accepter fire a notification saying such
     if (![byUsername isEqualToString:_username]) {
-        [UIUtils showToastMessage:[NSString stringWithFormat:NSLocalizedString(@"notification_invite_accept", nil), _username, byUsername] duration:1];
-        [[SoundController sharedInstance] playInviteAcceptedSoundForUser:_username];
+//        [UIUtils showToastMessage:[NSString stringWithFormat:NSLocalizedString(@"notification_invite_accept", nil), _username, byUsername] duration:1];
+        //notification will play sound
+       // [[SoundController sharedInstance] playInviteAcceptedSoundForUser:_username];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:@"inviteAccepted" object:byUsername];
         });

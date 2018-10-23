@@ -65,33 +65,34 @@
     return self;
 }
 
--(BOOL) shouldPlaySoundForUser: (NSString *) username {
-    BOOL playSound = [UIUtils getBoolPrefWithDefaultYesForUser:username key:@"_user_notifications_sound"];
-    return playSound;
-}
-
--(void) playNewMessageSoundForUser: (NSString *) username {
-    
-    if ([self shouldPlaySoundForUser: username]) {
-        AudioServicesPlaySystemSound(_messageSoundID);
-    }
-}
--(void) playInviteSoundForUser: (NSString *) username {
-    if ([self shouldPlaySoundForUser:username]) {
-        AudioServicesPlaySystemSound(_inviteSoundID);
-    }
-}
-
--(void) playInviteAcceptedSoundForUser: (NSString *) username {
-    if ([self shouldPlaySoundForUser:username]) {
-        AudioServicesPlaySystemSound(_acceptSoundID);
-    }
-}
-
--(void) playSoundNamed: (NSString *) soundName forUser: (NSString *) username{
-    if ([self shouldPlaySoundForUser:username]) {
-        AudioServicesPlaySystemSound([[soundMap objectForKey:soundName] intValue]);
-    }
-}
+//Notifications play sounds now
+//-(BOOL) shouldPlaySoundForUser: (NSString *) username {
+//    BOOL playSound = [UIUtils getBoolPrefWithDefaultYesForUser:username key:@"_user_notifications_sound"];
+//    return playSound;
+//}
+//
+//-(void) playNewMessageSoundForUser: (NSString *) username {
+//
+//    if ([self shouldPlaySoundForUser: username]) {
+//        AudioServicesPlaySystemSound(_messageSoundID);
+//    }
+//}
+//-(void) playInviteSoundForUser: (NSString *) username {
+//    if ([self shouldPlaySoundForUser:username]) {
+//        AudioServicesPlaySystemSound(_inviteSoundID);
+//    }
+//}
+//
+//-(void) playInviteAcceptedSoundForUser: (NSString *) username {
+//    if ([self shouldPlaySoundForUser:username]) {
+//        AudioServicesPlaySystemSound(_acceptSoundID);
+//    }
+//}
+//
+//-(void) playSoundNamed: (NSString *) soundName forUser: (NSString *) username{
+//    if ([self shouldPlaySoundForUser:username]) {
+//        AudioServicesPlaySystemSound([[soundMap objectForKey:soundName] intValue]);
+//    }
+//}
 
 @end

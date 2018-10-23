@@ -10,8 +10,8 @@
 
 @interface SoundController : NSObject
 +(SoundController*)sharedInstance;
--(void) playNewMessageSoundForUser: (NSString *) username;
--(void) playInviteSoundForUser: (NSString *) username;
--(void) playInviteAcceptedSoundForUser: (NSString *) username;
--(void) playSoundNamed: (NSString *) soundName forUser: (NSString *) username;
+//-(void) playNewMessageSoundForUser: (NSString *) username;
+//-(void) playInviteSoundForUser: (NSString *) username;
+//-(void) playInviteAcceptedSoundForUser: (NSString *) username;
+//-(void) playSoundNamed: (NSString *) soundName forUser: (NSString *) username;
 @end
