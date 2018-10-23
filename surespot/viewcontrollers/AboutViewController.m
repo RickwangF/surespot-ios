@@ -23,7 +23,7 @@
 {
     [super viewDidLoad];
     [_surespotLabel setText: NSLocalizedString(@"about_about", nil)];
-
+    
     
     NSArray * matches = @[NSLocalizedString(@"about_website_match", nil),
                           NSLocalizedString(@"tos_match",nil),
@@ -46,19 +46,10 @@
                         NSLocalizedString(@"about_audio_link", nil)];
     
     [UIUtils setLinkLabel:_aboutLabel delegate:self labelText:NSLocalizedString(@"about_website", nil) linkMatchTexts:matches urlStrings:links];
-
+    
     
     [self.navigationItem setTitle:NSLocalizedString(@"about_action_bar_right", nil)];
-    self.navigationController.navigationBar.translucent = NO;
-    
-    [_aboutLabel sizeToFit];
-    CGFloat bottom =  _aboutLabel.frame.origin.y + _aboutLabel.frame.size.height;
-    
-    CGSize size = self.view.frame.size;
-    size.height = bottom + 20;
-    _scrollView.contentSize = size;
-
-    
+    self.navigationController.navigationBar.translucent = NO;    
 }
 
 
