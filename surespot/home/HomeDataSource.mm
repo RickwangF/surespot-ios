@@ -59,7 +59,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) loadFriendsCallback: (void(^)(BOOL success)) callback{
-    DDLogInfo(@"loadFriends");
+    DDLogInfo(@"loadFriends for %@", _ourUsername);
     NSDictionary* userInfo = @{@"key": @"loadFriends"};
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startProgress" object:self userInfo:userInfo];
     
@@ -70,11 +70,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         
         NSArray * friendDicts = [JSON objectForKey:@"friends"];
         for (NSDictionary * friendDict in friendDicts) {
-            [_friends addObject:[[Friend alloc] initWithDictionary: friendDict ourUsername:_ourUsername]];
+            Friend * newFriend = [[Friend alloc] initWithDictionary: friendDict ourUsername:_ourUsername];
+            if (![_friends containsObject:newFriend]) {
+                [_friends addObject: newFriend];
+            }
+            else {
+                DDLogInfo(@"Friend %@ already exists, not adding", newFriend.name);
+            }
         };
         [self postRefresh];
         callback(YES);
-        DDLogInfo(@"loadFriends success");
+        DDLogInfo(@"loadFriends for %@ success", _ourUsername);
         NSDictionary* userInfo = @{@"key": @"loadFriends"};
         [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:self userInfo:userInfo];
         
@@ -83,7 +89,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         DDLogInfo(@"response failure: %@",  Error);
         [self postRefresh];
         callback(NO);
-        DDLogInfo(@"loadFriends failure");
+        DDLogInfo(@"loadFriends for %@ failure", _ourUsername);
         NSDictionary* userInfo = @{@"key": @"loadFriends"};
         [[NSNotificationCenter defaultCenter] postNotificationName:@"stopProgress" object:self userInfo:userInfo];
         
