@@ -52,13 +52,27 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger) section {
-    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
-    [header.textLabel setTextAlignment:NSTextAlignmentCenter];
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UILabel* headerLabel = [[UILabel alloc] init];
+    [headerLabel setTextAlignment:NSTextAlignmentCenter];
     if ([UIUtils isBlackTheme]) {
-        [view setTintColor:[UIUtils surespotGrey]];
-        [header.textLabel setTextColor:[UIUtils surespotForegroundGrey]];
+        [headerLabel setTintColor:[UIUtils surespotGrey]];
+        [headerLabel setTextColor:[UIUtils surespotForegroundGrey]];
     }
+    headerLabel.font = [UIFont boldSystemFontOfSize:18];
+    headerLabel.text = [[self tableView:tableView titleForHeaderInSection:section] uppercaseString];
+    return headerLabel;
 }
+
+//- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger) section {
+//    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+//    [header.textLabel setTextAlignment:NSTextAlignmentCenter];
+//    if ([UIUtils isBlackTheme]) {
+//        [view setTintColor:[UIUtils surespotGrey]];
+//        [header.textLabel setTextColor:[UIUtils surespotForegroundGrey]];
+//    }
+//}
+//
+
 
 @end

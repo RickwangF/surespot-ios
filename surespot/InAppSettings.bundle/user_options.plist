@@ -18,9 +18,29 @@
             <key>Type</key>
             <string>PSToggleSwitchSpecifier</string>
             <key>Title</key>
+            <string>pref_title_return_sends_message</string>
+            <key>Key</key>
+            <string>_user_pref_return_sends_message</string>
+            <key>DefaultValue</key>
+            <true/>
+        </dict>
+        <dict>
+            <key>Type</key>
+            <string>PSToggleSwitchSpecifier</string>
+            <key>Title</key>
             <string>pref_title_download_gifs</string>
             <key>Key</key>
             <string>_user_pref_download_gifs</string>
+            <key>DefaultValue</key>
+            <false/>
+        </dict>
+        <dict>
+            <key>Type</key>
+            <string>PSToggleSwitchSpecifier</string>
+            <key>Title</key>
+            <string>pref_title_disable_voice</string>
+            <key>Key</key>
+            <string>_user_pref_disable_voice</string>
             <key>DefaultValue</key>
             <false/>
         </dict>
@@ -51,26 +71,7 @@
 			<key>DefaultValue</key>
 			<true/>
 		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>pref_title_disable_voice</string>
-			<key>Key</key>
-			<string>_user_pref_disable_voice</string>
-			<key>DefaultValue</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>pref_title_return_sends_message</string>
-			<key>Key</key>
-			<string>_user_pref_return_sends_message</string>
-			<key>DefaultValue</key>
-			<true/>
-		</dict>
+
         <dict>
             <key>Type</key>
             <string>PSToggleSwitchSpecifier</string>
@@ -81,22 +82,6 @@
             <key>DefaultValue</key>
             <true/>
         </dict>
-		<dict>
-			<key>Title</key>
-			<string>notifications_title</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>notifications_sound</string>
-			<key>Key</key>
-			<string>_user_notifications_sound</string>
-			<key>DefaultValue</key>
-			<true/>
-		</dict>
 	</array>
 	<key>StringsTable</key>
 	<string>Root</string>

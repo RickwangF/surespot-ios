@@ -83,14 +83,7 @@
                 <string>uk</string>
                 <string>vi</string>
             </array>
-        </dict>
-
-		<dict>
-			<key>Title</key>
-			<string>pref_title_global_notifications</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
+        </dict>		
 		<dict>
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
