@@ -141,8 +141,8 @@
 
 - (NSMutableDictionary * ) toNSDictionary {
     NSMutableDictionary * dict =[NSMutableDictionary new];
-    NSString * serverid = [@(_serverid) stringValue];
-    [dict setObject:serverid forKey:@"id"];
+   // NSString * serverid = [@(_serverid) stringValue];
+   // [dict setObject:serverid forKey:@"id"];
     [dict setObject:_to forKey:@"to"];
     [dict setObject:_from forKey:@"from"];
     [dict setObject:_fromVersion forKey:@"fromVersion"];
@@ -150,11 +150,11 @@
     [dict setObject:_data forKey:@"data"];
     [dict setObject:_iv forKey:@"iv"];
     [dict setObject:_mimeType forKey:@"mimeType"];
-    [dict setObject:[NSNumber numberWithBool:_hashed] forKey:@"hashed"];
-    [dict setObject:[NSNumber numberWithBool:_shareable] forKey:@"shareable"];
-    if (_dateTime) {
-        [dict setObject:[@([_dateTime timeIntervalSince1970]*1000/1000) stringValue] forKey:@"datetime"];
-    }
+   // [dict setObject:[NSNumber numberWithBool:_hashed] forKey:@"hashed"];
+   // [dict setObject:[NSNumber numberWithBool:_shareable] forKey:@"shareable"];
+    //if (_dateTime) {
+     //   [dict setObject:[@([_dateTime timeIntervalSince1970]*1000/1000) stringValue] // forKey:@"datetime"];
+    //}
     
     if (_resendId > 0) {
         [dict setObject:[@(_resendId) stringValue] forKey:@"resendId"];
