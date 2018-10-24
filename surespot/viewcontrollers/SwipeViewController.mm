@@ -1843,7 +1843,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     else {
         _qrButton.hidden = YES;
-        _inviteTextView.hidden = YES;
+        _inviteTextView.hidden = YES;        
         Friend *afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
         if (afriend.isDeleted) {
             [_theButton setImage:[UIImage imageNamed:@"ic_menu_home"] forState:UIControlStateNormal];
@@ -1861,51 +1861,37 @@ const Float32 voiceRecordDelay = 0.3;
                 case MessageModeNone:
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
-                    //   _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
-                    
-                    //          [self setButtonTintColor:_expandButton selected:NO];
-                    //    [self setButtonTintColor:_gifButton selected:NO];
-                    //      [self setButtonTintColor:_galleryButton selected:NO];
-                    
                     _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
+                    _cameraButton.selected = NO;
                     _galleryButton.hidden = NO;
                     _galleryButton.selected = NO;
-                    
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
+                    _theButton.selected = NO;
                     break;
                 case MessageModeKeyboard:
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = NO;
                     _expandButton.selected = YES;
-                    //    [self setButtonTintColor:_expandButton selected:YES];
-                    //    [self setButtonTintColor:_gifButton selected:NO];
-                    //    [self setButtonTintColor:_galleryButton selected:NO];
                     _gifButton.selected = NO;
-                    //  _qrButton.hidden = YES;
                     _gifButton.hidden = YES;
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
                     _galleryButton.selected = NO;
-                    
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
+                    _theButton.selected = NO;
                     break;
                     
                 case MessageModeGIF:
                     _messageTextView.hidden = YES;
                     _expandButton.hidden = YES;
-                    //       _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = YES;
-                    //       [self setButtonTintColor:_expandButton selected:NO];
-                    //  [self setButtonTintColor:_gifButton selected:YES];
-                    //       [self setButtonTintColor:_galleryButton selected:NO];
-                    
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
                     _galleryButton.selected = NO;
@@ -1914,13 +1900,8 @@ const Float32 voiceRecordDelay = 0.3;
                     _theButton.hidden = YES;
                     break;
                 case MessageModeGallery:
-                    //        [self setButtonTintColor:_expandButton selected:NO];
-                    //   [self setButtonTintColor:_gifButton selected:NO];
-                    //    [self setButtonTintColor:_galleryButton selected:YES];
-                    
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
-                    //    _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
@@ -1938,16 +1919,16 @@ const Float32 voiceRecordDelay = 0.3;
             else {
                 BOOL disableVoice = [UIUtils getBoolPrefWithDefaultNoForUser:_username key:@"_user_pref_disable_voice"];
                 if (disableVoice) {
-                    
                     [_theButton setImage:[UIImage imageNamed:@"ic_menu_home"] forState:UIControlStateNormal];
                 }
                 else {
                     [_theButton setImage:[UIImage imageNamed:@"mic"] forState:UIControlStateNormal];
                 }
-                
             }
         }
     }
+    
+    _theButton.selected = NO;
     
     if (expand) {
         [self expand];
@@ -3265,12 +3246,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [_giphySearchTextView setTextColor:[self getThemeForegroundColor]];
     if ([UIUtils isBlackTheme]) {
         [_textFieldContainer setBackgroundColor:[UIColor blackColor]];
-        [_theButton setBackgroundColor:[UIColor blackColor]];
-        [_theButton setTintColor:[UIUtils surespotForegroundGrey]];
-        
+        [_giphyImage setImage:[UIImage imageNamed:@"powered_by_giphy_dark"]];
     }
     else {
-        [_theButton setTintColor:[UIUtils surespotGrey]];
+        [_textFieldContainer setBackgroundColor:[UIColor whiteColor]];
+        [_giphyImage setImage:[UIImage imageNamed:@"powered_by_giphy_light"]];
     }
 }
 
@@ -3618,7 +3598,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              }
                              completion:^(BOOL finished){
                                  [_gifView removeFromSuperview];
-                                 _gifView = nil;                                 
+                                 _gifView = nil;
                              }];
             
             [theWindowWeWillUse addSubview: _galleryView];

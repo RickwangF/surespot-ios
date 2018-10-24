@@ -24,7 +24,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface GalleryView ()
 
 @property (strong, nonatomic) IBOutlet UICollectionView *galleryPreview;
-
+@property (strong, nonatomic) IBOutlet UIButton *moreButton;
 @property (strong, nonatomic) CallbackBlock callback;
 @property (strong, nonatomic) CallbackBlock moreCallback;
 @property (strong, nonatomic) PHFetchResult * photos;
@@ -42,6 +42,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     layout.minimumInteritemSpacing = 2;
     layout.minimumColumnSpacing = 2;
     [_galleryPreview setCollectionViewLayout:layout];
+    //force tint colors
+    [_moreButton setSelected: NO];
 }
 
 - (IBAction)closeButtonTouch:(id)sender {
