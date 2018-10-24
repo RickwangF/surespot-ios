@@ -117,6 +117,8 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, strong) MessageView *ourPrototypeCell;
 @property (nonatomic, strong) MessageView *theirPrototypeCell;
 @property (nonatomic, strong) UIAlertController * alertController;
+@property (nonatomic, assign) BOOL suspendKeyboardListeners;
+
 @end
 @implementation SwipeViewController
 
@@ -1124,25 +1126,25 @@ const Float32 voiceRecordDelay = 0.3;
         }
         
         //muting
-//        if ([afriend muted]) {
-//            if ([afriend hasFriendImageAssigned]) {
-//                [cell.friendImage setAlpha:.5];
-//            }
-//            else {
-//                [cell.friendImage setAlpha:0.25];
-//            }
-//            cell.muteImage.hidden = NO;
-//        }
-//        else {
-//            if ([afriend hasFriendImageAssigned]) {
-//                [cell.friendImage setAlpha:1.0];
-//            }
-//            else {
-//                [cell.friendImage setAlpha:.5];
-//            }
-//
-//            cell.muteImage.hidden = YES;
-//        }
+        //        if ([afriend muted]) {
+        //            if ([afriend hasFriendImageAssigned]) {
+        //                [cell.friendImage setAlpha:.5];
+        //            }
+        //            else {
+        //                [cell.friendImage setAlpha:0.25];
+        //            }
+        //            cell.muteImage.hidden = NO;
+        //        }
+        //        else {
+        //            if ([afriend hasFriendImageAssigned]) {
+        //                [cell.friendImage setAlpha:1.0];
+        //            }
+        //            else {
+        //                [cell.friendImage setAlpha:.5];
+        //            }
+        //
+        //            cell.muteImage.hidden = YES;
+        //        }
         
         return cell;
     }
@@ -2184,6 +2186,12 @@ const Float32 voiceRecordDelay = 0.3;
                                                  UIActivityTypePostToTencentWeibo,
                                                  UIActivityTypeAirDrop];
             
+            //does weird shit with the keyboard
+            _suspendKeyboardListeners = YES;
+            [controller  setCompletionWithItemsHandler:^(UIActivityType  _Nullable activityType, BOOL completed, NSArray * _Nullable returnedItems, NSError * _Nullable activityError) {
+                _suspendKeyboardListeners = NO;
+            }];
+            
             if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
             {
                 [self presentViewController:controller animated:YES completion:nil];
@@ -2288,20 +2296,20 @@ const Float32 voiceRecordDelay = 0.3;
     
     if ([thefriend isFriend]) {
         //can't prevent notification showing in service extension so comment this out until or if one day we can
-//        if ([thefriend muted]) {
-//            REMenuItem * unmuteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"unmute", nil) image:[UIImage imageNamed:@"ic_volume_on"] highlightedImage:nil action:^(REMenuItem * item){
-//                [[[ChatManager sharedInstance] getChatController: _username] unmute: thefriend];
-//            }];
-//            [menuItems addObject:unmuteItem];
-//
-//        }
-//        else {
-//            REMenuItem * muteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"mute", nil) image:[UIImage imageNamed:@"ic_volume_off"] highlightedImage:nil action:^(REMenuItem * item){
-//                [[[ChatManager sharedInstance] getChatController: _username] mute: thefriend];
-//            }];
-//            [menuItems addObject:muteItem];
-//        }
-//
+        //        if ([thefriend muted]) {
+        //            REMenuItem * unmuteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"unmute", nil) image:[UIImage imageNamed:@"ic_volume_on"] highlightedImage:nil action:^(REMenuItem * item){
+        //                [[[ChatManager sharedInstance] getChatController: _username] unmute: thefriend];
+        //            }];
+        //            [menuItems addObject:unmuteItem];
+        //
+        //        }
+        //        else {
+        //            REMenuItem * muteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"mute", nil) image:[UIImage imageNamed:@"ic_volume_off"] highlightedImage:nil action:^(REMenuItem * item){
+        //                [[[ChatManager sharedInstance] getChatController: _username] mute: thefriend];
+        //            }];
+        //            [menuItems addObject:muteItem];
+        //        }
+        //
         if ([thefriend isChatActive]) {
             REMenuItem * closeTabHomeItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_close_tab", nil) image:[UIImage imageNamed:@"ic_menu_end_conversation"] highlightedImage:nil action:^(REMenuItem * item){
                 [self closeTabName: thefriend.name];
@@ -2925,7 +2933,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void) invite: (NSNotification *) notification {
-  //  Friend * thefriend = notification.object;
+    //  Friend * thefriend = notification.object;
     NSString * currentChat = [self getCurrentTabName];
     //Don't show the toast anymore as we display notification
     //show toast if we're not on the tab or home page, and pulse if we're logged in as the user
@@ -3342,7 +3350,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 // Called when the UIKeyboardDidShowNotification is sent.
 - (void)keyboardWillBeShown:(NSNotification*)aNotification {
-    
+    if (_suspendKeyboardListeners) return;
     DDLogInfo(@"keyboard shown, mode: %ld", _currentMode);
     NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
@@ -3400,6 +3408,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 // Called when the UIKeyboardWillHideNotification is sent
 - (void)keyboardWillBeHidden:(NSNotification *) aNotification
 {
+    if (_suspendKeyboardListeners) return;
     DDLogInfo(@"keyboard hide, mode: %ld", (long)_currentMode);
     NSDictionary* info = [aNotification userInfo];
     NSTimeInterval animationDuration;
