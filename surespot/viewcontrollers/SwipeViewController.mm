@@ -1124,25 +1124,25 @@ const Float32 voiceRecordDelay = 0.3;
         }
         
         //muting
-//        if ([afriend muted]) {
-//            if ([afriend hasFriendImageAssigned]) {
-//                [cell.friendImage setAlpha:.5];
-//            }
-//            else {
-//                [cell.friendImage setAlpha:0.25];
-//            }
-//            cell.muteImage.hidden = NO;
-//        }
-//        else {
-//            if ([afriend hasFriendImageAssigned]) {
-//                [cell.friendImage setAlpha:1.0];
-//            }
-//            else {
-//                [cell.friendImage setAlpha:.5];
-//            }
-//
-//            cell.muteImage.hidden = YES;
-//        }
+        //        if ([afriend muted]) {
+        //            if ([afriend hasFriendImageAssigned]) {
+        //                [cell.friendImage setAlpha:.5];
+        //            }
+        //            else {
+        //                [cell.friendImage setAlpha:0.25];
+        //            }
+        //            cell.muteImage.hidden = NO;
+        //        }
+        //        else {
+        //            if ([afriend hasFriendImageAssigned]) {
+        //                [cell.friendImage setAlpha:1.0];
+        //            }
+        //            else {
+        //                [cell.friendImage setAlpha:.5];
+        //            }
+        //
+        //            cell.muteImage.hidden = YES;
+        //        }
         
         return cell;
     }
@@ -2069,53 +2069,29 @@ const Float32 voiceRecordDelay = 0.3;
     return string;
 }
 
+-(void) sendImageToFriendname: (NSString *) friendname viewController: (UIViewController *) viewController {
+    if (friendname) {
+
+        Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:friendname];
+        if ([theFriend isFriend] && ![theFriend isDeleted]) {
+            
+            _imageDelegate = [[ImageDelegate alloc]
+                              initWithUsername:_username
+                              ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
+                              theirUsername:friendname];
+            
+            [self disableMessageModeShowKeyboard:NO setResponders:YES];
+            [ImageDelegate startImageSelectControllerFromViewController:viewController usingDelegate:_imageDelegate];
+            
+        }
+    }
+}
+
 -(REMenu *) createMenuMenu {
     //menu menu
-    
     NSMutableArray * menuItems = [NSMutableArray new];
     
     if ([self getCurrentTabName]) {
-        //       Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
-        //        if ([theFriend isFriend] && ![theFriend isDeleted]) {
-        //            NSString * theirUsername = [self getCurrentTabName];
-        //
-        //            REMenuItem * selectImageItem = [[REMenuItem alloc]
-        //                                            initWithTitle:NSLocalizedString(@"select_image", nil)
-        //                                            image:[UIImage imageNamed:@"ic_menu_gallery"]
-        //                                            highlightedImage:nil
-        //                                            action:^(REMenuItem * item){
-        //
-        //                                                _imageDelegate = [[ImageDelegate alloc]
-        //                                                                  initWithUsername:_username
-        //                                                                  ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-        //                                                                  theirUsername:theirUsername
-        //                                                                  assetLibrary:_assetLibrary];
-        //
-        //                                                [ImageDelegate startImageSelectControllerFromViewController:self usingDelegate:_imageDelegate];
-        //
-        //
-        //                                            }];
-        //            [menuItems addObject:selectImageItem];
-        //
-        //
-        //            REMenuItem * captureImageItem = [[REMenuItem alloc]
-        //                                             initWithTitle:NSLocalizedString(@"capture_image", nil)
-        //                                             image:[UIImage imageNamed:@"ic_menu_camera"]
-        //                                             highlightedImage:nil
-        //                                             action:^(REMenuItem * item){
-        //
-        //                                                 _imageDelegate = [[ImageDelegate alloc]
-        //                                                                   initWithUsername:_username
-        //                                                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-        //                                                                   theirUsername:theirUsername
-        //                                                                   assetLibrary:_assetLibrary];
-        //                                                 [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
-        //
-        //
-        //                                             }];
-        //            [menuItems addObject:captureImageItem];
-        //        }
-        
         REMenuItem * closeTabItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_close_tab", nil) image:[UIImage imageNamed:@"ic_menu_end_conversation"] highlightedImage:nil action:^(REMenuItem * item){
             [self closeTab];
         }];
@@ -2288,20 +2264,20 @@ const Float32 voiceRecordDelay = 0.3;
     
     if ([thefriend isFriend]) {
         //can't prevent notification showing in service extension so comment this out until or if one day we can
-//        if ([thefriend muted]) {
-//            REMenuItem * unmuteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"unmute", nil) image:[UIImage imageNamed:@"ic_volume_on"] highlightedImage:nil action:^(REMenuItem * item){
-//                [[[ChatManager sharedInstance] getChatController: _username] unmute: thefriend];
-//            }];
-//            [menuItems addObject:unmuteItem];
-//
-//        }
-//        else {
-//            REMenuItem * muteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"mute", nil) image:[UIImage imageNamed:@"ic_volume_off"] highlightedImage:nil action:^(REMenuItem * item){
-//                [[[ChatManager sharedInstance] getChatController: _username] mute: thefriend];
-//            }];
-//            [menuItems addObject:muteItem];
-//        }
-//
+        //        if ([thefriend muted]) {
+        //            REMenuItem * unmuteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"unmute", nil) image:[UIImage imageNamed:@"ic_volume_on"] highlightedImage:nil action:^(REMenuItem * item){
+        //                [[[ChatManager sharedInstance] getChatController: _username] unmute: thefriend];
+        //            }];
+        //            [menuItems addObject:unmuteItem];
+        //
+        //        }
+        //        else {
+        //            REMenuItem * muteItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"mute", nil) image:[UIImage imageNamed:@"ic_volume_off"] highlightedImage:nil action:^(REMenuItem * item){
+        //                [[[ChatManager sharedInstance] getChatController: _username] mute: thefriend];
+        //            }];
+        //            [menuItems addObject:muteItem];
+        //        }
+        //
         if ([thefriend isChatActive]) {
             REMenuItem * closeTabHomeItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_close_tab", nil) image:[UIImage imageNamed:@"ic_menu_end_conversation"] highlightedImage:nil action:^(REMenuItem * item){
                 [self closeTabName: thefriend.name];
@@ -2925,7 +2901,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void) invite: (NSNotification *) notification {
-  //  Friend * thefriend = notification.object;
+    //  Friend * thefriend = notification.object;
     NSString * currentChat = [self getCurrentTabName];
     //Don't show the toast anymore as we display notification
     //show toast if we're not on the tab or home page, and pulse if we're logged in as the user
@@ -3612,6 +3588,10 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 }
             }];
             
+            [view setMoreCallback:^(id result) {
+                [self sendImageToFriendname:friendname viewController: self];
+            }];
+            
             __block NSInteger yDelta = GALLERY_VIEW_OFFSET;
             [UIView animateWithDuration:0.5
                                   delay:0.0
@@ -3634,13 +3614,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                  DDLogDebug(@"setting frame to y: %f, height: %f", frame.origin.y, frame.size.height);
                                  
                                  _galleryView.frame = frame;
-                                 _messageBarState.galleryViewHeight = GALLERY_VIEW_OFFSET;
+                                 _messageBarState.galleryViewHeight = yDelta;
                              }
                              completion:^(BOOL finished){
                                  [_gifView removeFromSuperview];
-                                 
-                                 _gifView = nil;
-                                 
+                                 _gifView = nil;                                 
                              }];
             
             [theWindowWeWillUse addSubview: _galleryView];

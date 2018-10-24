@@ -13,5 +13,6 @@
 
 @interface GalleryView : UIView <CHTCollectionViewDelegateWaterfallLayout, UICollectionViewDataSource>
 -(void) setCallback: (CallbackBlock) callback;
+-(void) setMoreCallback: (CallbackBlock) moreCallback;
 -(void) fetchAssets;
 @end
