@@ -1845,7 +1845,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     else {
         _qrButton.hidden = YES;
-        _inviteTextView.hidden = YES;
+        _inviteTextView.hidden = YES;        
         Friend *afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
         if (afriend.isDeleted) {
             [_theButton setImage:[UIImage imageNamed:@"ic_menu_home"] forState:UIControlStateNormal];
@@ -1863,51 +1863,37 @@ const Float32 voiceRecordDelay = 0.3;
                 case MessageModeNone:
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
-                    //   _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
-                    
-                    //          [self setButtonTintColor:_expandButton selected:NO];
-                    //    [self setButtonTintColor:_gifButton selected:NO];
-                    //      [self setButtonTintColor:_galleryButton selected:NO];
-                    
                     _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
+                    _cameraButton.selected = NO;
                     _galleryButton.hidden = NO;
                     _galleryButton.selected = NO;
-                    
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
+                    _theButton.selected = NO;
                     break;
                 case MessageModeKeyboard:
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = NO;
                     _expandButton.selected = YES;
-                    //    [self setButtonTintColor:_expandButton selected:YES];
-                    //    [self setButtonTintColor:_gifButton selected:NO];
-                    //    [self setButtonTintColor:_galleryButton selected:NO];
                     _gifButton.selected = NO;
-                    //  _qrButton.hidden = YES;
                     _gifButton.hidden = YES;
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
                     _galleryButton.selected = NO;
-                    
                     _giphySearchTextView.hidden = YES;
                     _giphyImage.hidden = YES;
                     _theButton.hidden = NO;
+                    _theButton.selected = NO;
                     break;
                     
                 case MessageModeGIF:
                     _messageTextView.hidden = YES;
                     _expandButton.hidden = YES;
-                    //       _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = YES;
-                    //       [self setButtonTintColor:_expandButton selected:NO];
-                    //  [self setButtonTintColor:_gifButton selected:YES];
-                    //       [self setButtonTintColor:_galleryButton selected:NO];
-                    
                     _cameraButton.hidden = YES;
                     _galleryButton.hidden = YES;
                     _galleryButton.selected = NO;
@@ -1916,13 +1902,8 @@ const Float32 voiceRecordDelay = 0.3;
                     _theButton.hidden = YES;
                     break;
                 case MessageModeGallery:
-                    //        [self setButtonTintColor:_expandButton selected:NO];
-                    //   [self setButtonTintColor:_gifButton selected:NO];
-                    //    [self setButtonTintColor:_galleryButton selected:YES];
-                    
                     _messageTextView.hidden = NO;
                     _expandButton.hidden = YES;
-                    //    _qrButton.hidden = YES;
                     _gifButton.hidden = NO;
                     _gifButton.selected = NO;
                     _cameraButton.hidden = NO;
@@ -1940,16 +1921,16 @@ const Float32 voiceRecordDelay = 0.3;
             else {
                 BOOL disableVoice = [UIUtils getBoolPrefWithDefaultNoForUser:_username key:@"_user_pref_disable_voice"];
                 if (disableVoice) {
-                    
                     [_theButton setImage:[UIImage imageNamed:@"ic_menu_home"] forState:UIControlStateNormal];
                 }
                 else {
                     [_theButton setImage:[UIImage imageNamed:@"mic"] forState:UIControlStateNormal];
                 }
-                
             }
         }
     }
+    
+    _theButton.selected = NO;
     
     if (expand) {
         [self expand];
@@ -2071,53 +2052,29 @@ const Float32 voiceRecordDelay = 0.3;
     return string;
 }
 
+-(void) sendImageToFriendname: (NSString *) friendname viewController: (UIViewController *) viewController {
+    if (friendname) {
+
+        Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:friendname];
+        if ([theFriend isFriend] && ![theFriend isDeleted]) {
+            
+            _imageDelegate = [[ImageDelegate alloc]
+                              initWithUsername:_username
+                              ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
+                              theirUsername:friendname];
+            
+            [self disableMessageModeShowKeyboard:NO setResponders:YES];
+            [ImageDelegate startImageSelectControllerFromViewController:viewController usingDelegate:_imageDelegate];
+            
+        }
+    }
+}
+
 -(REMenu *) createMenuMenu {
     //menu menu
-    
     NSMutableArray * menuItems = [NSMutableArray new];
     
     if ([self getCurrentTabName]) {
-        //       Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
-        //        if ([theFriend isFriend] && ![theFriend isDeleted]) {
-        //            NSString * theirUsername = [self getCurrentTabName];
-        //
-        //            REMenuItem * selectImageItem = [[REMenuItem alloc]
-        //                                            initWithTitle:NSLocalizedString(@"select_image", nil)
-        //                                            image:[UIImage imageNamed:@"ic_menu_gallery"]
-        //                                            highlightedImage:nil
-        //                                            action:^(REMenuItem * item){
-        //
-        //                                                _imageDelegate = [[ImageDelegate alloc]
-        //                                                                  initWithUsername:_username
-        //                                                                  ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-        //                                                                  theirUsername:theirUsername
-        //                                                                  assetLibrary:_assetLibrary];
-        //
-        //                                                [ImageDelegate startImageSelectControllerFromViewController:self usingDelegate:_imageDelegate];
-        //
-        //
-        //                                            }];
-        //            [menuItems addObject:selectImageItem];
-        //
-        //
-        //            REMenuItem * captureImageItem = [[REMenuItem alloc]
-        //                                             initWithTitle:NSLocalizedString(@"capture_image", nil)
-        //                                             image:[UIImage imageNamed:@"ic_menu_camera"]
-        //                                             highlightedImage:nil
-        //                                             action:^(REMenuItem * item){
-        //
-        //                                                 _imageDelegate = [[ImageDelegate alloc]
-        //                                                                   initWithUsername:_username
-        //                                                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
-        //                                                                   theirUsername:theirUsername
-        //                                                                   assetLibrary:_assetLibrary];
-        //                                                 [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
-        //
-        //
-        //                                             }];
-        //            [menuItems addObject:captureImageItem];
-        //        }
-        
         REMenuItem * closeTabItem = [[REMenuItem alloc] initWithTitle:NSLocalizedString(@"menu_close_tab", nil) image:[UIImage imageNamed:@"ic_menu_end_conversation"] highlightedImage:nil action:^(REMenuItem * item){
             [self closeTab];
         }];
@@ -3297,12 +3254,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [_giphySearchTextView setTextColor:[self getThemeForegroundColor]];
     if ([UIUtils isBlackTheme]) {
         [_textFieldContainer setBackgroundColor:[UIColor blackColor]];
-        [_theButton setBackgroundColor:[UIColor blackColor]];
-        [_theButton setTintColor:[UIUtils surespotForegroundGrey]];
-        
+        [_giphyImage setImage:[UIImage imageNamed:@"powered_by_giphy_dark"]];
     }
     else {
-        [_theButton setTintColor:[UIUtils surespotGrey]];
+        [_textFieldContainer setBackgroundColor:[UIColor whiteColor]];
+        [_giphyImage setImage:[UIImage imageNamed:@"powered_by_giphy_light"]];
     }
 }
 
@@ -3621,6 +3577,10 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 }
             }];
             
+            [view setMoreCallback:^(id result) {
+                [self sendImageToFriendname:friendname viewController: self];
+            }];
+            
             __block NSInteger yDelta = GALLERY_VIEW_OFFSET;
             [UIView animateWithDuration:0.5
                                   delay:0.0
@@ -3643,13 +3603,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                  DDLogDebug(@"setting frame to y: %f, height: %f", frame.origin.y, frame.size.height);
                                  
                                  _galleryView.frame = frame;
-                                 _messageBarState.galleryViewHeight = GALLERY_VIEW_OFFSET;
+                                 _messageBarState.galleryViewHeight = yDelta;
                              }
                              completion:^(BOOL finished){
                                  [_gifView removeFromSuperview];
-                                 
                                  _gifView = nil;
-                                 
                              }];
             
             [theWindowWeWillUse addSubview: _galleryView];

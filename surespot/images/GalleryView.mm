@@ -24,8 +24,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @interface GalleryView ()
 
 @property (strong, nonatomic) IBOutlet UICollectionView *galleryPreview;
-
+@property (strong, nonatomic) IBOutlet UIButton *moreButton;
 @property (strong, nonatomic) CallbackBlock callback;
+@property (strong, nonatomic) CallbackBlock moreCallback;
 @property (strong, nonatomic) PHFetchResult * photos;
 @end
 
@@ -41,6 +42,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     layout.minimumInteritemSpacing = 2;
     layout.minimumColumnSpacing = 2;
     [_galleryPreview setCollectionViewLayout:layout];
+    //force tint colors
+    [_moreButton setSelected: NO];
 }
 
 - (IBAction)closeButtonTouch:(id)sender {
@@ -56,10 +59,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 -(void) setCallback: (CallbackBlock) callback {
-    
     _callback = callback;
 }
 
+-(void) setMoreCallback: (CallbackBlock) moreCallback {
+    _moreCallback = moreCallback;
+}
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 1;
@@ -82,7 +87,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     NSInteger index =[indexPath row];
     PHAsset * asset = [_photos objectAtIndex: index];
     
-    CGFloat screenWidth = [[UIScreen mainScreen] applicationFrame].size.width;
+    CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
     CGFloat scale = (float) screenWidth / [asset pixelWidth];
     CGFloat width = [asset pixelWidth] * scale;
     CGFloat height = [asset pixelHeight] * scale;
@@ -127,5 +132,12 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         _callback ([asset localIdentifier]);
     }
 }
+
+- (IBAction)moreTouchUpInside:(id)sender {
+    if (_moreCallback) {
+        _moreCallback(nil);
+    }
+}
+
 
 @end
