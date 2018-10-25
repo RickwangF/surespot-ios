@@ -75,9 +75,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         }
     }
     
-    UIWindow * alertWindow = [[UIAnyLevelWindow alloc] initWithFrame: [UIScreen mainScreen].bounds window: theWindowWeWillUse];
-    [alertWindow setHidden: NO];
-    return alertWindow;
+    return theWindowWeWillUse;
 }
 
 +(void)showAlertController: (UIAlertController *) controller window: (UIWindow *) window
