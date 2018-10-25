@@ -53,9 +53,10 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     [imageView setImage:image];
     [logoView addSubview: imageView];
+    
     _logoWindow = [[UIAnyLevelWindow alloc] initWithFrame:self.window.frame window:[UIUtils getHighestLevelWindow]];
+    _logoWindow.rootViewController = [UIViewController new];
     [_logoWindow addSubview:logoView];
-    [_logoWindow bringSubviewToFront:logoView];
     [_logoWindow setHidden:NO];
 }
 
