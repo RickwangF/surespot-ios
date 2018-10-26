@@ -61,14 +61,17 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 }
 
 
-+(UIWindow *) getHighestLevelWindow {
++(UIWindow *) getHighestLevelWindowKeyboardShowing: (BOOL) keyboardShowing {
+    //if keyboard showing, use keyboard window, otherwise use key window
     UIWindow * theWindowWeWillUse;
     UIWindowLevel theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = 0;
     for (UIWindow * window in [UIApplication sharedApplication].windows) {
-        DDLogDebug(@"isKeyWindow = %d window level = %.1f frame = %@ hidden = %d class = %@\n",
+        DDLogDebug(@"window: %@, isKeyWindow = %d window level = %.1f frame = %@ hidden = %d class = %@\n",window,
                    window.isKeyWindow, window.windowLevel,
                    NSStringFromCGRect(window.frame),window.hidden, window.class.description);
-        if (window.windowLevel>=theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn && !window.hidden) {
+        if (window.windowLevel>=theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn &&
+            !window.hidden &&
+            ((!keyboardShowing && window.isKeyWindow) || keyboardShowing)) {
             theMaxLevelWeFoundWhileIteratingThroughTheseWindowsTryingToReverseEngineerWTFIsGoingOn = window.windowLevel;
             theWindowWeWillUse = window;
             DDLogDebug(@"This is the window we shall use");

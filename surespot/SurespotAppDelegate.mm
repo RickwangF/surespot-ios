@@ -54,7 +54,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [imageView setImage:image];
     [logoView addSubview: imageView];
     
-    _logoWindow = [[UIAnyLevelWindow alloc] initWithFrame:self.window.frame window:[UIUtils getHighestLevelWindow]];
+    _logoWindow = [[UIAnyLevelWindow alloc] initWithFrame:self.window.frame window:[UIUtils getHighestLevelWindowKeyboardShowing:YES]];
     _logoWindow.rootViewController = [UIViewController new];
     [_logoWindow addSubview:logoView];
     [_logoWindow setHidden:NO];

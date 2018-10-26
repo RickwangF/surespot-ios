@@ -3544,7 +3544,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             DDLogInfo(@"showGalleryView, keyboard height: %f",_messageBarState.keyboardHeight);
             
             //get the topmost window which should be the keyboard window
-            UIWindow * theWindowWeWillUse = [UIUtils getHighestLevelWindow];
+            UIWindow * theWindowWeWillUse = [UIUtils getHighestLevelWindowKeyboardShowing: (_messageBarState.keyboardHeight > 0)];
             NSString * friendname = [self getCurrentTabName];
             
             [view setCallback:^(id result) {
@@ -3676,8 +3676,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (setResponders) {
             [self resignAllResponders];
         }
-        
-        
     }
     _currentMode = MessageModeNone;
     [_alertController dismissViewControllerAnimated:YES completion:nil];

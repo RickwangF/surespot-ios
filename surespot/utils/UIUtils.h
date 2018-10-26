@@ -59,7 +59,7 @@
                       callback: (CallbackBlock) callback;
 +(UIColor*) getTextColor;
 +(NSString *) ensureGiphyLang;
-+(UIWindow *) getHighestLevelWindow;
++(UIWindow *) getHighestLevelWindowKeyboardShowing: (BOOL) keyboardShowing;
 @end
 
 
