@@ -3253,11 +3253,9 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     [_inviteTextView setTextColor:[self getThemeForegroundColor]];
     [_giphySearchTextView setTextColor:[self getThemeForegroundColor]];
     if ([UIUtils isBlackTheme]) {
-        [_textFieldContainer setBackgroundColor:[UIColor blackColor]];
         [_giphyImage setImage:[UIImage imageNamed:@"powered_by_giphy_dark"]];
     }
     else {
-        [_textFieldContainer setBackgroundColor:[UIColor whiteColor]];
         [_giphyImage setImage:[UIImage imageNamed:@"powered_by_giphy_light"]];
     }
 }
