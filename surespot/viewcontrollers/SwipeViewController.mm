@@ -1828,7 +1828,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     
     if (![self getCurrentTabName]) {
-        [_theButton setImage:[UIImage imageNamed:@"ic_menu_invite"] forState:UIControlStateNormal];
+        [_theButton setImage:[UIImage imageNamed:@"add_friend"] forState:UIControlStateNormal];
         _messageTextView.hidden = YES;
         
         _inviteTextView.hidden = NO;

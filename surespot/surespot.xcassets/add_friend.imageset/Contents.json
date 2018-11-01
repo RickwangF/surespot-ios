@@ -2,12 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "ic_menu_invite.png",
+      "filename" : "add_friend.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "ic_menu_invite-1.png",
       "scale" : "2x"
     },
     {
