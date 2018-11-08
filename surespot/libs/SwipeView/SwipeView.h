@@ -81,6 +81,7 @@ SwipeViewAlignment;
 @property (nonatomic, assign) BOOL defersItemViewLoading;
 @property (nonatomic, assign, getter = isVertical) BOOL vertical;
 @property (nonatomic, assign) BOOL suppressScrollEvent;
+@property (nonatomic, assign) BOOL suppressLayoutSubviews;
 
 - (void)reloadData;
 - (void)reloadItemAtIndex:(NSInteger)index;

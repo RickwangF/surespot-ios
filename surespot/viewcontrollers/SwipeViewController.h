@@ -18,6 +18,7 @@
 #import "HPGrowingTextView.h"
 #import "VoiceMessagePlayedDelegate.h"
 #import "SideMenu-Swift.h"
+#import "ImageDelegate.h"
 
 @interface SwipeViewController : UIViewController
 <
@@ -35,6 +36,6 @@
     UITextViewDelegate,
     UIGestureRecognizerDelegate,
     VoiceMessagePlayedDelegate,
-    UISideMenuNavigationControllerDelegate
->
+    UISideMenuNavigationControllerDelegate,
+    ImageDelegateDelegate>
 @end

@@ -60,6 +60,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 // For responding to the user tapping Cancel.
 - (void) imagePickerControllerDidCancel: (UIImagePickerController *) picker {
     [_controller dismissViewControllerAnimated: YES completion:nil];
+    [_delegate imageSelectionCompleted];
 }
 
 // For responding to the user accepting a newly-captured picture or movie
@@ -133,6 +134,8 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                 
         }
     }
+    
+    [_delegate imageSelectionCompleted];
 }
 
 -(void) setBackgroundImage: (UIImage *) image {

@@ -52,7 +52,7 @@
 #import "GalleryView.h"
 
 #ifdef DEBUG
-static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 #else
 static const DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
@@ -2057,12 +2057,12 @@ const Float32 voiceRecordDelay = 0.3;
 
         Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:friendname];
         if ([theFriend isFriend] && ![theFriend isDeleted]) {
-            
+            _swipeView.suppressLayoutSubviews = YES;
             _imageDelegate = [[ImageDelegate alloc]
                               initWithUsername:_username
                               ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                               theirUsername:friendname];
-            
+            _imageDelegate.delegate = self;
             [self disableMessageModeShowKeyboard:NO setResponders:YES];
             [ImageDelegate startImageSelectControllerFromViewController:viewController usingDelegate:_imageDelegate];
             
@@ -2334,7 +2334,7 @@ const Float32 voiceRecordDelay = 0.3;
                                                                       initWithUsername:_username
                                                                       ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                                                                       theirUsername:thefriend.name];
-                                                    
+                                        
                                                     [ImageDelegate startFriendImageSelectControllerFromViewController:self usingDelegate:_imageDelegate];
                                                     
                                                     
@@ -3621,16 +3621,18 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
             if ([theFriend isFriend] && ![theFriend isDeleted]) {
                 NSString * theirUsername = [self getCurrentTabName];
-                
+                _swipeView.suppressLayoutSubviews = YES;
                 _imageDelegate = [[ImageDelegate alloc]
                                   initWithUsername:_username
                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                                   theirUsername:theirUsername];
+                _imageDelegate.delegate = self;
                 [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
                 //pull the gif view immediately coz it looks janky just scroling down
                 [_gifView removeFromSuperview];
                 [self disableMessageModeShowKeyboard:NO setResponders:YES];
-                
+              
+              
             }
             break;
         }
@@ -3648,6 +3650,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                      animations:^{
                          if (setResponders) {
                              NSInteger yDelta = GALLERY_VIEW_OFFSET;
+                             //NSInteger yDelta = galleryViewHeight;
                              
                              [self hideGifView];
                              
@@ -3824,6 +3827,12 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             }
         }
     }
+}
+
+
+- (void)imageSelectionCompleted {
+    DDLogDebug(@"imageSelectionCompleted");
+    _swipeView.suppressLayoutSubviews = NO;
 }
 
 @end

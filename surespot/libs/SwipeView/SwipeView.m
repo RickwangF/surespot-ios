@@ -567,8 +567,11 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (void)layoutSubviews
 {
+    
     DDLogVerbose(@"layoutSubviews");
+    if (_suppressLayoutSubviews) return;
     _suppressScrollEvent = YES;
+    
     [super layoutSubviews];
     [self updateItemSizeAndCount];
     [self updateScrollViewDimensions];
@@ -730,7 +733,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         if (animationEnabled) [UIView setAnimationsEnabled:NO];
         _suppressScrollEvent = YES;
         _scrollView.contentOffset = contentOffset;
-        _suppressScrollEvent = NO;
+         _suppressScrollEvent = NO;
         if (animationEnabled) [UIView setAnimationsEnabled:YES];
     }
 }

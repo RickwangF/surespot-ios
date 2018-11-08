@@ -16,6 +16,11 @@
 #define kSurespotImageDelegateModeFriendImage 2
 #define kSurespotImageDelegateModeBackgroundImage 3
 
+@protocol ImageDelegateDelegate<NSObject>
+@optional
+- (void)imageSelectionCompleted;
+@end
+
 @interface ImageDelegate : NSObject<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverControllerDelegate, MWPhotoBrowserDelegate>
 @property (nonatomic, strong)  UIPopoverController* popover;
 - (id) initWithUsername: (NSString *) username
@@ -32,5 +37,6 @@
 @property (nonatomic, assign) NSInteger mode;
 +(BOOL) startBackgroundImageSelectControllerFromViewController: (IASKAppSettingsViewController*) controller
                                                  usingDelegate: (ImageDelegate *) delegate;
+@property (nonatomic, weak) IBOutlet id<ImageDelegateDelegate> delegate;
 
 @end
