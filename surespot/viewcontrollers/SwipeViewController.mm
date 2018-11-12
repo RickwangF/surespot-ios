@@ -3442,7 +3442,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 -(void) moveViewsVerticallyBy:(NSInteger) yDelta {
     
-    DDLogDebug(@"moveViewsVerticallyBy: %ld", yDelta);
+    DDLogDebug(@"moveViewsVerticallyBy, yDelta frame: %ld", yDelta);
     DDLogDebug(@"moveViewsVerticallyBy, text frame origin before: %f", _textFieldContainer.frame.origin.y);
     
     
@@ -3538,13 +3538,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             [view setBackgroundColor:[UIUtils isBlackTheme] ? [UIColor blackColor] : [UIColor whiteColor]];
             _galleryView = view;
             
-            
-            DDLogInfo(@"No view currently set so setting gallery frame offscreen.");
-            
-            CGRect frame = _galleryView.frame;
+            CGRect frame = [[UIScreen mainScreen] bounds];
             frame.origin.y = [[UIScreen mainScreen] bounds].size.height;
+            frame.size.height = GALLERY_VIEW_OFFSET;
             _galleryView.frame = frame;
-            DDLogDebug(@"setting frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
+            DDLogDebug(@"setting gallery view frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
             DDLogInfo(@"showGalleryView, keyboard height: %f",_messageBarState.keyboardHeight);
             
             //get the topmost window which should be the keyboard window
@@ -3602,7 +3600,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                      [self setContentOffsets:-yDelta];
                                  }
                                  CGRect frame = CGRectMake(0,  self.view.frame.origin.y + self.view.frame.size.height - yDelta, self.view.frame.size.width, yDelta);
-                                 DDLogDebug(@"setting frame to y: %f, height: %f", frame.origin.y, frame.size.height);
+                                 DDLogDebug(@"setting gallery view frame to y: %f, height: %f", frame.origin.y, frame.size.height);
                                  
                                  _galleryView.frame = frame;
                                  _messageBarState.galleryViewHeight = yDelta;
