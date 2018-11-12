@@ -1845,7 +1845,7 @@ const Float32 voiceRecordDelay = 0.3;
     }
     else {
         _qrButton.hidden = YES;
-        _inviteTextView.hidden = YES;        
+        _inviteTextView.hidden = YES;
         Friend *afriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:[self getCurrentTabName]];
         if (afriend.isDeleted) {
             [_theButton setImage:[UIImage imageNamed:@"ic_menu_home"] forState:UIControlStateNormal];
@@ -2054,7 +2054,7 @@ const Float32 voiceRecordDelay = 0.3;
 
 -(void) sendImageToFriendname: (NSString *) friendname viewController: (UIViewController *) viewController {
     if (friendname) {
-
+        
         Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:friendname];
         if ([theFriend isFriend] && ![theFriend isDeleted]) {
             _swipeView.suppressLayoutSubviews = YES;
@@ -2334,7 +2334,7 @@ const Float32 voiceRecordDelay = 0.3;
                                                                       initWithUsername:_username
                                                                       ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                                                                       theirUsername:thefriend.name];
-                                        
+                                                    
                                                     [ImageDelegate startFriendImageSelectControllerFromViewController:self usingDelegate:_imageDelegate];
                                                     
                                                     
@@ -3631,8 +3631,8 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 //pull the gif view immediately coz it looks janky just scroling down
                 [_gifView removeFromSuperview];
                 [self disableMessageModeShowKeyboard:NO setResponders:YES];
-              
-              
+                
+                
             }
             break;
         }
@@ -3650,7 +3650,6 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                      animations:^{
                          if (setResponders) {
                              NSInteger yDelta = GALLERY_VIEW_OFFSET;
-                             //NSInteger yDelta = galleryViewHeight;
                              
                              [self hideGifView];
                              
@@ -3742,16 +3741,18 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                               delay:0.0
                             options: UIViewAnimationCurveEaseIn
                          animations:^{
-                             //                             CGRect cameraFrame = _cameraButton.frame;
-                             //                             CGRect messageTextFrame = _messageTextView.frame;
-                             //
-                             //                             CGFloat originalX = messageTextFrame.origin.x;
-                             //                             CGFloat deltaX = originalX - messageTextFrame.origin.x;
-                             //
-                             //                             //move left of text frame to right of camera button
-                             //                             messageTextFrame.origin.x = cameraFrame.origin.x + cameraFrame.size.width;
-                             //                             messageTextFrame.size.width -= deltaX;
-                             _messageTextView.frame = _messageBarState.origTextMessageFrame;
+                             CGRect cameraFrame = _cameraButton.frame;
+                             CGRect theButtonFrame = _theButton.frame;
+                             CGRect messageTextFrame = _messageTextView.frame;
+                             
+                             CGFloat x = cameraFrame.origin.x + cameraFrame.size.width + 6;
+                             CGFloat newWidth = theButtonFrame.origin.x - 4 - x;
+                             
+                             //move left of text frame to right of camera button
+                             messageTextFrame.origin.x = x;
+                             messageTextFrame.size.width = newWidth;
+                             _messageTextView.frame = messageTextFrame;
+                             DDLogDebug(@"Expand, _messageTextView frame: %@", _messageTextView);
                          } completion:^(BOOL finished) {
                              //show buttons afterwards
                              [self updateTabChangeUI];
@@ -3784,6 +3785,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                              CGFloat deltaX = originalX - messageTextFrame.origin.x;
                              messageTextFrame.size.width += deltaX;
                              _messageTextView.frame = messageTextFrame;
+                             DDLogDebug(@"Collapse, _messageTextView frame: %@", _messageTextView);
                          } completion:^(BOOL finished) {
                              
                          }];
