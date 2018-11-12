@@ -1916,7 +1916,7 @@ const Float32 voiceRecordDelay = 0.3;
             }
             
             if ([_messageTextView.text length] > 0) {
-                [_theButton setImage:[UIImage imageNamed:@"ic_menu_send"] forState:UIControlStateNormal];
+                [_theButton setImage:[UIImage imageNamed:@"send"] forState:UIControlStateNormal];
             }
             else {
                 BOOL disableVoice = [UIUtils getBoolPrefWithDefaultNoForUser:_username key:@"_user_pref_disable_voice"];
