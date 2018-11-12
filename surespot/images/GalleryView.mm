@@ -28,6 +28,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 @property (strong, nonatomic) CallbackBlock callback;
 @property (strong, nonatomic) CallbackBlock moreCallback;
 @property (strong, nonatomic) PHFetchResult * photos;
+@property (strong, nonatomic) PHCachingImageManager * cache;
 @end
 
 @implementation GalleryView
@@ -44,6 +45,9 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     [_galleryPreview setCollectionViewLayout:layout];
     //force tint colors
     [_moreButton setSelected: NO];
+    
+    _cache = [PHCachingImageManager new];
+    _cache.allowsCachingHighQualityImages = YES;
 }
 
 - (IBAction)closeButtonTouch:(id)sender {
@@ -75,20 +79,29 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    NSInteger computedWidth = [(CHTCollectionViewWaterfallLayout *) _galleryPreview.collectionViewLayout itemWidthInSectionAtIndex: 0];
     NSInteger index =  [indexPath row];
     PHAsset * asset = [_photos objectAtIndex:index];
-    return CGSizeMake( [asset pixelWidth], [asset pixelHeight]);
+    
+    CGFloat scale = (float) computedWidth / [asset pixelWidth];
+    CGFloat width = [asset pixelWidth] * scale;
+    CGFloat height = [asset pixelHeight] * scale;
+    DDLogDebug(@"sizeForItemAtIndexPath: %d, width: %f, height: %f", indexPath.row, width, height);
+    return CGSizeMake( width, height);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
                   cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     GalleryItemView* newCell = [self.galleryPreview dequeueReusableCellWithReuseIdentifier:@"GalleryCell"
                                                                               forIndexPath:indexPath];
-    NSInteger index =[indexPath row];
+    NSInteger index = [indexPath row];
     PHAsset * asset = [_photos objectAtIndex: index];
-    
-    CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
-    CGFloat scale = (float) screenWidth / [asset pixelWidth];
+    newCell.galleryView.image = nil;
+    newCell.url = asset.localIdentifier;
+    DDLogDebug(@"cellForItemAtIndexPath: %d, width: %d, height: %d", indexPath.row, [asset pixelWidth], [asset pixelHeight]);
+    NSInteger computedWidth = [(CHTCollectionViewWaterfallLayout *) _galleryPreview.collectionViewLayout itemWidthInSectionAtIndex: 0];
+    CGFloat scale = (float) computedWidth / [asset pixelWidth];
     CGFloat width = [asset pixelWidth] * scale;
     CGFloat height = [asset pixelHeight] * scale;
     
@@ -104,21 +117,30 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     activityIndicator.center = newCell.center;
     [activityIndicator startAnimating];
     [newCell addSubview:activityIndicator];
+    //check cache
+    DDLogDebug(@"Loading asset: %@, row: %d", asset.localIdentifier, index);
     
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [[PHCachingImageManager defaultManager] requestImageForAsset:asset
-                                                          targetSize:CGSizeMake( width, height)
-                                                         contentMode:PHImageContentModeAspectFit
-                                                             options:requestOptions
-                                                       resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-                                                           DDLogDebug(@"Loaded asset: %@", info);
-                                                           dispatch_async(dispatch_get_main_queue(), ^{
-                                                               newCell.galleryView.image = result;
-                                                               [activityIndicator removeFromSuperview];
-                                                           });
-                                                       }];
+        
+        [_cache requestImageForAsset:asset
+                          targetSize:CGSizeMake( width, height)
+                         contentMode:PHImageContentModeAspectFit
+                             options:requestOptions
+                       resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                           
+                           DDLogDebug(@"Loaded asset: %@,row: %d, result: %@", asset.localIdentifier, indexPath.row, result);
+                           DDLogDebug(@"row: %d, newCell.url: %@, asset.localId: %@", indexPath.row, newCell.url, asset.localIdentifier);
+                           if ([newCell.url isEqualToString:asset.localIdentifier]) {
+                               dispatch_async(dispatch_get_main_queue(), ^{
+                                   newCell.galleryView.image = result;
+                                   [activityIndicator removeFromSuperview];
+                               });
+                           }
+                       }];
     });
+    
+    
     
     return newCell;
 }

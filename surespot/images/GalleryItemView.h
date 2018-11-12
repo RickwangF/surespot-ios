@@ -10,6 +10,6 @@
 #import "FLAnimatedImage.h"
 
 @interface GalleryItemView : UICollectionViewCell
-@property (weak, nonatomic) NSString * url;
+@property (strong, nonatomic) NSString * url;
 @property (weak, nonatomic) IBOutlet UIImageView *galleryView;
 @end
