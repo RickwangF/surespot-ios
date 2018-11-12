@@ -118,11 +118,11 @@ typedef NS_ENUM(NSInteger, MessageMode) {
 @property (nonatomic, strong) MessageView *theirPrototypeCell;
 @property (nonatomic, strong) UIAlertController * alertController;
 @property (nonatomic, assign) BOOL suspendKeyboardListeners;
+@property (nonatomic, assign) NSInteger galleryHeight;
 
 @end
 @implementation SwipeViewController
 
-const NSInteger GALLERY_VIEW_OFFSET = 253;
 const Float32 voiceRecordDelay = 0.3;
 
 - (void)viewDidLoad
@@ -259,6 +259,7 @@ const Float32 voiceRecordDelay = 0.3;
     [_inviteTextView.internalTextView setAutocapitalizationType:UITextAutocapitalizationTypeNone];
     [_inviteTextView.internalTextView setSpellCheckingType:UITextSpellCheckingTypeNo];
     
+    _galleryHeight = MIN([[UIScreen mainScreen]bounds].size.height, [[UIScreen mainScreen] bounds].size.width)*.66;
     [self updateTabChangeUI];
     [self setBackButtonIcon];
     [self setTextBoxHints];
@@ -318,7 +319,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void) adjustTableViewHeight: (NSInteger) height {
-    
+    DDLogDebug(@"adjustTableViewHeight: %ld", (long)height);
     CGRect frame = _swipeView.frame;
     frame.size.height -= height;
     _swipeView.frame = frame;
@@ -421,7 +422,6 @@ const Float32 voiceRecordDelay = 0.3;
         [_popover presentPopoverFromRect:CGRectMake(x/2,y/2, 1,1 ) inView:self.view permittedArrowDirections:0 animated:YES];
     }
     
-    [self showHeader];
     [self handleNotification];
     [self registerForKeyboardNotifications];
 }
@@ -568,6 +568,7 @@ const Float32 voiceRecordDelay = 0.3;
 }
 
 -(void) showHeader {
+    DDLogDebug(@"showHeader");
     //if we're on iphone in landscape, hide the nav bar and status bar
     if ([[ UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone &&
         UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation])) {
@@ -582,6 +583,8 @@ const Float32 voiceRecordDelay = 0.3;
         [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
         [self.navigationController setNavigationBarHidden:NO animated:YES];
     }
+    
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 - (void) swipeViewDidScroll:(SwipeView *)scrollView {
@@ -1525,6 +1528,8 @@ const Float32 voiceRecordDelay = 0.3;
                 browser.alwaysShowControls = YES;
                 browser.navigationItem.title = NSLocalizedString(@"pan_and_zoom", nil);
                 [browser setNavBarAppearance:NO tintColor:[UIUtils surespotBlue]];
+                
+                [self.navigationController setNavigationBarHidden:NO animated:YES];
                 [self.navigationController pushViewController:browser animated:YES];
                 [self disableMessageModeShowKeyboard:NO setResponders:YES];
             }
@@ -3065,6 +3070,7 @@ const Float32 voiceRecordDelay = 0.3;
     [self updateTabChangeUI];
     [self setBackButtonIcon];
     [self setThemeStuff];
+    [self showHeader];
 }
 
 
@@ -3356,7 +3362,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
         if (_currentMode == MessageModeGIF && deltaHeight != 0) {
             [self animateGifWindowOpenSetContent: NO];
         }
-        [self hideGalleryFrame:GALLERY_VIEW_OFFSET];
+        [self hideGalleryFrame:_galleryHeight];
     } completion:^(BOOL completion) {
         
     }];
@@ -3409,7 +3415,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                               delay:0.0
                             options: UIViewAnimationCurveEaseOut
                          animations:^{
-                             NSInteger yDelta = GALLERY_VIEW_OFFSET;
+                             NSInteger yDelta = _galleryHeight;
                              [self hideGalleryFrame: yDelta];
                              [self updateTabChangeUI];
                          }
@@ -3442,19 +3448,19 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 
 -(void) moveViewsVerticallyBy:(NSInteger) yDelta {
     
-    DDLogDebug(@"moveViewsVerticallyBy, yDelta frame: %ld", yDelta);
-    DDLogDebug(@"moveViewsVerticallyBy, text frame origin before: %f", _textFieldContainer.frame.origin.y);
+    DDLogDebug(@"moveViewsVerticallyBy, yDelta: %ld", yDelta);
     
-    
+   // DDLogDebug(@"moveViewsVerticallyBy, text frame origin before: %f, height: %f", _textFieldContainer.frame.origin.y, _textFieldContainer.frame.size.height);
+    DDLogDebug(@"moveViewsVerticallyBy, swipe view frame origin before: %f, frame height: %f, bounds height: %f", _swipeView.frame.origin.y, _swipeView.frame.size.height, _swipeView.bounds.size.height);
     CGRect textFieldFrame = _textFieldContainer.frame;
     textFieldFrame.origin.y += yDelta;
     _textFieldContainer.frame = textFieldFrame;
-    
-    DDLogDebug(@"moveViewsVerticallyBy, text frame origin after: %f", _textFieldContainer.frame.origin.y);
-    
+
     CGRect frame = _swipeView.frame;
     frame.size.height += yDelta;
     _swipeView.frame = frame;
+  //  DDLogDebug(@"moveViewsVerticallyBy, text frame origin after: %f, height: %f", _textFieldContainer.frame.origin.y, _textFieldContainer.frame.size.height);
+    DDLogDebug(@"moveViewsVerticallyBy, swipe view frame origin after: %f, height: %f, bounds height: %f", _swipeView.frame.origin.y, _swipeView.frame.size.height, _swipeView.bounds.size.height);
 }
 
 -(void) setContentOffsets: (NSInteger) yDelta  {
@@ -3540,7 +3546,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
             
             CGRect frame = [[UIScreen mainScreen] bounds];
             frame.origin.y = [[UIScreen mainScreen] bounds].size.height;
-            frame.size.height = GALLERY_VIEW_OFFSET;
+            frame.size.height = _galleryHeight;
             _galleryView.frame = frame;
             DDLogDebug(@"setting gallery view frame to y: %f, height: %f", _galleryView.frame.origin.y, _galleryView.frame.size.height);
             DDLogInfo(@"showGalleryView, keyboard height: %f",_messageBarState.keyboardHeight);
@@ -3581,7 +3587,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                 [self sendImageToFriendname:friendname viewController: self];
             }];
             
-            __block NSInteger yDelta = GALLERY_VIEW_OFFSET;
+            __block NSInteger yDelta = _galleryHeight;
             [UIView animateWithDuration:0.5
                                   delay:0.0
                                 options: UIViewAnimationCurveEaseIn
@@ -3646,7 +3652,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                         options: UIViewAnimationCurveEaseOut
                      animations:^{
                          if (setResponders) {
-                             NSInteger yDelta = GALLERY_VIEW_OFFSET;
+                             NSInteger yDelta = _galleryHeight;
                              
                              [self hideGifView];
                              
@@ -3707,7 +3713,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                          if (setContent) {
                              [self setContentOffsets:-_gifOffsets];
                          }
-                         [self hideGalleryFrame:GALLERY_VIEW_OFFSET];
+                         [self hideGalleryFrame:_galleryHeight];
                          _messageBarState.galleryViewHeight = 0;
                      } completion:^(BOOL finished) {
                          DDLogDebug(@"animateGifWindow open removing gallery view from superview");
