@@ -1519,7 +1519,8 @@ const Float32 voiceRecordDelay = 0.3;
         if (cds) {
             SurespotMessage * message = [cds.messages objectAtIndex:indexPath.row];
             
-            if ([message.mimeType isEqualToString: MIME_TYPE_IMAGE]) {
+            if ([message.mimeType isEqualToString: MIME_TYPE_IMAGE]) {                
+                [self disableMessageModeShowKeyboard:NO setResponders:YES];
                 _imageMessage = message;
                 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
                 browser.displayActionButton = NO; // Show action button to allow sharing, copying, etc (defaults to YES)
@@ -1531,7 +1532,7 @@ const Float32 voiceRecordDelay = 0.3;
                 
                 [self.navigationController setNavigationBarHidden:NO animated:YES];
                 [self.navigationController pushViewController:browser animated:YES];
-                [self disableMessageModeShowKeyboard:NO setResponders:YES];
+
             }
             else {
                 if ([message.mimeType isEqualToString: MIME_TYPE_M4A]) {
