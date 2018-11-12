@@ -2063,7 +2063,10 @@ const Float32 voiceRecordDelay = 0.3;
         
         Friend * theFriend = [[[[ChatManager sharedInstance] getChatController: _username] getHomeDataSource] getFriendByName:friendname];
         if ([theFriend isFriend] && ![theFriend isDeleted]) {
-            _swipeView.suppressLayoutSubviews = YES;
+            
+            if ([UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPad) {
+                _swipeView.suppressLayoutSubviews = YES;
+            }
             _imageDelegate = [[ImageDelegate alloc]
                               initWithUsername:_username
                               ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
