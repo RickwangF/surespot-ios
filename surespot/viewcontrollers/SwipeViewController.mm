@@ -2063,9 +2063,9 @@ const Float32 voiceRecordDelay = 0.3;
                               ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                               theirUsername:friendname];
             _imageDelegate.delegate = self;
+            [_galleryView removeFromSuperview];
             [self disableMessageModeShowKeyboard:NO setResponders:YES];
             [ImageDelegate startImageSelectControllerFromViewController:viewController usingDelegate:_imageDelegate];
-            
         }
     }
 }
@@ -3625,12 +3625,11 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
                                   ourVersion:[[IdentityController sharedInstance] getOurLatestVersion: _username]
                                   theirUsername:theirUsername];
                 _imageDelegate.delegate = self;
-                [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
-                //pull the gif view immediately coz it looks janky just scroling down
+                //pull other views immediately coz they look janky
                 [_gifView removeFromSuperview];
+                [_galleryView removeFromSuperview];
                 [self disableMessageModeShowKeyboard:NO setResponders:YES];
-                
-                
+                [ImageDelegate startCameraControllerFromViewController:self usingDelegate:_imageDelegate];
             }
             break;
         }
@@ -3833,6 +3832,7 @@ didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
 - (void)imageSelectionCompleted {
     DDLogDebug(@"imageSelectionCompleted");
     _swipeView.suppressLayoutSubviews = NO;
+    [self showHeader];
 }
 
 @end
