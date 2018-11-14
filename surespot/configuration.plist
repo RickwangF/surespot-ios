@@ -2,15 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>giphy_api_key</key>
-	<string>dc6zaTOxFJmzC</string>
 	<key>bitly_token</key>
-	<string>4d80112e45e7c6c32d055e2ea9e0ceb87c593374</string>
+	<string>bitly_token</string>
 	<key>base_url</key>
-	<string>https://lb2.surespot.me:443</string>
+	<string>base_url</string>
 	<key>google_client_id</key>
-	<string>428168563991-kjkqs31gov2lmgh05ajbhcpi7bkpuop7.apps.googleusercontent.com</string>
+	<string>google_client_id</string>
 	<key>google_client_secret</key>
-	<string>1H_GukkECmZb8ElXEmEGuWh8</string>
+	<string>google_client_secret</string>
+    <key>giphy_api_key</key>
+    <string>giphy_api_key</string>
 </dict>
 </plist>
