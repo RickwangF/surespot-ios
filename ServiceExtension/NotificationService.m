@@ -30,9 +30,9 @@
         [notificationType isEqualToString:@"notification_invite_accept"]) {
         
         
-//        NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
-//        NSString * to = [locArgs objectAtIndex:0];
-//        NSString * from = [locArgs objectAtIndex:1];
+        NSArray * locArgs =[self.bestAttemptContent.userInfo valueForKeyPath:@"aps.alert.loc-args" ] ;
+        NSString * to = [locArgs objectAtIndex:0];
+        NSString * from = [locArgs objectAtIndex:1];
         
         //if muted do nothing
         //can't prevent notification being showing
@@ -46,8 +46,20 @@
             [SharedUtils incrementBadgeCount];
         }
         
-        //  self.bestAttemptContent.subtitle = [NSString stringWithFormat: NSLocalizedString(notificationType, nil), to];
-        //  self.bestAttemptContent.body = [NSString stringWithFormat: NSLocalizedString(notificationType, nil), to];
+        //get alias
+        NSString * fromName = [SharedUtils getAliasForUsername:to friendName:from];
+        if (!fromName) {
+            fromName = from;
+        }
+        
+        NSString * stringToLocalize = [NSString stringWithFormat:@"%@_from", notificationType];
+        NSString * body = [NSString stringWithFormat: NSLocalizedString(stringToLocalize, nil), to, fromName];
+        
+        UNMutableNotificationContent * content = [[UNMutableNotificationContent alloc] init];
+        [content setBody:body];
+            
+        self.bestAttemptContent.body = body;
+                //  self.bestAttemptContent.subtitle = [NSString stringWithFormat: NSLocalizedString(notificationType, nil), to];
         // self.bestAttemptContent.title = NSLocalizedString(@"notification_title", nil);
         
         

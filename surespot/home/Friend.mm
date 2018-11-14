@@ -11,6 +11,7 @@
 #import "EncryptionController.h"
 #import "IdentityController.h"
 #import "CocoaLumberjack.h"
+#import "SharedUtils.h"
 
 #define INVITER 32
 #define MESSAGE_ACTIVITY 16
@@ -104,6 +105,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
     if ([self hasFriendAliasAssigned] && [UIUtils stringIsNilOrEmpty: _aliasPlain]) {
         [EncryptionController symmetricDecryptString:_aliasData ourUsername: _ourUsername ourVersion:_aliasVersion theirUsername:_ourUsername theirVersion:_aliasVersion iv:_aliasIv hashed: _aliasHashed callback:^(id result) {
             _aliasPlain = result;
+            [SharedUtils setAlias:result forUsername:_ourUsername friendName:_name];
         }];
         
     }

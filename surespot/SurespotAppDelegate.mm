@@ -230,18 +230,13 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
                     (isMessage && ![[cc getCurrentChat] isEqualToString:from]) ||
                     !isMessage) {
                     //get alias
-                    Friend * thefriend = [[cc getHomeDataSource] getFriendByName: from];
-//                    if ([thefriend muted]) {
-//                        completionHandler(UNNotificationPresentationOptionNone);
-//                        return;
-//                    }
-                    NSString * body;
-                    if ([notificationType isEqualToString:@"notification_message"] && thefriend) {
-                        body = [NSString stringWithFormat:NSLocalizedString(@"notification_message_from", nil), to,thefriend.nameOrAlias];
+                    NSString * fromName = [SharedUtils getAliasForUsername:to friendName:from];
+                    if (!fromName) {
+                        fromName = from;
                     }
-                    else {
-                        body = [NSString stringWithFormat: NSLocalizedString(notificationType, nil), to];
-                    }
+                    
+                    NSString * stringToLocalize = [NSString stringWithFormat:@"%@_from", notificationType];
+                    NSString * body = [NSString stringWithFormat: NSLocalizedString(stringToLocalize, nil), to, fromName];
                     
                     UNMutableNotificationContent * content = [[UNMutableNotificationContent alloc] init];
                     [content setBody:body];

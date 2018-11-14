@@ -303,6 +303,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         //assign plain
         if (alias) {
             [afriend setAliasPlain: alias];
+            [SharedUtils setAlias:alias forUsername:_ourUsername friendName:friendname];
         }
         else {
             [afriend decryptAlias];
@@ -321,6 +322,7 @@ static const DDLogLevel ddLogLevel = DDLogLevelOff;
         [afriend setAliasIv:nil];
         
         [afriend setAliasPlain: nil];
+        [SharedUtils removeAliasForUsername:_ourUsername friendName:friendname];
         
         [self postRefresh];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"reloadSwipeView" object: nil];

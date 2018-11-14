@@ -22,5 +22,7 @@
 +(void) setActive: (BOOL) isActive;
 +(void) setMute: (BOOL) mute forUsername: (NSString *) username friendName: (NSString *) friendname;
 +(BOOL) getMuteForUsername: (NSString *) username friendName: (NSString *) friendname;
-
++(void) setAlias: (NSString *) alias forUsername: (NSString *) username friendName: (NSString *) friendname;
++(NSString *) getAliasForUsername: (NSString *) username friendName: (NSString *) friendname;
++(void) removeAliasForUsername: (NSString *) username friendName: (NSString *) friendname;
 @end

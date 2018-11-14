@@ -60,7 +60,7 @@
 
 +(void) setMute: (BOOL) mute forUsername: (NSString *) username friendName: (NSString *) friendname {
     NSUserDefaults * sharedDefaults = [self getSharedDefaults];
-    NSString * key = [NSString stringWithFormat:@"%@:%@", username, friendname];
+    NSString * key = [NSString stringWithFormat:@"mute_%@:%@", username, friendname];
     if (mute) {
         [sharedDefaults setBool:YES forKey: key];
     }
@@ -71,9 +71,26 @@
 
 +(BOOL) getMuteForUsername: (NSString *) username friendName: (NSString *) friendname {
     NSUserDefaults * sharedDefaults = [self getSharedDefaults];
-    NSString * key = [NSString stringWithFormat:@"%@:%@", username, friendname];
+    NSString * key = [NSString stringWithFormat:@"mute_%@:%@", username, friendname];
     return [sharedDefaults boolForKey:key];
 }
 
++(void) setAlias: (NSString *) alias forUsername: (NSString *) username friendName: (NSString *) friendname {
+    NSUserDefaults * sharedDefaults = [self getSharedDefaults];
+    NSString * key = [NSString stringWithFormat:@"alias_%@:%@", username, friendname];
+    [sharedDefaults setObject:alias forKey: key];
+}
+
++(NSString *) getAliasForUsername: (NSString *) username friendName: (NSString *) friendname {
+    NSUserDefaults * sharedDefaults = [self getSharedDefaults];
+    NSString * key = [NSString stringWithFormat:@"alias_%@:%@", username, friendname];
+    return [sharedDefaults stringForKey:key];
+}
+
++(void) removeAliasForUsername: (NSString *) username friendName: (NSString *) friendname {
+    NSUserDefaults * sharedDefaults = [self getSharedDefaults];
+    NSString * key = [NSString stringWithFormat:@"alias_%@:%@", username, friendname];
+    [sharedDefaults removeObjectForKey:key];
+}
 
 @end
